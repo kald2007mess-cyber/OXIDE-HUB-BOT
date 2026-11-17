@@ -88,6 +88,28 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
     }
 
+    // Keep legacy app modules (referrals, support, progress and mission reviews)
+    // attached to the same authenticated Telegram UUID.
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS visitors (
+        user_id TEXT PRIMARY KEY,
+        progress INTEGER NOT NULL DEFAULT 0,
+        points INTEGER NOT NULL DEFAULT 0,
+        cycle_started_at INTEGER,
+        created_at INTEGER NOT NULL
+      )
+    `).run();
+
+    const account = await env.DB.prepare(
+      "SELECT points FROM users WHERE user_uuid = ?"
+    ).bind(userUuid).first();
+
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO visitors
+        (user_id, progress, points, cycle_started_at, created_at)
+      VALUES (?, 0, ?, ?, ?)
+    `).bind(userUuid, Number(account?.points || 0), now, now).run();
+
     await env.DB.prepare(`
       INSERT OR IGNORE INTO telegram_identities (telegram_user_id, user_uuid, created_at)
       VALUES (?, ?, ?)
