@@ -916,14 +916,32 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
  .telegram-gate-button{font-size:14px;padding:12px 8px}
 }
 
+
+/* Final overrides: the welcome card is browser-only, never shown in Telegram. */
+.telegram-gate{display:none!important}
+body.outside-telegram .telegram-gate{display:flex!important}
+@media(max-width:768px){
+ html,body{min-height:100%;background-color:#030816!important}
+ body{
+  background-image:linear-gradient(180deg,rgba(3,8,22,.28),rgba(3,8,22,.62)),url("/mobile-background.svg")!important;
+  background-position:center center,center center!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-size:cover,cover!important;
+  background-attachment:scroll,scroll!important;
+  background-color:#030816!important;
+  min-height:100dvh!important;
+ }
+}
+
 </style>
 </head>
 <body>
 <script>
 (function(){
  const tg=window.Telegram&&window.Telegram.WebApp;
- const inTelegram=!!(tg&&(tg.initData||tg.platform&&tg.platform!=="unknown"));
- if(!inTelegram)document.body.classList.add("outside-telegram");
+ const ua=navigator.userAgent||"";
+ const inTelegram=/Telegram/i.test(ua)||!!(tg&&(tg.initData||(tg.initDataUnsafe&&tg.initDataUnsafe.user)||(tg.platform&&tg.platform!=="unknown")));
+ document.body.classList.toggle("outside-telegram",!inTelegram);
 })();
 </script>
 <section class="telegram-gate" aria-labelledby="telegramGateTitle">
