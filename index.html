@@ -595,7 +595,7 @@ let progress=0,busy=false,lastProgress=null,currentLanguage="ar",activePopup=nul
 let islandAds=[],islandCompleted=0,islandRemaining=0,islandCycleEndsAt=0,islandBusy=false,islandTimerInterval=null;
 let userDisplayId="",userIdLoaded=false,referralLinkValue="",referralLoaded=false;
 const LOCK_KEY="oxide_active_ad_session";
-const rewardImages={1:"oxide_55_coins.png",2:"oxide_145_coins.png",3:"oxide_premium.png",4:"oxide_25_bp_coins.png"};
+const rewardImages={1:"https://kald2007mess-cyber-github-io.pages.dev/oxide_55_coins.png",2:"https://kald2007mess-cyber-github-io.pages.dev/oxide_145_coins.png",3:"https://kald2007mess-cyber-github-io.pages.dev/oxide_premium.png",4:"https://kald2007mess-cyber-github-io.pages.dev/oxide_25_bp_coins.png"};
 let lastSupportMessageId=0,supportSending=false,supportPollingStarted=false;
 let supportSeenInitialized=false,supportSeenAdminId=0,supportUnreadAdminIds=[];
 function readOxideList(key){try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(error){return []}}
