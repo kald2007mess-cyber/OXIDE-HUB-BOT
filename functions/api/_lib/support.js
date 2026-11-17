@@ -21,6 +21,17 @@ export async function ensureSupportTables(DB) {
       telegram_message_id INTEGER
     )
   `).run();
+  const messageColumns = await DB.prepare("PRAGMA table_info(support_messages)").all();
+  const knownMessageColumns = new Set((messageColumns.results || []).map(column => column.name));
+  if (!knownMessageColumns.has("media_file_id")) {
+    await DB.prepare("ALTER TABLE support_messages ADD COLUMN media_file_id TEXT").run();
+  }
+  if (!knownMessageColumns.has("telegram_chat_id")) {
+    await DB.prepare("ALTER TABLE support_messages ADD COLUMN telegram_chat_id TEXT").run();
+  }
+  if (!knownMessageColumns.has("telegram_message_id")) {
+    await DB.prepare("ALTER TABLE support_messages ADD COLUMN telegram_message_id INTEGER").run();
+  }
   await DB.prepare(`
     CREATE INDEX IF NOT EXISTS idx_support_messages_conversation
     ON support_messages(conversation_id, id)
