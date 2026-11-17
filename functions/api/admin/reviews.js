@@ -124,7 +124,11 @@ async function reviewMission(DB, id, decision) {
         UPDATE mission_submissions
         SET status = 'approved', reviewed_at = ?
         WHERE id = ? AND status = 'pending'
-      `).bind(now, id)
+      `).bind(now, id),
+      DB.prepare(`
+        UPDATE users SET points = points + ?, updated_at = ?
+        WHERE user_uuid = ?
+      `).bind(reward, now, submission.user_id)
     ]);
 
     if (Number(results[0]?.meta?.changes || 0) !== 1 ||
