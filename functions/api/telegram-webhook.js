@@ -1,3 +1,5 @@
+import { ensureSupportTables } from "./_lib/support.js";
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -27,6 +29,40 @@ export async function onRequestPost({ request, env }) {
     const update = await request.json();
     const message = update.message;
     if (!message?.chat?.id || !message?.from?.id || typeof message.text !== "string") return json({ ok: true });
+
+    // An administrator can reply directly to the support notification in Telegram.
+    // The reply is stored in the same conversation and appears in the user's support tab.
+    if (message.reply_to_message &&
+        String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID) &&
+        String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
+        env.DB) {
+      await ensureSupportTables(env.DB);
+      const original = await env.DB.prepare(`
+        SELECT id, conversation_id
+        FROM support_messages
+        WHERE telegram_chat_id = ? AND telegram_message_id = ? AND sender = 'user'
+        LIMIT 1
+      `).bind(String(message.chat.id), Number(message.reply_to_message.message_id)).first();
+
+      if (original) {
+        const now = Math.floor(Date.now() / 1000);
+        const replyText = String(message.text || "").trim().slice(0, 2000);
+        if (replyText) {
+          await env.DB.prepare(`
+            INSERT INTO support_messages
+              (conversation_id, sender, message_type, message_text, created_at)
+            VALUES (?, 'admin', 'text', ?, ?)
+          `).bind(original.conversation_id, replyText, now).run();
+          await env.DB.prepare(`
+            UPDATE support_conversations
+            SET updated_at = ?, status = 'open'
+            WHERE id = ?
+          `).bind(now, original.conversation_id).run();
+        }
+        return json({ ok: true, supportReplySaved: Boolean(replyText) });
+      }
+    }
+
     if (!/^\/start(?:\s|$)/.test(message.text.trim())) return json({ ok: true });
 
     const isOwner = String(message.from.id) === String(env.TELEGRAM_ADMIN_ID);
