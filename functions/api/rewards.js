@@ -76,6 +76,11 @@ export async function onRequestPost({ request, env }) {
     if (!debit) return json({ success: false, error: "INSUFFICIENT_POINTS" }, 400);
     debitDone = true;
 
+    await env.DB.prepare(`
+      UPDATE visitors SET points = ?
+      WHERE user_id = ?
+    `).bind(Number(debit.points), userUuid).run();
+
     const inserted = await env.DB.prepare(`
       INSERT INTO redemption_orders
         (user_uuid, public_id, offer_id, offer_name, points_cost, user_uuid_input, status, created_at)
@@ -123,6 +128,8 @@ export async function onRequestPost({ request, env }) {
           "UPDATE users SET points = points + ?, updated_at = ? WHERE user_uuid = ? RETURNING points"
         ).bind(offer.points, now, userUuid).first();
         if (refund) {
+          await env.DB.prepare("UPDATE visitors SET points = ? WHERE user_id = ?")
+            .bind(Number(refund.points), userUuid).run();
           await env.DB.prepare(`
             INSERT INTO point_ledger (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
             VALUES (?, ?, ?, 'redemption_compensation', 'redemption', ?, ?)
