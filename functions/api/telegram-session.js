@@ -32,7 +32,7 @@ async function telegramUser(initData, botToken) {
   let user;
   try { user = JSON.parse(userText); } catch { return null; }
   const telegramId = String(user?.id || "");
-  if (!/^\\d{5,20}$/.test(telegramId)) return null;
+  if (!/^\d{5,20}$/.test(telegramId)) return null;
   params.delete("hash");
   const check = [...params.entries()].sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${v}`).join("\n");
