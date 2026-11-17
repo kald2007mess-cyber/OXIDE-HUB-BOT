@@ -786,7 +786,7 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-missions-glass-frame .oxide-shards-summary{margin:0 0 18px;background:rgba(111,70,172,.16);border-color:rgba(190,153,255,.3);box-shadow:none}
 .oxide-missions-glass-frame .oxide-missions-heading{margin:0 4px 14px}
 .oxide-missions-glass-frame .oxide-task-filters{padding-bottom:4px}
-.oxide-empty-task-space{min-height:110px;margin-top:14px;border:1px dashed rgba(190,153,255,.13);border-radius:16px;background:rgba(19,12,37,.08)}
+
 /* OXIDE HUB - refreshed standalone earn tasks */
 .oxide-missions-page{padding:14px 12px 100px;max-width:760px;margin:0 auto;color:#f5f1ff}
 .oxide-missions-page .oxide-shards-summary{margin:8px 0 18px;padding:20px;border:1px solid rgba(174,119,255,.28);border-radius:22px;background:linear-gradient(135deg,rgba(85,40,150,.42),rgba(20,16,42,.88));text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.22)}
@@ -798,8 +798,8 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-new-task-list{display:grid;gap:11px}.oxide-new-task-card{padding:14px;border:1px solid rgba(167,119,255,.24);border-radius:17px;background:linear-gradient(145deg,rgba(35,26,62,.96),rgba(18,16,39,.96));box-shadow:0 8px 22px rgba(0,0,0,.16)}.oxide-new-task-top{display:flex;align-items:center;gap:11px;min-width:0}.oxide-new-task-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border-radius:12px;background:rgba(145,97,231,.17);color:#d6bdff;font-size:20px;font-weight:900}.oxide-new-task-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.oxide-new-task-info strong{font-size:13px;line-height:1.35;color:#f7f2ff}.oxide-new-task-info small{font-size:10px;color:#a99abe}.oxide-task-reward{font-size:10px;font-weight:900;white-space:nowrap;color:#c7a6ff}.oxide-task-count{padding:5px 9px;border-radius:16px;background:rgba(151,104,255,.18);color:#ddc9ff;font-size:10px;font-weight:900;white-space:nowrap}.oxide-new-task-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid rgba(181,147,230,.12)}.oxide-task-category{font-size:10px;color:#9e91b5}.oxide-new-task-button{min-width:82px;padding:8px 15px;border:1px solid rgba(173,131,255,.28);border-radius:10px;background:rgba(120,77,190,.2);color:#cdb6f7;font-size:11px;font-weight:900;opacity:.85}.oxide-new-task-button:disabled{cursor:not-allowed}.oxide-new-task-ad{border-color:rgba(181,137,255,.4);background:linear-gradient(140deg,rgba(67,43,112,.75),rgba(20,17,43,.98))}
 
 /* OXIDE HOME BOTTOM DOCK + TOKEN MARK */
-#homePage.tap-home{display:flex;flex-direction:column;min-height:calc(100dvh - 94px);padding-bottom:12px!important}
-#homePage .tap-bottom-info{width:100%;margin-top:auto;padding-top:14px}
+#homePage.tap-home{display:flex;flex-direction:column;min-height:0!important;padding-bottom:12px!important}
+#homePage .tap-bottom-info{width:100%;margin-top:0!important;padding-top:14px}
 #homePage .tap-meter{margin-bottom:10px}
 #homePage .tap-home-footer{display:block;margin:12px 0 8px;text-align:center;color:#9b83b5;font-size:10px;line-height:1.8;letter-spacing:.7px}
 #homePage .tap-coin{width:min(84vw,330px)!important;height:min(84vw,330px)!important;max-width:330px!important;max-height:330px!important}
@@ -811,7 +811,7 @@ html,body{overscroll-behavior-y:auto!important}
 }
 #pointsBalance::after{width:23px;height:23px;flex-basis:23px}
 #missionTopBalance::after,#referralShardBalance::after{width:22px;height:22px;flex-basis:22px}
-@media(max-width:380px){#homePage .tap-coin{width:min(80vw,285px)!important;height:min(80vw,285px)!important;max-width:285px!important;max-height:285px!important}#homePage.tap-home{min-height:calc(100dvh - 88px)}}
+@media(max-width:380px){#homePage .tap-coin{width:min(80vw,285px)!important;height:min(80vw,285px)!important;max-width:285px!important;max-height:285px!important}#homePage.tap-home{min-height:0!important}}
 
 
 /* OXIDE PROFILE - Arabic account dashboard */
@@ -1082,7 +1082,6 @@ body.outside-telegram .telegram-gate{display:flex!important}
     <button class="oxide-filter-chip" type="button" data-task-filter="x" onclick="filterOxideTasks('x',this)">X</button>
     <button class="oxide-filter-chip" type="button" data-task-filter="watch" onclick="filterOxideTasks('watch',this)">Watch</button>
   </div>
-  <div class="oxide-empty-task-space" aria-label="No tasks available"></div>
 </div>
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
