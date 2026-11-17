@@ -213,7 +213,17 @@ export async function onRequestPost({ request, env }) {
         WHERE user_id = ?
           AND changes() = 1
           AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
-      `).bind(referrer.user_id, userId)
+      `).bind(referrer.user_id, userId),
+      env.DB.prepare(`
+        UPDATE users SET points = (SELECT points FROM visitors WHERE user_id = users.user_uuid),
+          updated_at = ?
+        WHERE user_uuid = ? AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
+      `).bind(now, userId, userId),
+      env.DB.prepare(`
+        UPDATE users SET points = (SELECT points FROM visitors WHERE user_id = users.user_uuid),
+          updated_at = ?
+        WHERE user_uuid = ? AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
+      `).bind(now, referrer.user_id, userId)
     ]);
 
     if (Number(results?.[0]?.meta?.changes || 0) !== 1) {
