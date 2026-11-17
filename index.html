@@ -720,6 +720,43 @@ html,body{overscroll-behavior-y:auto!important}
   #skillsPage.oxide-skills-page{height:calc(100vh - 88px)!important;max-height:calc(100vh - 88px)!important}
 }
 
+
+/* OXIDE HUB - referral page inspired by the supplied Shards layout */
+.oxide-referral-page{max-width:520px;margin:0 auto;padding:12px 13px 105px;color:#f5f0ff;text-align:left}
+.oxide-shards-summary{padding:18px 16px 20px;text-align:center;background:linear-gradient(145deg,rgba(45,23,75,.94),rgba(14,10,31,.96));border:1px solid rgba(177,119,231,.42);border-radius:19px;box-shadow:0 8px 26px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.06)}
+.oxide-shards-caption{font-size:12px;font-weight:800;letter-spacing:2.6px;color:#c9a8f2}
+.oxide-shards-balance{font-size:36px;line-height:1.25;font-weight:900;color:#fff;margin-top:5px;text-shadow:0 0 18px rgba(181,117,255,.35)}
+.oxide-shards-usdt{font-size:13px;font-weight:700;color:#b9f3d1;margin-top:4px}
+.oxide-referral-heading{padding:22px 4px 13px}
+.oxide-referral-eyebrow{font-size:10px;letter-spacing:2.5px;color:#b77bea;font-weight:900}
+.oxide-referral-heading h2{font-size:22px;margin:5px 0 0;color:#fff;font-weight:850}
+.oxide-invite-card{position:relative;overflow:hidden;padding:17px;border-radius:17px;background:linear-gradient(115deg,rgba(92,43,145,.38),rgba(28,17,51,.94));border:1px solid rgba(174,115,230,.42)}
+.oxide-invite-icon{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;background:rgba(188,132,255,.18);color:#d7b3ff;font-size:23px;margin-bottom:12px}
+.oxide-invite-title{font-size:18px;font-weight:850;color:#fff}
+.oxide-invite-description{font-size:13px;color:#cbbddc;margin-top:5px}
+.oxide-invite-description strong{color:#d9b5ff}
+.oxide-referral-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.oxide-referral-stat{min-width:0;padding:15px 13px;border-radius:15px;background:rgba(20,15,37,.94);border:1px solid rgba(157,112,201,.3)}
+.oxide-stat-label{font-size:11px;color:#bbaacb;font-weight:650}
+.oxide-stat-value{font-size:27px;font-weight:900;color:#fff;margin-top:7px}
+.oxide-stat-unit{font-size:10px;color:#b77bea;margin-top:2px}
+.oxide-link-card,.oxide-how-card{margin-top:13px;padding:16px;border-radius:16px;background:rgba(19,14,34,.96);border:1px solid rgba(157,112,201,.3)}
+.oxide-link-heading{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:850;color:#fff}
+.oxide-link-icon{font-size:18px}
+.oxide-link-label{font-size:12px;color:#c5b5d5;margin:14px 0 8px}
+.oxide-referral-input{display:block;width:100%;min-width:0;direction:ltr;text-align:left;background:rgba(8,7,19,.95)!important;color:#d9c0ff!important;border:1px solid rgba(166,113,219,.45)!important;border-radius:10px;padding:12px!important;font-size:11px!important;box-sizing:border-box}
+.oxide-link-hint{font-size:10px;color:#91829f;margin-top:7px}
+.oxide-link-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+.oxide-link-actions .referral-button{min-height:43px;border-radius:10px;font-size:13px;font-weight:850}
+.oxide-copy-button{background:linear-gradient(135deg,#a66be1,#7140b6)!important;border:1px solid #c49aef!important;color:#fff}
+.oxide-share-button{background:rgba(49,34,70,.95)!important;border:1px solid rgba(184,139,224,.55)!important;color:#e5d3f7}
+.oxide-how-card h3{font-size:15px;color:#fff;margin:0 0 15px}
+.oxide-how-step{display:flex;align-items:center;gap:11px;margin:12px 0;color:#d4c8df;font-size:12px;line-height:1.5}
+.oxide-step-number{flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:rgba(166,107,225,.18);border:1px solid rgba(185,135,235,.48);color:#d9b5ff;font-weight:900;font-size:11px}
+.oxide-how-note{margin-top:15px;padding-top:12px;border-top:1px solid rgba(157,112,201,.2);font-size:11px;color:#b77bea}
+.oxide-referral-page .referral-status{min-height:17px;text-align:center;color:#d6b6f4;font-size:11px}
+@media(max-width:360px){.oxide-referral-page{padding-left:10px;padding-right:10px}.oxide-shards-balance{font-size:32px}.oxide-stat-value{font-size:24px}.oxide-link-card,.oxide-how-card{padding:13px}}
+
 </style>
 </head>
 <body>
@@ -863,7 +900,51 @@ html,body{overscroll-behavior-y:auto!important}
 </div>
 </div></section>
 </section>
-<section id="referralPage" style="display:none"><h2 class="rewards-heading" id="referralHeading">👥 الإحالات</h2><div class="referral-card"><h3 class="referral-title" id="referralInviteTitle">ادعُ أصدقاءك واربح</h3><p class="referral-description" id="referralDescription">صديقك يحصل على 30 نقطة وأنت تحصل على 50 نقطة عند إدخال رمز دعوتك.</p><div class="referral-link-row"><input class="referral-link" id="referralLink" type="text" readonly value="Loading..."><button class="referral-button" id="copyReferralButton" type="button" onclick="copyReferralLink()">📋 نسخ</button></div><div style="margin-top:14px;text-align:right"><label for="referralCodeInput" style="display:block;color:#b8c9dd;font-size:12px;margin-bottom:7px">هل لديك رمز دعوة؟ أدخله هنا لتحصل على 30 نقطة</label><input class="referral-link" id="referralCodeInput" type="text" maxlength="45" placeholder="OX-XXXXXXXX" autocomplete="off" style="width:100%;margin-bottom:8px"><button class="referral-button" id="applyReferralCodeButton" type="button" onclick="submitReferralCode()" style="width:100%">تفعيل رمز الدعوة (+30 نقطة)</button></div><button class="referral-button" id="shareReferralButton" type="button" onclick="shareReferralLink()" style="width:100%;margin-top:9px">↗ مشاركة الرابط</button><div class="referral-status" id="referralStatus" role="status"></div></div><div class="referral-stats"><div class="referral-stat"><div class="referral-stat-label" id="referralCountLabel">الإحالات الناجحة</div><div class="referral-stat-value" id="referralCount">0</div></div><div class="referral-stat"><div class="referral-stat-label" id="referralEarnedLabel">النقاط المكتسبة</div><div class="referral-stat-value" id="referralEarned">0</div></div></div><div class="referral-ranking"><h3 id="pointsRankingTitle">🏆 أفضل 10 حسب النقاط</h3><div id="pointsRanking"><div class="ranking-row">جاري التحميل...</div></div></div><div class="referral-ranking"><h3 id="referralRankingTitle">👥 أفضل 10 حسب الإحالات</h3><div id="referralRanking"><div class="ranking-row">جاري التحميل...</div></div></div></section>
+<section id="referralPage" class="oxide-referral-page" style="display:none">
+  <div class="oxide-shards-summary">
+    <div class="oxide-shards-caption">YOUR SHARDS</div>
+    <div class="oxide-shards-balance" id="referralShardBalance">—</div>
+    <div class="oxide-shards-usdt" id="referralShardUsdt">— USDT</div>
+  </div>
+  <div class="oxide-referral-heading">
+    <div class="oxide-referral-eyebrow">REFERRAL</div>
+    <h2>Invite friends, earn shards</h2>
+  </div>
+  <div class="oxide-invite-card">
+    <div class="oxide-invite-icon">↗</div>
+    <div class="oxide-invite-title">Invite &amp; Earn</div>
+    <div class="oxide-invite-description">Get <strong>50 shards</strong> per successful referral</div>
+  </div>
+  <div class="oxide-referral-stats">
+    <div class="oxide-referral-stat">
+      <div class="oxide-stat-label">Total Referrals</div>
+      <div class="oxide-stat-value" id="referralCount">0</div>
+    </div>
+    <div class="oxide-referral-stat">
+      <div class="oxide-stat-label">Earned Shards</div>
+      <div class="oxide-stat-value" id="referralEarned">0</div>
+      <div class="oxide-stat-unit">+50 per invite</div>
+    </div>
+  </div>
+  <div class="oxide-link-card">
+    <div class="oxide-link-heading"><span class="oxide-link-icon">🔗</span><span>Link</span></div>
+    <div class="oxide-link-label">Your Referral Link</div>
+    <input class="referral-link oxide-referral-input" id="referralLink" type="text" readonly value="Loading..." aria-label="Your Referral Link">
+    <div class="oxide-link-hint">Tap to copy or use buttons below</div>
+    <div class="oxide-link-actions">
+      <button class="referral-button oxide-copy-button" id="copyReferralButton" type="button" onclick="copyReferralLink()">Copy</button>
+      <button class="referral-button oxide-share-button" id="shareReferralButton" type="button" onclick="shareReferralLink()">Share ↗</button>
+    </div>
+    <div class="referral-status" id="referralStatus" role="status"></div>
+  </div>
+  <div class="oxide-how-card">
+    <h3>How it works</h3>
+    <div class="oxide-how-step"><span class="oxide-step-number">1</span><span>Share your referral link with friends</span></div>
+    <div class="oxide-how-step"><span class="oxide-step-number">2</span><span>They sign up and join using your link</span></div>
+    <div class="oxide-how-step"><span class="oxide-step-number">3</span><span>You earn 50 shards per successful referral</span></div>
+    <div class="oxide-how-note">Track your earnings in real-time</div>
+  </div>
+</section>
 <footer>OXIDE HUB © 2026<br>Created by SKIMI_17</footer>
 </main>
 
@@ -1055,7 +1136,7 @@ async function loadRewardOrders(){const list=document.getElementById("rewardOrde
 function makePublicId(value){const input=String(value||"").trim();if(!input)return"OX-UNKNOWN";if(/^OX-[A-Z0-9]{8}$/i.test(input))return input.toUpperCase();const compact=input.replace(/-/g,"");if(/^[0-9a-f]{32}$/i.test(compact))return"OX-"+compact.slice(0,8).toUpperCase();return"OX-UNKNOWN"}
 function safeRankingId(item){if(item&&typeof item.displayId==="string"&&/^OX-[A-Z0-9]{8}$/i.test(item.displayId))return item.displayId.toUpperCase();const candidate=item&&(item.userId||item.user_id||item.id);return candidate?makePublicId(candidate):"OX-UNKNOWN"}
 function renderRanking(targetId,items,metric){const target=document.getElementById(targetId);target.innerHTML="";if(!Array.isArray(items)||!items.length){const row=document.createElement("div");row.className="ranking-row";row.textContent=currentLanguage==="ar"?"لا توجد بيانات بعد":"No data yet";target.appendChild(row);return}items.slice(0,10).forEach((item,index)=>{const row=document.createElement("div");row.className="ranking-row";const place=document.createElement("span");place.className="ranking-place";place.textContent="#"+(index+1);const id=document.createElement("span");id.className="ranking-id";id.textContent=safeRankingId(item);const score=document.createElement("span");score.className="ranking-score";score.textContent=Number(item[metric]||0).toLocaleString()+(metric==="points"?" pts":"");row.append(place,id,score);target.appendChild(row)})}
-async function submitReferralCode(){const input=document.getElementById("referralCodeInput"),button=document.getElementById("applyReferralCodeButton"),status=document.getElementById("referralStatus");const code=String(input?.value||"").trim();if(!code){status.textContent="أدخل رمز الدعوة أولاً.";return}button.disabled=true;status.textContent="جارٍ التحقق من الرمز...";try{const response=await fetch("/api/referral",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({referrerId:code})});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"REFERRAL_FAILED");input.disabled=true;button.textContent="تم التفعيل ✓";await loadRewards();await loadReferral();status.textContent="تم تفعيل الدعوة! حصلت على 30 نقطة وصاحب الرمز حصل على 50 نقطة."}catch(error){const messages={REFERRAL_ALREADY_USED:"لقد استخدمت رمز دعوة من قبل.",SELF_REFERRAL_NOT_ALLOWED:"لا يمكنك استخدام رمزك الخاص.",REFERRER_NOT_FOUND:"رمز الدعوة غير صحيح.",INVALID_REFERRAL:"صيغة رمز الدعوة غير صحيحة."};status.textContent=messages[error.message]||"تعذر تفعيل الرمز. حاول مرة أخرى."}finally{button.disabled=input.disabled}}async function loadReferral(){const status=document.getElementById("referralStatus");status.textContent=t("loading");try{const response=await fetch("/api/referral",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success||typeof data.referralCode!=="string"||!data.referralCode)throw new Error(data.error||"Referral API must return referralCode");referralLinkValue=window.location.origin+window.location.pathname+"?ref="+encodeURIComponent(data.referralCode);document.getElementById("referralLink").value=referralLinkValue;document.getElementById("referralCount").textContent=Number(data.user?.referrals??data.referrals??0).toLocaleString();document.getElementById("referralEarned").textContent=Number(data.user?.earned??data.earned??0).toLocaleString();renderRanking("pointsRanking",data.pointsRanking,"points");renderRanking("referralRanking",data.referralRanking,"referrals");referralLoaded=true;status.textContent=""}catch(error){status.textContent=t("refError");console.error("Referral loading failed:",error)}}
+async function submitReferralCode(){const input=document.getElementById("referralCodeInput"),button=document.getElementById("applyReferralCodeButton"),status=document.getElementById("referralStatus");const code=String(input?.value||"").trim();if(!code){status.textContent="أدخل رمز الدعوة أولاً.";return}button.disabled=true;status.textContent="جارٍ التحقق من الرمز...";try{const response=await fetch("/api/referral",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({referrerId:code})});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"REFERRAL_FAILED");input.disabled=true;button.textContent="تم التفعيل ✓";await loadRewards();await loadReferral();status.textContent="تم تفعيل الدعوة! حصلت على 30 نقطة وصاحب الرمز حصل على 50 نقطة."}catch(error){const messages={REFERRAL_ALREADY_USED:"لقد استخدمت رمز دعوة من قبل.",SELF_REFERRAL_NOT_ALLOWED:"لا يمكنك استخدام رمزك الخاص.",REFERRER_NOT_FOUND:"رمز الدعوة غير صحيح.",INVALID_REFERRAL:"صيغة رمز الدعوة غير صحيحة."};status.textContent=messages[error.message]||"تعذر تفعيل الرمز. حاول مرة أخرى."}finally{button.disabled=input.disabled}}async function loadReferral(){const status=document.getElementById("referralStatus");status.textContent=t("loading");try{const response=await fetch("/api/referral",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success||typeof data.referralCode!=="string"||!data.referralCode)throw new Error(data.error||"Referral API must return referralCode");referralLinkValue=window.location.origin+window.location.pathname+"?ref="+encodeURIComponent(data.referralCode);document.getElementById("referralLink").value=referralLinkValue;document.getElementById("referralCount").textContent=Number(data.user?.referrals??data.referrals??0).toLocaleString();document.getElementById("referralEarned").textContent=Number(data.user?.earned??data.earned??0).toLocaleString();const shardBalance=data.user?.points??data.user?.balance??data.points??null;document.getElementById("referralShardBalance").textContent=shardBalance===null?"—":Number(shardBalance).toLocaleString();document.getElementById("referralShardUsdt").textContent="USDT value unavailable";referralLoaded=true;status.textContent=""}catch(error){status.textContent=t("refError");console.error("Referral loading failed:",error)}}
 async function copyReferralLink(){if(!referralLinkValue)await loadReferral();if(!referralLinkValue)return;try{await navigator.clipboard.writeText(referralLinkValue);document.getElementById("referralStatus").textContent=t("copied");setTimeout(()=>{document.getElementById("referralStatus").textContent=""},1800)}catch(error){const field=document.getElementById("referralLink");field.focus();field.select();document.getElementById("referralStatus").textContent=currentLanguage==="ar"?"انسخ الرابط يدويًا":"Copy the link manually"}}
 async function shareReferralLink(){if(!referralLinkValue)await loadReferral();if(!referralLinkValue)return;const shareText=currentLanguage==="ar"?"انضم إلى OXIDE HUB عبر رابط الدعوة الخاص بي واربح!":"Join OXIDE HUB using my invitation link!";if(navigator.share){try{await navigator.share({title:"OXIDE HUB",text:shareText,url:referralLinkValue})}catch(error){if(error.name!=="AbortError")copyReferralLink()}}else copyReferralLink()}
 async function registerReferralFromLink(){const params=new URLSearchParams(window.location.search),referrerId=params.get("ref");if(!referrerId)return;try{const response=await fetch("/api/referral",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({referrerId})});const data=await response.json();if(data.success&&(data.registered||data.alreadyRegistered)){const cleanUrl=new URL(window.location.href);cleanUrl.searchParams.delete("ref");window.history.replaceState({},"",cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);if(data.registered)sessionStorage.setItem("oxide_referral_notice","1")}else if(["REFERRAL_NOT_ALLOWED_FOR_EXISTING_USER","INVALID_REFERRAL","SELF_REFERRAL"].includes(data.error)){const cleanUrl=new URL(window.location.href);cleanUrl.searchParams.delete("ref");window.history.replaceState({},"",cleanUrl.pathname+cleanUrl.search+cleanUrl.hash)}}catch(error){console.error("Referral registration failed; link parameter retained for retry:",error)}}
