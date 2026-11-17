@@ -74,7 +74,7 @@ export async function onRequestPost({ request, env }) {
       )
     `).run();
 
-    await env.DB.prepare(`
+    const createdUser = await env.DB.prepare(`
       INSERT OR IGNORE INTO users
         (user_uuid, public_id, points, status, created_at, updated_at)
       VALUES (?, ?, 0, 'active', ?, ?)
@@ -99,6 +99,17 @@ export async function onRequestPost({ request, env }) {
         created_at INTEGER NOT NULL
       )
     `).run();
+
+    // If this is a migrated legacy visitor, preserve the existing points
+    // when creating the new Telegram account instead of resetting the balance.
+    if (Number(createdUser.meta?.changes || 0) === 1) {
+      await env.DB.prepare(`
+        UPDATE users SET points = COALESCE(
+          (SELECT points FROM visitors WHERE user_id = ?), 0
+        ), updated_at = ?
+        WHERE user_uuid = ?
+      `).bind(userUuid, now, userUuid).run();
+    }
 
     const account = await env.DB.prepare(
       "SELECT points FROM users WHERE user_uuid = ?"
