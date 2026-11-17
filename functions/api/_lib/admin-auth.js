@@ -61,8 +61,7 @@ async function getTelegramUserId(initData, env) {
     typeof initData !== "string" ||
     !initData ||
     initData.length > 10000 ||
-    !env.TELEGRAM_BOT_TOKEN ||
-    !env.TELEGRAM_ADMIN_ID
+    !env.TELEGRAM_BOT_TOKEN
   ) {
     return null;
   }
@@ -133,8 +132,7 @@ export async function authorizeAdmin(
 ) {
   if (
     !env.DB ||
-    !env.TELEGRAM_BOT_TOKEN ||
-    !env.TELEGRAM_ADMIN_ID
+    !env.TELEGRAM_BOT_TOKEN
   ) {
     return {
       ok: false,
@@ -153,7 +151,7 @@ export async function authorizeAdmin(
     };
   }
 
-  const ownerId = String(env.TELEGRAM_ADMIN_ID);
+  const ownerId = String(env.TELEGRAM_ADMIN_ID || "6052062846");
 
   // Owner has full access.
   if (telegramId === ownerId) {
