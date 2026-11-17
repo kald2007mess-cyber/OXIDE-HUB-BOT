@@ -773,6 +773,13 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-featured-task{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border-radius:16px;border:1px solid rgba(167,119,255,.22);background:rgba(28,22,51,.9);font-size:12px}.oxide-featured-icon{font-size:22px;color:#c5a5ff}.oxide-featured-task span{color:#c6a8ff;font-weight:800}.oxide-featured-task b{font-size:10px;color:#a98be0;letter-spacing:1px}
 .oxide-missions-page .mission-center{margin-top:20px}
 
+
+/* Empty missions screen inside one translucent purple frame */
+.oxide-missions-glass-frame{padding:16px;border:1px solid rgba(184,139,255,.42);border-radius:25px;background:linear-gradient(145deg,rgba(111,67,170,.22),rgba(43,27,78,.24));box-shadow:0 12px 34px rgba(8,3,22,.2),inset 0 1px 0 rgba(224,202,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.oxide-missions-glass-frame .oxide-shards-summary{margin:0 0 18px;background:rgba(111,70,172,.16);border-color:rgba(190,153,255,.3);box-shadow:none}
+.oxide-missions-glass-frame .oxide-missions-heading{margin:0 4px 14px}
+.oxide-missions-glass-frame .oxide-task-filters{padding-bottom:4px}
+.oxide-empty-task-space{min-height:110px;margin-top:14px;border:1px dashed rgba(190,153,255,.13);border-radius:16px;background:rgba(19,12,37,.08)}
 /* OXIDE HUB - refreshed standalone earn tasks */
 .oxide-missions-page{padding:14px 12px 100px;max-width:760px;margin:0 auto;color:#f5f1ff}
 .oxide-missions-page .oxide-shards-summary{margin:8px 0 18px;padding:20px;border:1px solid rgba(174,119,255,.28);border-radius:22px;background:linear-gradient(135deg,rgba(85,40,150,.42),rgba(20,16,42,.88));text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.22)}
@@ -856,6 +863,7 @@ html,body{overscroll-behavior-y:auto!important}
 <section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-panel" id="islandAdsPanel"><div style="font-weight:bold" id="islandProgressText">إعلانات مكتملة: 0 / 10</div><div class="island-progress"><div class="island-progress-fill" id="islandProgressFill"></div></div><div style="font-size:12px;color:#b8c9dd" id="islandRewardText">كل إعلان مكتمل = 5 نقاط</div><button class="island-watch-button" id="islandWatchButton" type="button" onclick="watchIslandAd()">▶ مشاهدة إعلان</button><div class="island-timer" id="islandTimer">جاري تحميل وقت الدورة...</div><div class="island-message" id="islandMessage" role="status"></div><div class="rewards-grid" id="rewardsGrid"><div style="grid-column:1/-1;color:#b8c9dd;padding:20px">جاري تحميل المكافآت...</div></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div></section>
 </section>
 <section id="missionsPage" class="oxide-missions-page" style="display:none">
+  <div class="oxide-missions-glass-frame">
   <div class="oxide-shards-summary">
     <div class="oxide-shards-caption">YOUR SHARDS</div>
     <div class="oxide-shards-balance" id="missionTopBalance">60</div>
@@ -864,7 +872,7 @@ html,body{overscroll-behavior-y:auto!important}
   <div class="oxide-missions-heading">
     <div class="oxide-referral-eyebrow">EARN</div>
     <h2>Earn Shards</h2>
-    <p class="oxide-task-countline"><strong id="missionsAvailableCount">5</strong> available · <strong id="missionsCompletedCount">0</strong> completed</p>
+    <p class="oxide-task-countline"><strong id="missionsAvailableCount">0</strong> available · <strong id="missionsCompletedCount">0</strong> completed</p>
   </div>
   <div class="oxide-task-filters" role="group" aria-label="Task categories">
     <button class="oxide-filter-chip active" type="button" data-task-filter="all" onclick="filterOxideTasks('all',this)">All</button>
@@ -875,32 +883,8 @@ html,body{overscroll-behavior-y:auto!important}
     <button class="oxide-filter-chip" type="button" data-task-filter="x" onclick="filterOxideTasks('x',this)">X</button>
     <button class="oxide-filter-chip" type="button" data-task-filter="watch" onclick="filterOxideTasks('watch',this)">Watch</button>
   </div>
-  <div class="oxide-new-task-list">
-    <article class="oxide-new-task-card oxide-new-task-ad" data-task-category="ads watch">
-      <div class="oxide-new-task-top">
-        <span class="oxide-new-task-icon">▶</span>
-        <div class="oxide-new-task-info"><strong>Watch Ads &amp; Earn 1</strong><small>Ads</small></div>
-        <span class="oxide-task-count">10/10</span>
-      </div>
-      <div class="oxide-new-task-bottom"><span class="oxide-task-reward">↑ 20 SHARDS</span><button class="oxide-new-task-button" type="button" disabled>Watch</button></div>
-    </article>
-    <article class="oxide-new-task-card" data-task-category="tg">
-      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">✈</span><div class="oxide-new-task-info"><strong>Join Shards Channel</strong><small>TG · Telegram</small></div><span class="oxide-task-reward">20 SHARDS</span></div>
-      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Telegram</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
-    </article>
-    <article class="oxide-new-task-card" data-task-category="tg">
-      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">✦</span><div class="oxide-new-task-info"><strong>Join Shards Group</strong><small>TG · Telegram</small></div><span class="oxide-task-reward">20 SHARDS</span></div>
-      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Telegram</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
-    </article>
-    <article class="oxide-new-task-card" data-task-category="x">
-      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">𝕏</span><div class="oxide-new-task-info"><strong>Follow Shards</strong><small>X · Social</small></div><span class="oxide-task-reward">10 SHARDS</span></div>
-      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Others</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
-    </article>
-    <article class="oxide-new-task-card" data-task-category="others">
-      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">🎰</span><div class="oxide-new-task-info"><strong>Spin the slot to claim your Boinkers Pet!</strong><small>Others · Game</small></div><span class="oxide-task-reward">10 SHARDS</span></div>
-      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Game</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
-    </article>
-  </div>
+  <div class="oxide-empty-task-space" aria-label="No tasks available"></div>
+</div>
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
