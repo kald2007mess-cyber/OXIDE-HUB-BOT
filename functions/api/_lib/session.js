@@ -1,33 +1,11 @@
 const encoder = new TextEncoder();
 
-function toBase64Url(bytes) {
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+function toHex(bytes) {
+  return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
 }
 
-function fromBase64Url(value) {
-  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
-  const binary = atob(padded);
-  return Uint8Array.from(binary, c => c.charCodeAt(0));
-}
-
-async function hmac(secret, message) {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign", "verify"]
-  );
-
-  return new Uint8Array(
-    await crypto.subtle.sign("HMAC", key, encoder.encode(message))
-  );
+async function sha256(value) {
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(value)));
 }
 
 export function json(data, status = 200) {
@@ -40,37 +18,47 @@ export function json(data, status = 200) {
   });
 }
 
+// The cookie contains a random opaque token. Only its SHA-256 hash is stored in D1.
+export async function createSessionCookie(env, DB, userUuid) {
+  if (!env.SESSION_SECRET || !DB || !userUuid) throw new Error("SESSION_CONFIGURATION_MISSING");
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const token = toHex(bytes);
+  const tokenHash = toHex(await sha256(token));
+  const now = Math.floor(Date.now() / 1000);
+  const expiresAt = now + 60 * 60 * 24 * 30;
+
+  await DB.prepare(`
+    INSERT INTO app_sessions (user_uuid, token_hash, expires_at, created_at)
+    VALUES (?, ?, ?, ?)
+  `).bind(userUuid, tokenHash, expiresAt, now).run();
+
+  return `oxide_visitor=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+}
+
 export async function getVisitor(request, env) {
-  const secret = env.SESSION_SECRET;
-  if (!secret) throw new Error("Missing SESSION_SECRET");
-
+  if (!env.DB || !env.SESSION_SECRET) return null;
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(/(?:^|;\s*)oxide_visitor=([^;]+)/);
+  const match = cookie.match(/(?:^|;\\s*)oxide_visitor=([a-f0-9]{64})(?:;|$)/i);
+  if (!match) return null;
 
-  if (match) {
-    try {
-      const [id, signature] = decodeURIComponent(match[1]).split(".");
-      if (id && signature) {
-        const expected = toBase64Url(await hmac(secret, id));
-        if (signature === expected) return id;
-      }
-    } catch {}
-  }
+  const tokenHash = toHex(await sha256(match[1]));
+  const now = Math.floor(Date.now() / 1000);
+  const row = await env.DB.prepare(`
+    SELECT user_uuid
+    FROM app_sessions
+    WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > ?
+    LIMIT 1
+  `).bind(tokenHash, now).first();
 
-  return null;
+  return row?.user_uuid || null;
 }
 
-export async function createVisitorCookie(env) {
-  const id = crypto.randomUUID();
-  const signature = toBase64Url(
-    await hmac(env.SESSION_SECRET, id)
-  );
-
-  return `oxide_visitor=${encodeURIComponent(id + "." + signature)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=315360000`;
+// Legacy exports retained temporarily so older endpoints do not fail to import.
+// New authenticated sessions must be created with createSessionCookie().
+export async function createVisitorCookie() {
+  throw new Error("TELEGRAM_SESSION_REQUIRED");
 }
 
-export async function createVisitorCookieForId(env, id) {
-  if (!env.SESSION_SECRET || !id) throw new Error("Missing visitor identity configuration");
-  const signature = toBase64Url(await hmac(env.SESSION_SECRET, String(id)));
-  return `oxide_visitor=${encodeURIComponent(String(id) + "." + signature)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=315360000`;
+export async function createVisitorCookieForId() {
+  throw new Error("TELEGRAM_SESSION_REQUIRED");
 }
