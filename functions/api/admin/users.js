@@ -17,8 +17,8 @@ export async function onRequestPost({ request, env }) {
     const page = Math.max(1, Math.min(1000000, Math.floor(Number(body.page) || 1)));
     const limit = Math.max(1, Math.min(50, Math.floor(Number(body.limit) || 20)));
     const query = String(body.query || "").trim().slice(0, 100);
-    const search = query ? `%${query.replace(/[\\%_]/g, "\\$&")} %`.replace(" %", "%") : "%";
-    const where = query ? "WHERE u.public_id LIKE ? ESCAPE '\\\\' OR u.user_uuid LIKE ? ESCAPE '\\\\'" : "";
+    const search = query ? `%${query.replace(/[%_]/g, "")}%` : "%";
+    const where = query ? "WHERE u.public_id LIKE ? OR u.user_uuid LIKE ?" : "";
 
     const count = await env.DB.prepare(`
       SELECT COUNT(*) AS total
