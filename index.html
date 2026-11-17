@@ -757,6 +757,21 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-referral-page .referral-status{min-height:17px;text-align:center;color:#d6b6f4;font-size:11px}
 @media(max-width:360px){.oxide-referral-page{padding-left:10px;padding-right:10px}.oxide-shards-balance{font-size:32px}.oxide-stat-value{font-size:24px}.oxide-link-card,.oxide-how-card{padding:13px}}
 
+
+/* OXIDE HUB - standalone missions tab */
+.oxide-missions-page{padding:14px 12px 100px;max-width:760px;margin:0 auto;color:#f5f1ff}
+.oxide-missions-page .oxide-shards-summary{margin:8px 0 18px;padding:20px;border:1px solid rgba(174,119,255,.28);border-radius:22px;background:linear-gradient(135deg,rgba(85,40,150,.42),rgba(20,16,42,.88));text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.22)}
+.oxide-missions-page .oxide-shards-caption{font-size:11px;letter-spacing:2px;color:#c9b5ff;font-weight:800}
+.oxide-missions-page .oxide-shards-balance{font-size:34px;font-weight:900;margin:5px 0 0}
+.oxide-missions-page .oxide-shards-usdt{font-size:12px;color:#c8b8e8}
+.oxide-missions-heading{margin:16px 4px}.oxide-missions-heading h2{font-size:23px;margin:4px 0}
+.oxide-task-feature{padding:16px;margin:12px 0;border:1px solid rgba(167,119,255,.24);border-radius:18px;background:rgba(29,22,55,.88)}
+.oxide-task-feature-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.oxide-task-feature-head strong{font-size:16px}.oxide-task-feature-head p{margin:5px 0 0;font-size:12px;color:#bdb1d5}
+.oxide-task-feature-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;color:#d8ccef}.oxide-soon-pill,.oxide-task-count{padding:5px 10px;border-radius:20px;background:rgba(151,104,255,.18);color:#d9c4ff;font-size:11px;font-weight:800}
+.oxide-watch-soon{width:100%;margin-top:14px;padding:13px;border:1px solid rgba(165,122,255,.3);border-radius:12px;background:rgba(110,72,170,.16);color:#c9b6ed;font-weight:800}.oxide-watch-soon span{margin-inline-start:8px;color:#a98be0}
+.oxide-featured-title{font-weight:900;font-size:17px;margin:22px 4px 10px}.oxide-featured-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.oxide-featured-task{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border-radius:16px;border:1px solid rgba(167,119,255,.22);background:rgba(28,22,51,.9);font-size:12px}.oxide-featured-icon{font-size:22px;color:#c5a5ff}.oxide-featured-task span{color:#c6a8ff;font-weight:800}.oxide-featured-task b{font-size:10px;color:#a98be0;letter-spacing:1px}
+.oxide-missions-page .mission-center{margin-top:20px}
 </style>
 </head>
 <body>
@@ -779,6 +794,7 @@ html,body{overscroll-behavior-y:auto!important}
 </section>
 <nav class="navigation" aria-label="Main navigation">
 <button class="nav-item active" id="homeTab" type="button" onclick="showPage('home')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9 21v-7h6v7"/></svg></span><span class="nav-label" id="navHome">الرئيسية</span></button>
+<button class="nav-item" id="missionsTab" type="button" onclick="showPage('missions')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="nav-label">المهمات</span><span class="nav-soon">SOON</span></button>
 <button class="nav-item" id="rewardsTab" type="button" onclick="showPage('rewards')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14"/><path d="M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7Z"/><path d="M12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></span><span class="nav-label" id="navRewards">السحب</span></button>
 <button class="nav-item" id="vipTab" type="button" onclick="showPage('vip')"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5h8v2M8 13h.01M16 13h.01M12 11v4"/></svg></span><span class="nav-label" id="navPlay">العب</span><span class="nav-soon" id="soon2">SOON</span></button>
 <button class="nav-item" id="referralTab" type="button" onclick="showPage('referral')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6M17 11h6"/></svg></span><span class="nav-label" id="navReferral">إحالة</span></button>
@@ -827,8 +843,29 @@ html,body{overscroll-behavior-y:auto!important}
  </div>
  <div class="account-footer">OXIDE HUB <span>•</span> SURVIVE · EXPLORE · DOMINATE</div>
 </section>
-<section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-tabs"><button class="island-tab active" id="islandAdsTab" onclick="showIslandTab('ads')" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="M8 5.5v5M6.5 8h3M13 13l5 5M15 18h3v-3"/></svg><span class="island-tab-label" id="islandAdsLabel">اجمع واستبدل</span><span class="island-counter" id="islandTabCount">0/10</span></button><button class="island-tab" id="islandTasksTab" onclick="showIslandTab('tasks')" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><path d="m16 8 5-5"/></svg><span class="island-tab-label" id="islandTasksLabel">المهمات والعروض</span><span class="oxide-new-badge" id="missionsUnreadBadge" aria-label="مهمات جديدة"></span></button></div><div class="island-panel" id="islandAdsPanel"><div style="font-weight:bold" id="islandProgressText">إعلانات مكتملة: 0 / 10</div><div class="island-progress"><div class="island-progress-fill" id="islandProgressFill"></div></div><div style="font-size:12px;color:#b8c9dd" id="islandRewardText">كل إعلان مكتمل = 5 نقاط</div><button class="island-watch-button" id="islandWatchButton" type="button" onclick="watchIslandAd()">▶ مشاهدة إعلان</button><div class="island-timer" id="islandTimer">جاري تحميل وقت الدورة...</div><div class="island-message" id="islandMessage" role="status"></div><div class="rewards-grid" id="rewardsGrid"><div style="grid-column:1/-1;color:#b8c9dd;padding:20px">جاري تحميل المكافآت...</div></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div><div class="island-panel" id="islandTasksPanel" style="display:none">
-<div class="mission-center" id="missionCenter">
+<section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-panel" id="islandAdsPanel"><div style="font-weight:bold" id="islandProgressText">إعلانات مكتملة: 0 / 10</div><div class="island-progress"><div class="island-progress-fill" id="islandProgressFill"></div></div><div style="font-size:12px;color:#b8c9dd" id="islandRewardText">كل إعلان مكتمل = 5 نقاط</div><button class="island-watch-button" id="islandWatchButton" type="button" onclick="watchIslandAd()">▶ مشاهدة إعلان</button><div class="island-timer" id="islandTimer">جاري تحميل وقت الدورة...</div><div class="island-message" id="islandMessage" role="status"></div><div class="rewards-grid" id="rewardsGrid"><div style="grid-column:1/-1;color:#b8c9dd;padding:20px">جاري تحميل المكافآت...</div></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div></section>
+</section>
+<section id="missionsPage" class="oxide-missions-page" style="display:none">
+  <div class="oxide-shards-summary">
+    <div class="oxide-shards-caption">YOUR SHARDS</div>
+    <div class="oxide-shards-balance" id="missionTopBalance">—</div>
+    <div class="oxide-shards-usdt">Earn more</div>
+  </div>
+  <div class="oxide-missions-heading"><div class="oxide-referral-eyebrow">EARN</div><h2>Earn more shards</h2></div>
+  <section class="oxide-task-feature">
+    <div class="oxide-task-feature-head"><div><strong>YouTube Tasks</strong><p>Watch, like &amp; subscribe on YouTube</p></div><span class="mission-offer-soon">SOON</span></div>
+    <div class="oxide-task-feature-foot">Earn shards per task <span class="oxide-soon-pill">SOON</span></div>
+  </section>
+  <section class="oxide-task-feature oxide-ad-feature">
+    <div class="oxide-task-feature-head"><div><strong>Watch Ads &amp; Earn!</strong><p>Complete the ad missions and earn shards</p></div><span class="oxide-task-count" id="missionAdCount">10/10</span></div>
+    <button class="oxide-watch-soon" type="button" disabled>WATCH AD #1 · +20 SHARDS <span>SOON</span></button>
+  </section>
+  <div class="oxide-featured-title">Featured Tasks</div>
+  <div class="oxide-featured-grid">
+    <article class="oxide-featured-task"><div class="oxide-featured-icon">▶</div><strong>Join OXIDE Channel</strong><span>20 SHARDS</span><b>SOON</b></article>
+    <article class="oxide-featured-task"><div class="oxide-featured-icon">✦</div><strong>Join OXIDE Group</strong><span>20 SHARDS</span><b>SOON</b></article>
+  </div>
+  <div class="mission-center" id="missionCenter">
   <div class="mission-header">
     <div class="mission-brand">
       <div class="mission-brand-icon">◎</div>
@@ -898,7 +935,7 @@ html,body{overscroll-behavior-y:auto!important}
     </div>
   </section>
 </div>
-</div></section>
+
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
@@ -1089,6 +1126,7 @@ function showPage(page){
   document.getElementById("maintenancePanel").style.display=maintenanceNotice?"block":"none";
   document.getElementById("homePage").style.display="none";
   document.getElementById("rewardsPage").style.display="none";
+  document.getElementById("missionsPage").style.display="none";
   document.getElementById("referralPage").style.display="none";
   document.getElementById("vipPage").style.display=page==="vip"?"block":"none";
   document.getElementById("newsPage").style.display=news?"block":"none";
@@ -1104,6 +1142,7 @@ function showPage(page){
  document.getElementById("maintenancePanel").style.display="none";
  document.getElementById("homePage").style.display=home?"block":"none";
  document.getElementById("rewardsPage").style.display=rewards?"block":"none";
+ document.getElementById("missionsPage").style.display=page==="missions"?"block":"none";
  document.getElementById("supportPage").style.display=support?"block":"none";
  document.getElementById("referralPage").style.display=referral?"block":"none";
  document.getElementById("vipPage").style.display=vip?"block":"none";
@@ -1112,16 +1151,18 @@ function showPage(page){
  document.getElementById("skillsPage").style.display=skills?"block":"none";
  document.getElementById("homeTab").classList.toggle("active",home);
  document.getElementById("rewardsTab").classList.toggle("active",rewards);
+ document.getElementById("missionsTab").classList.toggle("active",page==="missions");
  document.getElementById("referralTab").classList.toggle("active",referral);document.getElementById("vipTab").classList.toggle("active",vip);
  document.getElementById("newsTab").classList.toggle("active",account);
  if(account){if(!userIdLoaded)loadUserId();const lang=document.getElementById("accountLanguage");if(lang)lang.value=currentLanguage;}
  if(skills)renderOxideSkills();
  if(rewards){loadRewards();loadIsland()}
+ if(page==="missions"){loadMissionStatus();trackMissionItems(missionData,true)}
  if(support){markSupportMessagesSeen();loadSupportMessages(true)}
  if(referral)loadReferral();
  if(news)loadNewsPosts();
 }
-function showIslandTab(tab){const ads=tab==="ads";document.getElementById("islandAdsPanel").style.display=ads?"block":"none";document.getElementById("islandTasksPanel").style.display=ads?"none":"block";document.getElementById("islandAdsTab").classList.toggle("active",ads);document.getElementById("islandTasksTab").classList.toggle("active",!ads);if(!ads){trackMissionItems(missionData,true);loadMissionStatus()}}
+function showIslandTab(tab){document.getElementById("islandAdsPanel").style.display="block"}
 function updatePlatforms(){const download=document.getElementById("download"),iphone=document.getElementById("iphoneButton"),beta=document.getElementById("betaButton");download.href=DOWNLOAD_PAGE;download.removeAttribute("aria-disabled");iphone.disabled=false;iphone.onclick=()=>{window.location.href="ios.html"};beta.href="beta.html";beta.removeAttribute("aria-disabled");beta.removeAttribute("tabindex");window.dispatchEvent(new Event("oxide-progress-updated"));}
 function updateProgress(value){progress=Math.max(0,Math.min(REQUIRED,Number(value)||0));document.getElementById("count").textContent=progress+"/"+REQUIRED;document.getElementById("bar").style.width=(progress/REQUIRED*100)+"%";for(let i=1;i<=REQUIRED;i++){const button=document.getElementById("btn"+i),label=document.getElementById("label"+i);if(!button||!label)continue;label.textContent=t("stage")+" "+i+"/"+REQUIRED;button.hidden=false;button.disabled=true;button.className="stage-watch-button locked";button.textContent="🔒 SOON";const card=button.closest(".stage");if(card)card.classList.remove("completed");const mark=card&&card.querySelector(".stage-complete-mark");if(mark)mark.hidden=true}updatePlatforms()}
 let adProgressPollRunning=false;async function refreshProgressAfterAd(){let expected=0;try{const raw=localStorage.getItem(LOCK_KEY);if(raw){const saved=JSON.parse(raw);expected=Number(saved.stage)||0;}}catch{}await refreshProgress();if(!expected||progress>=expected||adProgressPollRunning)return;adProgressPollRunning=true;try{for(let attempt=0;attempt<120;attempt++){if(progress>=expected)return;await new Promise(resolve=>setTimeout(resolve,1000));if(document.hidden)continue;await refreshProgress();if(progress>=expected)return;}}finally{adProgressPollRunning=false;}}
@@ -1132,7 +1173,7 @@ function formatIslandTimer(){if(!islandCycleEndsAt)return;const seconds=Math.max
 async function loadIsland(){const message=document.getElementById("islandMessage");message.textContent=t("islandLoading");try{const response=await fetch("/api/reward-ptc",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"Island request failed");islandAds=Array.isArray(data.ads)?data.ads.filter(ad=>typeof ad.url==="string"&&ad.url.startsWith("https://")&&Number(ad.duration)>0):[];islandCompleted=Math.max(0,Math.min(ISLAND_REQUIRED,Number(data.completedAds)||0));islandRemaining=Math.max(0,Number(data.remainingAds)||0);islandCycleEndsAt=Date.now()+Math.max(0,Number(data.remainingSeconds)||0)*1000;updateIslandDisplay();message.textContent=islandCompleted>=ISLAND_REQUIRED?t("islandComplete"):"";formatIslandTimer();if(!islandTimerInterval)islandTimerInterval=setInterval(formatIslandTimer,1000)}catch(error){message.textContent=t("islandError");document.getElementById("islandWatchButton").disabled=true}}
 async function watchIslandAd(){document.getElementById("islandMessage").textContent="🔒 SOON — مشاهدة الإعلانات غير متاحة حاليًا.";return;if(islandBusy)return;if(islandCompleted>=ISLAND_REQUIRED){document.getElementById("islandMessage").textContent=t("islandComplete");return}if(!islandAds.length){await loadIsland();if(!islandAds.length){document.getElementById("islandMessage").textContent=t("islandNoAds");return}}const popup=window.open("about:blank","_blank");if(!popup){document.getElementById("islandMessage").textContent=t("popup");return}islandBusy=true;updateIslandDisplay();try{const available=islandAds.filter(ad=>typeof ad.url==="string"&&ad.url.startsWith("https://"));if(!available.length)throw new Error(t("islandNoAds"));const ad=available[Math.floor(Math.random()*available.length)];popup.location.href=ad.url;document.getElementById("islandMessage").textContent=t("islandOpened")+" "+(ad.title||"PTC Ad")}catch(error){if(!popup.closed)popup.close();document.getElementById("islandMessage").textContent=error.message||t("islandError")}finally{islandBusy=false;updateIslandDisplay()}}
 async function refreshIslandAfterReturn(){if(document.getElementById("rewardsPage").style.display!=="none"){await loadIsland();await loadRewards()}}
-async function loadRewards(){const grid=document.getElementById("rewardsGrid");grid.innerHTML='<div style="grid-column:1/-1;color:#b8c9dd;padding:20px">'+t("loadingRewards")+"</div>";try{const response=await fetch("/api/rewards",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error("Rewards request failed");rewardPoints=Number(data.points)||0;rewardOffers=Array.isArray(data.offers)?data.offers:[];document.getElementById("pointsBalance").textContent=rewardPoints.toLocaleString();document.getElementById("missionsBalance").textContent=rewardPoints.toLocaleString();renderRewards();loadRewardOrders()}catch(error){grid.innerHTML='<div style="grid-column:1/-1;color:#ff9c9c;padding:20px">'+t("rewardsError")+"</div>"}}
+async function loadRewards(){const grid=document.getElementById("rewardsGrid");grid.innerHTML='<div style="grid-column:1/-1;color:#b8c9dd;padding:20px">'+t("loadingRewards")+"</div>";try{const response=await fetch("/api/rewards",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error("Rewards request failed");rewardPoints=Number(data.points)||0;rewardOffers=Array.isArray(data.offers)?data.offers:[];document.getElementById("pointsBalance").textContent=rewardPoints.toLocaleString();document.getElementById("missionsBalance").textContent=rewardPoints.toLocaleString();const missionTop=document.getElementById("missionTopBalance");if(missionTop)missionTop.textContent=rewardPoints.toLocaleString();renderRewards();loadRewardOrders()}catch(error){grid.innerHTML='<div style="grid-column:1/-1;color:#ff9c9c;padding:20px">'+t("rewardsError")+"</div>"}}
 function renderRewards(){const grid=document.getElementById("rewardsGrid");if(!grid||!rewardOffers.length)return;grid.innerHTML="";rewardOffers.forEach(offer=>{const card=document.createElement("div");card.className="reward-card";const image=document.createElement("img");image.className="reward-image";image.src=rewardImages[offer.id]||"";image.alt=offer.name||"Reward";image.loading="lazy";const name=document.createElement("div");name.className="reward-name";name.textContent=offer.name;const price=document.createElement("div");price.className="reward-price";price.textContent=Number(offer.points).toLocaleString()+" POINTS";const button=document.createElement("button");button.className="reward-button";button.textContent=rewardPoints>=Number(offer.points)?t("redeem"):t("insufficient");button.disabled=redeeming||rewardPoints<Number(offer.points);button.onclick=()=>redeemReward(offer.id);card.append(image,name,price,button);grid.appendChild(card)})}
 let selectedRedemptionOffer=null;
 function redeemReward(offerId){const offer=rewardOffers.find(item=>Number(item.id)===Number(offerId));if(!offer)return;if(rewardPoints<Number(offer.points)){document.getElementById("rewardMessage").textContent=t("insufficient");return}selectedRedemptionOffer=offer;const form=document.getElementById("redeemInlineForm");const title=document.getElementById("redeemInlineTitle");const input=document.getElementById("redeemUuidInput");title.textContent="تأكيد استبدال "+offer.name+" مقابل "+Number(offer.points).toLocaleString()+" نقطة";input.value="";form.hidden=false;form.scrollIntoView({behavior:"smooth",block:"nearest"});input.focus();}
@@ -1590,10 +1631,10 @@ async function loadMissionStatus(){
 
     const points = Number(data.points || 0);
     const balance = document.getElementById("missionsBalance");
-    if(balance) balance.textContent = points.toLocaleString();
+    if(balance) balance.textContent = points.toLocaleString();const missionTop=document.getElementById("missionTopBalance");if(missionTop)missionTop.textContent=points.toLocaleString();
 
     missionData = Array.isArray(data.missions) ? data.missions : [];
-    trackMissionItems(missionData,document.getElementById("islandTasksPanel").style.display!=="none");
+    trackMissionItems(missionData,document.getElementById("missionsPage").style.display!=="none");
 
     const completed = missionData.filter(item => item.status === "approved").length;
     updateMissionProgress(completed, missionData.length);
