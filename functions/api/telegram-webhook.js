@@ -65,16 +65,20 @@ export async function onRequestPost({ request, env }) {
     if (!/^\/start(?:\s|$)/.test(message.text.trim())) return json({ ok: true });
 
     const isOwner = String(message.from.id) === String(env.TELEGRAM_ADMIN_ID);
-    const keyboard = [[{ text: "🚀 فتح البوت", web_app: { url: env.TELEGRAM_WEBAPP_URL } }]];
+    const payload = {
+      chat_id: message.chat.id,
+      text: "مرحبًا بك في OXIDE HUB 🚀"
+    };
     if (isOwner) {
       const base = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "");
-      keyboard.push([{ text: "🔐 لوحة التحكم", web_app: { url: base + "/admin.html" } }]);
+      payload.reply_markup = {
+        inline_keyboard: [[{
+          text: "🔐 لوحة التحكم",
+          web_app: { url: base + "/admin.html" }
+        }]]
+      };
     }
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
-      chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀",
-      reply_markup: { keyboard, resize_keyboard: true, is_persistent: true }
-    });
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", payload);
     return json({ ok: true });
   } catch {
     return json({ ok: false, error: "BOT_WEBHOOK_FAILED" }, 500);
