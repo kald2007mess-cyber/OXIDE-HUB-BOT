@@ -138,6 +138,32 @@ button,input,select,textarea{backdrop-filter:blur(8px);-webkit-backdrop-filter:b
 .platform-editor{margin-top:18px}.platform-editor .field{margin:12px 0}
 @media(min-width:520px){.platform-file-grid{grid-template-columns:1fr 1fr}.platform-manager{padding:20px}}
 
+
+/* Mobile layout refinements for the admin panel. */
+html,body{max-width:100%;overflow-x:hidden}
+img,video,canvas,svg{max-width:100%;height:auto}
+button,input,select,textarea{max-width:100%;touch-action:manipulation}
+@media(max-width:600px){
+ body{padding:12px 9px}
+ .container{width:100%;max-width:100%;min-width:0}
+ header{padding:18px 6px}
+ h1{font-size:clamp(21px,6vw,30px);letter-spacing:1px;overflow-wrap:anywhere}
+ .card{padding:14px 11px;margin:11px 0;min-width:0}
+ .menu-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .platform-file-grid{grid-template-columns:minmax(0,1fr)!important}
+ .platform-card-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .field input,.field textarea{font-size:16px;min-width:0}
+ button{min-height:44px;padding:12px 9px;white-space:normal;overflow-wrap:anywhere}
+ .platform-file-link,.platform-file-description,.platform-status{overflow-wrap:anywhere;word-break:break-word}
+ .platform-details summary{padding:13px 10px}
+}
+@media(max-width:360px){
+ body{padding:9px 6px}
+ .card{padding:12px 9px}
+ .menu-grid{grid-template-columns:minmax(0,1fr)}
+ .platform-card-actions{grid-template-columns:minmax(0,1fr)}
+}
+
 </style>
 </head>
 <body>
