@@ -560,6 +560,20 @@ footer{padding-bottom:18px}
 @keyframes tapAura{0%,100%{transform:scale(.94);opacity:.7}50%{transform:scale(1.08);opacity:1}}
 @media(max-width:380px){.tap-home{padding-top:20px}.tap-stage{height:285px}.tap-coin{width:200px;height:200px}}
 
+
+/* refined purple flame + larger 3D coin */
+.tap-stage{height:350px}
+.tap-purple-flame{position:absolute;z-index:1;width:300px;height:310px;left:50%;top:50%;transform:translate(-50%,-48%);overflow:visible;opacity:.9;filter:drop-shadow(0 0 12px #a43cff88);animation:flameDance 2.2s ease-in-out infinite}
+.tap-purple-flame .flame-blur{transform-origin:50% 90%;animation:flamePulse 1.7s ease-in-out infinite}
+.tap-purple-flame .flame-main{transform-origin:50% 90%;animation:flameDance 1.35s ease-in-out infinite alternate}
+.tap-purple-flame .flame-inner{transform-origin:50% 90%;animation:flamePulse 1.1s ease-in-out infinite alternate}
+.tap-coin{width:244px;height:244px;z-index:3}
+.tap-coin svg{overflow:visible}
+.tap-aura{width:285px;height:285px;background:radial-gradient(circle,#b45aff55 0%,#7d2bd733 45%,transparent 72%)}
+@keyframes flameDance{0%{transform:translate(-50%,-48%) scaleX(.96) scaleY(.98)}100%{transform:translate(-50%,-50%) scaleX(1.04) scaleY(1.035)}}
+@keyframes flamePulse{0%{opacity:.72;filter:brightness(.9)}100%{opacity:1;filter:brightness(1.25)}}
+@media(max-width:380px){.tap-stage{height:320px}.tap-coin{width:220px;height:220px}.tap-purple-flame{width:275px;height:285px}}
+
 </style>
 </head>
 <body>
@@ -592,6 +606,16 @@ footer{padding-bottom:18px}
   <div class="tap-balance"><span>رصيد النقرات</span><strong id="tapBalance">0</strong><small>OXIDE COINS</small></div>
   <div class="tap-stage">
     <div class="tap-aura"></div>
+    <svg class="tap-purple-flame" viewBox="0 0 300 310" aria-hidden="true">
+      <defs>
+        <linearGradient id="flameCore" x1="0" y1="1" x2=".8" y2="0"><stop stop-color="#5b16b8"/><stop offset=".48" stop-color="#a43cff"/><stop offset="1" stop-color="#f0c6ff"/></linearGradient>
+        <linearGradient id="flameEdge" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#4a0b91"/><stop offset=".55" stop-color="#a63dff"/><stop offset="1" stop-color="#e8baff"/></linearGradient>
+        <filter id="flameGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"/></filter>
+      </defs>
+      <path class="flame-blur" d="M150 294C77 277 39 230 62 178c9-20 26-31 28-65 24 19 28 39 25 58 27-31 30-73 20-117 42 34 57 74 49 111 21-17 32-43 29-72 47 50 39 92 29 119-14 39-45 69-92 82Z" fill="#9b36ff" filter="url(#flameGlow)" opacity=".85"/>
+      <path class="flame-main" d="M150 292C83 276 51 233 68 190c8-21 22-32 24-61 18 17 25 36 22 55 25-30 31-69 20-111 37 33 51 67 45 103 20-17 27-38 25-61 35 41 38 78 26 111-13 37-41 58-80 66Z" fill="url(#flameEdge)" opacity=".9"/>
+      <path class="flame-inner" d="M151 273c-36-15-48-43-35-69 7-14 18-24 19-42 17 17 21 35 15 51 22-18 29-42 25-67 24 29 30 54 20 80-8 22-23 39-44 47Z" fill="url(#flameCore)"/>
+    </svg>
     <button class="tap-coin" id="tapCoin" type="button" aria-label="اضغط لجمع عملة">
       <svg viewBox="0 0 220 220" role="img" aria-label="عملة OXIDE بنفسجية ثلاثية الأبعاد">
         <defs>
