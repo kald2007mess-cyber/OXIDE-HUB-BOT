@@ -813,6 +813,65 @@ html,body{overscroll-behavior-y:auto!important}
 #missionTopBalance::after,#referralShardBalance::after{width:22px;height:22px;flex-basis:22px}
 @media(max-width:380px){#homePage .tap-coin{width:min(80vw,285px)!important;height:min(80vw,285px)!important;max-width:285px!important;max-height:285px!important}#homePage.tap-home{min-height:calc(100dvh - 88px)}}
 
+
+/* OXIDE PROFILE - Arabic account dashboard */
+#accountPage.oxide-account-page{display:none;text-align:right;direction:rtl;padding:4px 0 18px;color:#fff}
+.oxide-account-heading{margin:8px 0 18px;text-align:right}
+.oxide-account-eyebrow{font-size:10px;letter-spacing:1.8px;color:#c18aff;font-weight:900}
+.oxide-account-heading h2{margin:7px 0 5px;font-size:25px;color:#f5eaff;text-shadow:0 0 18px rgba(174,92,255,.28)}
+.oxide-account-heading p{margin:0;color:#a994bd;font-size:12px}
+.oxide-profile-card,.oxide-account-stat-card,.oxide-account-menu{background:linear-gradient(145deg,rgba(39,25,61,.96),rgba(15,14,36,.97));border:1px solid rgba(174,111,230,.28);border-radius:19px;box-shadow:0 12px 28px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.04)}
+.oxide-profile-card{padding:16px;margin-bottom:21px;position:relative;overflow:hidden}
+.oxide-profile-card:before{content:"";position:absolute;width:150px;height:150px;left:-65px;top:-80px;border-radius:50%;background:rgba(155,75,235,.12);filter:blur(5px)}
+.oxide-profile-top{display:flex;align-items:center;gap:13px;position:relative}
+.oxide-profile-avatar{width:68px;height:68px;flex:0 0 68px;border-radius:20px;display:grid;place-items:center;font-size:31px;background:linear-gradient(145deg,#543078,#261638);border:2px solid #a966e5;box-shadow:0 0 19px rgba(166,92,231,.25)}
+.oxide-profile-identity{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}
+.oxide-profile-identity strong{font-size:18px;color:#fff;max-width:100%;overflow-wrap:anywhere}
+.oxide-profile-identity>span{font-size:11px;color:#ad96c2}
+.oxide-profile-identity .oxide-account-status{color:#9ee5b8;font-size:10px;display:flex;align-items:center;gap:5px}
+.oxide-account-status i{width:7px;height:7px;border-radius:50%;background:#51dc8a;box-shadow:0 0 8px #51dc8a}
+.oxide-profile-mark{color:#d7a8ff;font-size:25px}
+.oxide-profile-id{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;padding:11px 12px;border-radius:12px;background:rgba(7,6,20,.4);border:1px solid rgba(179,133,218,.16)}
+.oxide-profile-id>div{display:flex;flex-direction:column;gap:5px;min-width:0;text-align:right}
+.oxide-profile-id>div span{font-size:10px;color:#a88ebc}
+.oxide-profile-id>div strong{font-size:12px;color:#ead8fb;direction:ltr;text-align:right;overflow-wrap:anywhere}
+.oxide-copy-id{border:1px solid rgba(191,139,238,.35);border-radius:9px;padding:7px 10px;background:rgba(137,76,185,.2);color:#e7caff;font-size:11px;font-weight:bold;white-space:nowrap}
+.oxide-level-head,.oxide-level-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.oxide-level-head{margin-top:17px;font-size:12px;color:#c6afd8}
+.oxide-level-head strong{color:#e0b6ff}
+.oxide-level-track{height:8px;background:rgba(255,255,255,.09);border-radius:20px;margin-top:9px;overflow:hidden}
+.oxide-level-track span{display:block;width:0;height:100%;background:linear-gradient(90deg,#7132e8,#d34dff);border-radius:20px}
+.oxide-level-foot{margin-top:7px;font-size:9px;color:#927ca7}
+.oxide-account-section-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:20px 2px 10px}
+.oxide-account-section-title>span{font-size:15px;font-weight:900;color:#ead5ff}
+.oxide-account-section-title small{font-size:9px;color:#927ba8}
+.oxide-account-wallet-grid,.oxide-account-stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.oxide-account-stat-card{padding:13px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.oxide-account-stat-icon{width:31px;height:31px;display:grid;place-items:center;border-radius:10px;background:rgba(165,91,221,.16);color:#d5a5ff;font-size:21px}
+.oxide-account-stat-label{font-size:10px;color:#b59bc9;line-height:1.5}
+.oxide-account-stat-card strong{font-size:22px;color:#f1ddff;direction:ltr;text-align:right;max-width:100%;overflow-wrap:anywhere;text-shadow:0 0 13px rgba(185,111,255,.2)}
+.oxide-account-stat-card small{font-size:9px;color:#8f7aa2}
+.oxide-wallet-main{border-color:rgba(187,112,255,.48);background:linear-gradient(145deg,rgba(63,35,91,.97),rgba(23,15,43,.98))}
+.oxide-account-achievements{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.oxide-achievement{padding:12px 5px;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px;background:linear-gradient(145deg,rgba(37,26,55,.95),rgba(17,14,34,.95));border:1px solid rgba(157,111,197,.23)}
+.oxide-achievement>span{font-size:25px;filter:grayscale(.35)}
+.oxide-achievement b{font-size:10px;color:#dfc6f3}
+.oxide-achievement small{font-size:9px;color:#a58bb9}
+.oxide-account-menu{overflow:hidden;padding:3px 12px}
+.oxide-account-menu-item,.oxide-account-language{width:100%;min-height:65px;display:flex;align-items:center;gap:11px;padding:10px 2px;border:0;border-bottom:1px solid rgba(174,130,205,.13);background:transparent;color:#fff;text-align:right;font-family:inherit}
+.oxide-account-menu-item:last-child{border-bottom:0}
+.oxide-menu-icon{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border-radius:11px;background:rgba(157,91,203,.17);color:#d8adff;font-size:20px}
+.oxide-account-menu-item>span:nth-child(2),.oxide-account-language>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:4px}
+.oxide-account-menu-item b,.oxide-account-language b{font-size:12px;color:#eadcf5}
+.oxide-account-menu-item small,.oxide-account-language small{font-size:9px;color:#9e89b0}
+.oxide-menu-arrow{font-size:25px;color:#a982c6}
+.oxide-account-language{border-bottom:0}
+.oxide-account-language select{max-width:112px;padding:8px 7px;border-radius:9px;border:1px solid rgba(182,127,224,.35);background:#211333;color:#f3e6ff;font-size:10px;font-family:inherit}
+.oxide-account-language option{background:#211333;color:#fff}
+.oxide-account-footer{display:flex;flex-direction:column;align-items:center;gap:5px;padding:23px 0 5px;color:#88739b;font-size:9px}
+.oxide-account-footer strong{font-size:13px;letter-spacing:2px;color:#bd8be8}
+@media(max-width:360px){.oxide-account-section-title small{font-size:8px}.oxide-account-stat-card{padding:10px}.oxide-account-stat-card strong{font-size:19px}.oxide-profile-card{padding:13px}}
+
 </style>
 </head>
 <body>
@@ -877,15 +936,53 @@ html,body{overscroll-behavior-y:auto!important}
     <div id="newsPosts"><div class="news-empty" id="newsEmpty">لا توجد أخبار بعد.</div></div>
   </section>
 </section>
-<section id="accountPage" style="display:none">
- <div class="page-heading"><span class="page-eyebrow">YOUR PROFILE</span><h2>حسابي</h2><p>إدارة حسابك ومساعدة OXIDE HUB</p></div>
-   <div class="user-id-card"><div class="user-id-label" id="userIdLabel">رقم المستخدم الخاص بك</div><div class="user-id-row"><span class="user-id-value" id="userIdValue">Loading...</span><button class="copy-id-button" id="copyIdButton" type="button" onclick="copyUserId()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg><span id="copyIdButtonText">نسخ</span></button></div></div>
- <div class="account-actions">
-  <button type="button" class="account-action" onclick="showPage('news')"><span class="account-action-icon">✦</span><span><b>مركز الأخبار</b><small>آخر تحديثات وإعلانات OXIDE HUB</small></span><span class="account-arrow">‹</span></button>
-  <button type="button" class="account-action" onclick="showPage('support')"><span class="account-action-icon">◌</span><span><b>الدعم الفني</b><small>تواصل مع فريق المساعدة</small></span><span class="account-arrow">‹</span></button>
-  <div class="account-preferences"><div><b>لغة التطبيق</b><small>اختر اللغة المناسبة لك</small></div><select aria-label="لغة التطبيق" onchange="changeLanguage(this.value)" id="accountLanguage"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option><option value="es">Español</option><option value="tr">Türkçe</option><option value="id">Bahasa Indonesia</option></select></div>
+<section id="accountPage" class="oxide-account-page" style="display:none">
+ <header class="oxide-account-heading">
+  <span class="oxide-account-eyebrow">OXIDE HUB • حسابك</span>
+  <h2>ملفي الشخصي</h2>
+  <p>مساحتك الشخصية داخل عالم OXIDE</p>
+ </header>
+ <section class="oxide-profile-card">
+  <div class="oxide-profile-top">
+   <div class="oxide-profile-avatar" aria-hidden="true">👤</div>
+   <div class="oxide-profile-identity">
+    <strong id="accountDisplayName">مستخدم OXIDE</strong>
+    <span>عضو في OXIDE HUB</span>
+    <span class="oxide-account-status"><i></i> حساب نشط</span>
+   </div>
+   <div class="oxide-profile-mark">✦</div>
+  </div>
+  <div class="oxide-profile-id">
+   <div><span>رقم حسابك</span><strong id="userIdValue">جارٍ التحميل...</strong></div>
+   <button class="oxide-copy-id" id="copyIdButton" type="button" onclick="copyUserId()"><span id="copyIdButtonText">نسخ</span> ⧉</button>
+  </div>
+  <div class="oxide-level-head"><span>مستوى الحساب</span><strong>المستوى 1</strong></div>
+  <div class="oxide-level-track"><span></span></div>
+  <div class="oxide-level-foot"><span>نظام الخبرة قادم قريبًا</span><span>0%</span></div>
+ </section>
+ <div class="oxide-account-section-title"><span>محفظتي</span><small>أرصدتك داخل المنصة</small></div>
+ <div class="oxide-account-wallet-grid">
+  <article class="oxide-account-stat-card oxide-wallet-main"><span class="oxide-account-stat-icon">◈</span><span class="oxide-account-stat-label">رصيدك الحالي</span><strong id="accountBalanceValue">—</strong><small>نقطة OXIDE</small></article>
+  <article class="oxide-account-stat-card"><span class="oxide-account-stat-icon">✧</span><span class="oxide-account-stat-label">نقاط الإحالات</span><strong id="accountEarnedValue">—</strong><small>النقاط المكتسبة من الدعوات</small></article>
  </div>
- <div class="account-footer">OXIDE HUB <span>•</span> SURVIVE · EXPLORE · DOMINATE</div>
+ <div class="oxide-account-section-title"><span>إحصائياتي</span><small>نشاطك في OXIDE HUB</small></div>
+ <div class="oxide-account-stats-grid">
+  <article class="oxide-account-stat-card"><span class="oxide-account-stat-icon">◉</span><span class="oxide-account-stat-label">الإعلانات المكتملة</span><strong id="accountAdsValue">0</strong></article>
+  <article class="oxide-account-stat-card"><span class="oxide-account-stat-icon">♧</span><span class="oxide-account-stat-label">الأصدقاء المدعوون</span><strong id="accountReferralsValue">—</strong></article>
+ </div>
+ <div class="oxide-account-section-title"><span>إنجازاتي</span><small>شارات رحلتك</small></div>
+ <div class="oxide-account-achievements">
+  <div class="oxide-achievement"><span>🚀</span><b>البداية</b><small>قريبًا</small></div>
+  <div class="oxide-achievement"><span>🔥</span><b>النشاط</b><small>قريبًا</small></div>
+  <div class="oxide-achievement"><span>🏆</span><b>الأسطورة</b><small>قريبًا</small></div>
+ </div>
+ <div class="oxide-account-section-title"><span>إعدادات الحساب</span><small>إدارة تجربتك</small></div>
+ <div class="oxide-account-menu">
+  <button type="button" class="oxide-account-menu-item" onclick="showPage('news')"><span class="oxide-menu-icon">✦</span><span><b>مركز الأخبار</b><small>آخر تحديثات وإعلانات المنصة</small></span><span class="oxide-menu-arrow">‹</span></button>
+  <button type="button" class="oxide-account-menu-item" onclick="showPage('support')"><span class="oxide-menu-icon">☏</span><span><b>الدعم الفني</b><small>تواصل مع فريق المساعدة</small></span><span class="oxide-menu-arrow">‹</span></button>
+  <div class="oxide-account-language"><span class="oxide-menu-icon">文</span><span><b>لغة التطبيق</b><small>اختر اللغة المناسبة لك</small></span><select aria-label="لغة التطبيق" onchange="changeLanguage(this.value)" id="accountLanguage"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option><option value="es">Español</option><option value="tr">Türkçe</option><option value="id">Bahasa Indonesia</option></select></div>
+ </div>
+ <footer class="oxide-account-footer"><strong>OXIDE HUB</strong><span>جميع الحقوق محفوظة © 2026</span><span>تصميم وتطوير SKIMI_17</span></footer>
 </section>
 <section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><h3 class="oxide-exchange-heading">🎁 تبديل نقاط</h3><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-panel" id="islandAdsPanel"><div class="rewards-grid" id="rewardsGrid"></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div></section>
 </section>
@@ -1101,6 +1198,19 @@ async function claimNotification(id,button){
 
 function filterOxideTasks(category,button){document.querySelectorAll(".oxide-filter-chip").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll(".oxide-new-task-card").forEach(card=>{const categories=(card.dataset.taskCategory||"").split(/\\s+/);card.style.display=category==="all"||categories.includes(category)?"":"none";});}
 
+
+function renderAccountProfile(){
+ const tgUser=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user;
+ const name=document.getElementById("accountDisplayName");
+ if(name&&tgUser){const fullName=[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ");name.textContent=fullName|| (tgUser.username?"@"+tgUser.username:"مستخدم OXIDE");}
+ const balance=document.getElementById("accountBalanceValue"),earned=document.getElementById("accountEarnedValue"),ads=document.getElementById("accountAdsValue"),refs=document.getElementById("accountReferralsValue");
+ const shard=document.getElementById("referralShardBalance"),earnedSource=document.getElementById("referralEarned"),refSource=document.getElementById("referralCount");
+ if(balance&&shard)balance.textContent=shard.textContent.trim()||"—";
+ if(earned&&earnedSource)earned.textContent=earnedSource.textContent.trim()||"—";
+ if(ads)ads.textContent=String(Number(islandCompleted)||0);
+ if(refs&&refSource)refs.textContent=refSource.textContent.trim()||"—";
+}
+
 function showPage(page){
  const support=page==="support";
  const news=page==="news";
@@ -1139,7 +1249,7 @@ function showPage(page){
  document.getElementById("missionsTab").classList.toggle("active",page==="missions");
  document.getElementById("referralTab").classList.toggle("active",referral);document.getElementById("vipTab").classList.toggle("active",vip);
  document.getElementById("newsTab").classList.toggle("active",account);
- if(account){if(!userIdLoaded)loadUserId();const lang=document.getElementById("accountLanguage");if(lang)lang.value=currentLanguage;}
+ if(account){if(!userIdLoaded)loadUserId();if(!referralLoaded)loadReferral().then(renderAccountProfile);renderAccountProfile();const lang=document.getElementById("accountLanguage");if(lang)lang.value=currentLanguage;}
  if(skills)renderOxideSkills();
  if(rewards){loadRewards();loadIsland()}
  if(page==="missions"){const balance=document.getElementById("missionTopBalance");if(balance&&rewardPoints>0)balance.textContent=rewardPoints.toLocaleString();}
