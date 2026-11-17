@@ -873,20 +873,36 @@ html,body{overscroll-behavior-y:auto!important}
 @media(max-width:360px){.oxide-account-section-title small{font-size:8px}.oxide-account-stat-card{padding:10px}.oxide-account-stat-card strong{font-size:19px}.oxide-profile-card{padding:13px}}
 
 
-/* Telegram-only access gate: keep the app covered until Telegram initData is verified. */
-body:not(.telegram-authorized)::before{
- content:"🔒 OXIDE HUB\\A\\Aهذا التطبيق متاح داخل Telegram فقط.\\Aافتح البوت في Telegram ثم اضغط «افتح بوت».";
- white-space:pre-line;
- position:fixed;inset:0;z-index:2147483647;
- display:flex;align-items:center;justify-content:center;
- padding:32px;text-align:center;
- background:#08051b;color:#fff;
- font:700 20px/2 system-ui,sans-serif;
-}
+/* Telegram-only gate with a direct bot link for visitors outside Telegram. */
+.telegram-gate{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 15%,rgba(35,75,145,.38),transparent 45%),#08051b;color:#fff;overflow-y:auto}
+.telegram-gate-card{width:100%;max-width:430px;padding:28px 22px;border:1px solid rgba(0,183,255,.55);border-radius:20px;background:linear-gradient(155deg,rgba(13,31,61,.98),rgba(5,12,30,.98));box-shadow:0 0 35px rgba(0,145,255,.2);text-align:center}
+.telegram-gate-icon{font-size:48px;margin-bottom:10px}
+.telegram-gate-title{margin:0 0 12px;color:#fff;font-size:25px;font-weight:900;text-shadow:0 0 15px rgba(0,183,255,.5)}
+.telegram-gate-description{margin:0;color:#c6d8ed;font-size:14px;line-height:2}
+.telegram-gate-steps{margin:18px 0;padding:14px 16px;border:1px solid rgba(72,132,190,.3);border-radius:12px;background:rgba(2,12,28,.55);text-align:right;color:#dceaff;font-size:13px;line-height:2}
+.telegram-gate-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;margin-top:18px;padding:13px;border:1px solid #36c5ff;border-radius:12px;background:linear-gradient(135deg,#159be5,#0756a4);color:#fff;text-decoration:none;font-size:16px;font-weight:900;box-shadow:0 0 18px rgba(0,183,255,.25)}
+.telegram-gate-button:active{transform:scale(.98)}
+.telegram-gate-note{margin:13px 0 0;color:#83a8ca;font-size:11px;line-height:1.7}
+body.telegram-authorized .telegram-gate{display:none}
 body:not(.telegram-authorized){overflow:hidden}
 </style>
 </head>
 <body>
+<section class="telegram-gate" aria-labelledby="telegramGateTitle">
+ <div class="telegram-gate-card">
+  <div class="telegram-gate-icon">🚀</div>
+  <h1 class="telegram-gate-title" id="telegramGateTitle">مرحباً بك في OXIDE HUB</h1>
+  <p class="telegram-gate-description">منصة OXIDE HUB مصممة للعمل من داخل Telegram Mini App. افتح البوت الرسمي لتدخل إلى المنصة وتستكشف المهمات والميزات المتاحة من مكان واحد.</p>
+  <div class="telegram-gate-steps">
+   <strong>كيف تبدأ؟</strong><br>
+   ١. اضغط على زر «فتح البوت» أدناه.<br>
+   ٢. انتقل إلى محادثة البوت في Telegram واضغط «Start» إذا ظهرت لك.<br>
+   ٣. افتح التطبيق من زر «افتح بوت» داخل Telegram.
+  </div>
+  <a class="telegram-gate-button" href="https://t.me/OxideHub_bot" target="_blank" rel="noopener noreferrer">✈️ فتح بوت OXIDE HUB في تيليجرام</a>
+  <p class="telegram-gate-note">للحصول على أفضل تجربة، افتح المنصة من داخل تطبيق Telegram الرسمي.</p>
+ </div>
+</section>
 <div class="stars"></div>
 <div class="rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <main class="container">
