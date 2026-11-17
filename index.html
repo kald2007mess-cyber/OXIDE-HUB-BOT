@@ -920,29 +920,6 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 /* Final overrides: the welcome card is browser-only, never shown in Telegram. */
 .telegram-gate{display:none!important}
 body.outside-telegram .telegram-gate{display:flex!important}
-/* Force the artwork onto the root canvas so opaque body backgrounds cannot hide it. */
-html{
- min-height:100%!important;
- background:#030816 url("/mobile-background.svg") center center / cover no-repeat fixed!important;
-}
-body{
- min-height:100vh!important;
- background:transparent!important;
- background-image:none!important;
-}
-@media(max-width:768px){
- html{
-  min-height:100%!important;
-  background-image:linear-gradient(rgba(3,8,22,.20),rgba(3,8,22,.48)),url("/mobile-background.svg")!important;
-  background-position:center center,center center!important;
-  background-repeat:no-repeat,no-repeat!important;
-  background-size:cover,cover!important;
-  background-attachment:scroll,scroll!important;
-  background-color:#030816!important;
- }
- body{min-height:100dvh!important;background:transparent!important;background-image:none!important}
-}
-
 </style>
 </head>
 <body>
