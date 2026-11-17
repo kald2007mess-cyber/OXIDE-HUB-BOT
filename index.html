@@ -549,8 +549,8 @@ footer{padding-bottom:18px}
 .tap-balance span{font-size:11px;color:#d5b9f2}.tap-balance strong{font-size:31px;line-height:1.2;font-weight:950;text-shadow:0 0 15px #b46cff}.tap-balance small{font-size:9px;letter-spacing:2px;color:#b78bdf}
 .tap-stage{height:310px;display:flex;align-items:center;justify-content:center;position:relative;flex-direction:column}
 .tap-aura{position:absolute;width:245px;height:245px;border-radius:50%;background:radial-gradient(circle,#a94cff45 0%,#7422bd24 42%,transparent 72%);filter:blur(8px);animation:tapAura 3s ease-in-out infinite}
-.tap-coin{position:relative;z-index:2;width:220px;height:220px;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 18px 16px #070014aa);transition:transform .09s ease; -webkit-tap-highlight-color:transparent}
-.tap-coin svg{display:block;width:100%;height:100%;overflow:visible}.tap-coin:active{transform:translateY(9px) scale(.94);filter:drop-shadow(0 7px 7px #070014aa)}
+.tap-coin{position:relative;z-index:2;width:min(78vw,310px);height:min(78vw,310px);padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 18px 16px #070014aa);transition:transform .09s ease; -webkit-tap-highlight-color:transparent}
+.tap-coin img{display:block;width:100%;height:100%;object-fit:contain;border:0;background:transparent;filter:drop-shadow(0 0 15px #a642ff88)}.tap-coin:active{transform:translateY(9px) scale(.94);filter:drop-shadow(0 7px 7px #070014aa)}
 .tap-coin.tap-hit{animation:coinPress .22s ease-out}.tap-hint{position:absolute;bottom:14px;font-size:11px;letter-spacing:2px;color:#cda7f5;text-shadow:0 0 12px #9c43f0}
 .tap-floats{position:absolute;inset:0;pointer-events:none;z-index:4}.tap-plus{position:absolute;font-size:23px;font-weight:950;color:#f0d4ff;text-shadow:0 0 12px #a642ff,0 2px 4px #21043b;animation:floatPlus .85s ease-out forwards;white-space:nowrap}
 .tap-footer{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:3px;color:#cdb8e2;font-size:12px}.tap-footer b{color:#e0b7ff}.tap-fire{font-size:22px;filter:drop-shadow(0 0 9px #a64aff)}
@@ -624,32 +624,7 @@ footer{padding-bottom:18px}
   <div class="tap-stage">
     <div class="tap-aura"></div>
 
-    <button class="tap-coin" id="tapCoin" type="button" aria-label="اضغط لجمع عملة">
-      <svg viewBox="0 0 240 240" role="img" aria-label="عملة OXIDE ثلاثية الأبعاد بشعار اللهب البنفسجي">
-<defs>
- <linearGradient id="cSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9a4ff"/><stop offset=".22" stop-color="#6020a9"/><stop offset=".65" stop-color="#21083f"/><stop offset="1" stop-color="#c16aff"/></linearGradient>
- <linearGradient id="cRim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4ff"/><stop offset=".18" stop-color="#d7a0ff"/><stop offset=".42" stop-color="#7423c5"/><stop offset=".68" stop-color="#f2caff"/><stop offset="1" stop-color="#4b1687"/></linearGradient>
- <radialGradient id="cFace" cx="30%" cy="20%" r="85%"><stop stop-color="#e9c5ff"/><stop offset=".18" stop-color="#a84cf4"/><stop offset=".55" stop-color="#54209a"/><stop offset="1" stop-color="#17072f"/></radialGradient>
- <linearGradient id="fEdge" x1="0" y1="1" x2=".8" y2="0"><stop stop-color="#401080"/><stop offset=".48" stop-color="#a02dff"/><stop offset="1" stop-color="#ffe0ff"/></linearGradient>
- <linearGradient id="fCore" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#4d13b5"/><stop offset=".55" stop-color="#a93dff"/><stop offset="1" stop-color="#fff0ff"/></linearGradient>
- <filter id="fGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.5"/></filter>
- <filter id="cShadow" x="-40%" y="-40%" width="180%" height="190%"><feGaussianBlur stdDeviation="8"/></filter>
-</defs>
-<ellipse cx="120" cy="211" rx="79" ry="15" fill="#a53fff" opacity=".48" filter="url(#cShadow)"/>
-<path d="M19 117a101 96 0 0 0 202 0v12a101 96 0 0 1-202 0Z" fill="url(#cSide)" stroke="#27084b" stroke-width="3"/>
-<ellipse cx="120" cy="113" rx="101" ry="99" fill="url(#cRim)" stroke="#f4d9ff" stroke-width="2"/>
-<ellipse cx="120" cy="110" rx="89" ry="87" fill="#26094b" stroke="#5b1a9b" stroke-width="3"/>
-<ellipse cx="120" cy="108" rx="82" ry="80" fill="url(#cFace)" stroke="#dca7ff" stroke-width="2"/>
-<ellipse cx="120" cy="108" rx="73" ry="71" fill="none" stroke="#f3d9ff" stroke-opacity=".65" stroke-width="1.8" stroke-dasharray="3 5"/>
-<path d="M120 34c-9 23-7 38 4 52 10 13 13 22 8 33 16-8 23-22 20-39 18 19 23 39 17 58-7 26-27 44-49 53-23-10-43-28-50-53-6-21 1-43 23-65-1 21 4 33 15 40-2-27 3-52 12-79Z" fill="#d43cff" opacity=".72" filter="url(#fGlow)"/>
-<path d="M120 39c-8 22-6 36 5 50 9 12 12 21 7 32 15-8 21-21 18-36 16 18 21 37 15 55-7 23-25 40-45 49-21-9-39-26-46-49-6-19 1-39 21-59-1 19 4 30 14 37-2-25 3-50 11-79Z" fill="url(#fEdge)" stroke="#f1caff" stroke-width="2.2" stroke-linejoin="round"/>
-<path d="M121 65c-4 17-3 27 5 38 7 9 8 16 4 24 10-7 13-16 11-26 10 13 12 25 8 37-5 15-16 26-29 33-14-7-25-18-30-33-4-13 0-25 12-38-1 12 2 19 9 24-1-19 3-40 10-59Z" fill="url(#fCore)" opacity=".95"/>
-<path d="M77 88q-14 25-5 49M161 76q20 24 17 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".72"/>
-<path d="M49 73q18-25 42-31" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".52"/>
-<path d="M120 25v8m0 150v8M29 108h8m166 0h8" stroke="#f7ddff" stroke-width="2" opacity=".8"/>
-<ellipse cx="120" cy="108" rx="95" ry="92" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
-</svg>
-    </button>
+    <button class="tap-coin" id="tapCoin" type="button" aria-label="اضغط لجمع عملة"><img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/1812349282260aede9d27ef5bc46d49c1d1e4bed/file_00000000b40082439a30053aac2c0c5f.png" alt="OXIDE purple flame coin"></button>
     <div class="tap-hint">اضغط هنا</div>
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
