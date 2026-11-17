@@ -89,8 +89,8 @@ export async function onRequestPost({ request, env }) {
       return json({success:true,tasks:await listTasks(env.DB)});
     }
 
-    const id = Number(body.id);
-    if (!Number.isSafeInteger(id) || id < 1) return json({success:false,error:"INVALID_TASK_ID"},400);
+    const id = Number(action === "completed" ? body.missionId : body.id);
+    if (!Number.isSafeInteger(id) || id < 1) return json({success:false,error:action === "completed" ? "INVALID_MISSION_ID" : "INVALID_TASK_ID"},400);
 
     if (action === "toggle") {
       const enabled = Number(body.enabled) === 1 ? 1 : 0;
