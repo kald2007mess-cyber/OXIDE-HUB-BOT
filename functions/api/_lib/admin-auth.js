@@ -28,7 +28,7 @@ async function getVerifiedTelegramId(initData, env) {
     if (!hash || !/^[a-f0-9]{64}$/i.test(hash) || !authDate || !userText || authDate > now + 60 || now - authDate > 86400) return null;
     const user = JSON.parse(userText);
     const telegramId = String(user?.id || "");
-    if (!/^\\d{5,20}$/.test(telegramId)) return null;
+    if (!/^\d{5,20}$/.test(telegramId)) return null;
     params.delete("hash");
     const dataCheck = [...params.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k,v]) => `${k}=${v}`).join("\n");
     const secret = await hmac(encoder.encode("WebAppData"), env.TELEGRAM_BOT_TOKEN);
