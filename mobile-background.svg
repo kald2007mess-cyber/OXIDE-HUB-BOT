@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1600" viewBox="0 0 900 1600">
+<defs>
+ <radialGradient id="bg"><stop stop-color="#18265a"/><stop offset=".55" stop-color="#090f2c"/><stop offset="1" stop-color="#020611"/></radialGradient>
+ <radialGradient id="nebula"><stop stop-color="#7543b9" stop-opacity=".55"/><stop offset=".55" stop-color="#244d9d" stop-opacity=".2"/><stop offset="1" stop-color="#080c22" stop-opacity="0"/></radialGradient>
+ <radialGradient id="planet"><stop stop-color="#9c7ce8"/><stop offset=".55" stop-color="#4b3a9a"/><stop offset="1" stop-color="#171d52"/></radialGradient>
+ <linearGradient id="ring"><stop stop-color="#68dfff" stop-opacity="0"/><stop offset=".48" stop-color="#8edfff" stop-opacity=".8"/><stop offset="1" stop-color="#c18bff" stop-opacity="0"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="55"/></filter>
+</defs>
+<rect width="900" height="1600" fill="url(#bg)"/>
+<ellipse cx="170" cy="500" rx="420" ry="300" fill="url(#nebula)" filter="url(#blur)"/>
+<ellipse cx="780" cy="1120" rx="390" ry="350" fill="#173e83" opacity=".23" filter="url(#blur)"/>
+<g fill="#fff">
+ <circle cx="78" cy="130" r="2"/><circle cx="240" cy="220" r="2"/><circle cx="480" cy="110" r="2"/><circle cx="720" cy="250" r="2"/><circle cx="830" cy="430" r="2"/><circle cx="130" cy="720" r="2"/><circle cx="330" cy="610" r="2"/><circle cx="620" cy="760" r="2"/><circle cx="790" cy="900" r="2"/><circle cx="90" cy="1080" r="2"/><circle cx="430" cy="1240" r="2"/><circle cx="700" cy="1400" r="2"/><circle cx="250" cy="1480" r="2"/>
+</g>
+<g fill="#79dfff" opacity=".8"><circle cx="370" cy="330" r="3"/><circle cx="760" cy="620" r="3"/><circle cx="190" cy="960" r="3"/><circle cx="550" cy="1500" r="3"/></g>
+<g transform="translate(650 490)">
+ <circle r="185" fill="url(#planet)"/>
+ <ellipse rx="260" ry="66" transform="rotate(-22)" fill="none" stroke="url(#ring)" stroke-width="19" opacity=".8"/>
+ <path d="M-130 -45 Q-20 -95 130 -40 M-150 35 Q-15 90 140 25" fill="none" stroke="#b7a5ff" stroke-opacity=".22" stroke-width="13"/>
+</g>
+<g transform="translate(190 1190)" opacity=".6">
+ <circle r="115" fill="#123f77" opacity=".5"/>
+ <path d="M0 -90 C-20 -35 40 -25 25 20 C15 55 -35 65 -52 25 C-70 -18 -25 -45 -22 -80 C-2 -54 12 -34 0 -90Z" fill="#ff8a3d"/>
+ <path d="M0 -38 C-15 -10 12 -4 8 22 C4 42 -22 42 -28 20 C-35 0 -8 -13 0 -38Z" fill="#ffe17b"/>
+</g>
+</svg>
