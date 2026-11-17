@@ -10,6 +10,25 @@ function json(data, status = 200) {
   });
 }
 
+async function ensurePointLedger(DB) {
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS point_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      delta INTEGER NOT NULL,
+      balance_after INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      reference_type TEXT NOT NULL,
+      reference_id TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )
+  `).run();
+  await DB.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_point_ledger_user
+    ON point_ledger(user_uuid, created_at DESC, id DESC)
+  `).run();
+}
+
 async function ensureRedemptionOrdersTable(DB) {
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS redemption_orders (
@@ -133,7 +152,14 @@ async function reviewMission(DB, id, decision) {
       DB.prepare(`
         UPDATE users SET points = points + ?, updated_at = ?
         WHERE user_uuid = ?
-      `).bind(reward, now, submission.user_id)
+      `).bind(reward, now, submission.user_id),
+      DB.prepare(`
+        INSERT INTO point_ledger
+          (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+        SELECT user_uuid,?,points,'mission_approved','mission_submission',?,?
+        FROM users WHERE user_uuid = ?
+          AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
+      `).bind(reward,String(id),now,submission.user_id,id)
     ]);
 
     if (Number(results[0]?.meta?.changes || 0) !== 1 ||
@@ -298,6 +324,7 @@ export async function onRequestPost({ request, env }) {
 
     const auth = await authorizeAdmin(String(body.initData || ""), env, "tasks");
     if (!auth.ok) return adminAuthResponse(auth);
+    await ensurePointLedger(env.DB);
 
     if (action === "list") {
       const type = String(body.type || "");
