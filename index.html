@@ -774,6 +774,12 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-missions-page .mission-center{margin-top:20px}
 
 
+
+.oxide-island-ad-moved{margin:12px 0 18px;padding:13px;border:1px solid rgba(184,139,255,.25);border-radius:16px;background:rgba(22,15,42,.22)}
+.oxide-island-ad-moved #islandProgressText{color:#f2eaff;font-size:13px;font-weight:800;margin-bottom:9px}
+.oxide-island-ad-moved .island-progress{margin:0 0 9px}
+.oxide-island-ad-moved #islandRewardText{margin-bottom:10px}
+.oxide-island-ad-moved .island-watch-button{width:100%;margin-top:2px}
 /* Empty missions screen inside one translucent purple frame */
 .oxide-missions-glass-frame{padding:16px;border:1px solid rgba(184,139,255,.42);border-radius:25px;background:linear-gradient(145deg,rgba(111,67,170,.22),rgba(43,27,78,.24));box-shadow:0 12px 34px rgba(8,3,22,.2),inset 0 1px 0 rgba(224,202,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .oxide-missions-glass-frame .oxide-shards-summary{margin:0 0 18px;background:rgba(111,70,172,.16);border-color:rgba(190,153,255,.3);box-shadow:none}
@@ -860,7 +866,7 @@ html,body{overscroll-behavior-y:auto!important}
  </div>
  <div class="account-footer">OXIDE HUB <span>•</span> SURVIVE · EXPLORE · DOMINATE</div>
 </section>
-<section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-panel" id="islandAdsPanel"><div style="font-weight:bold" id="islandProgressText">إعلانات مكتملة: 0 / 10</div><div class="island-progress"><div class="island-progress-fill" id="islandProgressFill"></div></div><div style="font-size:12px;color:#b8c9dd" id="islandRewardText">كل إعلان مكتمل = 5 نقاط</div><button class="island-watch-button" id="islandWatchButton" type="button" onclick="watchIslandAd()">▶ مشاهدة إعلان</button><div class="island-timer" id="islandTimer">جاري تحميل وقت الدورة...</div><div class="island-message" id="islandMessage" role="status"></div><div class="rewards-grid" id="rewardsGrid"><div style="grid-column:1/-1;color:#b8c9dd;padding:20px">جاري تحميل المكافآت...</div></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div></section>
+<section id="rewardsPage"><h2 class="rewards-heading" id="rewardsHeading">💸 السحب</h2><section class="island-section"><h2 class="island-title">🌌 OXIDE ISLAND</h2><div class="balance-card"><div class="balance-label" id="balanceLabel">رصيدك الحالي</div><div class="balance-number" id="pointsBalance">0</div><div class="balance-unit">OXIDE POINTS</div></div><div class="island-panel" id="islandAdsPanel"><div class="island-timer" id="islandTimer">جاري تحميل وقت الدورة...</div><div class="island-message" id="islandMessage" role="status"></div><div class="rewards-grid" id="rewardsGrid"><div style="grid-column:1/-1;color:#b8c9dd;padding:20px">جاري تحميل المكافآت...</div></div><div class="redeem-inline-form" id="redeemInlineForm" hidden><div class="redeem-inline-title" id="redeemInlineTitle">تأكيد استبدال النقاط</div><input class="redeem-inline-input" id="redeemUuidInput" type="text" maxlength="36" autocomplete="off" autocapitalize="characters" placeholder="OX-XXXXXXXX أو UUID كامل"><div class="redeem-inline-actions"><button class="redeem-confirm" id="redeemConfirmButton" type="button" onclick="submitRedemption()">تأكيد الطلب</button><button class="redeem-cancel" type="button" onclick="cancelRedemption()">إلغاء</button></div></div><div class="reward-message" id="rewardMessage" role="status"></div><section class="reward-orders" id="rewardOrdersSection"><div class="reward-orders-title">سجل طلبات السحب</div><div id="rewardOrdersList"><div class="reward-orders-empty">جاري تحميل الطلبات...</div></div></section><div class="pending-note" id="pendingNote">بعد الاستبدال سيتم تسجيل طلبك بحالة قيد المعالجة حتى تتم مراجعته.</div></div></section>
 </section>
 <section id="missionsPage" class="oxide-missions-page" style="display:none">
   <div class="oxide-missions-glass-frame">
@@ -871,6 +877,12 @@ html,body{overscroll-behavior-y:auto!important}
   </div>
   <div class="oxide-missions-heading">
     <div class="oxide-referral-eyebrow">EARN</div>
+    <div class="oxide-island-ad-moved">
+      <div style="font-weight:bold" id="islandProgressText">إعلانات مكتملة: 0 / 10</div>
+      <div class="island-progress"><div class="island-progress-fill" id="islandProgressFill"></div></div>
+      <div style="font-size:12px;color:#b8c9dd" id="islandRewardText">كل إعلان مكتمل = 5 نقاط</div>
+      <button class="island-watch-button" id="islandWatchButton" type="button" onclick="watchIslandAd()">▶ مشاهدة إعلان</button>
+    </div>
     <h2>Earn Shards</h2>
     <p class="oxide-task-countline"><strong id="missionsAvailableCount">0</strong> available · <strong id="missionsCompletedCount">0</strong> completed</p>
   </div>
