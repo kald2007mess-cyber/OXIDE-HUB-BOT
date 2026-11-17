@@ -38,7 +38,7 @@ export async function createSessionCookie(env, DB, userUuid) {
 export async function getVisitor(request, env) {
   if (!env.DB || !env.SESSION_SECRET) return null;
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(/(?:^|;\\s*)oxide_visitor=([a-f0-9]{64})(?:;|$)/i);
+  const match = cookie.match(/(?:^|;\s*)oxide_visitor=([a-f0-9]{64})(?:;|$)/i);
   if (!match) return null;
 
   const tokenHash = toHex(await sha256(match[1]));
