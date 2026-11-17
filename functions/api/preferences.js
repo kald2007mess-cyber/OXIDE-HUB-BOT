@@ -1,5 +1,12 @@
 import { getVisitor, json } from "./_lib/session.js";
 
+async function ensureLanguageColumn(DB) {
+  const columns = await DB.prepare("PRAGMA table_info(visitors)").all();
+  if (!(columns.results || []).some(column => column.name === "language")) {
+    await DB.prepare("ALTER TABLE visitors ADD COLUMN language TEXT NOT NULL DEFAULT 'ar'").run();
+  }
+}
+
 const LANGUAGES = ["ar", "en", "fr", "es", "de"];
 
 export async function onRequestGet({ request, env }) {
@@ -8,6 +15,7 @@ export async function onRequestGet({ request, env }) {
       return json({ success: false, error: "Server configuration missing" }, 500);
     }
 
+    await ensureLanguageColumn(env.DB);
     const userId = await getVisitor(request, env);
 
     if (!userId) {
