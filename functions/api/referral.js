@@ -1,8 +1,7 @@
 
 import {
   getVisitor,
-  json,
-  createVisitorCookie
+  json
 } from "./_lib/session.js";
 
 function response(data, cookie = null, status = 200) {
@@ -127,7 +126,6 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  let cookie = null;
   try {
     if (!env.DB || !env.SESSION_SECRET) {
       return json({ success: false, error: "SERVER_CONFIGURATION_MISSING" }, 500);
@@ -162,16 +160,13 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "REFERRER_NOT_FOUND" }, 404);
     }
 
-    let userId = await getVisitor(request, env);
+    const userId = await getVisitor(request, env);
     if (!userId) {
-      cookie = await createVisitorCookie(env);
-      const match = cookie.match(/^oxide_visitor=([^;]+)/);
-      if (!match) throw new Error("Session creation failed");
-      userId = decodeURIComponent(match[1]).split(".")[0];
+      return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     }
 
     if (String(userId).toLowerCase() === String(referrer.user_id).toLowerCase()) {
-      return response({ success: false, error: "SELF_REFERRAL_NOT_ALLOWED" }, cookie, 400);
+      return json({ success: false, error: "SELF_REFERRAL_NOT_ALLOWED" }, 400);
     }
 
     const now = Math.floor(Date.now() / 1000);
@@ -184,7 +179,7 @@ export async function onRequestPost({ request, env }) {
       "SELECT id FROM referrals WHERE referred_id = ? LIMIT 1"
     ).bind(userId).first();
     if (already) {
-      return response({ success: false, error: "REFERRAL_ALREADY_USED" }, cookie, 409);
+      return json({ success: false, error: "REFERRAL_ALREADY_USED" }, 409);
     }
 
     // Keep the existing database trigger compatible: insert the historical
@@ -239,6 +234,6 @@ export async function onRequestPost({ request, env }) {
     }, cookie);
   } catch (error) {
     console.error("Referral registration failed:", error);
-    return response({ success: false, error: "Could not register referral" }, cookie, 500);
+    return json({ success: false, error: "Could not register referral" }, 500);
   }
 }
