@@ -151,13 +151,13 @@ async function reviewMission(DB, id, decision) {
       `).bind(now, id),
       DB.prepare(`
         UPDATE users SET points = points + ?, updated_at = ?
-        WHERE user_uuid = ?
+        WHERE user_uuid = ? AND changes() = 1
       `).bind(reward, now, submission.user_id),
       DB.prepare(`
         INSERT INTO point_ledger
           (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
         SELECT user_uuid,?,points,'mission_approved','mission_submission',?,?
-        FROM users WHERE user_uuid = ?
+        FROM users WHERE user_uuid = ? AND changes() = 1
           AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
       `).bind(reward,String(id),now,submission.user_id,id)
     ]);
