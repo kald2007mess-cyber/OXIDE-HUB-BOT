@@ -138,33 +138,36 @@ async function reviewMission(DB, id, decision) {
   if (decision === "approve") {
     const results = await DB.batch([
       DB.prepare(`
-        UPDATE visitors SET points = points + ?
-        WHERE user_id = ? AND EXISTS (
+        UPDATE users SET points = points + ?, updated_at = ?
+        WHERE user_uuid = ? AND EXISTS (
           SELECT 1 FROM mission_submissions
           WHERE id = ? AND status = 'pending'
         )
-      `).bind(reward, submission.user_id, id),
+      `).bind(reward, now, submission.user_id, id),
+      DB.prepare(`
+        UPDATE visitors SET points = (
+          SELECT points FROM users WHERE user_uuid = visitors.user_id
+        )
+        WHERE user_id = ? AND changes() = 1
+      `).bind(submission.user_id),
       DB.prepare(`
         UPDATE mission_submissions
         SET status = 'approved', reviewed_at = ?
-        WHERE id = ? AND status = 'pending'
+        WHERE id = ? AND status = 'pending' AND changes() = 1
       `).bind(now, id),
-      DB.prepare(`
-        UPDATE users SET points = points + ?, updated_at = ?
-        WHERE user_uuid = ? AND changes() = 1
-      `).bind(reward, now, submission.user_id),
       DB.prepare(`
         INSERT INTO point_ledger
           (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
         SELECT user_uuid,?,points,'mission_approved','mission_submission',?,?
-        FROM users WHERE user_uuid = ? AND changes() = 1
+        FROM users
+        WHERE user_uuid = ?
           AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
-      `).bind(reward,String(id),now,submission.user_id,id)
+      `).bind(reward, String(id), now, submission.user_id, id)
     ]);
 
     if (Number(results[0]?.meta?.changes || 0) !== 1 ||
-        Number(results[1]?.meta?.changes || 0) !== 1) {
-      return { success: false, status: 409, error: "REQUEST_ALREADY_REVIEWED" };
+        Number(results[2]?.meta?.changes || 0) !== 1) {
+      return { success: false, status: 409, error: "REQUEST_ALREADY_REVIEWED_OR_USER_MISSING" };
     }
 
     try {
