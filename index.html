@@ -885,6 +885,37 @@ html,body{overscroll-behavior-y:auto!important}
 .telegram-gate-note{margin:13px 0 0;color:#83a8ca;font-size:11px;line-height:1.7}
 body.telegram-authorized .telegram-gate{display:none}
 body:not(.telegram-authorized){overflow:hidden}
+
+/* Mobile-first layout refinements: preserve the existing visual design. */
+html,body{max-width:100%;overflow-x:hidden}
+img,video,canvas,svg{max-width:100%;height:auto}
+button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
+@media(max-width:600px){
+ body{padding:14px 10px!important;background-size:auto,cover!important;background-attachment:scroll,scroll!important}
+ .container{width:100%;max-width:100%;margin-inline:auto}
+ .top-bar{flex-wrap:wrap;align-items:center}
+ .top-actions{max-width:100%;flex-wrap:wrap}
+ .language-box{max-width:100%}
+ .container>*{min-width:0}
+ .container [style*="width:"]{max-width:100%}
+ .container [style*="min-width:"]{min-width:0}
+ .container button,.container a[role="button"]{min-height:42px}
+ .container input,.container select,.container textarea{font-size:16px}
+ .container img{max-width:100%;object-fit:contain}
+ .container table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .telegram-gate{padding:14px}
+ .telegram-gate-card{max-width:100%;padding:23px 17px;border-radius:17px}
+ .telegram-gate-title{font-size:clamp(20px,6vw,25px)}
+ .telegram-gate-description{font-size:13px}
+}
+@media(max-width:380px){
+ body{padding:10px 7px!important}
+ .top-bar{gap:6px}
+ .top-actions{gap:5px}
+ .telegram-gate-card{padding:20px 14px}
+ .telegram-gate-button{font-size:14px;padding:12px 8px}
+}
+
 </style>
 </head>
 <body>
