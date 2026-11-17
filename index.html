@@ -772,6 +772,16 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-featured-title{font-weight:900;font-size:17px;margin:22px 4px 10px}.oxide-featured-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .oxide-featured-task{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border-radius:16px;border:1px solid rgba(167,119,255,.22);background:rgba(28,22,51,.9);font-size:12px}.oxide-featured-icon{font-size:22px;color:#c5a5ff}.oxide-featured-task span{color:#c6a8ff;font-weight:800}.oxide-featured-task b{font-size:10px;color:#a98be0;letter-spacing:1px}
 .oxide-missions-page .mission-center{margin-top:20px}
+
+/* OXIDE HUB - refreshed standalone earn tasks */
+.oxide-missions-page{padding:14px 12px 100px;max-width:760px;margin:0 auto;color:#f5f1ff}
+.oxide-missions-page .oxide-shards-summary{margin:8px 0 18px;padding:20px;border:1px solid rgba(174,119,255,.28);border-radius:22px;background:linear-gradient(135deg,rgba(85,40,150,.42),rgba(20,16,42,.88));text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.22)}
+.oxide-missions-page .oxide-shards-caption{font-size:11px;letter-spacing:2px;color:#c9b5ff;font-weight:800}
+.oxide-missions-page .oxide-shards-balance{font-size:34px;font-weight:900;margin:5px 0 0}
+.oxide-missions-page .oxide-shards-usdt{font-size:12px;color:#c8b8e8}
+.oxide-missions-heading{margin:16px 4px}.oxide-missions-heading h2{font-size:23px;margin:4px 0}.oxide-task-countline{font-size:12px;color:#bdb1d5;margin:8px 0 0}.oxide-task-countline strong{color:#e4d5ff}
+.oxide-task-filters{display:flex;gap:8px;overflow-x:auto;padding:5px 1px 12px;scrollbar-width:none}.oxide-task-filters::-webkit-scrollbar{display:none}.oxide-filter-chip{flex:0 0 auto;padding:8px 14px;border:1px solid rgba(169,126,255,.22);border-radius:20px;background:rgba(34,25,61,.88);color:#cfc1e9;font-size:12px;font-weight:800}.oxide-filter-chip.active{background:linear-gradient(135deg,#7544c7,#452477);border-color:#bd9bff;color:white}
+.oxide-new-task-list{display:grid;gap:11px}.oxide-new-task-card{padding:14px;border:1px solid rgba(167,119,255,.24);border-radius:17px;background:linear-gradient(145deg,rgba(35,26,62,.96),rgba(18,16,39,.96));box-shadow:0 8px 22px rgba(0,0,0,.16)}.oxide-new-task-top{display:flex;align-items:center;gap:11px;min-width:0}.oxide-new-task-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border-radius:12px;background:rgba(145,97,231,.17);color:#d6bdff;font-size:20px;font-weight:900}.oxide-new-task-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.oxide-new-task-info strong{font-size:13px;line-height:1.35;color:#f7f2ff}.oxide-new-task-info small{font-size:10px;color:#a99abe}.oxide-task-reward{font-size:10px;font-weight:900;white-space:nowrap;color:#c7a6ff}.oxide-task-count{padding:5px 9px;border-radius:16px;background:rgba(151,104,255,.18);color:#ddc9ff;font-size:10px;font-weight:900;white-space:nowrap}.oxide-new-task-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid rgba(181,147,230,.12)}.oxide-task-category{font-size:10px;color:#9e91b5}.oxide-new-task-button{min-width:82px;padding:8px 15px;border:1px solid rgba(173,131,255,.28);border-radius:10px;background:rgba(120,77,190,.2);color:#cdb6f7;font-size:11px;font-weight:900;opacity:.85}.oxide-new-task-button:disabled{cursor:not-allowed}.oxide-new-task-ad{border-color:rgba(181,137,255,.4);background:linear-gradient(140deg,rgba(67,43,112,.75),rgba(20,17,43,.98))}
 </style>
 </head>
 <body>
@@ -848,94 +858,49 @@ html,body{overscroll-behavior-y:auto!important}
 <section id="missionsPage" class="oxide-missions-page" style="display:none">
   <div class="oxide-shards-summary">
     <div class="oxide-shards-caption">YOUR SHARDS</div>
-    <div class="oxide-shards-balance" id="missionTopBalance">—</div>
-    <div class="oxide-shards-usdt">Earn more</div>
+    <div class="oxide-shards-balance" id="missionTopBalance">60</div>
+    <div class="oxide-shards-usdt">$0.01 USDT</div>
   </div>
-  <div class="oxide-missions-heading"><div class="oxide-referral-eyebrow">EARN</div><h2>Earn more shards</h2></div>
-  <section class="oxide-task-feature">
-    <div class="oxide-task-feature-head"><div><strong>YouTube Tasks</strong><p>Watch, like &amp; subscribe on YouTube</p></div><span class="mission-offer-soon">SOON</span></div>
-    <div class="oxide-task-feature-foot">Earn shards per task <span class="oxide-soon-pill">SOON</span></div>
-  </section>
-  <section class="oxide-task-feature oxide-ad-feature">
-    <div class="oxide-task-feature-head"><div><strong>Watch Ads &amp; Earn!</strong><p>Complete the ad missions and earn shards</p></div><span class="oxide-task-count" id="missionAdCount">10/10</span></div>
-    <button class="oxide-watch-soon" type="button" disabled>WATCH AD #1 · ↑20 SHARDS <span>SOON</span></button>
-  </section>
-  <div class="oxide-featured-title">Featured Tasks</div>
-  <div class="oxide-featured-grid">
-    <article class="oxide-featured-task"><div class="oxide-featured-icon">▶</div><strong>Join Shards Channel</strong><span>20 SHARDS</span><b>SOON</b></article>
-    <article class="oxide-featured-task"><div class="oxide-featured-icon">✦</div><strong>Join Shards Group</strong><span>20 SHARDS</span><b>SOON</b></article>
+  <div class="oxide-missions-heading">
+    <div class="oxide-referral-eyebrow">EARN</div>
+    <h2>Earn Shards</h2>
+    <p class="oxide-task-countline"><strong id="missionsAvailableCount">5</strong> available · <strong id="missionsCompletedCount">0</strong> completed</p>
   </div>
-  <div class="mission-center" id="missionCenter">
-  <div class="mission-header">
-    <div class="mission-brand">
-      <div class="mission-brand-icon">◎</div>
-      <div>
-        <div class="mission-brand-name">OXIDE HUB</div>
-        <div class="mission-brand-sub" id="missionSubtitle">MISSION CENTER</div>
+  <div class="oxide-task-filters" role="group" aria-label="Task categories">
+    <button class="oxide-filter-chip active" type="button" data-task-filter="all" onclick="filterOxideTasks('all',this)">All</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="tg" onclick="filterOxideTasks('tg',this)">TG</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="discord" onclick="filterOxideTasks('discord',this)">D</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="ads" onclick="filterOxideTasks('ads',this)">Ads</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="others" onclick="filterOxideTasks('others',this)">Others</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="x" onclick="filterOxideTasks('x',this)">X</button>
+    <button class="oxide-filter-chip" type="button" data-task-filter="watch" onclick="filterOxideTasks('watch',this)">Watch</button>
+  </div>
+  <div class="oxide-new-task-list">
+    <article class="oxide-new-task-card oxide-new-task-ad" data-task-category="ads watch">
+      <div class="oxide-new-task-top">
+        <span class="oxide-new-task-icon">▶</span>
+        <div class="oxide-new-task-info"><strong>Watch Ads &amp; Earn 1</strong><small>Ads</small></div>
+        <span class="oxide-task-count">10/10</span>
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:7px">
-      <span class="mission-live">● LIVE</span>
-      <span class="mission-language" id="missionLanguageLabel">SITE LANGUAGE</span>
-    </div>
+      <div class="oxide-new-task-bottom"><span class="oxide-task-reward">↑ 20 SHARDS</span><button class="oxide-new-task-button" type="button" disabled>Watch</button></div>
+    </article>
+    <article class="oxide-new-task-card" data-task-category="tg">
+      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">✈</span><div class="oxide-new-task-info"><strong>Join Shards Channel</strong><small>TG · Telegram</small></div><span class="oxide-task-reward">20 SHARDS</span></div>
+      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Telegram</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
+    </article>
+    <article class="oxide-new-task-card" data-task-category="tg">
+      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">✦</span><div class="oxide-new-task-info"><strong>Join Shards Group</strong><small>TG · Telegram</small></div><span class="oxide-task-reward">20 SHARDS</span></div>
+      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Telegram</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
+    </article>
+    <article class="oxide-new-task-card" data-task-category="x">
+      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">𝕏</span><div class="oxide-new-task-info"><strong>Follow Shards</strong><small>X · Social</small></div><span class="oxide-task-reward">10 SHARDS</span></div>
+      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Others</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
+    </article>
+    <article class="oxide-new-task-card" data-task-category="others">
+      <div class="oxide-new-task-top"><span class="oxide-new-task-icon">🎰</span><div class="oxide-new-task-info"><strong>Spin the slot to claim your Boinkers Pet!</strong><small>Others · Game</small></div><span class="oxide-task-reward">10 SHARDS</span></div>
+      <div class="oxide-new-task-bottom"><span class="oxide-task-category">Game</span><button class="oxide-new-task-button" type="button" disabled>Start</button></div>
+    </article>
   </div>
-
-  <div class="mission-progress-card">
-    <div class="mission-progress-top">
-      <span id="missionJourneyLabel">Mission Journey</span>
-      <span class="mission-progress-number" id="missionProgressNumber">0 / 10</span>
-    </div>
-    <div class="mission-progress-track"><div class="mission-progress-fill" id="missionProgressFill"></div></div>
-    <div class="mission-progress-foot">
-      <span id="missionProgressPercent">0% Completed</span>
-      <span id="missionRemaining">10 Missions Left</span>
-    </div>
-  </div>
-
-  <div class="mission-summary">
-    <div class="mission-summary-item">
-      <span id="missionBalanceLabel">TOTAL BALANCE · PTS</span>
-      <span class="mission-summary-value" id="missionsBalance">0</span>
-    </div>
-    <div class="mission-summary-item">
-      <span id="missionCompletedLabel">COMPLETED MISSIONS</span>
-      <span class="mission-summary-value" id="completedMissionsCount">0/0</span>
-    </div>
-  </div>
-
-  <div class="mission-group-title">
-    <span id="missionAvailableTitle">AVAILABLE MISSIONS</span>
-    <span class="mission-group-count" id="missionListCount">...</span>
-  </div>
-
-  <div class="mission-list" id="missionList">
-    <div class="mission-item">
-      <div class="mission-description">جاري تحميل المهمات...</div>
-    </div>
-  </div>
-  <section class="mission-offers-section" aria-label="عروض">
-    <h3 class="mission-offers-title"><svg class="mission-offers-heading-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12a4 4 0 0 1 3.8 5l-1.2 4a2.5 2.5 0 0 1-4.2 1l-2.2-2H9.8l-2.2 2a2.5 2.5 0 0 1-4.2-1l-1.2-4A4 4 0 0 1 6 8Z"/><path d="M7 11v4M5 13h4M16.5 11.5h.01M19 14h.01"/></svg><span>عروض</span></h3>
-    <div class="mission-offers-grid">
-      <article class="mission-offer-card">
-        <div class="mission-offer-art"><svg class="mission-offer-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 8h18a5 5 0 0 1 4.7 6.5l-1.8 6a3 3 0 0 1-5 1.2L19 18h-6l-3.9 3.7a3 3 0 0 1-5-1.2l-1.8-6A5 5 0 0 1 7 8Z"/><path d="M10 11v7M6.5 14.5h7M21 12h.1M25 16h.1"/></svg><span class="mission-offer-soon">SOON</span></div>
-        <button class="mission-offer-button" type="button" disabled>SOON</button>
-      </article>
-      <article class="mission-offer-card">
-        <div class="mission-offer-art"><svg class="mission-offer-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M18 3c5 3 8 8 8 14l-8 8c-6 0-11-3-14-8 4-8 8-12 14-14Z"/><path d="m10 22-5 5M8 16l-5 1 4-7M17 24l-1 5 7-4"/><circle cx="19" cy="12" r="3"/></svg><span class="mission-offer-soon">SOON</span></div>
-        <button class="mission-offer-button" type="button" disabled>SOON</button>
-      </article>
-      <article class="mission-offer-card">
-        <div class="mission-offer-art"><svg class="mission-offer-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 20l2-8 5-4h10l5 4 2 8H4Z"/><path d="M8 20v3M24 20v3M9 12l2-4M23 12l-2-4"/><circle cx="10" cy="20" r="2.5"/><circle cx="22" cy="20" r="2.5"/></svg><span class="mission-offer-soon">SOON</span></div>
-        <button class="mission-offer-button" type="button" disabled>SOON</button>
-      </article>
-      <article class="mission-offer-card">
-        <div class="mission-offer-art"><svg class="mission-offer-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5h9v9H5zM18 5h9v9h-9zM5 18h9v9H5zM18 18h9v9h-9z"/><path d="M9.5 9.5h.01M22.5 9.5h.01M9.5 22.5h.01M22.5 22.5h.01"/></svg><span class="mission-offer-soon">SOON</span></div>
-        <button class="mission-offer-button" type="button" disabled>SOON</button>
-      </article>
-    </div>
-  </section>
-</div>
-
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
@@ -1116,6 +1081,9 @@ async function claimNotification(id,button){
  }catch(error){button.disabled=false;button.textContent="حاول الاستلام مجددًا";alert(error.message==="ALREADY_CLAIMED_OR_NOT_FOUND"?"تم استلام هذه المكافأة مسبقًا أو لم تعد متاحة.":"تعذر استلام المكافأة. حاول مجددًا.");}
 }
 
+
+function filterOxideTasks(category,button){document.querySelectorAll(".oxide-filter-chip").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll(".oxide-new-task-card").forEach(card=>{const categories=(card.dataset.taskCategory||"").split(/\\s+/);card.style.display=category==="all"||categories.includes(category)?"":"none";});}
+
 function showPage(page){
  const support=page==="support";
  const news=page==="news";
@@ -1157,7 +1125,7 @@ function showPage(page){
  if(account){if(!userIdLoaded)loadUserId();const lang=document.getElementById("accountLanguage");if(lang)lang.value=currentLanguage;}
  if(skills)renderOxideSkills();
  if(rewards){loadRewards();loadIsland()}
- if(page==="missions"){loadMissionStatus();trackMissionItems(missionData,true)}
+ if(page==="missions"){const balance=document.getElementById("missionTopBalance");if(balance&&rewardPoints>0)balance.textContent=rewardPoints.toLocaleString();}
  if(support){markSupportMessagesSeen();loadSupportMessages(true)}
  if(referral)loadReferral();
  if(news)loadNewsPosts();
