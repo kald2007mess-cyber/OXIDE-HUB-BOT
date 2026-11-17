@@ -16,6 +16,22 @@ async function ensureTable(DB) {
     )
   `).run();
   await DB.prepare(`CREATE INDEX IF NOT EXISTS idx_oxide_notifications_user ON oxide_notifications(user_id, created_at DESC)`).run();
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS point_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      delta INTEGER NOT NULL,
+      balance_after INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      reference_type TEXT NOT NULL,
+      reference_id TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )
+  `).run();
+  await DB.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_point_ledger_user
+    ON point_ledger(user_uuid, created_at DESC, id DESC)
+  `).run();
 }
 
 export async function onRequestGet({ request, env }) {
@@ -96,7 +112,14 @@ export async function onRequestPost({ request, env }) {
           SELECT 1 FROM oxide_notifications
           WHERE id = ? AND user_id = ? AND claim_token = ?
         )
-      `).bind(userId,id,userId,token)
+      `).bind(userId,id,userId,token),
+      env.DB.prepare(`
+        INSERT INTO point_ledger
+          (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+        SELECT u.user_uuid,n.reward_points,u.points,'notification_reward','notification',CAST(n.id AS TEXT),?
+        FROM users u JOIN oxide_notifications n ON n.user_id = u.user_uuid
+        WHERE u.user_uuid = ? AND n.id = ? AND n.claim_token = ?
+      `).bind(now,userId,id,token)
     ]);
     const claimed = Number(result[0]?.meta?.changes || 0);
     const credited = Number(result[1]?.meta?.changes || 0);
