@@ -31,6 +31,9 @@ async function ensureRedemptionOrdersTable(DB) {
   if (!(columns.results || []).some(column => column.name === "user_uuid_input")) {
     await DB.prepare("ALTER TABLE redemption_orders ADD COLUMN user_uuid_input TEXT").run();
   }
+  if (!(columns.results || []).some(column => column.name === "refund_token")) {
+    await DB.prepare("ALTER TABLE redemption_orders ADD COLUMN refund_token TEXT").run();
+  }
 }
 
 async function ensureNotificationsTable(DB) {
@@ -67,11 +70,12 @@ async function getReviewItems(DB, type) {
     const result = await DB.prepare(`
       SELECT s.id, s.user_id, s.mission_id, s.proof_file_id, s.created_at,
              m.title AS mission_title, m.reward_points,
-             v.points, v.created_at AS user_created_at,
+             COALESCE(u.points, v.points, 0) AS points, COALESCE(u.created_at, v.created_at) AS user_created_at,
              CASE WHEN s.proof_file_id IS NOT NULL AND s.proof_file_id != ''
                        AND s.proof_file_id != 'uploading' THEN 1 ELSE 0 END AS proof_available
       FROM mission_submissions s
       JOIN oxide_admin_missions m ON m.id = s.mission_id
+      LEFT JOIN users u ON u.user_uuid = s.user_id
       LEFT JOIN visitors v ON v.user_id = s.user_id
       WHERE s.status = 'pending'
       ORDER BY s.created_at ASC, s.id ASC
@@ -85,8 +89,8 @@ async function getReviewItems(DB, type) {
            o.points_cost, o.user_uuid_input, o.created_at,
            COALESCE(u.points, v.points, 0) AS points, COALESCE(u.created_at, v.created_at) AS user_created_at,
            (SELECT COUNT(*) FROM mission_submissions s
-             WHERE s.user_id = o.user_id AND s.status = 'approved') AS completed_missions,
-           (SELECT COUNT(*) FROM referrals r WHERE r.referrer_id = o.user_id) AS invited_friends
+             WHERE s.user_id = o.user_uuid AND s.status = 'approved') AS completed_missions,
+           (SELECT COUNT(*) FROM referrals r WHERE r.referrer_id = o.user_uuid) AS invited_friends
     FROM redemption_orders o
     LEFT JOIN users u ON u.user_uuid = o.user_uuid
     LEFT JOIN visitors v ON v.user_id = o.user_uuid
