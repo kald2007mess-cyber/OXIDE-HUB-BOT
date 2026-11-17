@@ -796,6 +796,23 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-missions-heading{margin:16px 4px}.oxide-missions-heading h2{font-size:23px;margin:4px 0}.oxide-task-countline{font-size:12px;color:#bdb1d5;margin:8px 0 0}.oxide-task-countline strong{color:#e4d5ff}
 .oxide-task-filters{display:flex;gap:8px;overflow-x:auto;padding:5px 1px 12px;scrollbar-width:none}.oxide-task-filters::-webkit-scrollbar{display:none}.oxide-filter-chip{flex:0 0 auto;padding:8px 14px;border:1px solid rgba(169,126,255,.22);border-radius:20px;background:rgba(34,25,61,.88);color:#cfc1e9;font-size:12px;font-weight:800}.oxide-filter-chip.active{background:linear-gradient(135deg,#7544c7,#452477);border-color:#bd9bff;color:white}
 .oxide-new-task-list{display:grid;gap:11px}.oxide-new-task-card{padding:14px;border:1px solid rgba(167,119,255,.24);border-radius:17px;background:linear-gradient(145deg,rgba(35,26,62,.96),rgba(18,16,39,.96));box-shadow:0 8px 22px rgba(0,0,0,.16)}.oxide-new-task-top{display:flex;align-items:center;gap:11px;min-width:0}.oxide-new-task-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border-radius:12px;background:rgba(145,97,231,.17);color:#d6bdff;font-size:20px;font-weight:900}.oxide-new-task-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.oxide-new-task-info strong{font-size:13px;line-height:1.35;color:#f7f2ff}.oxide-new-task-info small{font-size:10px;color:#a99abe}.oxide-task-reward{font-size:10px;font-weight:900;white-space:nowrap;color:#c7a6ff}.oxide-task-count{padding:5px 9px;border-radius:16px;background:rgba(151,104,255,.18);color:#ddc9ff;font-size:10px;font-weight:900;white-space:nowrap}.oxide-new-task-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid rgba(181,147,230,.12)}.oxide-task-category{font-size:10px;color:#9e91b5}.oxide-new-task-button{min-width:82px;padding:8px 15px;border:1px solid rgba(173,131,255,.28);border-radius:10px;background:rgba(120,77,190,.2);color:#cdb6f7;font-size:11px;font-weight:900;opacity:.85}.oxide-new-task-button:disabled{cursor:not-allowed}.oxide-new-task-ad{border-color:rgba(181,137,255,.4);background:linear-gradient(140deg,rgba(67,43,112,.75),rgba(20,17,43,.98))}
+
+/* OXIDE HOME BOTTOM DOCK + TOKEN MARK */
+#homePage.tap-home{display:flex;flex-direction:column;min-height:calc(100dvh - 94px);padding-bottom:12px!important}
+#homePage .tap-bottom-info{width:100%;margin-top:auto;padding-top:14px}
+#homePage .tap-meter{margin-bottom:10px}
+#homePage .tap-home-footer{display:block;margin:12px 0 8px;text-align:center;color:#9b83b5;font-size:10px;line-height:1.8;letter-spacing:.7px}
+#homePage .tap-coin{width:min(84vw,330px)!important;height:min(84vw,330px)!important;max-width:330px!important;max-height:330px!important}
+#homePage .tap-balance strong{display:flex;align-items:center;justify-content:center;gap:7px}
+#tapBalance::after,#skillsBalance::after,#pointsBalance::after,#missionTopBalance::after,#referralShardBalance::after{
+ content:"";display:inline-block;flex:0 0 17px;width:17px;height:17px;
+ background:url("https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png") center/contain no-repeat;
+ vertical-align:middle;filter:drop-shadow(0 0 4px rgba(173,91,255,.7))
+}
+#pointsBalance::after{width:19px;height:19px;flex-basis:19px}
+#missionTopBalance::after,#referralShardBalance::after{width:17px;height:17px;flex-basis:17px}
+@media(max-width:380px){#homePage .tap-coin{width:min(80vw,285px)!important;height:min(80vw,285px)!important;max-width:285px!important;max-height:285px!important}#homePage.tap-home{min-height:calc(100dvh - 88px)}}
+
 </style>
 </head>
 <body>
@@ -834,9 +851,12 @@ html,body{overscroll-behavior-y:auto!important}
     <div class="tap-hint">اضغط على العملة</div>
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
-  <div class="tap-meter" aria-label="سعة التخزين"><div class="tap-meter-top"><span>مساحة التخزين</span><strong id="tapStorageText">0 / 1000</strong></div><div class="tap-meter-track"><span id="tapStorageFill"></span></div><div class="tap-meter-foot"><span id="tapStorageLevel">STORAGE LV1</span><span id="tapStoragePercent">0%</span></div></div>
-  <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b id="tapRewardText">+0.01</b> عملة</span></div>
-  <div id="tapNotice" class="tap-notice" role="status">تنبيه: الرصيد والتطوير والتعدين تجريبية ومحلية لهذه الجلسة، ولم تتم مزامنتها مع محفظة الحساب بعد.</div>
+  <div class="tap-bottom-info">
+    <div class="tap-meter" aria-label="سعة التخزين"><div class="tap-meter-top"><span>مساحة التخزين</span><strong id="tapStorageText">0 / 1000</strong></div><div class="tap-meter-track"><span id="tapStorageFill"></span></div><div class="tap-meter-foot"><span id="tapStorageLevel">STORAGE LV1</span><span id="tapStoragePercent">0%</span></div></div>
+    <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b id="tapRewardText">+0.01</b> عملة</span></div>
+    <div id="tapNotice" class="tap-notice" role="status">تنبيه: الرصيد والتطوير والتعدين تجريبية ومحلية لهذه الجلسة، ولم تتم مزامنتها مع محفظة الحساب بعد.</div>
+    <footer class="tap-home-footer">OXIDE HUB © 2026<br>Created by SKIMI_17</footer>
+  </div>
 </div>
 <section id="skillsPage" class="oxide-skills-page" style="display:none">
   <button class="skills-back" type="button" onclick="showPage('home')">← العودة للرئيسية</button>
@@ -952,7 +972,7 @@ html,body{overscroll-behavior-y:auto!important}
     <div id="referralRanking"><div class="ranking-row">جاري التحميل...</div></div>
   </div>
 </section>
-<footer>OXIDE HUB © 2026<br>Created by SKIMI_17</footer>
+
 </main>
 
 <script>
