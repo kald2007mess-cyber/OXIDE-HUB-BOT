@@ -222,16 +222,16 @@ export async function onRequestPost({ request, env }) {
     ]);
 
     if (Number(results?.[0]?.meta?.changes || 0) !== 1) {
-      return response({ success: false, error: "REFERRAL_ALREADY_USED" }, cookie, 409);
+      return json({ success: false, error: "REFERRAL_ALREADY_USED" }, 409);
     }
 
-    return response({
+    return json({
       success: true,
       registered: true,
       invitedPointsAwarded: 30,
       referrerPointsAwarded: 50,
       userId: shortId(userId)
-    }, cookie);
+    });
   } catch (error) {
     console.error("Referral registration failed:", error);
     return json({ success: false, error: "Could not register referral" }, 500);
