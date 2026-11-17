@@ -3,7 +3,7 @@ import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
 export async function onRequestPost({ request, env }) {
   try {
-    if (!env.DB || !env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ADMIN_ID) {
+    if (!env.DB || !env.TELEGRAM_BOT_TOKEN) {
       return new Response(JSON.stringify({
         success: false,
         error: "SERVER_CONFIGURATION_MISSING"
