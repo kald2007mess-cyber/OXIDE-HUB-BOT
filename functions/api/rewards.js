@@ -54,15 +54,16 @@ export async function onRequestPost({ request, env }) {
     if (!offer) return json({ success: false, error: "INVALID_OFFER" }, 400);
 
     const enteredUuid = String(body.userUuid || "").trim();
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(enteredUuid) ||
-        enteredUuid.toLowerCase() !== userUuid.toLowerCase()) {
-      return json({ success: false, error: "UUID_DOES_NOT_MATCH_ACCOUNT" }, 400);
-    }
-
     const user = await env.DB.prepare(
       "SELECT user_uuid, public_id, points FROM users WHERE user_uuid = ? AND status = 'active'"
     ).bind(userUuid).first();
     if (!user) return json({ success: false, error: "USER_NOT_FOUND" }, 404);
+
+    const normalizedInput = enteredUuid.toUpperCase();
+    if (normalizedInput !== String(user.user_uuid).toUpperCase() &&
+        normalizedInput !== String(user.public_id).toUpperCase()) {
+      return json({ success: false, error: "UUID_DOES_NOT_MATCH_ACCOUNT" }, 400);
+    }
 
     const now = Math.floor(Date.now() / 1000);
     await ensureOrdersTable(env.DB);
@@ -75,12 +76,6 @@ export async function onRequestPost({ request, env }) {
     if (!debit) return json({ success: false, error: "INSUFFICIENT_POINTS" }, 400);
     debitDone = true;
 
-    await env.DB.prepare(`
-      INSERT INTO point_ledger
-        (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
-      VALUES (?, ?, ?, 'redemption_request', 'redemption', 'pending', ?)
-    `).bind(userUuid, -offer.points, Number(debit.points), now).run();
-
     const inserted = await env.DB.prepare(`
       INSERT INTO redemption_orders
         (user_uuid, public_id, offer_id, offer_name, points_cost, user_uuid_input, status, created_at)
@@ -88,6 +83,12 @@ export async function onRequestPost({ request, env }) {
       RETURNING id
     `).bind(userUuid, user.public_id, offer.id, offer.name, offer.points, enteredUuid, now).first();
     orderId = Number(inserted.id);
+
+    await env.DB.prepare(`
+      INSERT INTO point_ledger
+        (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
+      VALUES (?, ?, ?, 'redemption_request', 'redemption', ?, ?)
+    `).bind(userUuid, -offer.points, Number(debit.points), String(orderId), now).run();
 
     const messageText = [
       "🎁 OXIDE HUB — طلب استبدال جديد",
