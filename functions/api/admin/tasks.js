@@ -1,4 +1,4 @@
-import { authorizeAdmin, adminAuthResponse } from "./_lib/admin-auth.js";
+import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
