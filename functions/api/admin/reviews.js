@@ -12,10 +12,10 @@ function json(data, status = 200) {
 
 async function ensureRedemptionOrdersTable(DB) {
   await DB.prepare(`
-    CREATE TABLE IF NOT EXISTS oxide_redemption_orders (
+    CREATE TABLE IF NOT EXISTS redemption_orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id TEXT NOT NULL,
-      display_id TEXT NOT NULL,
+      user_uuid TEXT NOT NULL,
+      public_id TEXT NOT NULL,
       offer_id INTEGER NOT NULL,
       offer_name TEXT NOT NULL,
       points_cost INTEGER NOT NULL,
@@ -27,9 +27,9 @@ async function ensureRedemptionOrdersTable(DB) {
     )
   `).run();
 
-  const columns = await DB.prepare("PRAGMA table_info(oxide_redemption_orders)").all();
+  const columns = await DB.prepare("PRAGMA table_info(redemption_orders)").all();
   if (!(columns.results || []).some(column => column.name === "user_uuid_input")) {
-    await DB.prepare("ALTER TABLE oxide_redemption_orders ADD COLUMN user_uuid_input TEXT").run();
+    await DB.prepare("ALTER TABLE redemption_orders ADD COLUMN user_uuid_input TEXT").run();
   }
 }
 
@@ -81,14 +81,15 @@ async function getReviewItems(DB, type) {
   }
 
   const result = await DB.prepare(`
-    SELECT o.id, o.user_id, o.display_id, o.offer_id, o.offer_name,
+    SELECT o.id, o.user_uuid AS user_id, o.public_id AS display_id, o.offer_id, o.offer_name,
            o.points_cost, o.user_uuid_input, o.created_at,
-           v.points, v.created_at AS user_created_at,
+           COALESCE(u.points, v.points, 0) AS points, COALESCE(u.created_at, v.created_at) AS user_created_at,
            (SELECT COUNT(*) FROM mission_submissions s
              WHERE s.user_id = o.user_id AND s.status = 'approved') AS completed_missions,
            (SELECT COUNT(*) FROM referrals r WHERE r.referrer_id = o.user_id) AS invited_friends
-    FROM oxide_redemption_orders o
-    LEFT JOIN visitors v ON v.user_id = o.user_id
+    FROM redemption_orders o
+    LEFT JOIN users u ON u.user_uuid = o.user_uuid
+    LEFT JOIN visitors v ON v.user_id = o.user_uuid
     WHERE o.status = 'pending'
     ORDER BY o.created_at ASC, o.id ASC
     LIMIT 50
@@ -165,8 +166,8 @@ async function reviewMission(DB, id, decision) {
 
 async function reviewRedemption(DB, id, decision) {
   const order = await DB.prepare(`
-    SELECT id, user_id, display_id, offer_name, points_cost, status
-    FROM oxide_redemption_orders WHERE id = ?
+    SELECT id, user_uuid AS user_id, public_id AS display_id, offer_name, points_cost, status
+    FROM redemption_orders WHERE id = ?
   `).bind(id).first();
 
   if (!order || order.status !== "pending") {
@@ -178,7 +179,7 @@ async function reviewRedemption(DB, id, decision) {
 
   if (decision === "approve") {
     const updated = await DB.prepare(`
-      UPDATE oxide_redemption_orders SET status = 'approved', reviewed_at = ?
+      UPDATE redemption_orders SET status = 'approved', reviewed_at = ?
       WHERE id = ? AND status = 'pending'
     `).bind(now, id).run();
 
@@ -198,24 +199,28 @@ async function reviewRedemption(DB, id, decision) {
   const refundToken = crypto.randomUUID();
   const results = await DB.batch([
     DB.prepare(`
-      UPDATE oxide_redemption_orders
+      UPDATE redemption_orders
       SET status = 'rejected', reviewed_at = ?, refund_token = ?
       WHERE id = ? AND status = 'pending'
     `).bind(now, refundToken, id),
     DB.prepare(`
-      UPDATE visitors SET points = points + (
-        SELECT points_cost FROM oxide_redemption_orders
+      UPDATE users SET points = points + (
+        SELECT points_cost FROM redemption_orders
         WHERE id = ? AND refund_token = ?
-      )
-      WHERE user_id = (
-        SELECT user_id FROM oxide_redemption_orders
+      ), updated_at = ?
+      WHERE user_uuid = (
+        SELECT user_uuid FROM redemption_orders
         WHERE id = ? AND refund_token = ?
       )
       AND EXISTS (
-        SELECT 1 FROM oxide_redemption_orders
+        SELECT 1 FROM redemption_orders
         WHERE id = ? AND refund_token = ?
       )
-    `).bind(id, refundToken, id, refundToken, id, refundToken)
+    `).bind(id, refundToken, now, id, refundToken, id, refundToken),
+    DB.prepare(`
+      UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = visitors.user_id)
+      WHERE user_id = (SELECT user_uuid FROM redemption_orders WHERE id = ? AND refund_token = ?)
+    `).bind(id, refundToken)
   ]);
 
   if (Number(results[0]?.meta?.changes || 0) !== 1 ||
