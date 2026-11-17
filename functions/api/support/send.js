@@ -16,21 +16,14 @@ export async function onRequestPost({ request, env }) {
     }
 
     const user = await env.DB.prepare(`
-      SELECT
-        v.user_id,
-        v.points,
+      SELECT v.user_id,
+        COALESCE(u.points, v.points, 0) AS points,
         v.progress,
         v.created_at,
-        COALESCE(r.completed_ads, 0) AS island_ads,
-        (
-          SELECT COUNT(*)
-          FROM offerwall_events e
-          WHERE e.user_id = v.user_id
-            AND e.status = 1
-            AND e.offer_type = 'ptc'
-        ) AS ptc_ads
+        0 AS island_ads,
+        0 AS ptc_ads
       FROM visitors v
-      LEFT JOIN reward_ad_cycles r ON r.user_id = v.user_id
+      LEFT JOIN users u ON u.user_uuid = v.user_id
       WHERE v.user_id = ?
     `).bind(userId).first();
 
