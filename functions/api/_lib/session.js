@@ -18,9 +18,27 @@ export function json(data, status = 200) {
   });
 }
 
+async function ensureSessionsTable(DB) {
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS app_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      expires_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      revoked_at INTEGER
+    )
+  `).run();
+  await DB.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_app_sessions_user
+    ON app_sessions(user_uuid, expires_at)
+  `).run();
+}
+
 // The cookie contains a random opaque token. Only its SHA-256 hash is stored in D1.
 export async function createSessionCookie(env, DB, userUuid) {
   if (!env.SESSION_SECRET || !DB || !userUuid) throw new Error("SESSION_CONFIGURATION_MISSING");
+  await ensureSessionsTable(DB);
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   const token = toHex(bytes);
   const tokenHash = toHex(await sha256(token));
@@ -37,6 +55,7 @@ export async function createSessionCookie(env, DB, userUuid) {
 
 export async function getVisitor(request, env) {
   if (!env.DB || !env.SESSION_SECRET) return null;
+  await ensureSessionsTable(env.DB);
   const cookie = request.headers.get("Cookie") || "";
   const match = cookie.match(/(?:^|;\s*)oxide_visitor=([a-f0-9]{64})(?:;|$)/i);
   if (!match) return null;
