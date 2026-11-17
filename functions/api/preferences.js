@@ -48,6 +48,7 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "Server configuration missing" }, 500);
     }
 
+    await ensureLanguageColumn(env.DB);
     const userId = await getVisitor(request, env);
 
     if (!userId) {
