@@ -79,15 +79,24 @@ export async function onRequestPost({ request, env }) {
           AND reward_points > 0 AND claimed_at IS NULL
       `).bind(now, now, token, id, userId),
       env.DB.prepare(`
-        UPDATE visitors SET points = points + (
+        UPDATE users SET points = points + (
           SELECT reward_points FROM oxide_notifications
           WHERE id = ? AND user_id = ? AND claim_token = ?
+        ), updated_at = ?
+        WHERE user_uuid = ? AND EXISTS (
+          SELECT 1 FROM oxide_notifications
+          WHERE id = ? AND user_id = ? AND claim_token = ?
+        )
+      `).bind(id,userId,token,now,userId,id,userId,token),
+      env.DB.prepare(`
+        UPDATE visitors SET points = (
+          SELECT points FROM users WHERE user_uuid = visitors.user_id
         )
         WHERE user_id = ? AND EXISTS (
           SELECT 1 FROM oxide_notifications
           WHERE id = ? AND user_id = ? AND claim_token = ?
         )
-      `).bind(id,userId,token,userId,id,userId,token)
+      `).bind(userId,id,userId,token)
     ]);
     const claimed = Number(result[0]?.meta?.changes || 0);
     const credited = Number(result[1]?.meta?.changes || 0);
