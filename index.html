@@ -894,7 +894,7 @@ html,body{overscroll-behavior-y:auto!important}
 </section>
 <nav class="navigation" aria-label="Main navigation">
 <button class="nav-item active" id="homeTab" type="button" onclick="showPage('home')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9 21v-7h6v7"/></svg></span><span class="nav-label" id="navHome">الرئيسية</span></button>
-<button class="nav-item" id="missionsTab" type="button" onclick="showPage('missions')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="nav-label">المهمات</span><span class="nav-soon">SOON</span></button>
+<button class="nav-item" id="missionsTab" type="button" onclick="showPage('missions')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="nav-label">المهمات</span></button>
 <button class="nav-item" id="rewardsTab" type="button" onclick="showPage('rewards')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14"/><path d="M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7Z"/><path d="M12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></span><span class="nav-label" id="navRewards">السحب</span></button>
 <button class="nav-item" id="referralTab" type="button" onclick="showPage('referral')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6M17 11h6"/></svg></span><span class="nav-label" id="navReferral">إحالة</span></button>
 <button class="nav-item" id="newsTab" type="button" onclick="showPage('account')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="nav-label" id="navNews">حسابي</span><span class="oxide-new-badge" id="newsUnreadBadge" aria-label="أخبار جديدة"></span></button>
@@ -1250,7 +1250,7 @@ function showPage(page){
  if(account){if(!userIdLoaded)loadUserId();if(!referralLoaded)loadReferral().then(renderAccountProfile);renderAccountProfile();const lang=document.getElementById("accountLanguage");if(lang)lang.value=currentLanguage;}
  if(skills)renderOxideSkills();
  if(rewards){loadRewards();loadIsland()}
- if(page==="missions"){const balance=document.getElementById("missionTopBalance");if(balance&&rewardPoints>0)balance.textContent=rewardPoints.toLocaleString();}
+ if(page==="missions"){loadMissionStatus();const balance=document.getElementById("missionTopBalance");if(balance&&rewardPoints>0)balance.textContent=rewardPoints.toLocaleString();}
  if(support){markSupportMessagesSeen();loadSupportMessages(true)}
  if(referral)loadReferral();
  if(news)loadNewsPosts();
