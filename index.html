@@ -665,6 +665,37 @@ body{position:relative!important}
 .oxide-skills-page{padding:10px 2px 28px;text-align:right;color:#fff}.skills-back{border:1px solid rgba(198,145,255,.35);border-radius:10px;padding:9px 13px;background:rgba(30,17,49,.9);color:#e8d5ff;font:700 11px Arial;cursor:pointer}.skills-hero{position:relative;overflow:hidden;margin:13px 0 15px;padding:22px 15px 18px;text-align:center;border:1px solid rgba(188,119,255,.38);border-radius:20px;background:radial-gradient(circle at 50% 0%,rgba(156,73,220,.28),transparent 58%),linear-gradient(145deg,rgba(43,22,68,.96),rgba(9,8,25,.98));box-shadow:0 12px 30px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.07)}.skills-kicker{font-size:9px;letter-spacing:2px;color:#cda0f4;font-weight:900}.skills-emblem{width:48px;height:48px;margin:12px auto 7px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(145deg,#a34ce4,#4c1b77);border:1px solid #d9aaff;color:white;box-shadow:0 0 24px #9c43f055}.skills-emblem svg{width:28px;height:28px}.skills-hero h2{margin:7px 0 5px;font-size:23px;text-shadow:0 0 15px #a64aff}.skills-hero p{margin:0;color:#bda9d2;font-size:11px;line-height:1.7}.skills-wallet{display:flex;flex-direction:column;gap:3px;width:max-content;min-width:145px;margin:15px auto 0;padding:9px 22px;border:1px solid rgba(194,143,255,.28);border-radius:12px;background:rgba(5,5,18,.42)}.skills-wallet span{font-size:9px;color:#bda5d9}.skills-wallet strong{font-size:22px;color:#fff;font-variant-numeric:tabular-nums}.skills-wallet small{font-size:8px;letter-spacing:1.7px;color:#b78bdf}.skills-grid{display:grid;grid-template-columns:1fr;gap:12px}.skill-card{position:relative;overflow:hidden;padding:15px;border:1px solid rgba(177,119,231,.3);border-radius:17px;background:linear-gradient(145deg,rgba(36,22,57,.97),rgba(10,9,27,.98));box-shadow:0 9px 22px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.045)}.skill-card:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,#d49aff,#7430b5);opacity:.8}.skill-card-head{display:flex;align-items:center;justify-content:space-between}.skill-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(160,83,220,.16);border:1px solid rgba(201,150,255,.3);color:#e7c8ff}.skill-icon svg{width:23px;height:23px}.skill-chip{font-size:8px;letter-spacing:1.2px;color:#c89bea;border:1px solid rgba(192,140,245,.28);border-radius:20px;padding:5px 8px}.skill-card h3{margin:12px 0 5px;font-size:16px;color:#f7edff}.skill-card>p{margin:0 0 13px;color:#a994bd;font-size:10px;line-height:1.7;min-height:32px}.skill-current{display:flex;align-items:center;justify-content:space-between;color:#a994bd;font-size:10px}.skill-current strong{color:#e6c8ff;font-size:12px}.skill-rate{display:flex;align-items:baseline;gap:7px;margin:9px 0}.skill-rate strong{font-size:25px;font-weight:950;color:#fff;text-shadow:0 0 13px #a64aff66}.skill-rate small{font-size:9px;color:#a994bd}.skill-next{min-height:28px;padding:7px 9px;border-radius:8px;background:rgba(155,87,206,.1);color:#d5b1f2;font-size:9px}.skill-upgrade{width:100%;margin-top:10px;padding:12px;border:1px solid rgba(214,166,255,.55);border-radius:10px;background:linear-gradient(110deg,#7b2db5,#542078);color:#fff;font:900 11px Arial;box-shadow:0 5px 15px rgba(111,42,164,.2);cursor:pointer;transition:transform .15s,filter .15s}.skill-upgrade:active{transform:scale(.98)}.skill-upgrade:disabled{opacity:.48;filter:grayscale(.55);cursor:not-allowed;box-shadow:none}.skill-upgrade.is-affordable{border-color:#d8a8ff;background:linear-gradient(110deg,#a33ee8,#7029bb 55%,#542078);box-shadow:0 0 9px rgba(184,91,255,.72),0 0 22px rgba(147,55,224,.48),inset 0 1px rgba(255,255,255,.24);animation:skillReadyGlow 1.8s ease-in-out infinite}.skill-upgrade.is-affordable:active{box-shadow:0 0 8px #bd78ff;filter:brightness(1.12)}@keyframes skillReadyGlow{0%,100%{box-shadow:0 0 8px rgba(184,91,255,.55),0 0 16px rgba(147,55,224,.28),inset 0 1px rgba(255,255,255,.2)}50%{box-shadow:0 0 13px rgba(207,145,255,.95),0 0 27px rgba(147,55,224,.62),inset 0 1px rgba(255,255,255,.28)}}.skills-note{display:flex;align-items:flex-start;gap:8px;margin-top:14px;padding:11px;border:1px solid rgba(255,197,91,.2);border-radius:11px;background:rgba(83,57,19,.13);color:#bda987;font-size:9px;line-height:1.7}.skills-note span{color:#ffd36a;font-size:13px}.skills-status{min-height:20px;margin-top:9px;text-align:center;color:#d9b5ff;font-size:10px;line-height:1.6}
 @media(min-width:520px){.skills-grid{grid-template-columns:1fr}.oxide-skills-page{max-width:430px;margin:auto}}@media(max-width:380px){.tap-skills-shortcut{left:calc(50% - min(35vw,135px) - 47px);width:40px;height:44px;border-radius:13px}.tap-meter{padding:11px 12px}}
 
+
+/* OXIDE HOME SIZE + EDGE SKILLS BUTTON CORRECTION */
+@media(max-width:600px){
+  #homePage.tap-home{padding:12px 12px 14px!important;gap:0}
+  #homePage .tap-heading h1{font-size:clamp(22px,6vw,26px)!important;margin:7px 0 5px!important}
+  #homePage .tap-heading p{font-size:12px!important;line-height:1.5!important}
+  #homePage .tap-eyebrow{font-size:9px!important;letter-spacing:2px!important}
+  #homePage .tap-balance{margin:12px auto 3px!important;padding:10px 25px 9px!important;min-width:175px!important}
+  #homePage .tap-balance span{font-size:10px!important}
+  #homePage .tap-balance strong{font-size:29px!important}
+  #homePage .tap-balance small{font-size:8px!important}
+  #homePage .tap-stage{height:clamp(285px,39svh,335px)!important;min-height:285px!important;position:relative!important;overflow:visible!important}
+  #homePage .tap-coin{width:min(68vw,245px)!important;height:min(68vw,245px)!important;max-width:245px!important;max-height:245px!important}
+  #homePage .tap-aura{width:270px!important;height:270px!important}
+  #homePage .tap-purple-flame{width:270px!important;height:280px!important}
+  #homePage .tap-hint{bottom:7px!important;font-size:10px!important}
+  #homePage .tap-skills-shortcut{left:-4px!important;right:auto!important;top:50%!important;transform:translateY(-50%)!important;width:46px!important;height:50px!important}
+  #homePage .tap-meter{margin:5px auto 0!important;padding:10px 12px!important;width:100%!important;max-width:360px!important}
+  #homePage .tap-meter-top{font-size:10px!important}
+  #homePage .tap-meter-top strong{font-size:13px!important}
+  #homePage .tap-meter-foot{font-size:9px!important}
+  #homePage .tap-footer{margin-top:8px!important;font-size:11px!important}
+  #homePage .tap-fire{font-size:19px!important}
+  #homePage .tap-notice{margin:8px auto 0!important;font-size:9px!important;line-height:1.5!important;max-width:340px!important}
+}
+@media(max-width:380px){
+  #homePage .tap-stage{height:clamp(270px,37svh,310px)!important;min-height:270px!important}
+  #homePage .tap-coin{width:min(65vw,225px)!important;height:min(65vw,225px)!important}
+  #homePage .tap-skills-shortcut{left:-5px!important;width:43px!important;height:47px!important}
+}
+
 </style>
 </head>
 <body>
