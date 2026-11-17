@@ -919,6 +919,13 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 </style>
 </head>
 <body>
+<script>
+(function(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ const inTelegram=!!(tg&&(tg.initData||tg.platform&&tg.platform!=="unknown"));
+ if(!inTelegram)document.body.classList.add("outside-telegram");
+})();
+</script>
 <section class="telegram-gate" aria-labelledby="telegramGateTitle">
  <div class="telegram-gate-card">
   <div class="telegram-gate-icon">🚀</div>
