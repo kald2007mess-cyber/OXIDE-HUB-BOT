@@ -166,7 +166,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     if (String(userId).toLowerCase() === String(referrer.user_id).toLowerCase()) {
-      return json({ success: false, error: "SELF_REFERRAL_NOT_ALLOWED" }, 400);
+      return json({ success: false, error: "SELF_REFERRAL" }, 400);
     }
 
     const now = Math.floor(Date.now() / 1000);
@@ -179,7 +179,7 @@ export async function onRequestPost({ request, env }) {
       "SELECT id FROM referrals WHERE referred_id = ? LIMIT 1"
     ).bind(userId).first();
     if (already) {
-      return json({ success: false, error: "REFERRAL_ALREADY_USED" }, 409);
+      return json({ success: true, alreadyRegistered: true }, 200);
     }
 
     // Keep the existing database trigger compatible: insert the historical
