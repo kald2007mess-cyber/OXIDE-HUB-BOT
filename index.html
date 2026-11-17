@@ -582,6 +582,15 @@ footer{padding-bottom:18px}
 .tap-stage{height:355px}
 @media(max-width:380px){.tap-coin{width:228px;height:228px}.tap-stage{height:330px}}
 
+
+/* Larger tap coin and cent-value reward popup */
+.tap-stage{height:405px}
+.tap-coin{width:310px;height:310px;max-width:86vw;max-height:86vw;filter:drop-shadow(0 22px 18px #080016dd) drop-shadow(0 0 22px #a43cff77)}
+.tap-coin:active{transform:translateY(11px) scale(.93);filter:drop-shadow(0 8px 8px #080016dd) drop-shadow(0 0 24px #bd65ff99)}
+.tap-plus{font-size:29px;letter-spacing:.3px;color:#f7e8ff;text-shadow:0 0 9px #fff,0 0 18px #b34cff,0 3px 8px #21043b}
+.tap-balance strong{font-variant-numeric:tabular-nums}
+@media(max-width:420px){.tap-stage{height:390px}.tap-coin{width:290px;height:290px}}
+@media(max-width:360px){.tap-stage{height:365px}.tap-coin{width:265px;height:265px}}
 </style>
 </head>
 <body>
@@ -644,7 +653,7 @@ footer{padding-bottom:18px}
     <div class="tap-hint">اضغط هنا</div>
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
-  <div class="tap-footer"><span class="tap-fire">🔥</span><span>كل ضغطة = <b>+1</b> عملة</span></div>
+  <div class="tap-footer"><span class="tap-fire">🔥</span><span>كل ضغطة = <b>+0.01</b> عملة</span></div>
   <div id="tapNotice" class="tap-notice" role="status">نظام النقر التجريبي — مزامنة الرصيد مع قاعدة البيانات لم تُفعّل بعد.</div>
 </div>
 <section id="supportPage" style="display:none"><button class="support-top-button" id="supportBackButton" type="button" onclick="showPage('home')" style="margin:12px 0">⬅ العودة للرئيسية</button><section class="support-box" id="supportBox"><h2 class="support-title" id="supportTitle">💬 الدعم الفني</h2><p class="support-description" id="supportDescription">أرسل رسالتك وسيرد عليك فريق OXIDE HUB هنا.</p><div class="support-messages" id="supportMessages" aria-live="polite"><div class="support-empty" id="supportEmpty">جاري تحميل المحادثة...</div></div><form class="support-form" id="supportForm" onsubmit="sendSupportMessage(event); return false;"><textarea class="support-input" id="supportInput" maxlength="2000" rows="2" placeholder="اكتب رسالتك هنا..." required></textarea><button class="support-send" id="supportSend" type="submit">إرسال</button></form><div class="support-status" id="supportStatus" role="status"></div><div class="support-media-note" id="supportMediaNote">هذه النسخة تدعم الرسائل النصية. دعم الصور والفيديو يحتاج إضافة تقنية منفصلة.</div></section></section>
@@ -1686,9 +1695,9 @@ function linkGooglePlayAccount(){
  if(!coin||!balance||!layer)return;
  let total=0;
  coin.addEventListener('click',function(){
-   total+=1;balance.textContent=total.toLocaleString('en-US');
+   total=Math.round((total+0.01)*100)/100;balance.textContent=total.toFixed(2);
    coin.classList.remove('tap-hit');void coin.offsetWidth;coin.classList.add('tap-hit');
-   const el=document.createElement('span');el.className='tap-plus';el.textContent='+1 🪙';
+   const el=document.createElement('span');el.className='tap-plus';el.textContent='+0.01 🪙';
    el.style.left=(42+Math.random()*16)+'%';el.style.top=(38+Math.random()*18)+'%';layer.appendChild(el);
    setTimeout(()=>el.remove(),900);
  });
