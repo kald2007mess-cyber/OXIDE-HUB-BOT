@@ -1,5 +1,6 @@
 
 import { getVisitor, json } from "../_lib/session.js";
+import { ensureSupportTables } from "../_lib/support.js";
 
 export async function onRequestGet({ request, env }) {
   try {
@@ -7,6 +8,7 @@ export async function onRequestGet({ request, env }) {
       return json({ error: "Server configuration missing" }, 500);
     }
 
+    await ensureSupportTables(env.DB);
     const userId = await getVisitor(request, env);
 
     if (!userId) {
