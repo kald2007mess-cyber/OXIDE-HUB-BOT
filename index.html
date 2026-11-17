@@ -542,6 +542,29 @@ footer{padding-bottom:18px}
 @media(max-width:360px){.nav-label{font-size:9px!important}.nav-item{min-height:56px!important}.reward-image{height:100px!important}.account-action{gap:9px}}
 
 
+/* OXIDE HUB HOME V2 - responsive dashboard additions */
+.tap-home{padding-top:22px;padding-bottom:26px}
+.tap-heading h1{letter-spacing:.1px}
+.tap-balance{min-width:min(230px,80%);margin-top:18px;padding:14px 30px 12px}
+.tap-stage{height:325px}
+.tap-coin{width:min(70vw,270px);height:min(70vw,270px)}
+.tap-session-card{max-width:330px;margin:7px auto 20px;padding:12px 14px;display:flex;align-items:center;gap:11px;text-align:right;border:1px solid rgba(196,133,255,.28);border-radius:14px;background:linear-gradient(120deg,rgba(48,22,75,.78),rgba(12,8,29,.88));box-shadow:inset 0 1px rgba(255,255,255,.05)}
+.tap-session-icon{width:38px;height:38px;display:grid;place-items:center;flex-shrink:0;border-radius:12px;background:rgba(166,91,236,.18);color:#e0b7ff;font-size:22px}
+.tap-session-copy{display:flex;flex:1;flex-direction:column;gap:3px}
+.tap-session-copy strong{font-size:18px;color:#fff}
+.tap-session-copy span{font-size:10px;color:#bda5d9}
+.tap-session-tag{font-size:9px;letter-spacing:1px;color:#b8ffd9;border:1px solid #3c9b70;border-radius:20px;padding:5px 8px}
+.tap-quick-title{margin:18px 0 10px;color:#e9d8ff;font-size:13px;font-weight:900;text-align:right}
+.tap-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:390px;margin:0 auto}
+.tap-quick-card{min-width:0;min-height:132px;padding:13px 10px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:right;border:1px solid rgba(174,111,231,.32);border-radius:14px;background:linear-gradient(145deg,rgba(42,22,66,.88),rgba(11,9,27,.92));color:#fff;font-family:Arial,sans-serif;cursor:pointer;transition:transform .15s,border-color .15s}
+.tap-quick-card:active{transform:scale(.97);border-color:#c18aff}
+.tap-quick-icon{font-size:22px}
+.tap-quick-name{font-size:12px;font-weight:900;color:#f4eaff}
+.tap-quick-card small{font-size:10px;color:#bda5d9;line-height:1.5}
+.tap-quick-card>b{margin-top:auto;font-size:10px;color:#d2a5ff}
+.tap-notice{max-width:340px;margin-top:16px}
+@media(max-width:380px){.tap-stage{height:285px}.tap-coin{width:205px;height:205px}.tap-quick-card{padding:11px 8px}.tap-quick-name{font-size:11px}}
+
 /* OXIDE TAP-TO-EARN HOME */
 .tap-home{min-height:calc(100vh - 180px);padding:28px 16px 22px;text-align:center;color:#fff;position:relative;overflow:hidden}
 .tap-heading{position:relative;z-index:1}.tap-eyebrow{font-size:10px;letter-spacing:2.4px;color:#d2a5ff;font-weight:900}.tap-heading h1{font-size:25px;margin:9px 0 5px;color:#fff;text-shadow:0 0 22px #8c39e8}.tap-heading p{margin:0;color:#bda5d9;font-size:13px}
@@ -619,17 +642,22 @@ footer{padding-bottom:18px}
 <button class="nav-item" id="newsTab" type="button" onclick="showPage('account')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="nav-label" id="navNews">حسابي</span><span class="oxide-new-badge" id="newsUnreadBadge" aria-label="أخبار جديدة"></span></button>
 </nav>
 <div id="homePage" class="tap-home">
-  <div class="tap-heading"><span class="tap-eyebrow">OXIDE HUB • TAP TO EARN</span><h1>اجمع عملات OXIDE</h1><p>اضغط على العملة لتحصل على +1</p></div>
-  <div class="tap-balance"><span>رصيد النقرات</span><strong id="tapBalance">0</strong><small>OXIDE COINS</small></div>
+  <div class="tap-heading"><span class="tap-eyebrow">OXIDE HUB • TAP TO EARN</span><h1>اجمع عملات OXIDE</h1><p>كل ضغطة تقرّبك من مكافأتك القادمة</p></div>
+  <div class="tap-balance"><span>رصيد النقرات التجريبي</span><strong id="tapBalance">0.00</strong><small>OXIDE COINS</small></div>
   <div class="tap-stage">
     <div class="tap-aura"></div>
-
     <button class="tap-coin" id="tapCoin" type="button" aria-label="اضغط لجمع عملة"><img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="OXIDE purple flame coin"></button>
-    <div class="tap-hint">اضغط هنا</div>
+    <div class="tap-hint">اضغط على العملة</div>
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
-  <div class="tap-footer"><span class="tap-fire">🔥</span><span>كل ضغطة = <b>+0.01</b> عملة</span></div>
-  <div id="tapNotice" class="tap-notice" role="status">نظام النقر التجريبي — مزامنة الرصيد مع قاعدة البيانات لم تُفعّل بعد.</div>
+  <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b>+0.01</b> عملة</span></div>
+  <div class="tap-session-card"><div class="tap-session-icon">✦</div><div class="tap-session-copy"><strong id="tapSessionCount">0</strong><span>ضغطاتك في هذه الجلسة</span></div><div class="tap-session-tag">LIVE</div></div>
+  <div class="tap-quick-title">اكتشف المزيد في OXIDE</div>
+  <div class="tap-quick-grid">
+    <button class="tap-quick-card" type="button" onclick="showPage('rewards')"><span class="tap-quick-icon">🎁</span><span class="tap-quick-name">المكافآت والعروض</span><small>شاهد طرق جمع النقاط</small><b>استكشف ←</b></button>
+    <button class="tap-quick-card" type="button" onclick="showPage('referral')"><span class="tap-quick-icon">👥</span><span class="tap-quick-name">دعوة الأصدقاء</span><small>تابع إحالاتك ومكافآتها</small><b>افتح الإحالات ←</b></button>
+  </div>
+  <div id="tapNotice" class="tap-notice" role="status">تنبيه: رصيد النقرات تجريبي ومحلي لهذه الجلسة، ولم تتم مزامنته مع محفظة الحساب بعد.</div>
 </div>
 <section id="supportPage" style="display:none"><button class="support-top-button" id="supportBackButton" type="button" onclick="showPage('home')" style="margin:12px 0">⬅ العودة للرئيسية</button><section class="support-box" id="supportBox"><h2 class="support-title" id="supportTitle">💬 الدعم الفني</h2><p class="support-description" id="supportDescription">أرسل رسالتك وسيرد عليك فريق OXIDE HUB هنا.</p><div class="support-messages" id="supportMessages" aria-live="polite"><div class="support-empty" id="supportEmpty">جاري تحميل المحادثة...</div></div><form class="support-form" id="supportForm" onsubmit="sendSupportMessage(event); return false;"><textarea class="support-input" id="supportInput" maxlength="2000" rows="2" placeholder="اكتب رسالتك هنا..." required></textarea><button class="support-send" id="supportSend" type="submit">إرسال</button></form><div class="support-status" id="supportStatus" role="status"></div><div class="support-media-note" id="supportMediaNote">هذه النسخة تدعم الرسائل النصية. دعم الصور والفيديو يحتاج إضافة تقنية منفصلة.</div></section></section>
 <section id="vipPage" style="display:none"><section class="island-section"><h2 class="island-title">👑 OXIDE VIP</h2><div class="pending-note" style="text-align:center;font-size:18px;font-weight:bold;color:#ffc52e">🔒 SOON</div><p style="color:#b8c9dd;line-height:1.8">اشتراك VIP سيكون متاحًا قريبًا.</p></section></section><section id="newsPage">
@@ -1666,11 +1694,13 @@ function linkGooglePlayAccount(){
 
 /* Tap-to-earn visual interaction (local preview only; server wallet API not connected) */
 (function(){
- const coin=document.getElementById('tapCoin'),balance=document.getElementById('tapBalance'),layer=document.getElementById('tapFloatLayer');
+ const coin=document.getElementById('tapCoin'),balance=document.getElementById('tapBalance'),layer=document.getElementById('tapFloatLayer'),sessionCount=document.getElementById('tapSessionCount');
  if(!coin||!balance||!layer)return;
- let total=0;
+ let total=0,taps=0;
  coin.addEventListener('click',function(){
-   total=Math.round((total+0.01)*100)/100;balance.textContent=total.toFixed(2);
+   total=Math.round((total+0.01)*100)/100;taps++;
+   balance.textContent=total.toFixed(2);
+   if(sessionCount)sessionCount.textContent=String(taps);
    coin.classList.remove('tap-hit');void coin.offsetWidth;coin.classList.add('tap-hit');
    const el=document.createElement('span');el.className='tap-plus';el.textContent='+0.01 🪙';
    el.style.left=(42+Math.random()*16)+'%';el.style.top=(38+Math.random()*18)+'%';layer.appendChild(el);
