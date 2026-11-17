@@ -806,7 +806,8 @@ function showPage(page){
   document.getElementById("vipPage").style.display=page==="vip"?"block":"none";
   document.getElementById("newsPage").style.display=news?"block":"none";
   document.getElementById("supportPage").style.display=support?"block":"none";
-  document.getElementById("newsTab").classList.toggle("active",news);
+  document.getElementById("accountPage").style.display="none";
+  document.getElementById("newsTab").classList.toggle("active",account);
   if(support){markSupportMessagesSeen();loadSupportMessages(true)}
   if(news)loadNewsPosts();
   return;
