@@ -23,6 +23,22 @@ async function ensureOrdersTable(DB) {
       telegram_message_id INTEGER
     )
   `).run();
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS point_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      delta INTEGER NOT NULL,
+      balance_after INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      reference_type TEXT NOT NULL,
+      reference_id TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )
+  `).run();
+  await DB.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_point_ledger_user
+    ON point_ledger(user_uuid, created_at DESC, id DESC)
+  `).run();
 }
 
 export async function onRequestGet({ request, env }) {
