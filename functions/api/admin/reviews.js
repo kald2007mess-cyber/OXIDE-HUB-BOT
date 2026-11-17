@@ -250,7 +250,15 @@ async function reviewRedemption(DB, id, decision) {
     DB.prepare(`
       UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = visitors.user_id)
       WHERE user_id = (SELECT user_uuid FROM redemption_orders WHERE id = ? AND refund_token = ?)
-    `).bind(id, refundToken)
+    `).bind(id, refundToken),
+    DB.prepare(`
+      INSERT INTO point_ledger
+        (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+      SELECT users.user_uuid,redemption_orders.points_cost,users.points,
+             'redemption_refund','redemption',CAST(redemption_orders.id AS TEXT),?
+      FROM users JOIN redemption_orders ON redemption_orders.user_uuid = users.user_uuid
+      WHERE redemption_orders.id = ? AND redemption_orders.refund_token = ?
+    `).bind(now,id,refundToken)
   ]);
 
   if (Number(results[0]?.meta?.changes || 0) !== 1 ||
