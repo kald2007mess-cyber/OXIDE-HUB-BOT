@@ -34,7 +34,6 @@ export async function onRequestPost({ request, env }) {
     // The reply is stored in the same conversation and appears in the user's support tab.
     if (message.reply_to_message &&
         String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID) &&
-        String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
         env.DB) {
       await ensureSupportTables(env.DB);
       const original = await env.DB.prepare(`
