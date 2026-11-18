@@ -805,7 +805,7 @@ async function deleteNews(id){if(newsBusy)return;if(!confirm("هل أنت متأ
 
 /* مراجعة طلبات المستخدمين من لوحة التحكم */
 let currentReviewType="missions",reviewsBusy=false,reviewProofUrls=[];
-async function reviewsRequest(data){const response=await fetch("/api/admin/reviews",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});if(data.action==="proof"){if(!response.ok)throw new Error("PROOF_LOAD_FAILED");return await response.blob();}const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"REVIEWS_API_ERROR");return result;}
+async function reviewsRequest(data){const response=await fetch("/api/admin/reviews",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});if(data.action==="proof"){if(!response.ok)throw new Error("PROOF_LOAD_FAILED");return await response.blob();}const result=await response.json();if(!response.ok||!result.success)throw new Error([result.error||"REVIEWS_API_ERROR",result.details||""].filter(Boolean).join(": "));return result;}
 function openReviews(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("reviewsPage").classList.remove("hidden");loadReviews("missions");}
 function closeReviews(){document.getElementById("reviewsPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");clearReviewProofs();}
 function clearReviewProofs(){reviewProofUrls.forEach(url=>URL.revokeObjectURL(url));reviewProofUrls=[];}
