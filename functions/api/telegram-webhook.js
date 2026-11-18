@@ -70,13 +70,7 @@ export async function onRequestPost({ request, env }) {
         const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "🔐 لوحة إدارة OXIDE HUB",
-          reply_markup: {
-            inline_keyboard: [[{
-              text: "فتح لوحة الإدارة",
-              web_app: { url: adminUrl }
-            }]]
-          }
+          text: "🔐 لوحة إدارة OXIDE HUB: افتح صفحة الإدارة من رابط الموقع."
         });
       }
       return json({ ok: true });
@@ -115,34 +109,21 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Remove the two bot command-menu entries ("Open bot" and "Admin panel").
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
-      commands: []
-    });
+    // Remove bot command-menu entries and reset the chat menu button.
+    // /start and /admin continue to work when typed manually.
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", { commands: [] });
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
       commands: [],
       scope: { type: "all_private_chats" }
     });
-
-    // Keep the Mini App launch button as a real Telegram Web App entry point.
-    // This is required for Telegram to provide signed initData to the app.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: {
-        type: "web_app",
-        text: "Open OXIDE HUB",
-        web_app: { url: env.TELEGRAM_WEBAPP_URL }
-      }
+      menu_button: { type: "default" }
     });
 
+    // Send the welcome message without any inline keyboard buttons.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀\nاضغط الزر أدناه لفتح التطبيق داخل Telegram:",
-      reply_markup: {
-        inline_keyboard: [[{
-          text: "🚀 Open OXIDE HUB",
-          web_app: { url: env.TELEGRAM_WEBAPP_URL }
-        }]]
-      }
+      text: "مرحبًا بك في OXIDE HUB 🚀\\nاكتب /start في أي وقت لعرض رسالة الترحيب."
     });
     return json({ ok: true });
   } catch {
