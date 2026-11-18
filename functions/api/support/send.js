@@ -39,12 +39,27 @@ export async function onRequestPost({ request, env }) {
     const now = Math.floor(Date.now() / 1000);
 
     stage = "CREATE_CONVERSATION";
-    await env.DB.prepare(`
-      INSERT INTO support_conversations
-      (user_id, status, created_at, updated_at)
-      VALUES (?, 'open', ?, ?)
-      ON CONFLICT(user_id) DO NOTHING
-    `).bind(userId, now, now).run();
+    const conversationSchema = await env.DB.prepare(
+      "PRAGMA table_info(support_conversations)"
+    ).all();
+    const conversationColumnNames = new Set(
+      (conversationSchema.results || []).map(column => column.name)
+    );
+    if (conversationColumnNames.has("user_uuid")) {
+      await env.DB.prepare(`
+        INSERT INTO support_conversations
+        (user_id, user_uuid, status, created_at, updated_at)
+        VALUES (?, ?, 'open', ?, ?)
+        ON CONFLICT(user_id) DO NOTHING
+      `).bind(userId, userId, now, now).run();
+    } else {
+      await env.DB.prepare(`
+        INSERT INTO support_conversations
+        (user_id, status, created_at, updated_at)
+        VALUES (?, 'open', ?, ?)
+        ON CONFLICT(user_id) DO NOTHING
+      `).bind(userId, now, now).run();
+    }
 
     stage = "READ_CONVERSATION";
     const conversation = await env.DB.prepare(`
