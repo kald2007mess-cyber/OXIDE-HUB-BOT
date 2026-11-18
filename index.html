@@ -2233,21 +2233,6 @@ function renderMissionCards(){
     card.appendChild(rewardRow);
 
     const targetUrl = String(mission.targetUrl || "");
-    if(/^https:\/\/[^\s]+$/i.test(targetUrl)){
-      const link = document.createElement("a");
-      link.className = "mission-link-button";
-      link.href = targetUrl;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = ui.open;
-      link.addEventListener("click",()=>{
-        try{sessionStorage.setItem("oxide_mission_started_"+id,"1")}catch(error){}
-        const proofBox=card.querySelector(".mission-proof-box");
-        if(proofBox)proofBox.style.display="block";
-      });
-      card.appendChild(link);
-    }
-
     const message = document.createElement("div");
     message.className = "mission-message";
     message.setAttribute("role", "status");
@@ -2266,18 +2251,40 @@ function renderMissionCards(){
     }
 
     if(String(mission.platform||"").toLowerCase()==="telegram_join"){
-      const joinButton = card.querySelector(".mission-link-button");
-      if(joinButton) joinButton.textContent = missionLanguage==="ar" ? "انضم إلى قناة تيليجرام ↗" : missionLanguage==="ru" ? "Вступить в Telegram-канал ↗" : "Join Telegram Channel ↗";
       const verifyButton = document.createElement("button");
       verifyButton.type = "button";
       verifyButton.className = "mission-submit-button";
-      verifyButton.textContent = status==="approved" ? (missionLanguage==="ar"?"مكتملة ✓":"Completed ✓") : (missionLanguage==="ar"?"تحقق واحصل على 50 نقطة":"Verify & claim 50 points");
-      verifyButton.disabled = status==="approved";
-      verifyButton.addEventListener("click",()=>verifyTelegramChannelMission(id,verifyButton,message));
+      let channelStep = "start";
+      verifyButton.textContent = missionLanguage==="ar" ? "إكمال" : missionLanguage==="ru" ? "Выполнить" : "Complete";
+      verifyButton.addEventListener("click",()=>{
+        if(channelStep === "start"){
+          channelStep = "verify";
+          verifyButton.textContent = missionLanguage==="ar" ? "تحقق" : missionLanguage==="ru" ? "Проверить" : "Verify";
+          if(message) message.textContent = missionLanguage==="ar" ? "اشترك في القناة ثم ارجع واضغط تحقق." : "Join the channel, return here, then tap Verify.";
+          openTelegramMissionChannel(targetUrl, true);
+          return;
+        }
+        verifyTelegramChannelMission(id,verifyButton,message,targetUrl);
+      });
       card.append(verifyButton,message);
       if(status==="pending") message.textContent = mt("pendingMessage");
       list.appendChild(card);
       return;
+    }
+
+    if(/^https:\/\/[^\s]+$/i.test(targetUrl)){
+      const link = document.createElement("a");
+      link.className = "mission-link-button";
+      link.href = targetUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = ui.open;
+      link.addEventListener("click",()=>{
+        try{sessionStorage.setItem("oxide_mission_started_"+id,"1")}catch(error){}
+        const proofBox=card.querySelector(".mission-proof-box");
+        if(proofBox)proofBox.style.display="block";
+      });
+      card.appendChild(link);
     }
 
     const form = document.createElement("form");
@@ -2441,7 +2448,23 @@ async function loadMissionStatus(){
   }
 }
 
-async function verifyTelegramChannelMission(missionId,button,message){
+function openTelegramMissionChannel(url, fromClick=false){
+ const channelUrl = /^https:\/\/t\.me\/[A-Za-z0-9_+/?=-]+$/i.test(String(url||""))
+   ? String(url) : "https://t.me/OxideHubOfficial";
+ try{
+  if(window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink==="function"){
+   window.Telegram.WebApp.openTelegramLink(channelUrl);
+   return;
+  }
+ }catch(error){console.warn("Telegram channel link:",error);}
+ if(fromClick){
+  const opened=window.open(channelUrl,"_blank","noopener,noreferrer");
+  if(opened)return;
+ }
+ window.location.href=channelUrl;
+}
+
+async function verifyTelegramChannelMission(missionId,button,message,channelUrl){
  if(missionSubmittingId!==null)return;
  const original=button.textContent;
  missionSubmittingId=Number(missionId);
@@ -2456,13 +2479,19 @@ async function verifyTelegramChannelMission(missionId,button,message){
   const data=await response.json();
   if(!response.ok||!data.success){
    const errors={
-    CHANNEL_NOT_JOINED:currentLanguage==="ar"?"لم تنضم إلى القناة بعد. انضم أولاً ثم اضغط تحقق.":"You have not joined the channel yet. Join first, then verify.",
+    CHANNEL_NOT_JOINED:currentLanguage==="ar"?"لم تشترك في القناة بعد. سنفتح القناة مجددًا؛ اشترك ثم ارجع واضغط تحقق.":"You have not joined the channel yet. The channel will reopen; join, return, and tap Verify.",
     BOT_NOT_ADMIN_OR_CHANNEL_UNAVAILABLE:currentLanguage==="ar"?"تعذر التحقق. تأكد أن البوت مشرف في القناة.":"Verification unavailable. Make sure the bot is an admin in the channel.",
     TELEGRAM_CHECK_FAILED:currentLanguage==="ar"?"تعذر الاتصال بتيليجرام. حاول لاحقًا.":"Could not contact Telegram. Please try again.",
     NO_VISITOR_SESSION:mt("session"),
     TELEGRAM_IDENTITY_NOT_FOUND:mt("session")
    };
-   throw new Error(errors[data.error]||data.error||"Verification failed");
+   if(data.error==="CHANNEL_NOT_JOINED"){
+    if(message)message.textContent=errors.CHANNEL_NOT_JOINED;
+    openTelegramMissionChannel(channelUrl, false);
+    return;
+   }
+   const detail=data.diagnostic ? " ("+data.diagnostic+")" : "";
+   throw new Error((errors[data.error]||data.error||"Verification failed")+detail);
   }
   if(message)message.textContent=data.alreadyCompleted
     ? (currentLanguage==="ar"?"هذه المهمة مكتملة مسبقًا.":"This mission is already completed.")
