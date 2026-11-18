@@ -29,7 +29,6 @@ export async function onRequestGet({ request, env }) {
     if (!userId) return json({ success:false, error:"NO_VISITOR_SESSION" },401);
     await ensureTables(env.DB);
     const user = await env.DB.prepare("SELECT points FROM users WHERE user_uuid = ? AND status = 'active'").bind(userId).first();
-    const legacy = await env.DB.prepare("SELECT points FROM visitors WHERE user_id = ?").bind(userId).first();
     const result = await env.DB.prepare(`
       SELECT m.id, m.title, m.description, m.platform, m.target_url,
              m.reward_points,
@@ -42,11 +41,12 @@ export async function onRequestGet({ request, env }) {
       WHERE COALESCE(m.enabled, 1) = 1
       ORDER BY m.id ASC
     `).bind(userId,userId).all();
-    return json({success:true,points:Number(user?.points ?? legacy?.points ?? 0),missions:(result.results||[]).map(m=>({
+    return json({success:true,points:Number(user?.points ?? 0),missions:(result.results||[]).map(m=>({
       id:Number(m.id),title:m.title,description:m.description,platform:m.platform,
       targetUrl:m.target_url,rewardPoints:Number(m.reward_points||0),status:m.status
     }))});
   } catch (error) {
+    console.error("Mission status API error:", error);
     return json({success:false,error:"MISSION_STATUS_FAILED"},500);
   }
 }
