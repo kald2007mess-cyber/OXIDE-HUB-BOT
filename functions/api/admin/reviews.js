@@ -170,6 +170,58 @@ async function reviewMission(DB, id, decision) {
       return { success: false, status: 409, error: "REQUEST_ALREADY_REVIEWED_OR_USER_MISSING" };
     }
 
+    // Release a referral reward only after the invited account completes
+    // a mission approved by an administrator. High-risk referrals remain held.
+    try {
+      const referral = await DB.prepare(`
+        SELECT referrer_id FROM referrals
+        WHERE referred_id = ? AND status = 'pending'
+        LIMIT 1
+      `).bind(submission.user_id).first();
+      if (referral?.referrer_id) {
+        const referralTime = Math.floor(Date.now() / 1000);
+        await DB.batch([
+          DB.prepare(`
+            UPDATE referrals SET status = 'rewarded', points_awarded = 50
+            WHERE referred_id = ? AND status = 'pending'
+              AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
+          `).bind(submission.user_id, id),
+          DB.prepare(`
+            UPDATE users SET points = points + 50, updated_at = ?
+            WHERE user_uuid = ? AND EXISTS (
+              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
+                AND points_awarded = 50
+            )
+          `).bind(referralTime, referral.referrer_id, submission.user_id),
+          DB.prepare(`
+            UPDATE users SET points = points + 30, updated_at = ?
+            WHERE user_uuid = ? AND EXISTS (
+              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
+                AND points_awarded = 50
+            )
+          `).bind(referralTime, submission.user_id, submission.user_id),
+          DB.prepare(`
+            UPDATE visitors SET points = (
+              SELECT points FROM users WHERE user_uuid = visitors.user_id
+            ) WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
+                AND points_awarded = 50
+            )
+          `).bind(referral.referrer_id, submission.user_id),
+          DB.prepare(`
+            UPDATE visitors SET points = (
+              SELECT points FROM users WHERE user_uuid = visitors.user_id
+            ) WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
+                AND points_awarded = 50
+            )
+          `).bind(submission.user_id, submission.user_id)
+        ]);
+      }
+    } catch (referralRewardError) {
+      console.error("Deferred referral reward failed:", referralRewardError);
+    }
+
     try {
       await notifyUser(DB, submission.user_id, "mission_approved",
         "✅ تمت الموافقة على مهمتك",
