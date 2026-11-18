@@ -1,4 +1,4 @@
-import { createSessionCookie, createSupportSessionCookie, revokeUserSessions, json } from "./_lib/session.js";
+import { createSessionCookie, createSupportSessionCookie, json } from "./_lib/session.js";
 
 const encoder = new TextEncoder();
 
