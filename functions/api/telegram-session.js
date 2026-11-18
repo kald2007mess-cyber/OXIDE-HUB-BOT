@@ -64,7 +64,7 @@ export async function onRequestPost({ request, env }) {
     const { telegramId, user } = verified;
     const userUuid = await stableUserUuid(telegramId);
     const now = Math.floor(Date.now() / 1000);
-    const publicId = "OX-" + userUuid.replace(/-/g, "").slice(0, 8).toUpperCase();
+    const initialPublicId = "OX-" + userUuid.replace(/-/g, "").slice(0, 8).toUpperCase();
 
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS telegram_identities (
@@ -78,7 +78,7 @@ export async function onRequestPost({ request, env }) {
       INSERT OR IGNORE INTO users
         (user_uuid, public_id, points, status, created_at, updated_at)
       VALUES (?, ?, 0, 'active', ?, ?)
-    `).bind(userUuid, publicId, now, now).run();
+    `).bind(userUuid, initialPublicId, now, now).run();
 
     const userRow = await env.DB.prepare(
       "SELECT user_uuid, status FROM users WHERE user_uuid = ? LIMIT 1"
