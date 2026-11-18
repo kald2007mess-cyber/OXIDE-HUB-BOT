@@ -134,6 +134,43 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "TELEGRAM_IDENTITY_CONFLICT" }, 409);
     }
 
+    // Persist the Telegram profile and a stable, collision-free public OX ID.
+    const publicId = "OX-" + telegramId;
+    await env.DB.prepare("UPDATE users SET public_id = ?, updated_at = ? WHERE user_uuid = ?")
+      .bind(publicId, now, userUuid).run();
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_profiles (
+        telegram_user_id TEXT PRIMARY KEY,
+        user_uuid TEXT NOT NULL UNIQUE,
+        public_id TEXT NOT NULL UNIQUE,
+        username TEXT,
+        first_name TEXT,
+        last_name TEXT,
+        photo_url TEXT,
+        telegram_url TEXT NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    `).run();
+    const username = String(user.username || "").replace(/^@/, "").slice(0, 64);
+    const photoUrl = typeof user.photo_url === "string" && /^https:\/\//i.test(user.photo_url)
+      ? user.photo_url.slice(0, 2048) : null;
+    await env.DB.prepare(`
+      INSERT INTO oxide_profiles
+        (telegram_user_id, user_uuid, public_id, username, first_name, last_name, photo_url, telegram_url, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(telegram_user_id) DO UPDATE SET
+        username = excluded.username,
+        first_name = excluded.first_name,
+        last_name = excluded.last_name,
+        photo_url = COALESCE(excluded.photo_url, oxide_profiles.photo_url),
+        updated_at = excluded.updated_at
+    `).bind(
+      telegramId, userUuid, publicId, username,
+      String(user.first_name || "").slice(0, 128),
+      String(user.last_name || "").slice(0, 128),
+      photoUrl, username ? "https://t.me/" + username : "tg://user?id=" + telegramId, now
+    ).run();
+
     const cookie = await createSessionCookie(env, env.DB, userUuid);
     const response = json({
       success: true,
