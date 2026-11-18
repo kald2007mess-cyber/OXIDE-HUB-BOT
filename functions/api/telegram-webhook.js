@@ -139,7 +139,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Owner-only command to publish the official OXIDE HUB explainer post to the channel.
-    const publishMatch = message.text.trim().match(/^\/publish_oxide(?:@\\w+)?$/);
+    const publishMatch = message.text.trim().match(/^\/publish_oxide(?:@\w+)?$/);
     if (publishMatch) {
       if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
           String(message.chat.type) === "private" &&
@@ -163,7 +163,7 @@ export async function onRequestPost({ request, env }) {
           "🔗https://t.me/OxideHubOfficial",
           "",
           "OXIDE HUB TEAM 🚀"
-        ].join("\\n");
+        ].join("\n");
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: "@OxideHubOfficial",
           text: postText,
