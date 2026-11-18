@@ -1485,7 +1485,74 @@ function redeemReward(offerId){const offer=rewardOffers.find(item=>Number(item.i
 function cancelRedemption(){selectedRedemptionOffer=null;document.getElementById("redeemInlineForm").hidden=true;document.getElementById("redeemUuidInput").value="";}
 function prependPendingRewardOrder(orderId,offer){const list=document.getElementById("rewardOrdersList");if(!list)return;const item=document.createElement("div");item.className="reward-order-item";const info=document.createElement("div");info.className="reward-order-info";const name=document.createElement("div");name.className="reward-order-name";name.textContent=String(offer?.name||"طلب استبدال");const meta=document.createElement("div");meta.className="reward-order-meta";meta.textContent="#"+Number(orderId)+" · "+Number(offer?.points||0).toLocaleString()+" نقطة · "+new Date().toLocaleString();info.append(name,meta);const status=document.createElement("div");status.className="reward-order-status";const spinner=document.createElement("span");spinner.className="reward-order-spinner";const label=document.createElement("span");label.textContent=ox("orderPending");status.append(spinner,label);item.append(info,status);list.prepend(item);}
 async function submitRedemption(){if(redeeming||!selectedRedemptionOffer)return;const input=document.getElementById("redeemUuidInput");const userUuid=String(input.value||"").trim().toUpperCase();if(!userUuid){document.getElementById("rewardMessage").textContent=ox("enterUuid");input.focus();return}if(!confirm("تأكيد طلب "+selectedRedemptionOffer.name+"؟ سيتم خصم النقاط بعد تأكيد UUID وإرسال الطلب."))return;redeeming=true;const confirmButton=document.getElementById("redeemConfirmButton");confirmButton.disabled=true;confirmButton.textContent=ox("sendingOrder");document.getElementById("rewardMessage").textContent=ox("savingOrder");renderRewards();try{const response=await fetch("/api/rewards",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({offerId:Number(selectedRedemptionOffer.id),userUuid})});const data=await response.json();if(!response.ok||!data.success){if(data.error==="INSUFFICIENT_POINTS")await loadRewards();throw new Error(data.error||"REDEMPTION_REQUEST_FAILED")}rewardPoints=Number(data.points)||0;document.getElementById("pointsBalance").textContent=rewardPoints.toLocaleString();document.getElementById("missionsBalance").textContent=rewardPoints.toLocaleString();document.getElementById("rewardMessage").textContent=ox("orderSent");prependPendingRewardOrder(data.orderId,selectedRedemptionOffer);cancelRedemption();loadRewardOrders();renderRewards()}catch(error){document.getElementById("rewardMessage").textContent=error.message==="INVALID_GAME_UUID_FORMAT"?ox("uuidFormatError"):error.message==="INSUFFICIENT_POINTS"?t("insufficient"):ox("orderError")}finally{redeeming=false;confirmButton.disabled=false;confirmButton.textContent=ox("confirmButton");renderRewards()}}
-async function loadRewardOrders(){const list=document.getElementById("rewardOrdersList");if(!list)return;try{const response=await fetch("/api/reward-orders",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error("ORDERS_LOAD_FAILED");const orders=Array.isArray(data.orders)?data.orders:[];const balanceResponse=await fetch("/api/rewards",{method:"GET",cache:"no-store",credentials:"same-origin"});const balanceData=await balanceResponse.json();if(balanceResponse.ok&&balanceData.success){rewardPoints=Number(balanceData.points)||0;document.getElementById("pointsBalance").textContent=rewardPoints.toLocaleString();document.getElementById("missionsBalance").textContent=rewardPoints.toLocaleString();renderRewards()}list.replaceChildren();if(!orders.length){const empty=document.createElement("div");empty.className="reward-orders-empty";empty.textContent=ox("emptyOrders");list.appendChild(empty);return}orders.forEach(order=>{const item=document.createElement("div");item.className="reward-order-item";const info=document.createElement("div");info.className="reward-order-info";const name=document.createElement("div");name.className="reward-order-name";name.textContent=String(order.offer_name||"طلب استبدال");const meta=document.createElement("div");meta.className="reward-order-meta";meta.textContent="#"+Number(order.id)+" · "+Number(order.points_cost||0).toLocaleString()+" نقطة · "+new Date(Number(order.created_at||0)*1000).toLocaleString();info.append(name,meta);const status=document.createElement("div");status.className="reward-order-status";if(order.status==="pending"){const spinner=document.createElement("span");spinner.className="reward-order-spinner";status.append(spinner);const label=document.createElement("span");label.textContent=ox("orderPending");status.append(label)}else if(order.status==="approved"){status.classList.add("reward-order-approved");status.textContent=ox("orderApproved")}else if(order.status==="rejected"){status.classList.add("reward-order-rejected");status.textContent=ox("orderRejected")}else{status.textContent=ox("orderUnknown")}item.append(info,status);list.appendChild(item)})}catch(error){list.textContent=ox("ordersError");}}
+async function loadRewardOrders(){
+ const list=document.getElementById("rewardOrdersList");
+ if(!list)return;
+ try{
+  const response=await fetch("/api/reward-orders",{method:"GET",cache:"no-store",credentials:"same-origin"});
+  const data=await response.json();
+  if(!response.ok||!data.success)throw new Error(data.error||"ORDERS_LOAD_FAILED");
+  const orders=Array.isArray(data.orders)?data.orders:[];
+  list.replaceChildren();
+  if(!orders.length){
+   const empty=document.createElement("div");
+   empty.className="reward-orders-empty";
+   empty.textContent=ox("emptyOrders");
+   list.appendChild(empty);
+  }else{
+   orders.forEach(order=>{
+    const item=document.createElement("div");
+    item.className="reward-order-item";
+    const info=document.createElement("div");
+    info.className="reward-order-info";
+    const name=document.createElement("div");
+    name.className="reward-order-name";
+    name.textContent=String(order.offer_name||"طلب استبدال");
+    const meta=document.createElement("div");
+    meta.className="reward-order-meta";
+    meta.textContent="#"+Number(order.id)+" · "+Number(order.points_cost||0).toLocaleString()+" نقطة · "+new Date(Number(order.created_at||0)*1000).toLocaleString();
+    info.append(name,meta);
+    const status=document.createElement("div");
+    status.className="reward-order-status";
+    if(order.status==="pending"){
+     const spinner=document.createElement("span");
+     spinner.className="reward-order-spinner";
+     status.append(spinner);
+     const label=document.createElement("span");
+     label.textContent=ox("orderPending");
+     status.append(label);
+    }else if(order.status==="approved"){
+     status.classList.add("reward-order-approved");
+     status.textContent=ox("orderApproved");
+    }else if(order.status==="rejected"){
+     status.classList.add("reward-order-rejected");
+     status.textContent=ox("orderRejected");
+    }else{
+     status.textContent=ox("orderUnknown");
+    }
+    item.append(info,status);
+    list.appendChild(item);
+   });
+  }
+ }catch(error){
+  console.error("Reward orders could not be loaded:",error);
+  list.textContent=ox("ordersError");
+  return;
+ }
+ // Balance refresh is independent: it must never block the withdrawal history.
+ try{
+  const balanceResponse=await fetch("/api/rewards",{method:"GET",cache:"no-store",credentials:"same-origin"});
+  const balanceData=await balanceResponse.json();
+  if(balanceResponse.ok&&balanceData.success){
+   rewardPoints=Number(balanceData.points)||0;
+   document.getElementById("pointsBalance").textContent=rewardPoints.toLocaleString();
+   document.getElementById("missionsBalance").textContent=rewardPoints.toLocaleString();
+   renderRewards();
+  }
+ }catch(error){
+  console.warn("Reward balance refresh failed; history is already displayed.",error);
+ }
+}
 
 /* Referral list IDs are always public aliases; never print raw UUIDs. */
 function makePublicId(value){const input=String(value||"").trim();if(!input)return"OX-UNKNOWN";if(/^OX-[A-Z0-9]{8}$/i.test(input))return input.toUpperCase();const compact=input.replace(/-/g,"");if(/^[0-9a-f]{32}$/i.test(compact))return"OX-"+compact.slice(0,8).toUpperCase();return"OX-UNKNOWN"}
