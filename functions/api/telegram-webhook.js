@@ -64,12 +64,12 @@ export async function onRequestPost({ request, env }) {
 
     // The /admin command and its admin-panel button have been retired.
 
-    const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
+    const startMatch = message.text.trim().match(/^\\/start(?:@\\w+)?(?:\\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
 
     // Telegram deep-link referrals are stored until the invited user opens the Mini App.
     const startPayload = String(startMatch[1] || "");
-    const referralMatch = startPayload.match(/^ref_(\d{5,20})$/);
+    const referralMatch = startPayload.match(/^ref_(\\d{5,20})$/);
     if (referralMatch && env.DB) {
       const referrerTelegramId = referralMatch[1];
       const invitedTelegramId = String(message.from.id);
@@ -97,9 +97,13 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Reset any custom Telegram chat menu button so the old admin-panel shortcut is no longer shown.
+    // Keep the Mini App shortcut in the Telegram chat corner, without sending extra inline buttons.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: { type: "default" }
+      menu_button: {
+        type: "web_app",
+        text: "Open 🚀",
+        web_app: { url: env.TELEGRAM_WEBAPP_URL }
+      }
     });
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
