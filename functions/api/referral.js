@@ -43,18 +43,49 @@ export async function onRequestGet({ request, env }) {
       }, 401);
     }
 
-    // الرصيد الإجمالي للمستخدم من جميع مصادر المكافآت
+    // Ensure referral storage exists before reading the user's personal link.
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS referrals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        referrer_id TEXT NOT NULL,
+        referred_id TEXT NOT NULL UNIQUE,
+        points_awarded INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL
+      )
+    `).run();
+    await env.DB.prepare(`
+      CREATE INDEX IF NOT EXISTS idx_referrals_referrer
+      ON referrals(referrer_id)
+    `).run();
+
+    // Make sure the authenticated Telegram account has its legacy visitor row.
+    const account = await env.DB.prepare(`
+      SELECT user_uuid, public_id, points
+      FROM users
+      WHERE user_uuid = ?
+      LIMIT 1
+    `).bind(userId).first();
+
+    if (!account) {
+      return json({ success: false, error: "ACCOUNT_NOT_FOUND" }, 404);
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO visitors (user_id, progress, points, created_at)
+      VALUES (?, 0, ?, ?)
+    `).bind(userId, Number(account.points || 0), now).run();
+
+    // Read the persistent balance and the stable public ID assigned at Telegram sign-in.
     const user = await env.DB.prepare(`
       SELECT user_id, points
       FROM visitors
       WHERE user_id = ?
+      LIMIT 1
     `).bind(userId).first();
 
     if (!user) {
-      return json({
-        success: false,
-        error: "USER_NOT_FOUND"
-      }, 404);
+      return json({ success: false, error: "USER_NOT_FOUND" }, 404);
     }
 
     // إحصائيات الإحالات فقط
@@ -92,10 +123,10 @@ export async function onRequestGet({ request, env }) {
     return json({
       success: true,
 
-      referralCode: (await env.DB.prepare("SELECT public_id FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first())?.public_id || shortId(user.user_id),
+      referralCode: account.public_id || shortId(user.user_id),
 
       user: {
-        userId: (await env.DB.prepare("SELECT public_id FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first())?.public_id || shortId(user.user_id),
+        userId: account.public_id || shortId(user.user_id),
         points: Number(user.points || 0),
         referrals: Number(stats?.total || 0),
         earned: Number(stats?.earned || 0)
