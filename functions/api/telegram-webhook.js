@@ -136,7 +136,7 @@ export async function onRequestPost({ request, env }) {
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀\\nاضغط الزر أدناه لفتح التطبيق داخل Telegram:",
+      text: "مرحبًا بك في OXIDE HUB 🚀\nاضغط الزر أدناه لفتح التطبيق داخل Telegram:",
       reply_markup: {
         inline_keyboard: [[{
           text: "🚀 Open OXIDE HUB",
