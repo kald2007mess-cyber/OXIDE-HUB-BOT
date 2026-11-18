@@ -1295,11 +1295,11 @@ function applyCompleteStaticLanguage(language){
  const setAll=(selector,keys)=>{const els=document.querySelectorAll(selector);keys.forEach((key,i)=>{if(els[i]&&p[key]!==undefined)els[i].textContent=p[key]})};
  set("#telegramGateTitle","gateTitle");set(".telegram-gate-description","gateDesc");set(".telegram-gate-how strong","gateHow");set(".telegram-gate-button","gateButton");set(".telegram-gate-note","gateNote");
  set(".maintenance-title","maintenance");set("#maintenanceMessage","maintenanceText");
- set(".tap-heading h1","tapTitle");set(".tap-heading p","tapDesc");set(".tap-balance>span","tapBalance");set(".tap-coin","tapAria");set(".tap-hint","tapHint");set(".tap-meter-top>span","tapStorage");set(".tap-footer>span:last-child","tapReward");
+ set(".tap-heading h1","tapTitle");set(".tap-heading p","tapDesc");set(".tap-balance>span","tapBalance");const tapCoin=document.querySelector(".tap-coin");if(tapCoin)tapCoin.setAttribute("aria-label",p.tapAria);set(".tap-hint","tapHint");set(".tap-meter-top>span","tapStorage");const tapReward=document.querySelector(".tap-footer>span:last-child");if(tapReward&&tapReward.firstChild)tapReward.firstChild.nodeValue=p.tapReward+" ";
  set(".skills-hero h2","skills");set(".skills-hero p","skillsDesc");setAll(".skill-card h3",["skillTap","skillStorage","skillMining"]);setAll(".skill-card p",["skillTapDesc","skillStorageDesc","skillMiningDesc"]);set(".skills-note","skillsNote");set(".skills-back","back");
  set("#vipPage .island-section>p","vipSoon");set("#newsEmpty","newsEmpty");
  set(".oxide-account-eyebrow","accountEyebrow");set("#accountPage .oxide-account-heading h2","accountTitle");set("#accountPage .oxide-account-heading p","accountDesc");
- set(".oxide-profile-identity>span:nth-of-type(1)","member");set(".oxide-account-status","active");set(".oxide-profile-id>div>span","accountId");set("#copyIdButtonText","copy");
+ set(".oxide-profile-identity>span:nth-of-type(1)","member");const accountStatus=document.querySelector(".oxide-account-status");if(accountStatus&&accountStatus.lastChild&&accountStatus.lastChild.nodeType===3)accountStatus.lastChild.nodeValue=" "+p.active;set(".oxide-profile-id>div>span","accountId");set("#copyIdButtonText","copy");
  set(".oxide-level-head>span","level");set(".oxide-level-head>strong","levelOne");set(".oxide-level-foot>span:first-child","xp");
  setAll(".oxide-account-section-title>span",["wallet","stats","achievements","settings"]);setAll(".oxide-account-section-title>small",["walletDesc","statsDesc","badges","settingsDesc"]);
  setAll(".oxide-account-stat-label",["balanceNow","refPoints","adsDone","friends"]);setAll(".oxide-account-stat-card small",["oxidePoints","earnedInvites"]);
@@ -1308,7 +1308,7 @@ function applyCompleteStaticLanguage(language){
  setAll(".oxide-account-footer span",["rights","designed"]);
  setAll(".oxide-shards-caption",["yourShards","yourShards"]);set(".oxide-referral-eyebrow","earn");set("#islandProgressText","adsProgress");set("#islandWatchButton","watchAd");
  set("#missionsPage .oxide-missions-heading h2","earnCoin");setAll(".oxide-filter-chip",["all","telegram","others"]);
- set(".oxide-referral-heading h2","referralTitle");set(".oxide-invite-title","inviteEarn");set(".oxide-invite-description","inviteDesc");
+ set(".oxide-referral-heading h2","referralTitle");set(".oxide-invite-title","inviteEarn");const inviteDesc=document.querySelector(".oxide-invite-description");if(inviteDesc&&inviteDesc.childNodes.length>=3){inviteDesc.childNodes[0].nodeValue=p.inviteDesc.split("50")[0];inviteDesc.childNodes[2].nodeValue=p.inviteDesc.split("50")[1]||"";}
  setAll(".oxide-referral-stat .oxide-stat-label",["totalRefs","earnedShards"]);set(".oxide-referral-stat .oxide-stat-unit","perInvite");
  set(".oxide-link-heading span:last-child","link");set(".oxide-link-label","yourLink");const referralInput=document.getElementById("referralLink");if(referralInput){referralInput.placeholder=p.linkPlaceholder;referralInput.setAttribute("aria-label",p.yourLink)}
  set(".oxide-link-hint","copyHint");set("#copyReferralButton","copyBtn");set("#shareReferralButton","shareBtn");set(".oxide-how-card h3","howWorks");setAll(".oxide-how-step>span:last-child",["stepOne","stepTwo","stepThree"]);set(".oxide-how-note","track");
