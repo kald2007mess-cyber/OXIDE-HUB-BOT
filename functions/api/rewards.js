@@ -69,16 +69,19 @@ export async function onRequestPost({ request, env }) {
     offer = OFFERS.find(item => item.id === Number(body.offerId));
     if (!offer) return json({ success: false, error: "INVALID_OFFER" }, 400);
 
-    const enteredUuid = String(body.userUuid || "").trim();
+    const enteredUuid = String(body.userUuid || "").trim().toUpperCase();
     const user = await env.DB.prepare(
       "SELECT user_uuid, public_id, points FROM users WHERE user_uuid = ? AND status = 'active'"
     ).bind(userUuid).first();
     if (!user) return json({ success: false, error: "USER_NOT_FOUND" }, 404);
 
-    const normalizedInput = enteredUuid.toUpperCase();
-    if (normalizedInput !== String(user.user_uuid).toUpperCase() &&
-        normalizedInput !== String(user.public_id).toUpperCase()) {
-      return json({ success: false, error: "UUID_DOES_NOT_MATCH_ACCOUNT" }, 400);
+    // Accept game/player IDs in the DL-GSJ-UU format, as well as existing OXIDE IDs.
+    const isGameUuid = /^[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{2}$/.test(enteredUuid);
+    const isOwnOxideId =
+      enteredUuid === String(user.user_uuid).toUpperCase() ||
+      enteredUuid === String(user.public_id).toUpperCase();
+    if (!isGameUuid && !isOwnOxideId) {
+      return json({ success: false, error: "INVALID_UUID_FORMAT" }, 400);
     }
 
     const now = Math.floor(Date.now() / 1000);
