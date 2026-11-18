@@ -68,6 +68,17 @@ export async function onRequestPost({ request, env }) {
     const fileId = photos[photos.length-1]?.file_id;
     if(!fileId) return json({success:false,error:"TELEGRAM_DELIVERY_FAILED"},502);
     const now = Math.floor(Date.now()/1000);
+
+    // Keep the admin-created mission mirrored in the FK parent table.
+    // mission_submissions.mission_id references missions(id), not oxide_admin_missions(id).
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO missions
+        (id,title,description,platform,reward_points,enabled,created_at,updated_at)
+      SELECT id,title,description,platform,reward_points,enabled,created_at,?
+      FROM oxide_admin_missions
+      WHERE id=?
+    `).bind(now,missionId).run();
+
     const submissionColumns = await env.DB.prepare("PRAGMA table_info(mission_submissions)").all();
     const hasLegacyUserUuid = (submissionColumns.results || []).some(column => column.name === "user_uuid");
     if (hasLegacyUserUuid) {
