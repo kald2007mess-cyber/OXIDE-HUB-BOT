@@ -102,6 +102,7 @@ export async function onRequestPost({ request, env }) {
           SELECT user_uuid,?,points,'wallet_tap','wallet_tap',?,?
           FROM users WHERE user_uuid = ?
             AND EXISTS (SELECT 1 FROM oxide_wallet_state WHERE user_id = ? AND updated_at = ?)
+            AND changes() = 1
         `).bind(reward,tapReference,now,userId,userId,now)
       ]);
       if (Number(results?.[0]?.meta?.changes || 0) !== 1) return json({ success: false, error: "STORAGE_FULL" }, 409);
@@ -122,6 +123,7 @@ export async function onRequestPost({ request, env }) {
           SELECT user_uuid,?,points,'wallet_upgrade','wallet_upgrade',?,?
           FROM users WHERE user_uuid = ?
             AND EXISTS (SELECT 1 FROM oxide_wallet_state WHERE user_id = ? AND updated_at = ?)
+            AND changes() = 1
         `).bind(-cost,upgradeReference,now,userId,userId,now)
       ]);
       if (Number(results?.[0]?.meta?.changes || 0) !== 1 || Number(results?.[1]?.meta?.changes || 0) !== 1) {
