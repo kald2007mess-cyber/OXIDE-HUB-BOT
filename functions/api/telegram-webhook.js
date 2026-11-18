@@ -97,6 +97,11 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    // Reset any custom Telegram chat menu button so the old admin-panel shortcut is no longer shown.
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
+      menu_button: { type: "default" }
+    });
+
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
       text: "مرحبًا بك في OXIDE HUB 🚀\nاضغط على الزر لفتح التطبيق.",
