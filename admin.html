@@ -674,6 +674,88 @@ function closeUsers(){document.getElementById("usersPage").classList.add("hidden
 function searchUsers(){usersQuery=document.getElementById("usersSearch").value.trim();usersPage=1;loadUsers();}
 function changeUsersPage(direction){const next=usersPage+direction;if(next<1||next>usersTotalPages)return;usersPage=next;loadUsers();}
 
+
+/* Messenger-style technical support management */
+let supportAdminConversations=[],supportAdminSelectedId=0,supportAdminBusy=false,supportAdminListTimer=null,supportAdminThreadTimer=null;
+async function supportAdminRequest(data){
+ const response=await fetch("/api/admin/support",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});
+ const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"SUPPORT_ADMIN_FAILED");return result;
+}
+function openSupportAdmin(){
+ if(!hasAdminPermission("support")){alert("ليس لديك صلاحية إدارة الدعم الفني.");return;}
+ document.getElementById("mainMenu").classList.add("hidden");
+ document.getElementById("supportAdminPage").classList.remove("hidden");
+ loadSupportAdminConversations();
+ if(supportAdminListTimer)clearInterval(supportAdminListTimer);
+ supportAdminListTimer=setInterval(()=>{if(!document.hidden)loadSupportAdminConversations(true)},6000);
+}
+function closeSupportAdmin(){
+ document.getElementById("supportAdminPage").classList.add("hidden");
+ document.getElementById("mainMenu").classList.remove("hidden");
+ if(supportAdminListTimer){clearInterval(supportAdminListTimer);supportAdminListTimer=null;}
+ if(supportAdminThreadTimer){clearInterval(supportAdminThreadTimer);supportAdminThreadTimer=null;}
+ supportAdminSelectedId=0;
+}
+async function loadSupportAdminConversations(silent=false){
+ if(supportAdminBusy)return;supportAdminBusy=true;
+ const list=document.getElementById("supportAdminList"),status=document.getElementById("supportAdminCount");
+ if(!silent)list.innerHTML='<div class="support-admin-empty">جارٍ تحميل المحادثات...</div>';
+ try{
+  const result=await supportAdminRequest({action:"list"});
+  supportAdminConversations=Array.isArray(result.conversations)?result.conversations:[];
+  status.textContent="عدد المحادثات: "+supportAdminConversations.length;
+  renderSupportAdminConversations();
+ }catch(error){status.textContent="تعذر تحميل المحادثات";if(!silent)list.innerHTML='<div class="support-admin-empty">تعذر تحميل الرسائل. تحقق من نشر API الدعم الفني.</div>';}
+ finally{supportAdminBusy=false;}
+}
+function renderSupportAdminConversations(){
+ const list=document.getElementById("supportAdminList");
+ if(!supportAdminConversations.length){list.innerHTML='<div class="support-admin-empty">لا توجد محادثات حتى الآن.</div>';return;}
+ list.innerHTML=supportAdminConversations.map(item=>{
+  const id=Number(item.conversation_id),name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"مستخدم OXIDE";
+  const unread=Number(item.unread_count||0)>0,photo=String(item.photo_url||"");
+  return '<button type="button" class="support-admin-conversation '+(id===supportAdminSelectedId?'active':'')+'" onclick="selectSupportAdminConversation('+id+')"><span class="support-admin-avatar">👤'+(photo?'<img src="'+escapeHtml(photo)+'" alt="">':'')+'</span><span class="support-admin-person"><strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(item.display_id||"—")+'</small></span><i class="support-admin-unread '+(unread?'':'is-hidden')+'" aria-label="رسالة جديدة"></i></button>';
+ }).join("");
+ list.querySelectorAll(".support-admin-avatar img").forEach(img=>{img.addEventListener("error",()=>{img.remove();},{once:true});});
+}
+async function selectSupportAdminConversation(id){
+ const item=supportAdminConversations.find(row=>Number(row.conversation_id)===Number(id));if(!item)return;
+ supportAdminSelectedId=Number(id);renderSupportAdminConversations();
+ const name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"مستخدم OXIDE";
+ const head=document.getElementById("supportAdminChatHead");
+ head.innerHTML='<strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(item.display_id||"—")+'</small>';
+ document.getElementById("supportAdminInput").disabled=false;document.getElementById("supportAdminSend").disabled=false;
+ await loadSupportAdminThread();
+ if(supportAdminThreadTimer)clearInterval(supportAdminThreadTimer);
+ supportAdminThreadTimer=setInterval(()=>{if(!document.hidden&&supportAdminSelectedId===Number(id))loadSupportAdminThread(true)},4000);
+}
+async function loadSupportAdminThread(silent=false){
+ const id=supportAdminSelectedId;if(!id)return;
+ const thread=document.getElementById("supportAdminThread");
+ if(!silent)thread.innerHTML='<div class="support-admin-empty">جارٍ تحميل المحادثة...</div>';
+ try{
+  const result=await supportAdminRequest({action:"messages",conversationId:id});
+  if(id!==supportAdminSelectedId)return;
+  const messages=Array.isArray(result.messages)?result.messages:[];
+  if(!messages.length){thread.innerHTML='<div class="support-admin-empty">لا توجد رسائل في هذه المحادثة.</div>';return;}
+  thread.innerHTML=messages.map(message=>{
+   const side=message.sender==="admin"||message.sender==="support"?"admin":"user";
+   const date=message.created_at?new Date(Number(message.created_at)*1000).toLocaleString("ar-DZ"):"";
+   return '<div class="support-admin-bubble '+side+'">'+escapeHtml(message.message_text||"")+'<span class="support-admin-time">'+(side==="admin"?"فريق الدعم":"المستخدم")+' • '+escapeHtml(date)+'</span></div>';
+  }).join("");
+  thread.scrollTop=thread.scrollHeight;
+  await loadSupportAdminConversations(true);
+ }catch(error){if(!silent)thread.innerHTML='<div class="support-admin-empty">تعذر تحميل المحادثة: '+escapeHtml(error.message)+'</div>';}
+}
+async function sendAdminSupportReply(event){
+ event.preventDefault();const input=document.getElementById("supportAdminInput"),button=document.getElementById("supportAdminSend"),message=input.value.trim(),id=supportAdminSelectedId;
+ if(!id||!message||button.disabled)return;
+ button.disabled=true;document.getElementById("supportAdminStatus").textContent="جارٍ إرسال الرد...";
+ try{await supportAdminRequest({action:"reply",conversationId:id,message});input.value="";document.getElementById("supportAdminStatus").textContent="تم إرسال الرد.";await loadSupportAdminThread();}
+ catch(error){document.getElementById("supportAdminStatus").textContent="تعذر إرسال الرد: "+error.message;}
+ finally{button.disabled=false;}
+}
+
 /* إدارة الأخبار */
 let newsPosts=[],newsBusy=false,editingNewsId=null,newsPreviewUrl="";
 function openNews(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("newsPage").classList.remove("hidden");resetNewsForm();loadNews();}
@@ -781,7 +863,7 @@ async function sendAdminReward(){
 }
 
 /* بقية أقسام الإدارة */
-function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("قسم الأمان والصلاحيات خاص بالمالك.");return;}openSecurity();return;}if(["users","news","tasks","reviews"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("ليس لديك صلاحية لهذا القسم.");return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}const messages={stats:"إحصائيات الموقع"};alert((messages[name]||"هذا القسم")+"\\nهذه الوظيفة لم يتم ربطها بعد.");}
+function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("قسم الأمان والصلاحيات خاص بالمالك.");return;}openSecurity();return;}if(["users","news","tasks","reviews","support"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("ليس لديك صلاحية لهذا القسم.");return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}if(name==="support"){openSupportAdmin();return;}const messages={stats:"إحصائيات الموقع"};alert((messages[name]||"هذا القسم")+"\\nهذه الوظيفة لم يتم ربطها بعد.");}
 
 
 async function loadAdminDashboard(){
