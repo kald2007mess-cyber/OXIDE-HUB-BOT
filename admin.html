@@ -775,12 +775,55 @@ async function loadAdminDashboard(){
  status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
 }
 
-/* التحقق من المدير */
+/* التحقق من المدير - مع مهلة اتصال ورسائل تشخيص واضحة */
 async function start(){
- if(!tg||!tg.initData){statusBox.textContent="افتح لوحة الإدارة من رابط Mini App داخل Telegram.";return;}
- tg.ready();tg.expand();
- try{const response=await fetch("/api/admin/auth",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success||!result.admin){statusBox.textContent="غير مصرح لك بالدخول.";return;}adminOwner=Boolean(result.owner);adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];applyAdminPermissions();document.getElementById("loading").classList.add("hidden");document.getElementById("panel").classList.remove("hidden");loadAdminDashboard();if(hasAdminPermission("maintenance"))await loadMaintenance();if(["android","beta","ios"].some(hasAdminPermission)){try{await loadDownloads();}catch(error){console.error("Downloads loading error:",error);}}}
- catch{statusBox.textContent="تعذر الاتصال بالخادم. حاول مجدداً.";}
+ if(!tg||!tg.initData){
+  statusBox.textContent="لم تصل بيانات Telegram. أغلق الصفحة وافتحها من زر لوحة الإدارة داخل البوت.";
+  return;
+ }
+ try{
+  tg.ready();
+  tg.expand();
+  statusBox.textContent="تم استلام بيانات Telegram. جارٍ الاتصال بخادم التحقق...";
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),12000);
+  let response;
+  try{
+   response=await fetch("/api/admin/auth",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    credentials:"same-origin",
+    cache:"no-store",
+    signal:controller.signal,
+    body:JSON.stringify({initData:tg.initData})
+   });
+  }finally{
+   clearTimeout(timeout);
+  }
+  let result;
+  try{result=await response.json();}
+  catch{throw new Error("INVALID_SERVER_RESPONSE");}
+  if(!response.ok||!result.success||!result.admin){
+   statusBox.textContent=response.status===403
+    ?"رفض الخادم صلاحية الدخول. تحقق من حساب المدير في إعدادات البوت."
+    :"تعذر التحقق من صلاحية المدير (HTTP "+response.status+").";
+   return;
+  }
+  adminOwner=Boolean(result.owner);
+  adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];
+  applyAdminPermissions();
+  document.getElementById("loading").classList.add("hidden");
+  document.getElementById("panel").classList.remove("hidden");
+  loadAdminDashboard();
+  if(hasAdminPermission("maintenance"))loadMaintenance().catch(error=>console.error("Maintenance loading error:",error));
+ }catch(error){
+  console.error("Admin authentication error:",error);
+  statusBox.textContent=error?.name==="AbortError"
+   ?"انتهت مهلة الاتصال (12 ثانية). تحقق من نشر Cloudflare Pages وعنوان API."
+   :error?.message==="INVALID_SERVER_RESPONSE"
+    ?"الخادم أرسل استجابة غير مفهومة. تحقق من نشر API."
+    :"تعذر الاتصال بخادم التحقق. أعد المحاولة بعد قليل.";
+ }
 }
 start();
 
