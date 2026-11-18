@@ -128,11 +128,11 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Remove bot command-menu entries and reset the chat menu button.
-    // /start and /admin continue to work when typed manually.
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", { commands: [] });
+    // Show the admin command in Telegram; access remains restricted to the owner.
+    const botCommands = [{ command: "admin", description: "لوحة الإدارة" }];
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", { commands: botCommands });
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
-      commands: [],
+      commands: botCommands,
       scope: { type: "all_private_chats" }
     });
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
