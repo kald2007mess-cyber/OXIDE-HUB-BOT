@@ -130,6 +130,29 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "TELEGRAM_IDENTITY_CONFLICT" }, 409);
     }
 
+    // Record a privacy-preserving risk signal; raw IP addresses are never stored.
+    const clientIp = request.headers.get("CF-Connecting-IP") || "";
+    const ipDigest = clientIp
+      ? toHex(new Uint8Array(await crypto.subtle.digest(
+          "SHA-256", encoder.encode(env.SESSION_SECRET + ":" + clientIp)
+        )))
+      : "";
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_security_signals (
+        user_uuid TEXT PRIMARY KEY,
+        ip_hash TEXT NOT NULL DEFAULT '',
+        updated_at INTEGER NOT NULL
+      )
+    `).run();
+    if (ipDigest) {
+      await env.DB.prepare(`
+        INSERT INTO oxide_security_signals(user_uuid,ip_hash,updated_at)
+        VALUES(?,?,?)
+        ON CONFLICT(user_uuid) DO UPDATE SET
+          ip_hash=excluded.ip_hash, updated_at=excluded.updated_at
+      `).bind(userUuid, ipDigest, now).run();
+    }
+
     // Enforce the configured rule: the third distinct Telegram account on one IP
     // bans every account associated with that IP. Only a keyed digest is stored.
     await env.DB.prepare(`
@@ -239,29 +262,6 @@ export async function onRequestPost({ request, env }) {
 
     if (!userRow || userRow.status !== "active") {
       return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
-    }
-
-    // Record a privacy-preserving risk signal; raw IP addresses are never stored.
-    const clientIp = request.headers.get("CF-Connecting-IP") || "";
-    const ipDigest = clientIp
-      ? toHex(new Uint8Array(await crypto.subtle.digest(
-          "SHA-256", encoder.encode(env.SESSION_SECRET + ":" + clientIp)
-        )))
-      : "";
-    await env.DB.prepare(`
-      CREATE TABLE IF NOT EXISTS oxide_security_signals (
-        user_uuid TEXT PRIMARY KEY,
-        ip_hash TEXT NOT NULL DEFAULT '',
-        updated_at INTEGER NOT NULL
-      )
-    `).run();
-    if (ipDigest) {
-      await env.DB.prepare(`
-        INSERT INTO oxide_security_signals(user_uuid,ip_hash,updated_at)
-        VALUES(?,?,?)
-        ON CONFLICT(user_uuid) DO UPDATE SET
-          ip_hash=excluded.ip_hash, updated_at=excluded.updated_at
-      `).bind(userUuid, ipDigest, now).run();
     }
 
     // A Telegram deep-link attribution is recorded first; rewards wait for a genuinely
