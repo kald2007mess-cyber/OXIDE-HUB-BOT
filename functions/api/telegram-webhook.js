@@ -82,14 +82,14 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Private owner-only admin command. Open the admin panel inside Telegram's Web App.
-    const adminMatch = message.text.trim().match(/^\\/admin(?:@\\w+)?$/);
+    const adminMatch = message.text.trim().match(/^\/admin(?:@\w+)?$/);
     if (adminMatch) {
       if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
           String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
-        const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\\/$/, "") + "/admin.html";
+        const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "🔐 لوحة إدارة OXIDE HUB\\nاضغط على الزر لفتح لوحة التحكم داخل تيليجرام.",
+          text: "🔐 لوحة إدارة OXIDE HUB\nاضغط على الزر لفتح لوحة التحكم داخل تيليجرام.",
           reply_markup: {
             inline_keyboard: [[{
               text: "فتح لوحة الإدارة 🔐",
