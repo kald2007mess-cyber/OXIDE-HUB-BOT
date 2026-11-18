@@ -4,6 +4,7 @@ const ALLOWED_PERMISSIONS = [
   "users",
   "news",
   "tasks",
+  "support",
   "android",
   "beta",
   "ios",
