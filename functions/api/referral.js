@@ -66,32 +66,33 @@ export async function onRequestGet({ request, env }) {
       WHERE referrer_id = ?
     `).bind(userId).first();
 
-    // ترتيب جميع المستخدمين حسب رصيدهم الإجمالي
+    // Top users are read from persistent D1 records and enriched with Telegram profiles.
     const pointsRanking = await env.DB.prepare(`
-      SELECT user_id, points
-      FROM visitors
-      ORDER BY
-        COALESCE(points, 0) DESC,
-        created_at ASC,
-        user_id ASC
+      SELECT v.user_id, COALESCE(u.public_id, p.public_id) AS display_id,
+             v.points, p.username, p.photo_url, p.telegram_url
+      FROM visitors v
+      LEFT JOIN users u ON u.user_uuid = v.user_id
+      LEFT JOIN oxide_profiles p ON p.user_uuid = v.user_id
+      ORDER BY COALESCE(v.points, 0) DESC, v.created_at ASC, v.user_id ASC
       LIMIT 10
     `).all();
 
-    // ترتيب المستخدمين حسب عدد الإحالات الناجحة
     const referralRanking = await env.DB.prepare(`
-      SELECT
-        referrer_id,
-        COUNT(*) AS total
-      FROM referrals
-      GROUP BY referrer_id
-      ORDER BY total DESC, referrer_id ASC
+      SELECT r.referrer_id, COUNT(*) AS total,
+             COALESCE(u.public_id, p.public_id) AS display_id,
+             p.username, p.photo_url, p.telegram_url
+      FROM referrals r
+      LEFT JOIN users u ON u.user_uuid = r.referrer_id
+      LEFT JOIN oxide_profiles p ON p.user_uuid = r.referrer_id
+      GROUP BY r.referrer_id
+      ORDER BY total DESC, r.referrer_id ASC
       LIMIT 10
     `).all();
 
     return json({
       success: true,
 
-      referralCode: shortId(user.user_id),
+      referralCode: (await env.DB.prepare("SELECT public_id FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first())?.public_id || shortId(user.user_id),
 
       user: {
         userId: shortId(user.user_id),
@@ -103,7 +104,11 @@ export async function onRequestGet({ request, env }) {
       pointsRanking: (pointsRanking.results || []).map(
         (item, index) => ({
           rank: index + 1,
-          userId: shortId(item.user_id),
+          userId: item.display_id || shortId(item.user_id),
+          displayId: item.display_id || shortId(item.user_id),
+          username: item.username || "",
+          photoUrl: item.photo_url || "",
+          telegramUrl: item.telegram_url || "",
           points: Number(item.points || 0)
         })
       ),
@@ -111,7 +116,11 @@ export async function onRequestGet({ request, env }) {
       referralRanking: (referralRanking.results || []).map(
         (item, index) => ({
           rank: index + 1,
-          userId: shortId(item.referrer_id),
+          userId: item.display_id || shortId(item.referrer_id),
+          displayId: item.display_id || shortId(item.referrer_id),
+          username: item.username || "",
+          photoUrl: item.photo_url || "",
+          telegramUrl: item.telegram_url || "",
           referrals: Number(item.total || 0)
         })
       )
@@ -141,18 +150,24 @@ export async function onRequestPost({ request, env }) {
         "SELECT user_id FROM visitors WHERE UPPER(user_id) = ? LIMIT 1"
       ).bind(enteredCode).first();
     } else {
-      const match = enteredCode.match(/^OX-?([0-9A-F]{8})$/);
-      if (!match) {
-        return json({ success: false, error: "INVALID_REFERRAL" }, 400);
-      }
-      const matches = await env.DB.prepare(`
-        SELECT user_id FROM visitors
-        WHERE UPPER(SUBSTR(REPLACE(user_id, '-', ''), 1, 8)) = ?
-        LIMIT 2
-      `).bind(match[1]).all();
-      if ((matches.results || []).length === 1) referrer = matches.results[0];
-      else if ((matches.results || []).length > 1) {
-        return json({ success: false, error: "REFERRAL_CODE_AMBIGUOUS" }, 409);
+      const profile = await env.DB.prepare(`
+        SELECT user_uuid AS user_id FROM oxide_profiles
+        WHERE UPPER(public_id) = ? LIMIT 1
+      `).bind(enteredCode).first();
+      if (profile) referrer = profile;
+      else {
+        const legacyMatch = enteredCode.match(/^OX-?([0-9A-F]{8})$/);
+        if (legacyMatch) {
+          const matches = await env.DB.prepare(`
+            SELECT user_id FROM visitors
+            WHERE UPPER(SUBSTR(REPLACE(user_id, '-', ''), 1, 8)) = ?
+            LIMIT 2
+          `).bind(legacyMatch[1]).all();
+          if ((matches.results || []).length === 1) referrer = matches.results[0];
+          else if ((matches.results || []).length > 1) {
+            return json({ success: false, error: "REFERRAL_CODE_AMBIGUOUS" }, 409);
+          }
+        }
       }
     }
 
