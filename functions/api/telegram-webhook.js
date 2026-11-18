@@ -139,10 +139,10 @@ export async function onRequestPost({ request, env }) {
       menu_button: { type: "default" }
     });
 
-    // Send the welcome message without any inline keyboard buttons.
+    // Send the OXIDE HUB welcome message without inline keyboard buttons.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀\\nاكتب /start في أي وقت لعرض رسالة الترحيب."
+      text: "🚀 مرحبًا بك في OXIDE HUB!\\n\\n🌌 عالمك الجديد للربح والمكافآت يبدأ من هنا!\\n\\n💎 أنجز المهام واجمع العملات.\\n📺 شاهد الإعلانات واربح النقاط.\\n👥 ادعُ أصدقاءك واحصل على مكافآت إضافية.\\n🎁 اجمع رصيدك واستمتع بمكافآتك!\\n\\n🔥 كل خطوة تقرّبك من هدفك.\\n\\nنتمنى لك تجربة ممتعة، وحظًا موفقًا! ❤️\\n\\n🚀 OXIDE HUB — Your Rewards, Your World."
     });
     return json({ ok: true });
   } catch {
