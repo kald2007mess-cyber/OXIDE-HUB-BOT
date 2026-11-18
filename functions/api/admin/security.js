@@ -1,5 +1,26 @@
 import { authorizeAdmin } from "../_lib/admin-auth.js";
 
+const ALLOWED_PERMISSIONS = [
+  "users",
+  "news",
+  "tasks",
+  "android",
+  "beta",
+  "ios",
+  "maintenance",
+  "stats"
+];
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    }
+  });
+}
+
 function validTelegramId(value) {
   return /^\d{5,20}$/.test(String(value || ""));
 }
