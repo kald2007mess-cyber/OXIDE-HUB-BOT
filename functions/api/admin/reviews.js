@@ -132,7 +132,7 @@ async function getReviewItems(DB, type) {
            COALESCE(u.points, v.points, 0) AS points, COALESCE(u.created_at, v.created_at) AS user_created_at,
            (SELECT COUNT(*) FROM mission_submissions s
              WHERE s.user_id = o.user_uuid AND s.status = 'approved') AS completed_missions,
-           (SELECT COUNT(*) FROM referrals r WHERE r.referrer_id = o.user_uuid) AS invited_friends
+           0 AS invited_friends
     FROM redemption_orders o
     LEFT JOIN users u ON u.user_uuid = o.user_uuid
     LEFT JOIN visitors v ON v.user_id = o.user_uuid
