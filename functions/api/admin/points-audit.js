@@ -70,16 +70,21 @@ export async function onRequestPost({ request, env }) {
         FROM point_ledger WHERE user_uuid = ? GROUP BY reason ORDER BY total DESC
       `, [userUuid]),
       safeRows(env.DB, `
-        SELECT r.id, r.referred_id AS referredId, r.points_awarded AS pointsAwarded,
-               r.status, r.risk_score AS riskScore, r.risk_reason AS riskReason,
-               r.created_at AS createdAt, p.username, p.first_name AS firstName,
-               p.last_name AS lastName, u.public_id AS referredPublicId
+        SELECT r.id, r.referrer_id AS referrerId, r.referred_id AS referredId,
+               r.points_awarded AS pointsAwarded, r.status,
+               r.risk_score AS riskScore, r.risk_reason AS riskReason,
+               r.created_at AS createdAt,
+               CASE WHEN r.referrer_id = ? THEN 'referrer' ELSE 'invited' END AS relation,
+               ru.public_id AS referrerPublicId, rp.username AS referrerUsername,
+               du.public_id AS referredPublicId, dp.username AS referredUsername
         FROM referrals r
-        LEFT JOIN oxide_profiles p ON p.user_uuid = r.referred_id
-        LEFT JOIN users u ON u.user_uuid = r.referred_id
+        LEFT JOIN users ru ON ru.user_uuid = r.referrer_id
+        LEFT JOIN oxide_profiles rp ON rp.user_uuid = r.referrer_id
+        LEFT JOIN users du ON du.user_uuid = r.referred_id
+        LEFT JOIN oxide_profiles dp ON dp.user_uuid = r.referred_id
         WHERE r.referrer_id = ? OR r.referred_id = ?
         ORDER BY r.created_at DESC LIMIT 100
-      `, [userUuid, userUuid]),
+      `, [userUuid, userUuid, userUuid]),
       safeRows(env.DB, `
         SELECT s.id, s.mission_id AS missionId, s.status, s.created_at AS createdAt,
                s.reviewed_at AS reviewedAt, m.title, m.reward_points AS rewardPoints
