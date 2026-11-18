@@ -74,6 +74,19 @@ export async function onRequestGet({ request, env }) {
       return json({ success: false, error: "ACCOUNT_NOT_FOUND" }, 404);
     }
 
+    // Telegram deep links require the real numeric Telegram ID, not the
+    // public OX- display code. Resolve it from the verified identity table.
+    const telegramIdentity = await env.DB.prepare(`
+      SELECT telegram_user_id
+      FROM telegram_identities
+      WHERE user_uuid = ?
+      LIMIT 1
+    `).bind(userId).first();
+
+    if (!telegramIdentity?.telegram_user_id) {
+      return json({ success: false, error: "TELEGRAM_IDENTITY_NOT_FOUND" }, 404);
+    }
+
     // Referral totals are secondary; the user's unique code must still be returned
     // if an older referrals table has a different optional statistics schema.
     let stats = { total: 0, earned: 0 };
@@ -125,7 +138,7 @@ export async function onRequestGet({ request, env }) {
     return json({
       success: true,
 
-      referralCode: account.public_id || shortId(userId),
+      referralCode: String(telegramIdentity.telegram_user_id),
 
       user: {
         userId: account.public_id || shortId(userId),
