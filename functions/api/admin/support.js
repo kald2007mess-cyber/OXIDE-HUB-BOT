@@ -1,5 +1,6 @@
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
-import { ensureSupportTables, json } from "../_lib/support.js";
+import { ensureSupportTables } from "../_lib/support.js";
+import { json } from "../_lib/session.js";
 
 async function ensureAdminSupportReads(DB) {
   await DB.prepare(`
