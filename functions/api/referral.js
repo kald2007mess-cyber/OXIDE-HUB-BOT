@@ -154,18 +154,28 @@ export async function onRequestPost({ request, env }) {
         SELECT user_uuid AS user_id FROM oxide_profiles
         WHERE UPPER(public_id) = ? LIMIT 1
       `).bind(enteredCode).first();
-      if (profile) referrer = profile;
-      else {
-        const legacyMatch = enteredCode.match(/^OX-?([0-9A-F]{8})$/);
-        if (legacyMatch) {
-          const matches = await env.DB.prepare(`
-            SELECT user_id FROM visitors
-            WHERE UPPER(SUBSTR(REPLACE(user_id, '-', ''), 1, 8)) = ?
-            LIMIT 2
-          `).bind(legacyMatch[1]).all();
-          if ((matches.results || []).length === 1) referrer = matches.results[0];
-          else if ((matches.results || []).length > 1) {
-            return json({ success: false, error: "REFERRAL_CODE_AMBIGUOUS" }, 409);
+      if (profile) {
+        referrer = profile;
+      } else {
+        // GET returns users.public_id first, so resolve that same public code here too.
+        const publicUser = await env.DB.prepare(`
+          SELECT user_uuid AS user_id FROM users
+          WHERE UPPER(public_id) = ? LIMIT 1
+        `).bind(enteredCode).first();
+        if (publicUser) {
+          referrer = publicUser;
+        } else {
+          const legacyMatch = enteredCode.match(/^OX-?([0-9A-F]{8})$/);
+          if (legacyMatch) {
+            const matches = await env.DB.prepare(`
+              SELECT user_id FROM visitors
+              WHERE UPPER(SUBSTR(REPLACE(user_id, '-', ''), 1, 8)) = ?
+              LIMIT 2
+            `).bind(legacyMatch[1]).all();
+            if ((matches.results || []).length === 1) referrer = matches.results[0];
+            else if ((matches.results || []).length > 1) {
+              return json({ success: false, error: "REFERRAL_CODE_AMBIGUOUS" }, 409);
+            }
           }
         }
       }
