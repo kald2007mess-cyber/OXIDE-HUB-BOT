@@ -1,4 +1,4 @@
-// OXIDE HUB admin authorization: owner-only until deputy management is enabled.
+// OXIDE HUB admin authorization: verified Telegram owner and active deputies.
 const encoder = new TextEncoder();
 
 function toHex(bytes) {
@@ -41,17 +41,35 @@ export async function authorizeAdmin(initData, env, requiredPermission = null) {
   if (!env.DB || !env.TELEGRAM_BOT_TOKEN || !env.OXIDE_OWNER_TELEGRAM_ID) {
     return { ok: false, status: 500, error: "SERVER_CONFIG" };
   }
+
   const telegramId = await getVerifiedTelegramId(initData, env);
   if (!telegramId) return { ok: false, status: 403, error: "UNAUTHORIZED" };
-  if (telegramId !== String(env.OXIDE_OWNER_TELEGRAM_ID)) {
-    return { ok: false, status: 403, error: "OWNER_ONLY" };
+
+  if (telegramId === String(env.OXIDE_OWNER_TELEGRAM_ID)) {
+    return {
+      ok: true,
+      owner: true,
+      telegramId,
+      permissions: ["users","news","tasks","android","beta","ios","maintenance","stats","security"]
+    };
   }
-  return {
-    ok: true,
-    owner: true,
-    telegramId,
-    permissions: ["users","news","tasks","android","beta","ios","maintenance","stats","security"]
-  };
+
+  const deputy = await env.DB.prepare(
+    "SELECT telegram_id FROM oxide_admin_deputies WHERE telegram_id = ? AND active = 1"
+  ).bind(telegramId).first();
+
+  if (!deputy) return { ok: false, status: 403, error: "UNAUTHORIZED" };
+
+  const result = await env.DB.prepare(
+    "SELECT permission FROM oxide_admin_deputy_permissions WHERE telegram_id = ?"
+  ).bind(telegramId).all();
+
+  const permissions = (result.results || []).map(row => String(row.permission));
+  if (requiredPermission && !permissions.includes(String(requiredPermission))) {
+    return { ok: false, status: 403, error: "PERMISSION_DENIED" };
+  }
+
+  return { ok: true, owner: false, telegramId, permissions };
 }
 
 export function adminAuthResponse(auth) {
