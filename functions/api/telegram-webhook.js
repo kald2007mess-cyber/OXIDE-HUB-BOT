@@ -97,7 +97,16 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Remove the custom chat menu button (including Open) for this bot.
+    // Remove the two bot command-menu entries ("Open bot" and "Admin panel").
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
+      commands: []
+    });
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
+      commands: [],
+      scope: { type: "all_private_chats" }
+    });
+
+    // Keep Telegram's chat menu button at its normal default.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
       menu_button: { type: "default" }
     });
