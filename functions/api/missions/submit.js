@@ -40,6 +40,9 @@ export async function onRequestPost({ request, env }) {
       return json({success:false,error:"SERVER_CONFIGURATION_MISSING"},500);
     const userId = await getVisitor(request,env);
     if (!userId) return json({success:false,error:"NO_VISITOR_SESSION"},401);
+    const account = await env.DB.prepare("SELECT public_id, status FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first();
+    if (!account || account.status !== "active") return json({success:false,error:"USER_NOT_FOUND"},403);
+    const displayId = String(account.public_id || ("OX-" + userId.replace(/-/g,"").slice(0,8).toUpperCase()));
     const form = await request.formData();
     const missionId = Number(form.get("missionId"));
     const proof = form.get("proof");
@@ -57,7 +60,7 @@ export async function onRequestPost({ request, env }) {
     const photo = new FormData();
     photo.set("chat_id",String(env.TELEGRAM_ADMIN_ID));
     photo.set("photo",proof,proof.name||"mission-proof.jpg");
-    photo.set("caption",`📥 OXIDE HUB — Mission proof\nUser: OX-${userId.replace(/-/g,"").slice(0,8).toUpperCase()}\nMission: #${missionId} — ${mission.title}`);
+    photo.set("caption",`📥 OXIDE HUB — Mission proof\nUser: ${displayId}\nMission: #${missionId} — ${mission.title}`);
     const tgResponse = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendPhoto`,{method:"POST",body:photo});
     const tg = await tgResponse.json();
     if(!tgResponse.ok || !tg.ok) return json({success:false,error:"TELEGRAM_DELIVERY_FAILED"},502);
