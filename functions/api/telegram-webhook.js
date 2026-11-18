@@ -106,9 +106,14 @@ export async function onRequestPost({ request, env }) {
       scope: { type: "all_private_chats" }
     });
 
-    // Keep Telegram's chat menu button at its normal default.
+    // Keep the Mini App launch button as a real Telegram Web App entry point.
+    // This is required for Telegram to provide signed initData to the app.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: { type: "default" }
+      menu_button: {
+        type: "web_app",
+        text: "Open OXIDE HUB",
+        web_app: { url: env.TELEGRAM_WEBAPP_URL }
+      }
     });
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
