@@ -1138,6 +1138,7 @@ body.outside-telegram .telegram-gate{display:flex!important}
     <button class="oxide-filter-chip" type="button" data-task-filter="x" onclick="filterOxideTasks('x',this)">X</button>
     <button class="oxide-filter-chip" type="button" data-task-filter="watch" onclick="filterOxideTasks('watch',this)">Watch</button>
   </div>
+  <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div>
 </div>
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
@@ -1676,6 +1677,12 @@ function missionPlatformIcon(platform){
   return svg;
 }
 
+function filterOxideTasks(category,button){
+  document.querySelectorAll("[data-task-filter]").forEach(chip=>chip.classList.toggle("active",chip===button));
+  const cards=document.querySelectorAll("#missionList [data-mission-id]");
+  cards.forEach(card=>{card.style.display=(category==="all"||card.dataset.taskFilter===category)?"":"none";});
+}
+
 function renderMissionCards(){
   const list = document.getElementById("missionList");
   if(!list) return;
@@ -1701,6 +1708,7 @@ function renderMissionCards(){
     const card = document.createElement("article");
     card.className = "mission-item";
     card.dataset.missionId = String(id);
+    card.dataset.taskFilter = mission.platform === "telegram" ? "tg" : "others";
 
     const main = document.createElement("div");
     main.className = "mission-item-main";
@@ -1878,6 +1886,12 @@ async function loadMissionStatus(){
     if(balance) balance.textContent = points.toLocaleString();const missionTop=document.getElementById("missionTopBalance");if(missionTop)missionTop.textContent=points.toLocaleString();
 
     missionData = Array.isArray(data.missions) ? data.missions : [];
+    const availableCount = missionData.filter(item => item.status !== "approved").length;
+    const completedCount = missionData.filter(item => item.status === "approved").length;
+    const availableNode = document.getElementById("missionsAvailableCount");
+    const completedNode = document.getElementById("missionsCompletedCount");
+    if(availableNode) availableNode.textContent = String(availableCount);
+    if(completedNode) completedNode.textContent = String(completedCount);
     trackMissionItems(missionData,document.getElementById("missionsPage").style.display!=="none");
 
     const completed = missionData.filter(item => item.status === "approved").length;
