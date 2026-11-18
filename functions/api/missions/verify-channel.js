@@ -207,6 +207,7 @@ export async function onRequestPost({ request, env }) {
     });
   } catch (error) {
     console.error("Telegram channel mission error:",stage,error);
-    return json({success:false,error:"CHANNEL_MISSION_FAILED",diagnostic:stage},500);
+    const detail = String(error?.message || error || "UNKNOWN_ERROR").slice(0, 220);
+    return json({success:false,error:"CHANNEL_MISSION_FAILED",diagnostic:stage + ": " + detail},500);
   }
 }
