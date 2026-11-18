@@ -63,11 +63,11 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Private owner-only admin command. It is intentionally not registered in the public command menu.
-    const adminMatch = message.text.trim().match(/^\\/admin(?:@\\w+)?$/);
+    const adminMatch = message.text.trim().match(/^\/admin(?:@\w+)?$/);
     if (adminMatch) {
       if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
           String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
-        const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\\/$/, "") + "/admin.html";
+        const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
           text: "🔐 لوحة إدارة OXIDE HUB",
@@ -82,12 +82,12 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: true });
     }
 
-    const startMatch = message.text.trim().match(/^\\/start(?:@\\w+)?(?:\\s+([A-Za-z0-9_-]{1,64}))?$/);
+    const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
 
     // Telegram deep-link referrals are stored until the invited user opens the Mini App.
     const startPayload = String(startMatch[1] || "");
-    const referralMatch = startPayload.match(/^ref_(\\d{5,20})$/);
+    const referralMatch = startPayload.match(/^ref_(\d{5,20})$/);
     if (referralMatch && env.DB) {
       const referrerTelegramId = referralMatch[1];
       const invitedTelegramId = String(message.from.id);
