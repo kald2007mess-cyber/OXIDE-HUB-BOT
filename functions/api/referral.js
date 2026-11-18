@@ -125,10 +125,10 @@ export async function onRequestGet({ request, env }) {
     return json({
       success: true,
 
-      referralCode: account.public_id || shortId(user.user_id),
+      referralCode: account.public_id || shortId(userId),
 
       user: {
-        userId: account.public_id || shortId(user.user_id),
+        userId: account.public_id || shortId(userId),
         points: Number(account.points || 0),
         referrals: Number(stats?.total || 0),
         earned: Number(stats?.earned || 0)
