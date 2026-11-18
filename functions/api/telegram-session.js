@@ -189,6 +189,11 @@ export async function onRequestPost({ request, env }) {
     if (!knownReferralColumns.has("risk_reason")) {
       await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
     }
+    // Existing referrals with an awarded balance were already paid by the legacy flow.
+    await env.DB.prepare(`
+      UPDATE referrals SET status = 'rewarded'
+      WHERE points_awarded > 0 AND status = 'pending'
+    `).run();
 
     const pendingReferral = await env.DB.prepare(
       "SELECT referrer_telegram_id FROM oxide_pending_referrals WHERE referred_telegram_id = ? LIMIT 1"
