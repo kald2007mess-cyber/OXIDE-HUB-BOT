@@ -2247,39 +2247,7 @@ function linkGooglePlayAccount(){
 
 </script>
 
-<script>
-/* Owner-only OXIDE HUB admin entry: visibility is granted by the verified server response. */
-(async function initOwnerAdminEntry(){
-  const tg = window.Telegram && window.Telegram.WebApp;
-  if (!tg || !tg.initData) return;
-  try {
-    tg.ready();
-    const response = await fetch("/api/admin/auth", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      credentials: "same-origin",
-      cache: "no-store",
-      body: JSON.stringify({initData: tg.initData})
-    });
-    if (!response.ok) return;
-    const data = await response.json();
-    if (!data || data.success !== true || data.admin !== true || data.owner !== true) return;
 
-    const button = document.createElement("button");
-    button.id = "oxideOwnerAdminEntry";
-    button.type = "button";
-    button.textContent = "⚙️ لوحة الإدارة";
-    button.setAttribute("aria-label", "فتح لوحة الإدارة");
-    button.style.cssText = "position:fixed;top:12px;left:12px;z-index:9999;padding:10px 13px;border:1px solid #35d7ff;border-radius:10px;background:linear-gradient(135deg,#087ed0,#06305d);color:#fff;font:bold 13px Arial,sans-serif;box-shadow:0 0 15px rgba(0,183,255,.35);cursor:pointer";
-    button.addEventListener("click", function(){
-      window.location.href = "/admin.html";
-    });
-    document.body.appendChild(button);
-  } catch (error) {
-    console.warn("Owner admin entry verification failed.");
-  }
-})();
-</script>
 
 </body>
 </html>
