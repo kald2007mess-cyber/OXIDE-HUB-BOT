@@ -95,7 +95,7 @@ export async function onRequestGet({ request, env }) {
       referralCode: (await env.DB.prepare("SELECT public_id FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first())?.public_id || shortId(user.user_id),
 
       user: {
-        userId: shortId(user.user_id),
+        userId: (await env.DB.prepare("SELECT public_id FROM users WHERE user_uuid = ? LIMIT 1").bind(userId).first())?.public_id || shortId(user.user_id),
         points: Number(user.points || 0),
         referrals: Number(stats?.total || 0),
         earned: Number(stats?.earned || 0)
