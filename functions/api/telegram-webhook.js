@@ -97,13 +97,9 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Keep the Mini App shortcut in the Telegram chat corner, without sending extra inline buttons.
+    // Remove the custom chat menu button (including Open) for this bot.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: {
-        type: "web_app",
-        text: "Open 🚀",
-        web_app: { url: env.TELEGRAM_WEBAPP_URL }
-      }
+      menu_button: { type: "default" }
     });
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
