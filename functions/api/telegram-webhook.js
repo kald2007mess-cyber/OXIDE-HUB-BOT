@@ -1,5 +1,39 @@
 import { ensureSupportTables } from "./_lib/support.js";
 
+function getBotLanguage(languageCode) {
+  const code = String(languageCode || "").toLowerCase();
+  if (code.startsWith("ru")) return "ru";
+  if (code.startsWith("en")) return "en";
+  return "ar";
+}
+
+const botTexts = {
+  ar: {
+    adminTitle: "🔐 لوحة إدارة OXIDE HUB",
+    adminBody: "اضغط على الزر لفتح لوحة التحكم داخل تيليجرام.",
+    adminButton: "فتح لوحة الإدارة 🔐",
+    adminCommand: "لوحة الإدارة",
+    welcome: "🚀 مرحبًا بك في OXIDE HUB!\n💎 أنجز المهام، اجمع العملات، وادعُ أصدقاءك لتربح المزيد!\n🔥 رحلتك نحو المكافآت تبدأ الآن!",
+    open: "فتح التطبيق 🚀"
+  },
+  en: {
+    adminTitle: "🔐 OXIDE HUB Admin Panel",
+    adminBody: "Tap the button to open the control panel inside Telegram.",
+    adminButton: "Open Admin Panel 🔐",
+    adminCommand: "Admin panel",
+    welcome: "🚀 Welcome to OXIDE HUB!\n💎 Complete tasks, collect coins, and invite friends to earn more!\n🔥 Your rewards journey starts now!",
+    open: "Open App 🚀"
+  },
+  ru: {
+    adminTitle: "🔐 Панель администратора OXIDE HUB",
+    adminBody: "Нажмите кнопку, чтобы открыть панель управления в Telegram.",
+    adminButton: "Открыть панель 🔐",
+    adminCommand: "Панель администратора",
+    welcome: "🚀 Добро пожаловать в OXIDE HUB!\n💎 Выполняйте задания, собирайте монеты и приглашайте друзей, чтобы зарабатывать больше!\n🔥 Ваш путь к наградам начинается сейчас!",
+    open: "Открыть приложение 🚀"
+  }
+};
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -81,6 +115,9 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    const language = getBotLanguage(message.from.language_code);
+    const words = botTexts[language];
+
     // Private owner-only admin command. Open the admin panel inside Telegram's Web App.
     const adminMatch = message.text.trim().match(/^\/admin(?:@\w+)?$/);
     if (adminMatch) {
@@ -89,10 +126,10 @@ export async function onRequestPost({ request, env }) {
         const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "🔐 لوحة إدارة OXIDE HUB\nاضغط على الزر لفتح لوحة التحكم داخل تيليجرام.",
+          text: words.adminTitle + "\n" + words.adminBody,
           reply_markup: {
             inline_keyboard: [[{
-              text: "فتح لوحة الإدارة 🔐",
+              text: words.adminButton,
               web_app: { url: adminUrl }
             }]]
           }
@@ -135,7 +172,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Show the admin command in Telegram; access remains restricted to the owner.
-    const botCommands = [{ command: "admin", description: "لوحة الإدارة" }];
+    const botCommands = [{ command: "admin", description: words.adminCommand }];
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", { commands: botCommands });
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
       commands: botCommands,
@@ -148,10 +185,10 @@ export async function onRequestPost({ request, env }) {
     // Send the OXIDE HUB welcome message without inline keyboard buttons.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "🚀 مرحبًا بك في OXIDE HUB!\n💎 أنجز المهام، اجمع العملات، وادعُ أصدقاءك لتربح المزيد!\n🔥 رحلتك نحو المكافآت تبدأ الآن!",
+      text: words.welcome,
       reply_markup: {
         inline_keyboard: [[{
-          text: "Open 🚀",
+          text: words.open,
           web_app: { url: env.TELEGRAM_WEBAPP_URL }
         }]]
       }
