@@ -31,6 +31,9 @@ async function ensureMissionSubmissionsTable(DB) {
       await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
     }
   }
+  if (!names.includes("proof_file_id")) {
+    await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN proof_file_id TEXT").run();
+  }
 }
 
 async function ensurePointLedger(DB) {
