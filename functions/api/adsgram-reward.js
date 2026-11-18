@@ -96,6 +96,7 @@ export async function onRequestPost({ request, env }) {
         FROM users u JOIN reward_ad_cycles c ON c.user_id = u.user_uuid
         WHERE u.user_uuid = ?
           AND EXISTS (SELECT 1 FROM adsgram_reward_state WHERE user_id = ? AND last_claim_at = ?)
+          AND changes() = 1
       `).bind(REWARD_POINTS,now,userId,userId,now)
     ]);
 
