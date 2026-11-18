@@ -97,28 +97,39 @@ export async function onRequestGet({ request, env }) {
       WHERE referrer_id = ?
     `).bind(userId).first();
 
-    // Top users are read from persistent D1 records and enriched with Telegram profiles.
-    const pointsRanking = await env.DB.prepare(`
-      SELECT v.user_id, COALESCE(u.public_id, p.public_id) AS display_id,
-             v.points, p.username, p.photo_url, p.telegram_url
-      FROM visitors v
-      LEFT JOIN users u ON u.user_uuid = v.user_id
-      LEFT JOIN oxide_profiles p ON p.user_uuid = v.user_id
-      ORDER BY COALESCE(v.points, 0) DESC, v.created_at ASC, v.user_id ASC
-      LIMIT 10
-    `).all();
+    // Rankings are optional: a ranking-query issue must never hide a user's own invite link.
+    let pointsRanking = { results: [] };
+    let referralRanking = { results: [] };
 
-    const referralRanking = await env.DB.prepare(`
-      SELECT r.referrer_id, COUNT(*) AS total,
-             COALESCE(u.public_id, p.public_id) AS display_id,
-             p.username, p.photo_url, p.telegram_url
-      FROM referrals r
-      LEFT JOIN users u ON u.user_uuid = r.referrer_id
-      LEFT JOIN oxide_profiles p ON p.user_uuid = r.referrer_id
-      GROUP BY r.referrer_id
-      ORDER BY total DESC, r.referrer_id ASC
-      LIMIT 10
-    `).all();
+    try {
+      pointsRanking = await env.DB.prepare(`
+        SELECT v.user_id, COALESCE(u.public_id, p.public_id) AS display_id,
+               v.points, p.username, p.photo_url, p.telegram_url
+        FROM visitors v
+        LEFT JOIN users u ON u.user_uuid = v.user_id
+        LEFT JOIN oxide_profiles p ON p.user_uuid = v.user_id
+        ORDER BY COALESCE(v.points, 0) DESC, v.created_at ASC, v.user_id ASC
+        LIMIT 10
+      `).all();
+    } catch (rankingError) {
+      console.error("Referral points ranking unavailable:", rankingError);
+    }
+
+    try {
+      referralRanking = await env.DB.prepare(`
+        SELECT r.referrer_id, COUNT(*) AS total,
+               COALESCE(u.public_id, p.public_id) AS display_id,
+               p.username, p.photo_url, p.telegram_url
+        FROM referrals r
+        LEFT JOIN users u ON u.user_uuid = r.referrer_id
+        LEFT JOIN oxide_profiles p ON p.user_uuid = r.referrer_id
+        GROUP BY r.referrer_id
+        ORDER BY total DESC, r.referrer_id ASC
+        LIMIT 10
+      `).all();
+    } catch (rankingError) {
+      console.error("Referral ranking unavailable:", rankingError);
+    }
 
     return json({
       success: true,
@@ -158,6 +169,7 @@ export async function onRequestGet({ request, env }) {
     });
 
   } catch (error) {
+    console.error("Referral data load failed:", error);
     return json({
       success: false,
       error: "Could not load referral data"
