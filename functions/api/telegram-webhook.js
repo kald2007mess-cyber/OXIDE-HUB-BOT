@@ -62,12 +62,45 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    if (!/^\/start(?:\s|$)/.test(message.text.trim())) return json({ ok: true });
+    const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
+    if (!startMatch) return json({ ok: true });
+
+    // Telegram deep-link referrals are stored until the invited user opens the Mini App.
+    const startPayload = String(startMatch[1] || "");
+    const referralMatch = startPayload.match(/^ref_(\d{5,20})$/);
+    if (referralMatch && env.DB) {
+      const referrerTelegramId = referralMatch[1];
+      const invitedTelegramId = String(message.from.id);
+      if (referrerTelegramId !== invitedTelegramId) {
+        await env.DB.prepare(`
+          CREATE TABLE IF NOT EXISTS oxide_pending_referrals (
+            referred_telegram_id TEXT PRIMARY KEY,
+            referrer_telegram_id TEXT NOT NULL,
+            created_at INTEGER NOT NULL
+          )
+        `).run();
+        const referrer = await env.DB.prepare(
+          "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
+        ).bind(referrerTelegramId).first();
+        if (referrer) {
+          await env.DB.prepare(`
+            INSERT OR IGNORE INTO oxide_pending_referrals
+              (referred_telegram_id, referrer_telegram_id, created_at)
+            VALUES (?, ?, ?)
+          `).bind(invitedTelegramId, referrerTelegramId, Math.floor(Date.now() / 1000)).run();
+        }
+      }
+    }
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀",
-      reply_markup: { remove_keyboard: true }
+      text: "مرحبًا بك في OXIDE HUB 🚀\\nاضغط على الزر لفتح التطبيق.",
+      reply_markup: {
+        inline_keyboard: [[{
+          text: "🚀 فتح OXIDE HUB",
+          web_app: { url: env.TELEGRAM_WEBAPP_URL }
+        }]]
+      }
     });
     return json({ ok: true });
   } catch {
