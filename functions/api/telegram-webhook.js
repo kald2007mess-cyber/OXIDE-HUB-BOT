@@ -62,7 +62,25 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // The /admin command and its admin-panel button have been retired.
+    // Private owner-only admin command. It is intentionally not registered in the public command menu.
+    const adminMatch = message.text.trim().match(/^\\/admin(?:@\\w+)?$/);
+    if (adminMatch) {
+      if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
+          String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
+        const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\\/$/, "") + "/admin.html";
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+          chat_id: message.chat.id,
+          text: "🔐 لوحة إدارة OXIDE HUB",
+          reply_markup: {
+            inline_keyboard: [[{
+              text: "فتح لوحة الإدارة",
+              web_app: { url: adminUrl }
+            }]]
+          }
+        });
+      }
+      return json({ ok: true });
+    }
 
     const startMatch = message.text.trim().match(/^\\/start(?:@\\w+)?(?:\\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
