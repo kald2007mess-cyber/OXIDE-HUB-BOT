@@ -82,7 +82,10 @@ export async function onRequestPost({ request, env }) {
         const referrer = await env.DB.prepare(
           "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
         ).bind(referrerTelegramId).first();
-        if (referrer) {
+        const invitedAlreadyRegistered = await env.DB.prepare(
+          "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
+        ).bind(invitedTelegramId).first();
+        if (referrer && !invitedAlreadyRegistered) {
           await env.DB.prepare(`
             INSERT OR IGNORE INTO oxide_pending_referrals
               (referred_telegram_id, referrer_telegram_id, created_at)
