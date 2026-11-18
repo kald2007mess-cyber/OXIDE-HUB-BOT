@@ -395,7 +395,9 @@ export async function onRequestPost({ request, env }) {
     const headers = new Headers(response.headers);
     headers.set("Set-Cookie", cookie);
     return new Response(response.body, { status: 200, headers });
-  } catch {
-    return json({ success: false, error: "TELEGRAM_SESSION_FAILED" }, 500);
+  } catch (error) {
+    console.error("OXIDE telegram session failure:", error);
+    const diagnostic = String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180);
+    return json({ success: false, error: "TELEGRAM_SESSION_FAILED", diagnostic }, 500);
   }
 }
