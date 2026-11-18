@@ -805,12 +805,12 @@ html,body{overscroll-behavior-y:auto!important}
 #homePage .tap-coin{width:min(84vw,330px)!important;height:min(84vw,330px)!important;max-width:330px!important;max-height:330px!important}
 #homePage .tap-balance strong{display:flex;align-items:center;justify-content:center;gap:7px}
 #tapBalance::after,#skillsBalance::after,#pointsBalance::after,#missionTopBalance::after,#referralShardBalance::after{
- content:"";display:inline-block;flex:0 0 22px;width:22px;height:22px;margin-inline-start:5px;
+ content:"";display:inline-block;flex:0 0 44px;width:44px;height:44px;margin-inline-start:5px;
  background:url("https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png") center/contain no-repeat;
  vertical-align:middle;filter:drop-shadow(0 0 4px rgba(173,91,255,.7))
 }
-#pointsBalance::after{width:23px;height:23px;flex-basis:23px}
-#missionTopBalance::after,#referralShardBalance::after{width:22px;height:22px;flex-basis:22px}
+#pointsBalance::after{width:44px;height:44px;flex-basis:44px}
+#missionTopBalance::after,#referralShardBalance::after{width:44px;height:44px;flex-basis:44px}
 @media(max-width:380px){#homePage .tap-coin{width:min(80vw,285px)!important;height:min(80vw,285px)!important;max-width:285px!important;max-height:285px!important}#homePage.tap-home{min-height:0!important}}
 
 
@@ -952,8 +952,8 @@ body.outside-telegram .telegram-gate{display:flex!important}
   #homePage .tap-home-footer{margin-top:3px!important;font-size:7px!important;line-height:1.25!important}
 }
 
-/* Double only the small coin icon beside the tap balance */
-#tapBalance::after{width:44px!important;height:44px!important;flex-basis:44px!important}
+/* All small OXIDE coin icons are doubled across every page */
+#tapBalance::after,#skillsBalance::after,#pointsBalance::after,#missionTopBalance::after,#referralShardBalance::after{width:44px!important;height:44px!important;flex-basis:44px!important}
 
 /* Slightly lower the tap coin without changing its size or behavior */
 @media(max-width:600px){#homePage .tap-coin{position:relative!important;top:35px!important;transform:translateY(35px)!important}}
