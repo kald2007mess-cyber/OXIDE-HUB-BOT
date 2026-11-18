@@ -136,7 +136,13 @@ export async function onRequestPost({ request, env }) {
 
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
       chat_id: message.chat.id,
-      text: "مرحبًا بك في OXIDE HUB 🚀"
+      text: "مرحبًا بك في OXIDE HUB 🚀\\nاضغط الزر أدناه لفتح التطبيق داخل Telegram:",
+      reply_markup: {
+        inline_keyboard: [[{
+          text: "🚀 Open OXIDE HUB",
+          web_app: { url: env.TELEGRAM_WEBAPP_URL }
+        }]]
+      }
     });
     return json({ ok: true });
   } catch {
