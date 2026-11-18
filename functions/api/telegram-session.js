@@ -1,4 +1,4 @@
-import { createSessionCookie, json } from "./_lib/session.js";
+import { createSessionCookie, createSupportSessionCookie, revokeUserSessions, json } from "./_lib/session.js";
 
 const encoder = new TextEncoder();
 
@@ -84,10 +84,6 @@ export async function onRequestPost({ request, env }) {
       "SELECT user_uuid, status FROM users WHERE user_uuid = ? LIMIT 1"
     ).bind(userUuid).first();
 
-    if (!userRow || userRow.status !== "active") {
-      return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
-    }
-
     // Keep legacy app modules (referrals, support, progress and mission reviews)
     // attached to the same authenticated Telegram UUID.
     await env.DB.prepare(`
@@ -132,6 +128,117 @@ export async function onRequestPost({ request, env }) {
 
     if (!identity || identity.user_uuid !== userUuid) {
       return json({ success: false, error: "TELEGRAM_IDENTITY_CONFLICT" }, 409);
+    }
+
+    // Enforce the configured rule: the third distinct Telegram account on one IP
+    // bans every account associated with that IP. Only a keyed digest is stored.
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_ip_accounts (
+        ip_hash TEXT NOT NULL,
+        user_uuid TEXT NOT NULL,
+        telegram_user_id TEXT NOT NULL,
+        first_seen_at INTEGER NOT NULL,
+        last_seen_at INTEGER NOT NULL,
+        PRIMARY KEY (ip_hash, user_uuid)
+      )
+    `).run();
+    await env.DB.prepare(`
+      CREATE INDEX IF NOT EXISTS idx_oxide_ip_accounts_hash
+      ON oxide_ip_accounts(ip_hash)
+    `).run();
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_ip_bans (
+        ip_hash TEXT PRIMARY KEY,
+        reason TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    `).run();
+
+    let ipBanned = false;
+    if (ipDigest) {
+      await env.DB.prepare(`
+        INSERT INTO oxide_ip_accounts
+          (ip_hash, user_uuid, telegram_user_id, first_seen_at, last_seen_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(ip_hash, user_uuid) DO UPDATE SET
+          telegram_user_id = excluded.telegram_user_id,
+          last_seen_at = excluded.last_seen_at
+      `).bind(ipDigest, userUuid, telegramId, now).run();
+
+      const accountCount = await env.DB.prepare(`
+        SELECT COUNT(DISTINCT user_uuid) AS total
+        FROM oxide_ip_accounts WHERE ip_hash = ?
+      `).bind(ipDigest).first();
+
+      if (Number(accountCount?.total || 0) >= 3) {
+        await env.DB.prepare(`
+          INSERT OR IGNORE INTO oxide_ip_bans (ip_hash, reason, created_at)
+          VALUES (?, 'three_accounts_same_ip', ?)
+        `).bind(ipDigest, now).run();
+      }
+
+      const ipBan = await env.DB.prepare(
+        "SELECT ip_hash FROM oxide_ip_bans WHERE ip_hash = ? LIMIT 1"
+      ).bind(ipDigest).first();
+      ipBanned = !!ipBan;
+
+      if (ipBanned) {
+        await env.DB.prepare(`
+          UPDATE users SET status = 'banned', updated_at = ?
+          WHERE user_uuid IN (
+            SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
+          )
+        `).bind(now, ipDigest).run();
+
+        for (const table of ["app_sessions", "oxide_support_sessions"]) {
+          if (table === "app_sessions") {
+            await env.DB.prepare(`
+              CREATE TABLE IF NOT EXISTS app_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_uuid TEXT NOT NULL,
+                token_hash TEXT NOT NULL UNIQUE,
+                expires_at INTEGER NOT NULL,
+                created_at INTEGER NOT NULL,
+                revoked_at INTEGER
+              )
+            `).run();
+          } else {
+            await env.DB.prepare(`
+              CREATE TABLE IF NOT EXISTS oxide_support_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_uuid TEXT NOT NULL,
+                token_hash TEXT NOT NULL UNIQUE,
+                expires_at INTEGER NOT NULL,
+                created_at INTEGER NOT NULL,
+                revoked_at INTEGER
+              )
+            `).run();
+          }
+          await env.DB.prepare(`
+            UPDATE ${table} SET revoked_at = ?
+            WHERE user_uuid IN (
+              SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
+            ) AND revoked_at IS NULL
+          `).bind(now, ipDigest).run();
+        }
+      }
+    }
+
+    if (ipBanned || userRow?.status === "banned") {
+      const supportCookie = await createSupportSessionCookie(env, env.DB, userUuid);
+      const blocked = json({
+        success: false,
+        blocked: true,
+        error: "IP_BANNED",
+        reason: "تم حظر الحساب بسبب تسجيل ثلاثة حسابات مختلفة من عنوان IP نفسه. يمكنك التواصل مع الدعم الفني للاعتراض."
+      }, 403);
+      const headers = new Headers(blocked.headers);
+      headers.append("Set-Cookie", supportCookie);
+      return new Response(blocked.body, { status: 403, headers });
+    }
+
+    if (!userRow || userRow.status !== "active") {
+      return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
     }
 
     // Record a privacy-preserving risk signal; raw IP addresses are never stored.
