@@ -134,7 +134,31 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "TELEGRAM_IDENTITY_CONFLICT" }, 409);
     }
 
-    // Apply a Telegram /start referral once the invited account has a verified OXIDE identity.
+    // Record a privacy-preserving risk signal; raw IP addresses are never stored.
+    const clientIp = request.headers.get("CF-Connecting-IP") || "";
+    const ipDigest = clientIp
+      ? toHex(new Uint8Array(await crypto.subtle.digest(
+          "SHA-256", encoder.encode(env.SESSION_SECRET + ":" + clientIp)
+        )))
+      : "";
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_security_signals (
+        user_uuid TEXT PRIMARY KEY,
+        ip_hash TEXT NOT NULL DEFAULT '',
+        updated_at INTEGER NOT NULL
+      )
+    `).run();
+    if (ipDigest) {
+      await env.DB.prepare(`
+        INSERT INTO oxide_security_signals(user_uuid,ip_hash,updated_at)
+        VALUES(?,?,?)
+        ON CONFLICT(user_uuid) DO UPDATE SET
+          ip_hash=excluded.ip_hash, updated_at=excluded.updated_at
+      `).bind(userUuid, ipDigest, now).run();
+    }
+
+    // A Telegram deep-link attribution is recorded first; rewards wait for a genuinely
+    // approved mission. Shared IPs are a review signal, not proof of fraud.
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS oxide_pending_referrals (
         referred_telegram_id TEXT PRIMARY KEY,
@@ -142,6 +166,30 @@ export async function onRequestPost({ request, env }) {
         created_at INTEGER NOT NULL
       )
     `).run();
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS referrals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        referrer_id TEXT NOT NULL,
+        referred_id TEXT NOT NULL UNIQUE,
+        points_awarded INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        risk_score INTEGER NOT NULL DEFAULT 0,
+        risk_reason TEXT NOT NULL DEFAULT ''
+      )
+    `).run();
+    const referralColumns = await env.DB.prepare("PRAGMA table_info(referrals)").all();
+    const knownReferralColumns = new Set((referralColumns.results || []).map(column => column.name));
+    if (!knownReferralColumns.has("status")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN status TEXT NOT NULL DEFAULT 'pending'").run();
+    }
+    if (!knownReferralColumns.has("risk_score")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_score INTEGER NOT NULL DEFAULT 0").run();
+    }
+    if (!knownReferralColumns.has("risk_reason")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
+    }
+
     const pendingReferral = await env.DB.prepare(
       "SELECT referrer_telegram_id FROM oxide_pending_referrals WHERE referred_telegram_id = ? LIMIT 1"
     ).bind(telegramId).first();
@@ -150,51 +198,38 @@ export async function onRequestPost({ request, env }) {
         "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
       ).bind(String(pendingReferral.referrer_telegram_id)).first();
       if (referrerIdentity && referrerIdentity.user_uuid !== userUuid) {
-        await env.DB.prepare(`
-          CREATE TABLE IF NOT EXISTS referrals (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            referrer_id TEXT NOT NULL,
-            referred_id TEXT NOT NULL UNIQUE,
-            points_awarded INTEGER NOT NULL DEFAULT 0,
-            created_at INTEGER NOT NULL
-          )
-        `).run();
         const existingReferral = await env.DB.prepare(
           "SELECT id FROM referrals WHERE referred_id = ? LIMIT 1"
         ).bind(userUuid).first();
         if (!existingReferral) {
-          const referralTime = Math.floor(Date.now() / 1000);
-          await env.DB.batch([
-            env.DB.prepare(`
-              INSERT OR IGNORE INTO referrals
-                (referrer_id, referred_id, points_awarded, created_at)
-              VALUES (?, ?, 15, ?)
-            `).bind(referrerIdentity.user_uuid, userUuid, referralTime),
-            env.DB.prepare(`
-              UPDATE visitors SET points = points + 30
-              WHERE user_id = ? AND changes() = 1
-                AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ?)
-            `).bind(userUuid, userUuid),
-            env.DB.prepare(`
-              UPDATE referrals SET points_awarded = 50
-              WHERE referred_id = ? AND points_awarded = 15 AND changes() = 1
-            `).bind(userUuid),
-            env.DB.prepare(`
-              UPDATE visitors SET points = points + 35
-              WHERE user_id = ? AND changes() = 1
-                AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
-            `).bind(referrerIdentity.user_uuid, userUuid),
-            env.DB.prepare(`
-              UPDATE users SET points = (SELECT points FROM visitors WHERE user_id = users.user_uuid),
-                updated_at = ? WHERE user_uuid = ?
-                AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
-            `).bind(referralTime, userUuid, userUuid),
-            env.DB.prepare(`
-              UPDATE users SET points = (SELECT points FROM visitors WHERE user_id = users.user_uuid),
-                updated_at = ? WHERE user_uuid = ?
-                AND EXISTS (SELECT 1 FROM referrals WHERE referred_id = ? AND points_awarded = 50)
-            `).bind(referralTime, referrerIdentity.user_uuid, userUuid)
-          ]);
+          let riskScore = 0;
+          const reasons = [];
+          if (ipDigest) {
+            const referrerSignal = await env.DB.prepare(
+              "SELECT ip_hash FROM oxide_security_signals WHERE user_uuid = ? LIMIT 1"
+            ).bind(referrerIdentity.user_uuid).first();
+            if (referrerSignal?.ip_hash && referrerSignal.ip_hash === ipDigest) {
+              riskScore += 70;
+              reasons.push("same_ip_as_referrer");
+            }
+            const sameIpAccounts = await env.DB.prepare(`
+              SELECT COUNT(*) AS total FROM oxide_security_signals
+              WHERE ip_hash = ? AND updated_at >= ?
+            `).bind(ipDigest, now - 30 * 86400).first();
+            if (Number(sameIpAccounts?.total || 0) >= 3) {
+              riskScore += 30;
+              reasons.push("multiple_accounts_same_ip");
+            }
+          }
+          const riskStatus = riskScore >= 70 ? "review" : "pending";
+          await env.DB.prepare(`
+            INSERT OR IGNORE INTO referrals
+              (referrer_id,referred_id,points_awarded,created_at,status,risk_score,risk_reason)
+            VALUES(?,?,0,?,?,?,?)
+          `).bind(
+            referrerIdentity.user_uuid, userUuid, now, riskStatus,
+            riskScore, reasons.join(",")
+          ).run();
         }
       }
       await env.DB.prepare(
