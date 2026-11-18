@@ -21,6 +21,24 @@ async function ensureTables(DB) {
     reviewed_at INTEGER
   )`).run();
 
+  await DB.prepare(`
+    INSERT INTO oxide_admin_missions
+      (title,description,platform,target_url,reward_points,enabled,created_at)
+    SELECT ?,?,?,?,?,1,?
+    WHERE NOT EXISTS (
+      SELECT 1 FROM oxide_admin_missions
+      WHERE platform='telegram_join' AND target_url=?
+    )
+  `).bind(
+    "Join OXIDE HUB Telegram Channel",
+    "Join @OxideHubOfficial and verify your membership to receive 50 OXIDE points.",
+    "telegram_join",
+    "https://t.me/OxideHubOfficial",
+    50,
+    Math.floor(Date.now()/1000),
+    "https://t.me/OxideHubOfficial"
+  ).run();
+
   const submissionColumns = await DB.prepare("PRAGMA table_info(mission_submissions)").all();
   const submissionColumnNames = (submissionColumns.results || []).map(column => column.name);
   if (!submissionColumnNames.includes("user_id")) {
