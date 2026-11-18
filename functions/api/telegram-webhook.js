@@ -43,6 +43,11 @@ export async function onRequestPost({ request, env }) {
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
       menu_button: { type: "default" }
     });
+    // Also clear any menu-button override saved specifically for this private chat.
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
+      chat_id: message.chat.id,
+      menu_button: { type: "default" }
+    });
 
     // An administrator can reply directly to the support notification in Telegram.
     // The reply is stored in the same conversation and appears in the user's support tab.
