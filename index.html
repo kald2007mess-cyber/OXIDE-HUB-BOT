@@ -2170,7 +2170,7 @@ function renderMissionCards(){
     const card = document.createElement("article");
     card.className = "mission-item";
     card.dataset.missionId = String(id);
-    card.dataset.taskFilter = mission.platform === "telegram" ? "tg" : "others";
+    card.dataset.taskFilter = String(mission.platform||"").startsWith("telegram") ? "tg" : "others";
 
     const main = document.createElement("div");
     main.className = "mission-item-main";
@@ -2263,6 +2263,21 @@ function renderMissionCards(){
       message.textContent = ui.pendingMessage;
     }else if(status === "rejected"){
       message.textContent = ui.rejectedMessage;
+    }
+
+    if(String(mission.platform||"").toLowerCase()==="telegram_join"){
+      const joinButton = card.querySelector(".mission-link-button");
+      if(joinButton) joinButton.textContent = missionLanguage==="ar" ? "انضم إلى قناة تيليجرام ↗" : missionLanguage==="ru" ? "Вступить в Telegram-канал ↗" : "Join Telegram Channel ↗";
+      const verifyButton = document.createElement("button");
+      verifyButton.type = "button";
+      verifyButton.className = "mission-submit-button";
+      verifyButton.textContent = status==="approved" ? (missionLanguage==="ar"?"مكتملة ✓":"Completed ✓") : (missionLanguage==="ar"?"تحقق واحصل على 50 نقطة":"Verify & claim 50 points");
+      verifyButton.disabled = status==="approved";
+      verifyButton.addEventListener("click",()=>verifyTelegramChannelMission(id,verifyButton,message));
+      card.append(verifyButton,message);
+      if(status==="pending") message.textContent = mt("pendingMessage");
+      list.appendChild(card);
+      return;
     }
 
     const form = document.createElement("form");
@@ -2424,6 +2439,41 @@ async function loadMissionStatus(){
       list.appendChild(message);
     }
   }
+}
+
+async function verifyTelegramChannelMission(missionId,button,message){
+ if(missionSubmittingId!==null)return;
+ const original=button.textContent;
+ missionSubmittingId=Number(missionId);
+ button.disabled=true;
+ button.textContent=currentLanguage==="ar"?"جارٍ التحقق...":"Verifying...";
+ if(message)message.textContent="";
+ try{
+  const response=await fetch("/api/missions/verify-channel",{
+   method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",
+   body:JSON.stringify({missionId:Number(missionId)})
+  });
+  const data=await response.json();
+  if(!response.ok||!data.success){
+   const errors={
+    CHANNEL_NOT_JOINED:currentLanguage==="ar"?"لم تنضم إلى القناة بعد. انضم أولاً ثم اضغط تحقق.":"You have not joined the channel yet. Join first, then verify.",
+    BOT_NOT_ADMIN_OR_CHANNEL_UNAVAILABLE:currentLanguage==="ar"?"تعذر التحقق. تأكد أن البوت مشرف في القناة.":"Verification unavailable. Make sure the bot is an admin in the channel.",
+    TELEGRAM_CHECK_FAILED:currentLanguage==="ar"?"تعذر الاتصال بتيليجرام. حاول لاحقًا.":"Could not contact Telegram. Please try again.",
+    NO_VISITOR_SESSION:mt("session"),
+    TELEGRAM_IDENTITY_NOT_FOUND:mt("session")
+   };
+   throw new Error(errors[data.error]||data.error||"Verification failed");
+  }
+  if(message)message.textContent=data.alreadyCompleted
+    ? (currentLanguage==="ar"?"هذه المهمة مكتملة مسبقًا.":"This mission is already completed.")
+    : (currentLanguage==="ar"?"تم التحقق! أضيفت 50 نقطة إلى رصيدك.":"Verified! 50 points have been added to your balance.");
+  await loadMissionStatus();
+ }catch(error){
+  if(message)message.textContent=error.message||"Verification failed";
+ }finally{
+  missionSubmittingId=null;
+  if(button.isConnected){button.disabled=false;button.textContent=original;}
+ }
 }
 
 async function submitMissionProof(event, missionId){
