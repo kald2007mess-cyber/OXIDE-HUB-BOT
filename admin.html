@@ -643,7 +643,7 @@ let newsPosts=[],newsBusy=false,editingNewsId=null,newsPreviewUrl="";
 function openNews(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("newsPage").classList.remove("hidden");resetNewsForm();loadNews();}
 function closeNews(){document.getElementById("newsPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function clearNewsPreview(){if(newsPreviewUrl){URL.revokeObjectURL(newsPreviewUrl);newsPreviewUrl="";}document.getElementById("newsPreview").innerHTML="معاينة الوسائط المختارة ستظهر هنا.";}
-document.getElementById("newsMedia").addEventListener("change",function(){
+document.getElementById("newsMedia")?.addEventListener("change",function(){
  clearNewsPreview();const file=this.files&&this.files[0];if(!file)return;
  const isVideo=file.type==="video/mp4"||file.name.toLowerCase().endsWith(".mp4"),isImage=["image/jpeg","image/png","image/webp"].includes(file.type)||/\.(jpg|jpeg|png|webp)$/i.test(file.name);
  if(!isVideo&&!isImage){this.value="";alert("اختر صورة JPG أو PNG أو WEBP أو فيديو MP4 فقط.");return;}
