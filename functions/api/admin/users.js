@@ -18,13 +18,15 @@ export async function onRequestPost({ request, env }) {
     const limit = Math.max(1, Math.min(50, Math.floor(Number(body.limit) || 20)));
     const query = String(body.query || "").trim().slice(0, 100);
     const search = query ? `%${query.replace(/[%_]/g, "")}%` : "%";
-    const where = query ? "WHERE u.public_id LIKE ? OR u.user_uuid LIKE ?" : "";
+    const where = query ? "WHERE u.public_id LIKE ? OR u.user_uuid LIKE ? OR p.username LIKE ? OR p.first_name LIKE ? OR p.last_name LIKE ?" : "";
+    const searchParams = query ? [search, search, search, search, search] : [];
 
     const count = await env.DB.prepare(`
       SELECT COUNT(*) AS total
       FROM users u
+      LEFT JOIN oxide_profiles p ON p.user_uuid = u.user_uuid
       ${where}
-    `).bind(...(query ? [search, search] : [])).first();
+    `).bind(...searchParams).first();
 
     const total = Number(count?.total || 0);
     const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -32,15 +34,19 @@ export async function onRequestPost({ request, env }) {
     const offset = (safePage - 1) * limit;
 
     const result = await env.DB.prepare(`
-      SELECT u.public_id AS id, u.points,
+      SELECT u.public_id AS id, u.user_uuid AS userUuid, u.points,
              COALESCE(v.progress, 0) AS progress,
-             u.created_at AS createdAt
+             u.created_at AS createdAt,
+             p.first_name AS firstName, p.last_name AS lastName,
+             p.username AS username, p.photo_url AS photoUrl,
+             p.telegram_url AS telegramUrl
       FROM users u
       LEFT JOIN visitors v ON v.user_id = u.user_uuid
+      LEFT JOIN oxide_profiles p ON p.user_uuid = u.user_uuid
       ${where}
       ORDER BY u.created_at DESC, u.user_uuid ASC
       LIMIT ? OFFSET ?
-    `).bind(...(query ? [search, search, limit, offset] : [limit, offset])).all();
+    `).bind(...(query ? [...searchParams, limit, offset] : [limit, offset])).all();
 
     return json({
       success: true,
