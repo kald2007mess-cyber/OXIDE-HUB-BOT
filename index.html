@@ -1772,6 +1772,11 @@ function renderMissionCards(){
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.textContent = ui.open;
+      link.addEventListener("click",()=>{
+        try{sessionStorage.setItem("oxide_mission_started_"+id,"1")}catch(error){}
+        const proofBox=card.querySelector(".mission-proof-box");
+        if(proofBox)proofBox.style.display="block";
+      });
       card.appendChild(link);
     }
 
@@ -1794,6 +1799,10 @@ function renderMissionCards(){
 
     const form = document.createElement("form");
     form.className = "mission-proof-box";
+    const missionStarted = status !== "not_submitted" ||
+      !/^https:\/\/[^\s]+$/i.test(targetUrl) ||
+      (()=>{try{return sessionStorage.getItem("oxide_mission_started_"+id)==="1"}catch(error){return false}})();
+    form.style.display = missionStarted ? "block" : "none";
 
     const label = document.createElement("label");
     label.className = "mission-file-label";
