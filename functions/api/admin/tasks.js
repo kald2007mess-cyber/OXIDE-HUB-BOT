@@ -32,6 +32,18 @@ async function ensureTables(DB) {
     created_at INTEGER NOT NULL,
     reviewed_at INTEGER
   )`).run();
+
+  const submissionColumns = await DB.prepare("PRAGMA table_info(mission_submissions)").all();
+  const submissionColumnNames = (submissionColumns.results || []).map(column => column.name);
+  if (!submissionColumnNames.includes("user_id")) {
+    await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN user_id TEXT").run();
+    if (submissionColumnNames.includes("user_uuid")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = user_uuid WHERE user_id IS NULL OR user_id = ''").run();
+    } else if (submissionColumnNames.includes("visitor_id")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
+    }
+  }
+
 }
 
 async function listTasks(DB) {
