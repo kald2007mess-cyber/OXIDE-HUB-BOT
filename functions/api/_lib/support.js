@@ -24,6 +24,14 @@ export async function ensureSupportTables(DB) {
   if (!knownConversationColumns.has("updated_at")) {
     await DB.prepare("ALTER TABLE support_conversations ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0").run();
   }
+  if (knownConversationColumns.has("user_uuid")) {
+    await DB.prepare(`
+      UPDATE support_conversations
+      SET user_id = user_uuid
+      WHERE (user_id IS NULL OR user_id = '')
+        AND user_uuid IS NOT NULL AND user_uuid != ''
+    `).run();
+  }
   await DB.prepare(`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_support_conversations_user
     ON support_conversations(user_id)
