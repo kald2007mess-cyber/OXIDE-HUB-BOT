@@ -1866,6 +1866,12 @@ async function loadMissionStatus(){
   const list = document.getElementById("missionList");
 
   try{
+    // The missions endpoint uses the authenticated HttpOnly visitor cookie.
+    // Ensure Telegram initData has been verified and the session cookie exists first.
+    if(!userIdLoaded && !await loadUserId()){
+      throw new Error("NO_TELEGRAM_SESSION");
+    }
+
     const response = await fetch("/api/missions/status", {
       method:"GET",
       cache:"no-store",
