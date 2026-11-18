@@ -201,7 +201,7 @@ export async function onRequestPost({ request, env }) {
         ON CONFLICT(ip_hash, user_uuid) DO UPDATE SET
           telegram_user_id = excluded.telegram_user_id,
           last_seen_at = excluded.last_seen_at
-      `).bind(ipDigest, userUuid, telegramId, now).run();
+      `).bind(ipDigest, userUuid, telegramId, now, now).run();
 
       diagnosticStage = "COUNT_IP_ACCOUNTS";
     const accountCount = await env.DB.prepare(`
