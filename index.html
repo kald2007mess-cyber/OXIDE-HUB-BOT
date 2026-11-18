@@ -1333,7 +1333,7 @@ function translateRemainingStaticText(language){
  const skillButton=document.querySelector(".tap-skills-shortcut");if(skillButton)skillButton.setAttribute("aria-label",p.skillsAria);
  const tapMeter=document.querySelector(".tap-meter");if(tapMeter)tapMeter.setAttribute("aria-label",p.tapStorageAria);
  const note=document.querySelector("#notificationsList .notification-empty");if(note)note.textContent=p.notificationLoading;
- const gate=document.querySelector(".telegram-gate-how");if(gate){const lines=gate.querySelectorAll("li");[p.gateStep1,p.gateStep2,p.gateStep3].forEach((v,i)=>{if(lines[i])lines[i].textContent=v})}
+ const gate=document.querySelector(".telegram-gate-how");if(gate)gate.innerHTML="<strong>"+p.gateHow+"</strong><br>1. "+p.gateStep1+"<br>2. "+p.gateStep2+"<br>3. "+p.gateStep3;
  translateRemainingStaticText(language);
 }
 
