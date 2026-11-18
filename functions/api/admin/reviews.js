@@ -200,7 +200,7 @@ async function reviewMission(DB, id, decision) {
     // a mission approved by an administrator. High-risk referrals remain held.
     try {
       const referral = await DB.prepare(`
-        SELECT referrer_id FROM referrals
+        SELECT id, referrer_id FROM referrals
         WHERE referred_id = ? AND status = 'pending'
         LIMIT 1
       `).bind(submission.user_id).first();
@@ -241,7 +241,21 @@ async function reviewMission(DB, id, decision) {
               SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
                 AND points_awarded = 50
             )
-          `).bind(submission.user_id, submission.user_id)
+          `).bind(submission.user_id, submission.user_id),
+          DB.prepare(`
+            INSERT INTO point_ledger
+              (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+            SELECT user_uuid,50,points,'referral_reward','referral',CAST(? AS TEXT),?
+            FROM users WHERE user_uuid = ?
+              AND EXISTS (SELECT 1 FROM referrals WHERE id = ? AND status = 'rewarded' AND points_awarded = 50)
+          `).bind(referral.id,referralTime,referral.referrer_id,referral.id),
+          DB.prepare(`
+            INSERT INTO point_ledger
+              (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+            SELECT user_uuid,30,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
+            FROM users WHERE user_uuid = ?
+              AND EXISTS (SELECT 1 FROM referrals WHERE id = ? AND status = 'rewarded' AND points_awarded = 50)
+          `).bind(referral.id,referralTime,submission.user_id,referral.id)
         ]);
       }
     } catch (referralRewardError) {
