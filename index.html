@@ -121,7 +121,7 @@ body{margin:0;min-height:100vh;background-color:#030816;font-family:Arial,sans-s
 .mission-summary-value{display:block;color:#fff;font-size:22px;font-weight:900;margin-top:1px}
 .mission-group-title{display:flex;align-items:center;justify-content:space-between;color:#dceeff;font-size:12px;font-weight:800;letter-spacing:.4px;margin:16px 1px 9px}
 .mission-group-count{font-size:9px;color:#8ea6c8;font-weight:normal}
-.mission-list{display:grid;grid-template-columns:1fr;gap:9px}
+.mission-list{display:grid;grid-template-columns:1fr;gap:9px}.mission-history{margin-top:18px;padding-top:14px;border-top:1px solid #294967}.mission-history-title{color:#55d6ff;font-size:13px;font-weight:900;margin:0 0 10px}.mission-history-item{background:rgba(12,26,46,.9);border:1px solid #294967;border-radius:10px;padding:10px;margin:7px 0;font-size:11px;color:#d8e5f3}.mission-history-row{display:flex;justify-content:space-between;align-items:center;gap:8px}.mission-history-state{font-size:10px;font-weight:bold}.mission-history-state.pending{color:#ffd36a}.mission-history-state.approved{color:#43d69a}.mission-history-state.rejected{color:#ff8791}.mission-history-date{color:#829bb9;font-size:9px;margin-top:5px}
 .mission-item{display:block;background:linear-gradient(145deg,rgba(18,35,59,.98),rgba(12,26,46,.98));border:1px solid #2b4b6b;border-radius:14px;padding:12px;color:#d8e5f3;font-size:12px;min-width:0}
 .mission-item-main{display:flex;align-items:center;justify-content:space-between;gap:9px}
 .mission-item-heading{display:flex;align-items:center;gap:9px;min-width:0}
@@ -1134,7 +1134,7 @@ body.outside-telegram .telegram-gate{display:flex!important}
     <button class="oxide-filter-chip" type="button" data-task-filter="tg" onclick="filterOxideTasks('tg',this)">Telegram</button>
     <button class="oxide-filter-chip" type="button" data-task-filter="others" onclick="filterOxideTasks('others',this)">TikTok / Others</button>
   </div>
-  <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div>
+  <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><section class="mission-history" id="missionHistoryList" aria-live="polite"></section>
 </div>
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
@@ -1519,6 +1519,7 @@ missionTranslations.de={...missionTranslations.en,subtitle:"MISSIONENZENTRUM",jo
 let missionLanguage = "ar";
 function mt(key){return missionTranslations[missionLanguage]?.[key] || missionTranslations.en[key] || key;}
 let missionData = [];
+let missionSubmissionHistory = [];
 let missionSubmittingId = null;
 let missionPreviewUrls = [];
 
@@ -1871,6 +1872,41 @@ function renderMissionCards(){
   });
 }
 
+function renderMissionHistory(){
+  const host=document.getElementById("missionHistoryList");
+  if(!host)return;
+  host.replaceChildren();
+  const title=document.createElement("div");
+  title.className="mission-history-title";
+  title.textContent="📋 سجل المهمات";
+  host.appendChild(title);
+  if(!missionSubmissionHistory.length){
+    const empty=document.createElement("div");
+    empty.className="mission-description";
+    empty.textContent="لا توجد مهمات مرسلة بعد.";
+    host.appendChild(empty);
+    return;
+  }
+  missionSubmissionHistory.forEach(item=>{
+    const card=document.createElement("div");
+    card.className="mission-history-item";
+    const row=document.createElement("div");
+    row.className="mission-history-row";
+    const name=document.createElement("strong");
+    name.textContent=String(item.title||("Mission #"+item.missionId));
+    const state=document.createElement("span");
+    state.className="mission-history-state "+String(item.status||"");
+    state.textContent=item.status==="pending"?"⏳ قيد المراجعة":item.status==="approved"?"✅ مقبولة":"❌ مرفوضة";
+    row.append(name,state);
+    const date=document.createElement("div");
+    date.className="mission-history-date";
+    const stamp=Number(item.reviewedAt||item.createdAt||0);
+    date.textContent=stamp?new Date(stamp*1000).toLocaleString():"";
+    card.append(row,date);
+    host.appendChild(card);
+  });
+}
+
 async function loadMissionStatus(){
   const list = document.getElementById("missionList");
 
@@ -1896,7 +1932,9 @@ async function loadMissionStatus(){
     const balance = document.getElementById("missionsBalance");
     if(balance) balance.textContent = points.toLocaleString();const missionTop=document.getElementById("missionTopBalance");if(missionTop)missionTop.textContent=points.toLocaleString();
 
-    missionData = Array.isArray(data.missions) ? data.missions : [];
+    missionData = Array.isArray(data.missions) ? data.missions.filter(item => item.status !== "pending") : [];
+    missionSubmissionHistory = Array.isArray(data.submissions) ? data.submissions : [];
+    renderMissionHistory();
     const availableCount = missionData.filter(item => item.status !== "approved").length;
     const completedCount = missionData.filter(item => item.status === "approved").length;
     const availableNode = document.getElementById("missionsAvailableCount");
@@ -1906,7 +1944,7 @@ async function loadMissionStatus(){
     trackMissionItems(missionData,document.getElementById("missionsPage").style.display!=="none");
 
     const completed = missionData.filter(item => item.status === "approved").length;
-    updateMissionProgress(completed, missionData.length);
+    updateMissionProgress(completed, missionData.length + missionSubmissionHistory.filter(item => item.status === "pending").length);
     renderMissionCards();
 
   }catch(error){
