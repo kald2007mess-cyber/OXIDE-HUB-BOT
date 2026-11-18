@@ -164,6 +164,52 @@ button,input,select,textarea{max-width:100%;touch-action:manipulation}
  .platform-card-actions{grid-template-columns:minmax(0,1fr)}
 }
 
+
+/* OXIDE HUB ADMIN — refined control-center interface. Rain canvas, stars and inline SVG artwork are intentionally preserved. */
+:root{--oxide-cyan:#66dcff;--oxide-violet:#b98cff;--oxide-line:rgba(126,177,255,.22);--oxide-glass:rgba(7,14,34,.66)}
+body{color:#f4f7ff;background-color:#050a18}
+.container{max-width:980px}
+header{padding:22px 10px 18px}
+header h1{font-size:clamp(27px,5vw,39px);text-shadow:0 0 24px rgba(87,184,255,.42)}
+.subtitle{letter-spacing:2.5px;font-size:11px}
+.admin-welcome,.admin-dashboard,.admin-section-heading{position:relative;margin:15px 0;padding:20px;border:1px solid var(--oxide-line);border-radius:20px;background:linear-gradient(135deg,rgba(24,34,75,.78),rgba(9,18,43,.67));box-shadow:0 16px 40px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.admin-welcome{display:flex;align-items:center;justify-content:space-between;gap:16px;overflow:hidden}
+.admin-welcome:after{content:"";position:absolute;width:190px;height:190px;left:-55px;top:-105px;border-radius:50%;border:1px solid rgba(113,194,255,.18);box-shadow:0 0 0 18px rgba(113,194,255,.025),0 0 0 38px rgba(113,194,255,.02);pointer-events:none}
+.admin-kicker{color:#79dfff;font-size:10px;font-weight:800;letter-spacing:2px}
+.admin-welcome h2{font-size:clamp(21px,4vw,29px);margin:9px 0 7px;color:#fff}
+.admin-welcome p,.admin-section-heading p{margin:0;color:#a9bbd5;font-size:13px;line-height:1.7}
+.admin-live-mark{display:flex;align-items:center;gap:8px;white-space:nowrap;padding:9px 12px;border-radius:30px;background:rgba(15,68,60,.42);border:1px solid rgba(91,230,177,.28);color:#9af2c7;font-size:11px}
+.admin-live-mark span{width:7px;height:7px;border-radius:50%;background:#4adea2;box-shadow:0 0 12px #4adea2}
+.admin-dashboard{padding:18px}
+.admin-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.admin-dashboard-head h3,.admin-section-heading h3{font-size:19px;margin:5px 0 0;color:#f1f5ff}
+.admin-refresh{width:auto;margin:0;padding:9px 14px;background:rgba(41,61,104,.65);border:1px solid rgba(133,175,255,.25);font-size:12px}
+.admin-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.admin-metric{min-width:0;padding:15px 13px;border-radius:15px;border:1px solid rgba(127,163,255,.2);background:linear-gradient(145deg,rgba(26,42,83,.78),rgba(10,20,47,.78));display:flex;flex-direction:column;gap:7px}
+.admin-metric-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:rgba(111,173,255,.13);color:#8ce5ff;font-size:18px}
+.admin-metric small{color:#aabbd4;font-size:11px}
+.admin-metric strong{color:#fff;font-size:27px;line-height:1.15;font-variant-numeric:tabular-nums}
+.admin-metric em{font-style:normal;color:#788eae;font-size:10px}
+.admin-dashboard-status{margin:13px 2px 0;color:#8ca3c4;font-size:11px;min-height:16px}
+.admin-section-heading{padding:16px 19px;margin-bottom:10px}
+.admin-section-heading h3{margin:5px 0}
+.menu-heading{display:none}
+.menu-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.menu-tile{min-height:138px;border-radius:19px;position:relative;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.menu-tile:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 52%);pointer-events:none}
+.menu-tile .tile-icon{width:47px;height:47px}
+.menu-tile span{font-size:15px}
+.card{border-radius:18px}
+#maintenanceCard{margin-top:15px!important}
+#maintenanceCard h3{margin-top:2px}
+#usersPage .card,#tasksPage .card,#reviewsPage .card,#securityPage .card,#rewardsAdminPage .card{border-radius:20px;padding:20px}
+.back{width:auto;min-width:160px;padding:11px 15px;font-size:13px}
+.field input,.field textarea,.users-toolbar input,select{border-radius:12px!important;background:rgba(5,13,31,.82)!important;border-color:rgba(112,160,225,.27)!important}
+button{border-radius:12px}
+.platform-status{border:1px solid rgba(112,160,225,.2);border-radius:12px;background:rgba(7,18,40,.75)}
+@media(max-width:700px){.container{max-width:100%}.admin-welcome{align-items:flex-start;flex-direction:column;padding:17px}.admin-live-mark{font-size:10px}.admin-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-metric{padding:13px}.admin-metric strong{font-size:24px}.menu-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.menu-tile{min-height:125px}.admin-dashboard{padding:14px}.admin-section-heading{padding:14px}}
+@media(max-width:360px){.admin-metric-grid{gap:7px}.admin-metric{padding:10px}.admin-metric strong{font-size:21px}.menu-tile{min-height:116px;padding:12px 6px}.menu-tile span{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -174,64 +220,37 @@ button,input,select,textarea{max-width:100%;touch-action:manipulation}
 <div class="card" id="loading"><div class="status" id="status">جارٍ التحقق من صلاحية المدير...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
-<p class="menu-heading">CONTROL CENTER</p>
+<section class="admin-welcome">
+ <div class="admin-welcome-copy"><span class="admin-kicker">OXIDE HUB / ADMIN SYSTEM</span><h2>مركز التحكم الرئيسي</h2><p>إدارة الموقع والمستخدمين والمهام والطلبات من لوحة واحدة.</p></div>
+ <div class="admin-live-mark"><span></span> لوحة الإدارة متصلة</div>
+</section>
+<section class="admin-dashboard" aria-label="ملخص الإدارة">
+ <div class="admin-dashboard-head"><div><span class="admin-kicker">LIVE OVERVIEW</span><h3>نظرة عامة</h3></div><button class="admin-refresh" onclick="loadAdminDashboard()">⟳ تحديث</button></div>
+ <div class="admin-metric-grid">
+  <article class="admin-metric"><span class="admin-metric-icon">♙</span><small>إجمالي المستخدمين</small><strong id="dashUsers">—</strong><em>المستخدمون المسجلون</em></article>
+  <article class="admin-metric"><span class="admin-metric-icon">✓</span><small>المهمات الحالية</small><strong id="dashTasks">—</strong><em>المهمات المفعّلة</em></article>
+  <article class="admin-metric"><span class="admin-metric-icon">▤</span><small>طلبات المهمات</small><strong id="dashMissionReviews">—</strong><em>طلبات بانتظار المراجعة</em></article>
+  <article class="admin-metric"><span class="admin-metric-icon">◇</span><small>طلبات الاستبدال</small><strong id="dashRedemptionReviews">—</strong><em>طلبات بانتظار المراجعة</em></article>
+ </div>
+ <p id="dashboardStatus" class="admin-dashboard-status">يتم تحميل ملخص البيانات...</p>
+</section>
+<div class="admin-section-heading"><span class="admin-kicker">MANAGEMENT MODULES</span><h3>أقسام الإدارة</h3><p>اختر القسم لفتح واجهته وأدوات التحكم الخاصة به.</p></div>
+
 <div class="menu-grid">
 <button class="menu-tile blue" data-admin-permission="users" onclick="action('users')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span>معلومات المستخدمين</span></button>
-<button class="menu-tile yellow" data-admin-permission="news" onclick="action('news')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><span>إدارة الأخبار</span></button>
 <button class="menu-tile purple" data-admin-permission="tasks" onclick="action('reviews')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m8 12 2.5 2.5L16 9M8 6h8M8 18h5"/></svg></div><span>مراجعة الطلبات</span><small>المهمات • استبدال النقاط</small></button>
 <button class="menu-tile green" data-admin-permission="tasks" onclick="action('tasks')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg></div><span>إدارة المهمات</span></button>
-<button class="menu-tile blue" data-admin-permission="android" onclick="openPlatform('android')"><div class="tile-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 18h6"/></svg></div><span>ANDROID</span></button>
-<button class="menu-tile purple" data-admin-permission="beta" onclick="openPlatform('beta')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/></svg></div><span>BETA</span></button>
-<button class="menu-tile silver" data-admin-permission="ios" onclick="openPlatform('ios')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 7c-2-3-6-2-7 1-2 5 3 12 5 12 1 0 1-1 2-1s1 1 2 1c2 0 7-7 5-12-1-3-5-4-7-1Z"/><path d="M12 7c0-3 2-5 5-5"/></svg></div><span>iOS</span></button>
 <button id="siteTile" data-admin-permission="maintenance" class="menu-tile site-off" onclick="toggleMaintenance()"><div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div><span>إدارة الموقع</span><small id="siteTileStatus">جارٍ التحميل...</small></button>
-<button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>إرسال المكافآت</span><small>إشعارات المستخدمين</small></button>
+<button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>المكافآت والإشعارات</span><small>إرسال مكافأة قابلة للاستلام</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="action('security')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>الأمان والصلاحيات</span></button>
 </div>
 <div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ إدارة صيانة الموقع</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
 </div>
 <div id="usersPage" class="hidden"><div class="card"><button class="back" onclick="closeUsers()">⬅ العودة إلى لوحة الإدارة</button><h3>👥 معلومات المستخدمين</h3><div class="users-summary"><div class="users-stat">إجمالي المستخدمين<strong id="usersTotal">—</strong></div><div class="users-stat">الصفحة الحالية<strong id="usersPageNumber">1</strong></div></div><div class="users-toolbar"><input id="usersSearch" type="search" placeholder="بحث بواسطة User ID" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchUsers()">بحث</button></div><div class="platform-status" id="usersStatus">جارٍ تحميل المستخدمين...</div><div id="usersList"></div><div class="users-pagination"><button class="secondary" id="usersPrev" onclick="changeUsersPage(-1)" disabled>السابق</button><button class="secondary" id="usersNext" onclick="changeUsersPage(1)" disabled>التالي</button></div><p class="note">تعرض هذه الصفحة بيانات المستخدمين المسجلة في قاعدة بيانات الموقع.</p></div></div>
-<div id="newsPage" class="hidden"><div class="card"><button class="back" onclick="closeNews()">⬅ العودة إلى لوحة الإدارة</button><h3>📰 إدارة الأخبار</h3><div class="platform-status" id="newsStatus">جارٍ تحميل المنشورات...</div><h3 id="newsFormHeading">إضافة منشور جديد</h3><div class="field"><label>عنوان المنشور</label><input id="newsTitle" maxlength="180" placeholder="اكتب عنوان المنشور"></div><div class="field"><label>نص المنشور</label><textarea id="newsContent" maxlength="5000" placeholder="اكتب تفاصيل المنشور"></textarea></div><div class="field"><label>إضافة صورة أو فيديو</label><input class="file-input" id="newsMedia" type="file" accept="image/jpeg,image/png,image/webp,video/mp4"></div><p class="note">الصيغ المقبولة: JPG / PNG / WEBP / MP4. عند تعديل منشور يمكنك ترك الملف فارغًا للاحتفاظ بالوسائط الحالية.</p><div id="newsPreview" class="news-preview">معاينة الوسائط المختارة ستظهر هنا.</div><button id="publishNewsButton" onclick="saveNews()">📢 نشر المنشور</button><button id="cancelNewsEditButton" class="secondary hidden" onclick="resetNewsForm()">إلغاء التعديل</button><hr style="border:0;border-top:1px solid #294661;margin:22px 0"><h3>المنشورات القديمة</h3><div id="newsPosts"><div class="news-empty">جارٍ تحميل المنشورات...</div></div></div></div>
 <div id="tasksPage" class="hidden"><div class="card"><button class="back" onclick="closeTasks()">⬅ العودة إلى لوحة الإدارة</button><h3>🎯 إدارة المهمات</h3><div class="platform-status" id="tasksStatus">جارٍ تحميل المهمات...</div><div class="tasks-summary"><div class="task-stat">إجمالي المهمات<strong id="tasksTotal">—</strong></div><div class="task-stat">المهمات المفعّلة<strong id="tasksEnabled">—</strong></div><div class="task-stat">إجمالي الإكمالات<strong id="tasksCompleted">—</strong></div></div><div class="task-form"><h3 id="taskFormHeading">إضافة مهمة</h3><div class="field"><label>اسم المهمة</label><input id="taskTitle" maxlength="120" placeholder="مثال: متابعة حساب TikTok"></div><div class="field"><label>المنصة</label><select id="taskPlatform" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="tiktok">TikTok</option><option value="telegram">Telegram</option></select></div><div class="field"><label>وصف المهمة</label><textarea id="taskDescription" maxlength="1000" placeholder="اشرح المطلوب من المستخدم"></textarea></div><div class="field"><label>رابط المهمة (HTTPS)</label><input id="taskUrl" type="url" placeholder="https://..."></div><div class="field"><label>النقاط عند القبول</label><input id="taskReward" type="number" min="0" max="100000" value="50"></div><div class="field"><label>ترتيب المهمة</label><input id="taskOrder" type="number" min="0" value="1"></div><div class="field"><label>الحالة</label><select id="taskEnabled" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">مفعّلة</option><option value="0">متوقفة</option></select></div><button id="taskSaveButton" onclick="saveTask()">💾 حفظ المهمة</button><button id="taskCancelButton" class="secondary hidden" onclick="resetTaskForm()">إلغاء التعديل</button></div><h3>المهمات الحالية</h3><div id="tasksList"><div class="task-empty">جارٍ التحميل...</div></div><div id="taskCompletedPanel" class="hidden"><hr style="border:0;border-top:1px solid #294661;margin:20px 0"><h3 id="taskCompletedHeading">المستخدمون الذين أكملوا المهمة</h3><div class="platform-status" id="taskCompletedStatus"></div><div id="taskCompletedUsers"></div><button class="secondary" onclick="closeCompletedUsers()">إغلاق قائمة المستخدمين</button></div><p class="note">عدد الإكمالات يعرض الطلبات التي تمت الموافقة عليها فقط. لا يمكن حذف مهمة لها طلبات محفوظة؛ أوقفها بدلًا من ذلك للحفاظ على السجل.</p></div></div>
 <div id="reviewsPage" class="hidden"><div class="card"><button class="back" onclick="closeReviews()">⬅ العودة إلى لوحة الإدارة</button><h3>📋 مراجعة الطلبات</h3><div class="review-tabs"><button id="reviewMissionsTab" onclick="loadReviews('missions')">📝 طلبات المهمات (الدليل)</button><button id="reviewRedemptionsTab" class="secondary" onclick="loadReviews('redemptions')">💎 استبدال النقاط (العروض)</button></div><div class="platform-status" id="reviewsStatus">اختر نوع الطلبات لمراجعتها.</div><div id="reviewsList"><div class="task-empty">لا توجد طلبات معروضة.</div></div></div></div>
 <div id="securityPage" class="hidden"><div class="card"><button class="back" onclick="closeSecurity()">⬅ العودة إلى لوحة الإدارة</button><h3>🛡️ الأمان والصلاحيات</h3><p class="note">هذا القسم خاص بالمالك فقط. يمكنك إضافة نائب ومنحه صلاحيات محددة أو سحبها في أي وقت.</p><div class="platform-status" id="securityStatus">جارٍ تحميل النواب...</div><div class="task-form"><h3>إضافة نائب جديد</h3><div class="field"><label>Telegram ID للنائب</label><input id="deputyTelegramId" inputmode="numeric" maxlength="20" placeholder="مثال: 123456789"></div><button id="addDeputyButton" onclick="addDeputy()">➕ إضافة النائب</button></div><h3>النواب الحاليون</h3><div id="deputiesList"><div class="task-empty">جارٍ التحميل...</div></div><p class="note">لا يمكن للنائب دخول قسم الأمان والصلاحيات. المالك وحده يستطيع إدارة النواب. صلاحيات الأقسام ستُفرض من الخادم عند ربط حماية كل قسم.</p></div></div>
-<div id="platformPage" class="hidden"><div class="card platform-manager">
-<button class="back" onclick="backToMenu()">⬅ العودة إلى لوحة الإدارة</button>
-<div class="platform-manager-head"><div><div class="platform-eyebrow">OXIDE PLATFORM MANAGER</div><h2 id="platformHeading">إدارة المنصة</h2><p class="platform-subtitle">إدارة الملفات والتحديثات والفيديو من مكان واحد</p></div><div class="platform-mark" id="platformMark">🤖</div></div>
-<div class="platform-state-panel"><div><span class="platform-state-caption">حالة المنصة</span><strong id="platformStateLabel">جارٍ تحميل الحالة...</strong></div><span class="platform-state-dot" id="platformStateDot"></span></div><button id="platformVisibilityButton" class="secondary" onclick="togglePlatformVisibility()">جارٍ تحميل حالة الظهور...</button>
-<div class="users-summary platform-summary">
-<div class="users-stat"><span>الملفات المسجلة</span><strong id="platformFilesCount">0</strong></div>
-<div class="users-stat"><span>إجمالي التنزيلات</span><strong id="platformDownloadsCount">0</strong></div>
-</div>
-<div class="platform-section-heading"><h3>📦 إدارة الملفات</h3><span>ملفان كحد أقصى</span></div>
-<div id="platformFilesList" class="platform-file-grid"><div class="users-empty">جارٍ تحميل الملفات...</div></div>
-<div class="platform-editor" id="platformEditor">
-<details class="platform-details" id="fileEditorDetails"><summary><span>＋ إضافة أو تعديل ملف</span><small>الاسم • الإصدار • الملف • الحالة</small></summary>
-<div class="platform-details-body">
-<h3 id="platformFormHeading">➕ إضافة ملف جديد</h3>
-<div class="field"><label>مكان حفظ الملف</label><select id="fileSlot" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">الملف الأول</option><option value="2">الملف الثاني</option></select><p class="note">كل منصة لها ملف أول وملف ثانٍ مستقلان.</p></div>
-<div class="field"><label>اسم التطبيق / الملف</label><input id="appTitle" maxlength="150" placeholder="اسم التطبيق"></div>
-<div class="field"><label>رقم الإصدار</label><input id="appVersion" maxlength="50" placeholder="مثال: 2.1.2"></div>
-<div class="field"><label>الوصف</label><textarea id="appDescription" maxlength="1000" placeholder="وصف الإصدار"></textarea></div>
-<div class="field"><label>رابط تنزيل خارجي (اختياري)</label><input id="platformUrl" type="url" placeholder="https://..."></div>
-<div class="field"><label id="platformFileLabel">اختر ملف APK من هاتفك</label><input class="file-input" id="platformFile" type="file" accept=".apk,application/vnd.android.package-archive"><p class="note" id="platformFileHint">الحد الأقصى 2.5 غيغابايت. يمكنك أيضًا إضافة رابط تنزيل خارجي.</p></div>
-<div class="platform-status" id="currentFile">لا توجد بيانات ملف محدد.</div>
-<div class="field"><label>حالة الملف</label><select id="enabled" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">مفعّل</option><option value="0">متوقف</option></select></div>
-<button id="saveButton" onclick="savePlatform()">💾 إضافة بيانات الملف</button>
-<button id="uploadButton" onclick="uploadPlatform()">📤 رفع الملف</button>
-<button id="cancelPlatformEdit" class="secondary hidden" onclick="resetPlatformForm()">إلغاء التعديل</button>
-<p class="note" id="platformInfo">اختر الخانة الصحيحة قبل الحفظ أو الرفع. التعديلات تخص هذه المنصة فقط.</p>
-</div></details>
-<details class="platform-details" id="tutorialEditorDetails"><summary><span>🎥 إدارة فيديو الشرح</span><small>رفع • رابط خارجي • حفظ</small></summary>
-<div class="platform-details-body">
-<div class="field"><label>رفع فيديو MP4 من الهاتف</label><input class="file-input" id="tutorialFile" type="file" accept="video/mp4,.mp4"><p class="note">الحد الأقصى 50 ميغابايت. الفيديو مستقل لكل منصة.</p></div>
-<button id="uploadTutorialButton" onclick="uploadPlatformTutorial()">📤 رفع فيديو الشرح</button>
-<div id="tutorialUploadProgress" class="platform-status hidden"><div id="tutorialUploadText">0%</div><div style="height:12px;background:#26394d;border-radius:20px;overflow:hidden;margin-top:10px"><div id="tutorialUploadFill" style="height:100%;width:0%;background:linear-gradient(90deg,#087eaa,#35d7ff);transition:width .2s"></div></div></div>
-<div class="field"><label>أو رابط فيديو خارجي (HTTPS)</label><input id="tutorialUrl" type="url" placeholder="https://..."></div>
-<button id="saveTutorialButton" onclick="savePlatformTutorial()">💾 حفظ رابط الشرح الخارجي</button>
-</div></details></div>
-<div class="platform-status" id="platformStatus">جارٍ تحميل البيانات...</div>
-</div></div>
-<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ العودة إلى لوحة الإدارة</button><h3>🎁 إرسال مكافأة</h3><p class="note">أرسل إشعار مكافأة إلى مستخدم محدد أو جميع المستخدمين. لا تُضاف النقاط إلا بعد ضغط المستخدم على «استلم المكافأة».</p><div class="field"><label>المستلم</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">جميع المستخدمين</option><option value="user">مستخدم محدد</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>رقم المستخدم (مثال: OX-1234ABCD)</label><input id="rewardUserId" maxlength="11" placeholder="OX-XXXXXXXX"></div><div class="field"><label>عدد النقاط</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>عنوان الإشعار</label><input id="rewardTitle" maxlength="120" value="🎁 مكافأة جديدة"></div><div class="field"><label>رسالة للمستخدم</label><textarea id="rewardMessage" maxlength="500">لديك مكافأة جديدة جاهزة للاستلام.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 إرسال المكافأة</button><div class="platform-status" id="rewardSendStatus">المكافأة ستُضاف بعد استلام المستخدم لها.</div></div>
+<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ العودة إلى لوحة الإدارة</button><h3>🎁 المكافآت والإشعارات</h3><p class="note">أرسل إشعار مكافأة إلى مستخدم محدد أو جميع المستخدمين. لا تُضاف النقاط إلا بعد ضغط المستخدم على «استلم المكافأة».</p><div class="field"><label>المستلم</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">جميع المستخدمين</option><option value="user">مستخدم محدد</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>رقم المستخدم (مثال: OX-1234ABCD)</label><input id="rewardUserId" maxlength="11" placeholder="OX-XXXXXXXX"></div><div class="field"><label>عدد النقاط</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>عنوان الإشعار</label><input id="rewardTitle" maxlength="120" value="🎁 مكافأة جديدة"></div><div class="field"><label>رسالة للمستخدم</label><textarea id="rewardMessage" maxlength="500">لديك مكافأة جديدة جاهزة للاستلام.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 إرسال المكافأة</button><div class="platform-status" id="rewardSendStatus">المكافأة ستُضاف بعد استلام المستخدم لها.</div></div>
 </div>
 </div>
 
@@ -728,11 +747,39 @@ async function sendAdminReward(){
 /* بقية أقسام الإدارة */
 function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("قسم الأمان والصلاحيات خاص بالمالك.");return;}openSecurity();return;}if(["users","news","tasks","reviews"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("ليس لديك صلاحية لهذا القسم.");return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}const messages={stats:"إحصائيات الموقع"};alert((messages[name]||"هذا القسم")+"\\nهذه الوظيفة لم يتم ربطها بعد.");}
 
+
+async function loadAdminDashboard(){
+ const status=document.getElementById("dashboardStatus");
+ if(!status||!tg?.initData)return;
+ status.textContent="جارٍ تحديث الإحصائيات...";
+ const read=async(url,payload)=>{
+  const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...payload,initData:tg.initData})});
+  const data=await response.json();
+  if(!response.ok||!data.success)throw new Error(data.error||"DASHBOARD_LOAD_FAILED");
+  return data;
+ };
+ const jobs=[];
+ if(hasAdminPermission("users"))jobs.push(read("/api/admin/users",{page:1,limit:1}).then(x=>{document.getElementById("dashUsers").textContent=Number(x.total||0).toLocaleString("en-US");}).catch(()=>{document.getElementById("dashUsers").textContent="—";}));
+ else document.getElementById("dashUsers").textContent="—";
+ if(hasAdminPermission("tasks")){
+  jobs.push(read("/api/admin/tasks",{action:"list"}).then(x=>{const rows=Array.isArray(x.tasks)?x.tasks:[];document.getElementById("dashTasks").textContent=rows.filter(t=>Number(t.enabled)===1).length.toLocaleString("en-US");}).catch(()=>{document.getElementById("dashTasks").textContent="—";}));
+  for(const [type,id] of [["missions","dashMissionReviews"],["redemptions","dashRedemptionReviews"]]){
+   jobs.push(read("/api/admin/reviews",{action:"list",type}).then(x=>{document.getElementById(id).textContent=Array.isArray(x.items)?x.items.length.toLocaleString("en-US"):"0";}).catch(()=>{document.getElementById(id).textContent="—";}));
+  }
+ }else{
+  document.getElementById("dashTasks").textContent="—";
+  document.getElementById("dashMissionReviews").textContent="—";
+  document.getElementById("dashRedemptionReviews").textContent="—";
+ }
+ await Promise.all(jobs);
+ status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
+}
+
 /* التحقق من المدير */
 async function start(){
  if(!tg||!tg.initData){statusBox.textContent="افتح لوحة الإدارة من رابط Mini App داخل Telegram.";return;}
  tg.ready();tg.expand();
- try{const response=await fetch("/api/admin/auth",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success||!result.admin){statusBox.textContent="غير مصرح لك بالدخول.";return;}adminOwner=Boolean(result.owner);adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];applyAdminPermissions();document.getElementById("loading").classList.add("hidden");document.getElementById("panel").classList.remove("hidden");if(hasAdminPermission("maintenance"))await loadMaintenance();if(["android","beta","ios"].some(hasAdminPermission)){try{await loadDownloads();}catch(error){console.error("Downloads loading error:",error);}}}
+ try{const response=await fetch("/api/admin/auth",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success||!result.admin){statusBox.textContent="غير مصرح لك بالدخول.";return;}adminOwner=Boolean(result.owner);adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];applyAdminPermissions();document.getElementById("loading").classList.add("hidden");document.getElementById("panel").classList.remove("hidden");loadAdminDashboard();if(hasAdminPermission("maintenance"))await loadMaintenance();if(["android","beta","ios"].some(hasAdminPermission)){try{await loadDownloads();}catch(error){console.error("Downloads loading error:",error);}}}
  catch{statusBox.textContent="تعذر الاتصال بالخادم. حاول مجدداً.";}
 }
 start();
