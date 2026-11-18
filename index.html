@@ -1329,7 +1329,7 @@ function renderAccountProfile(){
  const name=document.getElementById("accountDisplayName");
  if(name){const fullName=[profile.firstName||tgUser?.first_name,profile.lastName||tgUser?.last_name].filter(Boolean).join(" ");name.textContent=fullName||(profile.username?"@"+profile.username:"مستخدم OXIDE");}
  const avatar=document.querySelector(".oxide-profile-avatar");
- if(avatar&&profile.photoUrl){avatar.innerHTML="";const image=document.createElement("img");image.src=profile.photoUrl;image.alt="Telegram profile";image.referrerPolicy="no-referrer";image.onerror=()=>{avatar.textContent="👤"};avatar.appendChild(image);}
+ const avatarUrl=profile.photoUrl||tgUser?.photo_url;if(avatar&&avatarUrl){avatar.innerHTML="";const image=document.createElement("img");image.src=avatarUrl;image.alt="Telegram profile";image.referrerPolicy="no-referrer";image.onerror=()=>{avatar.textContent="👤"};avatar.appendChild(image);}
  const identity=document.querySelector(".oxide-profile-identity");
  if(identity&&profile.telegramUrl&&!identity.querySelector(".oxide-telegram-link")){const link=document.createElement("a");link.className="oxide-telegram-link";link.href=profile.telegramUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent=profile.username?"@"+profile.username:"فتح حساب Telegram";identity.appendChild(link);}
  const balance=document.getElementById("accountBalanceValue"),earned=document.getElementById("accountEarnedValue"),ads=document.getElementById("accountAdsValue"),refs=document.getElementById("accountReferralsValue");
@@ -1383,7 +1383,7 @@ function showPage(page){
  if(rewards){loadRewards();loadIsland()}
  if(page==="missions"){loadMissionStatus();const balance=document.getElementById("missionTopBalance");if(balance&&rewardPoints>0)balance.textContent=rewardPoints.toLocaleString();}
  if(support){markSupportMessagesSeen();loadSupportMessages(true)}
- if(referral)loadReferral();
+ if(referral){loadUserId().then(ok=>{if(ok)loadReferral()})}
  if(news)loadNewsPosts();
 }
 function showIslandTab(tab){document.getElementById("islandAdsPanel").style.display="block"}
@@ -2032,7 +2032,7 @@ async function initializeOxideHub(){
  }catch(error){console.warn("Maintenance status could not be loaded; continuing with normal site startup.",error)}
  await boot();
 }
-async function boot(){/* Verify Telegram Mini App identity and establish the visitor cookie first. */if(!await loadUserId())return;/* Register referral only after the Telegram identity is established. */await registerReferralFromLink();getActiveSession();createStages();await refreshProgress();await loadSavedLanguage();if(sessionStorage.getItem("oxide_referral_notice")==="1"){document.getElementById("referralStatus").textContent=t("refRegistered");sessionStorage.removeItem("oxide_referral_notice")}loadRewards();loadIsland();loadMissionStatus();loadNotifications(false);startSupportChat();setInterval(()=>{if(getActiveSession()||!document.hidden)refreshProgress()},1000);window.addEventListener("focus",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false);loadNotifications(false)});document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)}});window.addEventListener("pageshow",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)});setInterval(()=>{if(!document.hidden){loadMissionStatus();checkNewsUpdates();loadNotifications(false);if(document.getElementById("rewardsPage").style.display==="block")loadRewardOrders()}},30000)}
+async function boot(){/* Verify Telegram Mini App identity and establish the visitor cookie first. */if(!await loadUserId())return;/* Register referral only after the Telegram identity is established. */await registerReferralFromLink();if(window.loadOxideWallet)await window.loadOxideWallet();await loadReferral();getActiveSession();createStages();await refreshProgress();await loadSavedLanguage();if(sessionStorage.getItem("oxide_referral_notice")==="1"){document.getElementById("referralStatus").textContent=t("refRegistered");sessionStorage.removeItem("oxide_referral_notice")}loadRewards();loadIsland();loadMissionStatus();loadNotifications(false);startSupportChat();setInterval(()=>{if(getActiveSession()||!document.hidden)refreshProgress()},1000);window.addEventListener("focus",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false);loadNotifications(false)});document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)}});window.addEventListener("pageshow",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)});setInterval(()=>{if(!document.hidden){loadMissionStatus();checkNewsUpdates();loadNotifications(false);if(document.getElementById("rewardsPage").style.display==="block")loadRewardOrders()}},30000)}
 initializeOxideHub();
 
 // OXIDE HUB platform availability: admin-controlled ON/OFF state.
@@ -2170,9 +2170,13 @@ function linkGooglePlayAccount(){
  const levels={tap:1,storage:1,mining:1};
  const tapRates=[0,0.01,0.05,0.1],storageCaps=[0,1000,1500,2000],miningRates=[0,0.001,0.01,0.05];
  const upgradeCosts={tap:[0,100,500],storage:[0,150,600],mining:[0,300,1200]};
- let total=0,taps=0;
+ let total=0,taps=0,walletReady=false;
  const fmt=n=>Number(n).toFixed(3);
  function setBalance(){balance.textContent=fmt(total);const b=document.getElementById("skillsBalance");if(b)b.textContent=fmt(total)}
+ async function walletRequest(payload={}){const response=await fetch("/api/wallet",{method:payload.action?"POST":"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:payload.action?JSON.stringify(payload):undefined});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"WALLET_REQUEST_FAILED");return data}
+ function applyWallet(data){total=Number(data.points||0);taps=Number(data.taps||0);if(data.levels){levels.tap=Number(data.levels.tap||1);levels.storage=Number(data.levels.storage||1);levels.mining=Number(data.levels.mining||1)}walletReady=true;renderOxideSkills();const shard=document.getElementById("referralShardBalance");if(shard)shard.textContent=fmt(total);const account=document.getElementById("accountBalanceValue");if(account)account.textContent=fmt(total)}
+ window.loadOxideWallet=async function(){try{const data=await walletRequest();applyWallet(data);return true}catch(error){walletReady=false;console.error("Persistent wallet load failed:",error);const status=document.getElementById("skillsStatus");if(status)status.textContent="تعذر تحميل رصيد الحساب من الخادم.";return false}};
+ async function performWalletAction(payload){try{const data=await walletRequest(payload);applyWallet(data);return true}catch(error){if(error.message==="STORAGE_FULL"){const status=document.getElementById("skillsStatus");if(status)status.textContent="اكتملت سعة التخزين الحالية."}else if(error.message==="INSUFFICIENT_BALANCE_OR_CONFLICT"){const status=document.getElementById("skillsStatus");if(status)status.textContent="رصيدك غير كافٍ أو حدث تعارض. حدّث الرصيد."}else{console.error("Wallet action failed:",error)}return false}}
  function updateMeter(){
   const cap=storageCaps[levels.storage],pct=Math.min(100,taps/cap*100);
   const text=document.getElementById("tapStorageText"),fill=document.getElementById("tapStorageFill"),level=document.getElementById("tapStorageLevel"),percent=document.getElementById("tapStoragePercent");
@@ -2189,25 +2193,26 @@ function linkGooglePlayAccount(){
   if(next){next.textContent=level>=max?"أعلى مستوى تم فتحه":("المستوى التالي: "+(kind==="tap"?"+"+rates[kind][level+1].toFixed(2):kind==="mining"?rates[kind][level+1].toFixed(3)+" / ثانية":rates[kind][level+1]));}
  }
  window.renderOxideSkills=function(){setBalance();["tap","storage","mining"].forEach(updateSkillCard);updateMeter();const reward=document.getElementById("tapRewardText");if(reward)reward.textContent="+"+tapRates[levels.tap].toFixed(2);};
- function upgrade(kind){
+ async function upgrade(kind){
+  if(!walletReady)return;
   const level=levels[kind];if(level>=3)return;
-  const cost=upgradeCosts[kind][level],status=document.getElementById("skillsStatus");
-  if(total<cost){if(status)status.textContent="رصيدك غير كافٍ لإتمام هذا التطوير.";return}
-  total=Math.round((total-cost)*1000)/1000;levels[kind]++;
-  if(status)status.textContent="تم تطوير المهارة إلى LV"+levels[kind]+" بنجاح ✨";
-  setBalance();renderOxideSkills();
+  const ok=await performWalletAction({action:"upgrade",kind});
+  const status=document.getElementById("skillsStatus");
+  if(ok&&status)status.textContent="تم تطوير المهارة إلى LV"+levels[kind]+" بنجاح ✨";
  }
  ["tap","storage","mining"].forEach(kind=>{const button=document.getElementById(kind+"SkillUpgrade");if(button)button.addEventListener("click",()=>upgrade(kind))});
- coin.addEventListener("click",function(){
-  const cap=storageCaps[levels.storage];if(taps>=cap){updateMeter();return}
-  const reward=tapRates[levels.tap];total=Math.round((total+reward)*1000)/1000;taps++;
-  setBalance();updateMeter();["tap","storage","mining"].forEach(updateSkillCard);
+ coin.addEventListener("click",async function(){
+  if(!walletReady)return;
+  const reward=tapRates[levels.tap];
+  const ok=await performWalletAction({action:"tap"});if(!ok)return;
+  updateMeter();["tap","storage","mining"].forEach(updateSkillCard);
   const rewardText=document.getElementById("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2);
   coin.classList.remove("tap-hit");void coin.offsetWidth;coin.classList.add("tap-hit");
   const el=document.createElement("span");el.className="tap-plus";el.textContent="+"+reward.toFixed(2)+" 🪙";el.style.left=(42+Math.random()*16)+"%";el.style.top=(38+Math.random()*18)+"%";layer.appendChild(el);setTimeout(()=>el.remove(),900);
  });
- setInterval(()=>{if(document.hidden)return;total=Math.round((total+miningRates[levels.mining])*1000)/1000;setBalance();["tap","storage","mining"].forEach(updateSkillCard)},1000);
+ setInterval(async()=>{if(document.hidden||!walletReady)return;await performWalletAction({action:"claim_mining"})},15000);
  window.renderOxideSkills();
+ setTimeout(()=>window.loadOxideWallet(),0);
 })();
 
 </script>
