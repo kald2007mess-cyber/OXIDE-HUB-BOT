@@ -23,12 +23,17 @@ async function ensureTables(DB) {
 }
 
 export async function onRequestGet({ request, env }) {
+  let diagnosticStage = "START";
   try {
     if (!env.DB || !env.SESSION_SECRET) return json({ success:false, error:"SERVER_CONFIGURATION_MISSING" },500);
+    diagnosticStage = "READ_SESSION";
     const userId = await getVisitor(request, env);
     if (!userId) return json({ success:false, error:"NO_VISITOR_SESSION" },401);
+    diagnosticStage = "ENSURE_MISSION_TABLES";
     await ensureTables(env.DB);
+    diagnosticStage = "READ_USER_POINTS";
     const user = await env.DB.prepare("SELECT points FROM users WHERE user_uuid = ? AND status = 'active'").bind(userId).first();
+    diagnosticStage = "READ_MISSION_STATUS";
     const result = await env.DB.prepare(`
       SELECT m.id, m.title, m.description, m.platform, m.target_url,
              m.reward_points,
@@ -46,7 +51,8 @@ export async function onRequestGet({ request, env }) {
       targetUrl:m.target_url,rewardPoints:Number(m.reward_points||0),status:m.status
     }))});
   } catch (error) {
-    console.error("Mission status API error:", error);
-    return json({success:false,error:"MISSION_STATUS_FAILED"},500);
+    console.error("Mission status API error:", diagnosticStage, error);
+    const diagnostic = `${diagnosticStage}: ${String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180)}`;
+    return json({success:false,error:"MISSION_STATUS_FAILED",diagnostic},500);
   }
 }
