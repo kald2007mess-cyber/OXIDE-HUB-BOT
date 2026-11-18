@@ -65,8 +65,15 @@ export async function onRequestPost({ request, env }) {
     const fileId = photos[photos.length-1]?.file_id;
     if(!fileId) return json({success:false,error:"TELEGRAM_DELIVERY_FAILED"},502);
     const now = Math.floor(Date.now()/1000);
-    await env.DB.prepare("INSERT INTO mission_submissions(user_id,mission_id,proof_file_id,status,created_at) VALUES(?,?,?,'pending',?)")
-      .bind(userId,missionId,fileId,now).run();
+    const submissionColumns = await env.DB.prepare("PRAGMA table_info(mission_submissions)").all();
+    const hasLegacyUserUuid = (submissionColumns.results || []).some(column => column.name === "user_uuid");
+    if (hasLegacyUserUuid) {
+      await env.DB.prepare("INSERT INTO mission_submissions(user_uuid,user_id,mission_id,proof_file_id,status,created_at) VALUES(?,?,?,?, 'pending', ?)")
+        .bind(userId,userId,missionId,fileId,now).run();
+    } else {
+      await env.DB.prepare("INSERT INTO mission_submissions(user_id,mission_id,proof_file_id,status,created_at) VALUES(?,?,?,'pending',?)")
+        .bind(userId,missionId,fileId,now).run();
+    }
     return json({success:true});
   } catch (error) {
     return json({success:false,error:"MISSION_SUBMISSION_FAILED"},500);
