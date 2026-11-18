@@ -81,3 +81,74 @@ export async function createVisitorCookie() {
 export async function createVisitorCookieForId() {
   throw new Error("TELEGRAM_SESSION_REQUIRED");
 }
+
+
+// Restricted sessions are accepted only by the support endpoints.
+async function ensureSupportSessionsTable(DB) {
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS oxide_support_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      expires_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      revoked_at INTEGER
+    )
+  `).run();
+  await DB.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_oxide_support_sessions_user
+    ON oxide_support_sessions(user_uuid, expires_at)
+  `).run();
+}
+
+export async function createSupportSessionCookie(env, DB, userUuid) {
+  if (!env.SESSION_SECRET || !DB || !userUuid) throw new Error("SESSION_CONFIGURATION_MISSING");
+  await ensureSupportSessionsTable(DB);
+  const token = toHex(crypto.getRandomValues(new Uint8Array(32)));
+  const tokenHash = toHex(await sha256(token));
+  const now = Math.floor(Date.now() / 1000);
+  const expiresAt = now + 60 * 60 * 24 * 30;
+  await DB.prepare(`
+    INSERT INTO oxide_support_sessions (user_uuid, token_hash, expires_at, created_at)
+    VALUES (?, ?, ?, ?)
+  `).bind(userUuid, tokenHash, expiresAt, now).run();
+  return `oxide_support=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+}
+
+export async function getSupportVisitor(request, env) {
+  const normalUser = await getVisitor(request, env);
+  if (normalUser) return normalUser;
+  if (!env.DB || !env.SESSION_SECRET) return null;
+  await ensureSupportSessionsTable(env.DB);
+  const cookie = request.headers.get("Cookie") || "";
+  const match = cookie.match(/(?:^|;\\s*)oxide_support=([a-f0-9]{64})(?:;|$)/i);
+  if (!match) return null;
+  const tokenHash = toHex(await sha256(match[1]));
+  const now = Math.floor(Date.now() / 1000);
+  const row = await env.DB.prepare(`
+    SELECT s.user_uuid
+    FROM oxide_support_sessions s
+    INNER JOIN users u ON u.user_uuid = s.user_uuid
+    WHERE s.token_hash = ? AND s.revoked_at IS NULL
+      AND s.expires_at > ? AND u.status = 'banned'
+    LIMIT 1
+  `).bind(tokenHash, now).first();
+  return row?.user_uuid || null;
+}
+
+export async function revokeUserSessions(DB, userUuid, now = Math.floor(Date.now() / 1000)) {
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS app_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      expires_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      revoked_at INTEGER
+    )
+  `).run();
+  await DB.prepare(`
+    UPDATE app_sessions SET revoked_at = ?
+    WHERE user_uuid = ? AND revoked_at IS NULL
+  `).bind(now, userUuid).run();
+}
