@@ -1,6 +1,6 @@
 import { getVisitor, json } from "./_lib/session.js";
 
-const REWARD_POINTS = 10;
+const REWARD_POINTS = 20;
 const MAX_ADS = 10;
 const CYCLE_SECONDS = 5 * 60 * 60;
 const CLAIM_COOLDOWN_SECONDS = 30;
