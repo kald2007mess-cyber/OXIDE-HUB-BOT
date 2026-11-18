@@ -1397,7 +1397,7 @@ function translateRemainingStaticText(language){
  }
 }
 
-function changeLanguage(language,save=true){if(!translations[language])return;currentLanguage=language;applyTapHomeLanguage(language);localStorage.setItem("oxide_language",language);const languageSelect=document.getElementById("language");if(languageSelect)languageSelect.value=language;const accountLanguage=document.getElementById("accountLanguage");if(accountLanguage)accountLanguage.value=language;if(save)saveLanguagePreference(language);document.documentElement.lang=language;document.documentElement.dir=language==="ar"?"rtl":"ltr";if(document.getElementById("progressLabel"))document.getElementById("progressLabel").textContent=t("progress");if(document.getElementById("androidText"))document.getElementById("androidText").textContent=t("android");if(document.getElementById("iphoneText"))document.getElementById("iphoneText").textContent=t("iphone");if(document.getElementById("betaText"))document.getElementById("betaText").textContent=t("beta");if(document.getElementById("navHome"))document.getElementById("navHome").textContent=t("home");if(document.getElementById("navRewards"))document.getElementById("navRewards").textContent=t("navEarn");if(document.getElementById("navReferral"))document.getElementById("navReferral").textContent=t("referral");if(document.getElementById("navNews"))document.getElementById("navNews").textContent=t("navAccount");const playLabel=document.getElementById("navPlay");if(playLabel)playLabel.textContent=t("navPlay");const vipSoonLabel=document.getElementById("soon2");if(vipSoonLabel)vipSoonLabel.textContent=t("soon");if(document.getElementById("balanceLabel"))document.getElementById("balanceLabel").textContent=t("balance");if(document.getElementById("pendingNote"))document.getElementById("pendingNote").textContent=t("pendingNote");if(document.getElementById("rewardsHeading"))document.getElementById("rewardsHeading").textContent="🎁 "+t("rewards");if(document.getElementById("islandAdsLabel"))document.getElementById("islandAdsLabel").textContent=t("islandAds");if(document.getElementById("islandTasksLabel"))document.getElementById("islandTasksLabel").textContent=t("islandTasks");if(document.getElementById("islandRewardText"))document.getElementById("islandRewardText").textContent=t("islandReward");if(document.getElementById("islandWatchButton"))document.getElementById("islandWatchButton").textContent=t("islandWatch");if(document.getElementById("userIdLabel"))document.getElementById("userIdLabel").textContent=t("userId");if(document.getElementById("copyIdButtonText"))document.getElementById("copyIdButtonText").textContent=t("copyId");if(document.getElementById("supportTopButtonText"))document.getElementById("supportTopButtonText").textContent=t("support");if(document.getElementById("supportBackButton"))document.getElementById("supportBackButton").textContent=t("back");if(document.getElementById("newsHeading"))document.getElementById("newsHeading").textContent="📰 "+t("newsTitle");if(document.getElementById("supportTitle"))document.getElementById("supportTitle").textContent=supportText("title");if(document.getElementById("supportDescription"))document.getElementById("supportDescription").textContent=supportText("description");if(document.getElementById("supportInput"))document.getElementById("supportInput").placeholder=supportText("placeholder");if(document.getElementById("supportSend"))document.getElementById("supportSend").textContent=supportText("send");if(document.getElementById("supportMediaNote"))document.getElementById("supportMediaNote").textContent=supportText("mediaNote");if(document.getElementById("referralHeading"))document.getElementById("referralHeading").textContent="👥 "+t("referral");if(document.getElementById("referralInviteTitle"))document.getElementById("referralInviteTitle").textContent=t("referralTitle");if(document.getElementById("referralDescription"))document.getElementById("referralDescription").textContent=t("referralDesc");if(document.getElementById("referralCountLabel"))document.getElementById("referralCountLabel").textContent=t("referrals");if(document.getElementById("referralEarnedLabel"))document.getElementById("referralEarnedLabel").textContent=t("earned");if(document.getElementById("copyReferralButton"))document.getElementById("copyReferralButton").textContent=t("copy");if(document.getElementById("shareReferralButton"))document.getElementById("shareReferralButton").textContent=t("share");if(document.getElementById("pointsRankingTitle"))document.getElementById("pointsRankingTitle").textContent=t("pointsRank");if(document.getElementById("referralRankingTitle"))document.getElementById("referralRankingTitle").textContent=t("refRank");renderGuide();createStages();renderRewards();updateIslandDisplay();renderSupportLanguage();changeMissionLanguage(language);renderNewsLanguage();if(progress>=REQUIRED)statusBox.textContent=t("complete");if(referralLoaded)loadReferral();try{applyCompleteStaticLanguage(language)}catch(error){console.error('Static language rendering failed:',error)}applyTapHomeLanguage(language);applySkillsPageLanguage(language);applyMissionsPageLanguage(language);if(window.renderOxideSkills)window.renderOxideSkills();requestAnimationFrame(()=>{applyTapHomeLanguage(language);applySkillsPageLanguage(language);applyMissionsPageLanguage(language)})}
+function changeLanguage(language,save=true){if(!translations[language])return;currentLanguage=language;applyTapHomeLanguage(language);localStorage.setItem("oxide_language",language);const languageSelect=document.getElementById("language");if(languageSelect)languageSelect.value=language;const accountLanguage=document.getElementById("accountLanguage");if(accountLanguage)accountLanguage.value=language;if(save)saveLanguagePreference(language);document.documentElement.lang=language;document.documentElement.dir=language==="ar"?"rtl":"ltr";if(document.getElementById("progressLabel"))document.getElementById("progressLabel").textContent=t("progress");if(document.getElementById("androidText"))document.getElementById("androidText").textContent=t("android");if(document.getElementById("iphoneText"))document.getElementById("iphoneText").textContent=t("iphone");if(document.getElementById("betaText"))document.getElementById("betaText").textContent=t("beta");if(document.getElementById("navHome"))document.getElementById("navHome").textContent=t("home");if(document.getElementById("navRewards"))document.getElementById("navRewards").textContent=t("navEarn");if(document.getElementById("navReferral"))document.getElementById("navReferral").textContent=t("referral");if(document.getElementById("navNews"))document.getElementById("navNews").textContent=t("navAccount");const playLabel=document.getElementById("navPlay");if(playLabel)playLabel.textContent=t("navPlay");const vipSoonLabel=document.getElementById("soon2");if(vipSoonLabel)vipSoonLabel.textContent=t("soon");if(document.getElementById("balanceLabel"))document.getElementById("balanceLabel").textContent=t("balance");if(document.getElementById("pendingNote"))document.getElementById("pendingNote").textContent=t("pendingNote");if(document.getElementById("rewardsHeading"))document.getElementById("rewardsHeading").textContent="🎁 "+t("rewards");if(document.getElementById("islandAdsLabel"))document.getElementById("islandAdsLabel").textContent=t("islandAds");if(document.getElementById("islandTasksLabel"))document.getElementById("islandTasksLabel").textContent=t("islandTasks");if(document.getElementById("islandRewardText"))document.getElementById("islandRewardText").textContent=t("islandReward");if(document.getElementById("islandWatchButton"))document.getElementById("islandWatchButton").textContent=t("islandWatch");if(document.getElementById("userIdLabel"))document.getElementById("userIdLabel").textContent=t("userId");if(document.getElementById("copyIdButtonText"))document.getElementById("copyIdButtonText").textContent=t("copyId");if(document.getElementById("supportTopButtonText"))document.getElementById("supportTopButtonText").textContent=t("support");if(document.getElementById("supportBackButton"))document.getElementById("supportBackButton").textContent=t("back");if(document.getElementById("newsHeading"))document.getElementById("newsHeading").textContent="📰 "+t("newsTitle");if(document.getElementById("supportTitle"))document.getElementById("supportTitle").textContent=supportText("title");if(document.getElementById("supportDescription"))document.getElementById("supportDescription").textContent=supportText("description");if(document.getElementById("supportInput"))document.getElementById("supportInput").placeholder=supportText("placeholder");if(document.getElementById("supportSend"))document.getElementById("supportSend").textContent=supportText("send");if(document.getElementById("supportMediaNote"))document.getElementById("supportMediaNote").textContent=supportText("mediaNote");if(document.getElementById("referralHeading"))document.getElementById("referralHeading").textContent="👥 "+t("referral");if(document.getElementById("referralInviteTitle"))document.getElementById("referralInviteTitle").textContent=t("referralTitle");if(document.getElementById("referralDescription"))document.getElementById("referralDescription").textContent=t("referralDesc");if(document.getElementById("referralCountLabel"))document.getElementById("referralCountLabel").textContent=t("referrals");if(document.getElementById("referralEarnedLabel"))document.getElementById("referralEarnedLabel").textContent=t("earned");if(document.getElementById("copyReferralButton"))document.getElementById("copyReferralButton").textContent=t("copy");if(document.getElementById("shareReferralButton"))document.getElementById("shareReferralButton").textContent=t("share");if(document.getElementById("pointsRankingTitle"))document.getElementById("pointsRankingTitle").textContent=t("pointsRank");if(document.getElementById("referralRankingTitle"))document.getElementById("referralRankingTitle").textContent=t("refRank");renderGuide();createStages();renderRewards();updateIslandDisplay();renderSupportLanguage();changeMissionLanguage(language);renderNewsLanguage();if(progress>=REQUIRED)statusBox.textContent=t("complete");if(referralLoaded)loadReferral();try{applyCompleteStaticLanguage(language)}catch(error){console.error('Static language rendering failed:',error)}applyTapHomeLanguage(language);requestAnimationFrame(()=>applyTapHomeLanguage(language))}
 function applyTapHomeLanguage(language){
  const labels={
   en:{title:"Collect OXIDE Coins",desc:"Every tap brings you closer to your next reward",balance:"Demo tap balance",hint:"Tap the coin",storage:"Storage capacity",reward:"Reward per tap",coin:"Coin",missions:"MISSIONS"},
@@ -1419,52 +1419,6 @@ function applyTapHomeLanguage(language){
   if(amount)reward.appendChild(amount);
   reward.append(" "+t.coin);
  }
-}
-function applyMissionsPageLanguage(language){
- const labels={
-  en:{balance:"Your coin balance",progress:"Ads completed:",adReward:"Each completed ad = +10 points",watch:"▶ Watch Advertisement",heading:"Earn Coins",available:"available",completed:"completed",all:"All",telegram:"Telegram",others:"TikTok / Others"},
-  ru:{balance:"Баланс монет",progress:"Просмотрено рекламы:",adReward:"За каждую просмотренную рекламу = +10 очков",watch:"▶ Смотреть рекламу",heading:"Заработать монеты",available:"доступно",completed:"выполнено",all:"Все",telegram:"Telegram",others:"TikTok / другое"}
- };
- if(language==="ar")return;
- const t=labels[language]||labels.en;
- const put=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=value};
- put("#missionsPage .oxide-shards-caption",t.balance);
- const progress=document.getElementById("islandProgressText");if(progress){const match=progress.textContent.match(/(\\d+)\\s*\\/\\s*(\\d+)/);progress.textContent=t.progress+" "+(match?match[1]+" / "+match[2]:"0 / 10")}
- put("#islandRewardText",t.adReward);
- put("#islandWatchButton",t.watch);
- const heading=document.querySelector("#missionsPage .oxide-missions-heading h2");if(heading){const image=heading.querySelector("img");heading.textContent=t.heading+" ";if(image)heading.appendChild(image)}
- const count=document.querySelector("#missionsPage .oxide-task-countline");if(count){const a=document.getElementById("missionsAvailableCount"),c=document.getElementById("missionsCompletedCount");count.replaceChildren();if(a)count.append(a);count.append(" "+t.available+" · ");if(c)count.append(c);count.append(" "+t.completed)}
- const filters=document.querySelectorAll("#missionsPage [data-task-filter]");filters.forEach(button=>{const key=button.dataset.taskFilter;button.textContent=key==="all"?t.all:key==="tg"?t.telegram:t.others;button.setAttribute("aria-label",button.textContent)});
- const caption=document.querySelector("#missionsPage .oxide-missions-heading .oxide-referral-eyebrow");if(caption)caption.textContent="EARN";
- if(typeof renderMissionCards==="function")renderMissionCards();
- if(typeof renderMissionHistory==="function")renderMissionHistory();
-}
-function applySkillsPageLanguage(language){
- const labels={
-  en:{back:"← Back to Home",title:"Skill Center",desc:"Upgrade your abilities and increase your productivity in OXIDE HUB",balance:"Current balance",tap:"Tap Skills",tapDesc:"Increase the reward you receive with every tap.",storage:"Storage Skills",storageDesc:"Expand your tap meter capacity.",mining:"Mining Skills",miningDesc:"Earn coins automatically every second while the app stays open.",level:"Current level",tapUnit:"Coins / tap",storageUnit:"Tap capacity",miningUnit:"Coins / second",note:"The skills system in this version is experimental and local; costs are not deducted from your server wallet.",tapChip:"TAP POWER",storageChip:"CAPACITY",miningChip:"AUTO MINING"},
-  ru:{back:"← На главную",title:"Центр навыков",desc:"Развивайте навыки и повышайте эффективность в OXIDE HUB",balance:"Текущий баланс",tap:"Навыки нажатия",tapDesc:"Увеличьте награду за каждое нажатие.",storage:"Навыки хранилища",storageDesc:"Увеличьте вместимость шкалы нажатий.",mining:"Навыки добычи",miningDesc:"Получайте монеты каждую секунду, пока приложение открыто.",level:"Текущий уровень",tapUnit:"Монет / нажатие",storageUnit:"Вместимость",miningUnit:"Монет / сек",note:"Система навыков в этой версии экспериментальная и локальная; стоимость улучшений не списывается с серверного кошелька.",tapChip:"СИЛА НАЖАТИЯ",storageChip:"ВМЕСТИМОСТЬ",miningChip:"АВТОДОБЫЧА"}
- };
- if(language==="ar")return;
- const t=labels[language]||labels.en;
- const put=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=value};
- put("#skillsPage .skills-back",t.back);
- put("#skillsPage .skills-hero h2",t.title);
- put("#skillsPage .skills-hero>p",t.desc);
- put("#skillsPage .skills-wallet>span",t.balance);
- put("#skillsPage .skill-tap h3",t.tap);
- put("#skillsPage .skill-tap>p",t.tapDesc);
- put("#skillsPage .skill-storage h3",t.storage);
- put("#skillsPage .skill-storage>p",t.storageDesc);
- put("#skillsPage .skill-mining h3",t.mining);
- put("#skillsPage .skill-mining>p",t.miningDesc);
- document.querySelectorAll("#skillsPage .skill-current>span").forEach(el=>el.textContent=t.level);
- put("#skillsPage .skill-tap .skill-rate small",t.tapUnit);
- put("#skillsPage .skill-storage .skill-rate small",t.storageUnit);
- put("#skillsPage .skill-mining .skill-rate small",t.miningUnit);
- put("#skillsPage .skill-tap .skill-chip",t.tapChip);
- put("#skillsPage .skill-storage .skill-chip",t.storageChip);
- put("#skillsPage .skill-mining .skill-chip",t.miningChip);
- const note=document.querySelector("#skillsPage .skills-note");if(note){const icon=note.querySelector("span");note.textContent=t.note+" ";if(icon)note.prepend(icon)}
 }
 function showBlockedScreen(){
  let screen=document.getElementById("oxideBlockedScreen");
@@ -2034,12 +1988,7 @@ function renderMissionCards(){
     const headingText = document.createElement("div");
     const title = document.createElement("div");
     title.className = "mission-item-title";
-    const missionTextTranslations={
-      en:{"متابعة حساب TikTok":"Follow TikTok account","تابع حساب TikTok":"Follow TikTok account","متابعة حساب تيك توك":"Follow TikTok account"},
-      ru:{"متابعة حساب TikTok":"Подписаться на TikTok","تابع حساب TikTok":"Подписаться на TikTok","متابعة حساب تيك توك":"Подписаться на TikTok"}
-    };
-    const originalTitle=String(mission.title || ("Mission #" + id));
-    title.textContent=missionLanguage==="ar"?originalTitle:(missionTextTranslations[missionLanguage]?.[originalTitle]||originalTitle);
+    title.textContent = String(mission.title || ("Mission #" + id));
 
     const meta = document.createElement("div");
     meta.className = "mission-item-meta";
@@ -2070,12 +2019,7 @@ function renderMissionCards(){
     if(mission.description){
       const description = document.createElement("div");
       description.className = "mission-description";
-      const originalDescription=String(mission.description);
-      const descriptionTranslations={
-        en:{"تابع حسابنا الرسمي على TikTok ثم ارفع لقطة شاشة واضحة لإثبات المتابعة.":"Follow our official TikTok account, then upload a clear screenshot as proof."},
-        ru:{"تابع حسابنا الرسمي على TikTok ثم ارفع لقطة شاشة واضحة لإثبات المتابعة.":"Подпишитесь на наш официальный аккаунт TikTok и загрузите чёткий скриншот в качестве подтверждения."}
-      };
-      description.textContent=missionLanguage==="ar"?originalDescription:(descriptionTranslations[missionLanguage]?.[originalDescription]||originalDescription);
+      description.textContent = String(mission.description);
       card.appendChild(description);
     }
 
@@ -2618,7 +2562,7 @@ initializeOxideHub();
   if(button){if(level>=max){button.textContent=ox("maxLevel");button.disabled=true;button.classList.remove("is-affordable")}else{const canAfford=total>=upgradeCosts[kind][level];button.innerHTML=ox("upgrade")+" "+upgradeCosts[kind][level]+' <img class="oxide-coin-inline" src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="Coin">';button.disabled=!canAfford;button.classList.toggle("is-affordable",canAfford)}}
   if(next){next.textContent=level>=max?(currentLanguage==="ru"?"Открыт максимальный уровень":"Highest level unlocked"):((currentLanguage==="ru"?"Следующий уровень: ":"Next level: ")+(kind==="tap"?"+"+rates[kind][level+1].toFixed(2):kind==="mining"?rates[kind][level+1].toFixed(3)+(currentLanguage==="ru"?" / сек":" / sec"):rates[kind][level+1]));}
  }
- window.renderOxideSkills=function(){setBalance();["tap","storage","mining"].forEach(updateSkillCard);updateMeter();const reward=document.getElementById("tapRewardText");if(reward)reward.textContent="+"+tapRates[levels.tap].toFixed(2);applySkillsPageLanguage(currentLanguage);};
+ window.renderOxideSkills=function(){setBalance();["tap","storage","mining"].forEach(updateSkillCard);updateMeter();const reward=document.getElementById("tapRewardText");if(reward)reward.textContent="+"+tapRates[levels.tap].toFixed(2);};
  async function upgrade(kind){
   if(!walletReady)return;
   const level=levels[kind];if(level>=3)return;
