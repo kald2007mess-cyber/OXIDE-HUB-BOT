@@ -1342,6 +1342,7 @@ function translateRemainingStaticText(language){
   const parent=node.parentElement;if(!parent||parent.closest("script,style,textarea,input,select option,.notification-title,.notification-body,.news-card,.oxide-profile-identity,.reward-name,[contenteditable='true']"))continue;
   const raw=node.nodeValue,trimmed=raw.trim();if(dict[trimmed])node.nodeValue=raw.replace(trimmed,dict[trimmed]);
  }
+ document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>["placeholder","aria-label","title","alt"].forEach(attr=>{const value=el.getAttribute(attr);if(!value||!/[\u0600-\u06FF]/.test(value))return;if(dict[value])el.setAttribute(attr,dict[value]);}));
  document.querySelectorAll("#language option[value='ar'],#accountLanguage option[value='ar']").forEach(option=>option.textContent=dict["العربية"]);
  document.querySelectorAll("#language,#accountLanguage").forEach(el=>el.setAttribute("aria-label",language==="ru"?"Язык приложения":"App language"));
 }
