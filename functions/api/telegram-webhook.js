@@ -63,7 +63,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Owner-only /admin command. The Mini App still verifies Telegram initData server-side.
-    const adminMatch = message.text.trim().match(/^\\/admin(?:@\\w+)?$/);
+    const adminMatch = message.text.trim().startsWith("/admin") && /^\/admin(?:@\w+)?$/.test(message.text.trim());
     if (adminMatch) {
       const ownerId = String(env.OXIDE_OWNER_TELEGRAM_ID || "");
       if (!ownerId || String(message.from.id) !== ownerId) {
