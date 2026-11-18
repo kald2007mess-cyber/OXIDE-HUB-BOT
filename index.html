@@ -1880,7 +1880,7 @@ async function loadMissionStatus(){
 
     const data = await response.json();
     if(!response.ok || !data.success){
-      throw new Error(data.error || "STATUS_FAILED");
+      throw new Error(data.diagnostic || data.error || "STATUS_FAILED");
     }
 
     const points = Number(data.points || 0);
