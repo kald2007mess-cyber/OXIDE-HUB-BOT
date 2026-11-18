@@ -2046,6 +2046,15 @@ Object.assign(translations.ru,{userId:"🆔 Ваш ID пользователя",
 Object.assign(translations.tr,{userId:"🆔 Kullanıcı kimliğiniz",copyId:"📋 Kopyala",support:"💬 Destek",back:"⬅ Ana sayfaya dön",newsTitle:"Haberler",newsEmpty:"Henüz haber yok.",newsError:"Haberler yüklenemedi.",views:"görüntüleme",comments:"yorum",writeComment:"Yorum yaz...",send:"Gönder",commentError:"Yorum gönderilemedi.",commentSent:"Yorum yayınlandı.",noComments:"Henüz yorum yok.",newsLoading:"Haberler yükleniyor..."});
 Object.assign(translations.id,{userId:"🆔 ID Pengguna Anda",copyId:"📋 Salin",support:"💬 Dukungan",back:"⬅ Kembali ke Beranda",newsTitle:"Berita",newsEmpty:"Belum ada berita.",newsError:"Berita gagal dimuat.",views:"dilihat",comments:"komentar",writeComment:"Tulis komentar...",send:"Kirim",commentError:"Komentar gagal dikirim.",commentSent:"Komentar dipublikasikan.",noComments:"Belum ada komentar.",newsLoading:"Memuat berita..."});
 
+
+/* Keep the displayed island reward consistent in all six languages. */
+translations.ar.islandReward="كل إعلان مكتمل = +10 نقاط";
+translations.en.islandReward="Each completed ad = +10 points";
+translations.ru.islandReward="За каждую завершённую рекламу = +10 очков";
+translations.es.islandReward="Cada anuncio completado = +10 puntos";
+translations.tr.islandReward="Tamamlanan her reklam = +10 puan";
+translations.id.islandReward="Setiap iklan selesai = +10 poin";
+
 let languagePreferenceReady=false;
 async function saveLanguagePreference(language){
  try{await fetch("/api/preferences",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({language})})}catch(error){console.warn("Language preference will remain on this device until server sync is available.",error)}
