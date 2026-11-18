@@ -2,12 +2,16 @@ import { getSupportVisitor, json } from "../_lib/session.js";
 import { ensureSupportTables } from "../_lib/support.js";
 
 export async function onRequestPost({ request, env }) {
+  let stage = "START";
+  let messageSaved = false;
   try {
     if (!env.DB || !env.SESSION_SECRET) {
       return json({ error: "Server configuration missing" }, 500);
     }
 
+    stage = "ENSURE_SUPPORT_TABLES";
     await ensureSupportTables(env.DB);
+    stage = "AUTHENTICATE_VISITOR";
     const userId = await getSupportVisitor(request, env);
     if (!userId) return json({ error: "No visitor session" }, 401);
 
@@ -17,6 +21,7 @@ export async function onRequestPost({ request, env }) {
       return json({ error: "Invalid message" }, 400);
     }
 
+    stage = "LOAD_USER";
     const user = await env.DB.prepare(`
       SELECT v.user_id,
         COALESCE(u.points, v.points, 0) AS points,
@@ -33,12 +38,14 @@ export async function onRequestPost({ request, env }) {
 
     const now = Math.floor(Date.now() / 1000);
 
+    stage = "CREATE_CONVERSATION";
     await env.DB.prepare(`
       INSERT OR IGNORE INTO support_conversations
       (user_id, status, created_at, updated_at)
       VALUES (?, 'open', ?, ?)
     `).bind(userId, now, now).run();
 
+    stage = "READ_CONVERSATION";
     const conversation = await env.DB.prepare(`
       SELECT id FROM support_conversations WHERE user_id = ?
     `).bind(userId).first();
@@ -49,12 +56,15 @@ export async function onRequestPost({ request, env }) {
 
     // Save the user's message first. Telegram must never control whether
     // the message is stored or shown in the website conversation.
+    stage = "SAVE_MESSAGE";
     const saved = await env.DB.prepare(`
       INSERT INTO support_messages
       (conversation_id, sender, message_type, message_text, created_at)
       VALUES (?, 'user', 'text', ?, ?)
     `).bind(conversation.id, message, now).run();
 
+    messageSaved = true;
+    stage = "UPDATE_CONVERSATION";
     await env.DB.prepare(`
       UPDATE support_conversations
       SET updated_at = ?, status = 'open'
@@ -109,6 +119,7 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    stage = "SAVE_TELEGRAM_REFERENCE";
     if (notificationSent && saved.meta?.last_row_id) {
       await env.DB.prepare(`
         UPDATE support_messages
@@ -128,8 +139,10 @@ export async function onRequestPost({ request, env }) {
       message: "Message saved"
     });
   } catch (error) {
-    return json({
-      error: "Could not save support message"
-    }, 500);
+    console.error("Support message send failed:", stage, error);
+    if (messageSaved) {
+      return json({ success: true, saved: true, notificationSent: false, warning: "MESSAGE_SAVED_NOTIFICATION_FAILED" });
+    }
+    return json({ success: false, error: "SUPPORT_SEND_FAILED", diagnostic: stage + ": " + String(error?.message || error || "UNKNOWN").slice(0, 180) }, 500);
   }
 }
