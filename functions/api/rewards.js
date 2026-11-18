@@ -75,13 +75,10 @@ export async function onRequestPost({ request, env }) {
     ).bind(userUuid).first();
     if (!user) return json({ success: false, error: "USER_NOT_FOUND" }, 404);
 
-    // Accept game/player IDs in the DL-GSJ-UU format, as well as existing OXIDE IDs.
+    // Game UUID format: 2-3-2 (letters, digits, or a mix). It is not the OXIDE account ID.
     const isGameUuid = /^[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{2}$/.test(enteredUuid);
-    const isOwnOxideId =
-      enteredUuid === String(user.user_uuid).toUpperCase() ||
-      enteredUuid === String(user.public_id).toUpperCase();
-    if (!isGameUuid && !isOwnOxideId) {
-      return json({ success: false, error: "INVALID_UUID_FORMAT" }, 400);
+    if (!isGameUuid) {
+      return json({ success: false, error: "INVALID_GAME_UUID_FORMAT" }, 400);
     }
 
     const now = Math.floor(Date.now() / 1000);
