@@ -1434,7 +1434,7 @@ function applyEarnPageLanguage(language){
  set(".oxide-shards-caption",en?"Your coin balance":"رصيدك من العملات");
  const progress=root.querySelector("#islandProgressText");
  if(progress){
-  const count=(progress.textContent.match(/\\d+\\s*\\/\\s*\\d+/)||["0 / "+ISLAND_REQUIRED])[0];
+  const count=(progress.textContent.match(/\d+\s*\/\s*\d+/)||["0 / "+ISLAND_REQUIRED])[0];
   progress.textContent=(en?"Ads completed:":"إعلانات مكتملة:")+" "+count;
  }
  const heading=root.querySelector(".oxide-missions-heading h2");
