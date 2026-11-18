@@ -1,5 +1,5 @@
 
-import { getVisitor, json } from "../_lib/session.js";
+import { getSupportVisitor, json } from "../_lib/session.js";
 import { ensureSupportTables } from "../_lib/support.js";
 
 export async function onRequestGet({ request, env }) {
@@ -9,7 +9,7 @@ export async function onRequestGet({ request, env }) {
     }
 
     await ensureSupportTables(env.DB);
-    const userId = await getVisitor(request, env);
+    const userId = await getSupportVisitor(request, env);
 
     if (!userId) {
       return json({ error: "No visitor session" }, 401);
