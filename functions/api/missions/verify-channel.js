@@ -133,6 +133,35 @@ export async function onRequestPost({ request, env }) {
 
     stage = "CLAIM_REWARD";
     const now = Math.floor(Date.now()/1000);
+
+    // Older databases may still require the legacy user_uuid column.
+    const submissionInfo = await env.DB.prepare("PRAGMA table_info(mission_submissions)").all();
+    const submissionColumns = (submissionInfo.results || []).map(column => column.name);
+    const hasLegacyUserUuid = submissionColumns.includes("user_uuid");
+    const submissionInsert = hasLegacyUserUuid
+      ? env.DB.prepare(`
+          INSERT INTO mission_submissions
+            (user_uuid,user_id,mission_id,proof_file_id,status,created_at,reviewed_at)
+          SELECT ?,?, ?,NULL,'approved',?,?
+          WHERE EXISTS (
+            SELECT 1 FROM telegram_channel_claims WHERE user_id=? AND mission_id=?
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM mission_submissions WHERE user_id=? AND mission_id=? AND status='approved'
+          )
+        `).bind(userId,userId,mission.id,now,now,userId,mission.id,userId,mission.id)
+      : env.DB.prepare(`
+          INSERT INTO mission_submissions
+            (user_id,mission_id,proof_file_id,status,created_at,reviewed_at)
+          SELECT ?,?,NULL,'approved',?,?
+          WHERE EXISTS (
+            SELECT 1 FROM telegram_channel_claims WHERE user_id=? AND mission_id=?
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM mission_submissions WHERE user_id=? AND mission_id=? AND status='approved'
+          )
+        `).bind(userId,mission.id,now,now,userId,mission.id,userId,mission.id);
+
     const claimResults = await env.DB.batch([
       env.DB.prepare(`
         INSERT OR IGNORE INTO telegram_channel_claims(user_id,mission_id,claimed_at)
@@ -154,16 +183,7 @@ export async function onRequestPost({ request, env }) {
           SELECT 1 FROM telegram_channel_claims WHERE user_id=? AND mission_id=?
         )
       `).bind(userId,userId,userId,mission.id),
-      env.DB.prepare(`
-        INSERT INTO mission_submissions(user_id,mission_id,proof_file_id,status,created_at,reviewed_at)
-        SELECT ?,?,NULL,'approved',?,?
-        WHERE EXISTS (
-          SELECT 1 FROM telegram_channel_claims WHERE user_id=? AND mission_id=?
-        )
-        AND NOT EXISTS (
-          SELECT 1 FROM mission_submissions WHERE user_id=? AND mission_id=? AND status='approved'
-        )
-      `).bind(userId,mission.id,now,now,userId,mission.id,userId,mission.id)
+      submissionInsert
     ]);
 
     const claimed = Number(claimResults[0]?.meta?.changes || 0) === 1;
