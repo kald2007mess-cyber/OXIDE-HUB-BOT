@@ -53,12 +53,16 @@ export async function onRequestGet({ request, env }) {
         created_at INTEGER NOT NULL
       )
     `).run();
-    await env.DB.prepare(`
-      CREATE INDEX IF NOT EXISTS idx_referrals_referrer
-      ON referrals(referrer_id)
-    `).run();
+    // Index creation is an optimization; do not block personal referral data if it fails.
+    try {
+      await env.DB.prepare(`
+        CREATE INDEX IF NOT EXISTS idx_referrals_referrer
+        ON referrals(referrer_id)
+      `).run();
+    } catch (indexError) {
+      console.error("Referral index unavailable:", indexError);
+    }
 
-    // Make sure the authenticated Telegram account has its legacy visitor row.
     const account = await env.DB.prepare(`
       SELECT user_uuid, public_id, points
       FROM users
@@ -70,32 +74,19 @@ export async function onRequestGet({ request, env }) {
       return json({ success: false, error: "ACCOUNT_NOT_FOUND" }, 404);
     }
 
-    const now = Math.floor(Date.now() / 1000);
-    await env.DB.prepare(`
-      INSERT OR IGNORE INTO visitors (user_id, progress, points, created_at)
-      VALUES (?, 0, ?, ?)
-    `).bind(userId, Number(account.points || 0), now).run();
-
-    // Read the persistent balance and the stable public ID assigned at Telegram sign-in.
-    const user = await env.DB.prepare(`
-      SELECT user_id, points
-      FROM visitors
-      WHERE user_id = ?
-      LIMIT 1
-    `).bind(userId).first();
-
-    if (!user) {
-      return json({ success: false, error: "USER_NOT_FOUND" }, 404);
+    // Referral totals are secondary; the user's unique code must still be returned
+    // if an older referrals table has a different optional statistics schema.
+    let stats = { total: 0, earned: 0 };
+    try {
+      stats = await env.DB.prepare(`
+        SELECT COUNT(*) AS total,
+               COALESCE(SUM(points_awarded), 0) AS earned
+        FROM referrals
+        WHERE referrer_id = ?
+      `).bind(userId).first() || stats;
+    } catch (statsError) {
+      console.error("Referral statistics unavailable:", statsError);
     }
-
-    // إحصائيات الإحالات فقط
-    const stats = await env.DB.prepare(`
-      SELECT
-        COUNT(*) AS total,
-        COALESCE(SUM(points_awarded), 0) AS earned
-      FROM referrals
-      WHERE referrer_id = ?
-    `).bind(userId).first();
 
     // Rankings are optional: a ranking-query issue must never hide a user's own invite link.
     let pointsRanking = { results: [] };
@@ -138,7 +129,7 @@ export async function onRequestGet({ request, env }) {
 
       user: {
         userId: account.public_id || shortId(user.user_id),
-        points: Number(user.points || 0),
+        points: Number(account.points || 0),
         referrals: Number(stats?.total || 0),
         earned: Number(stats?.earned || 0)
       },
