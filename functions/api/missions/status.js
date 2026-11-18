@@ -60,8 +60,16 @@ export async function onRequestGet({ request, env }) {
     `).bind(userId,userId).all();
     return json({success:true,points:Number(user?.points ?? 0),missions:(result.results||[]).map(m=>({
       id:Number(m.id),title:m.title,description:m.description,platform:m.platform,
-      targetUrl:m.target_url,rewardPoints:Number(m.reward_points||0),status:m.status
-    }))});
+      targetUrl:m.target_url,rewardPoints:Number(m.reward_points||0),status:m.status === "rejected" ? "not_submitted" : m.status
+    })),submissions:(await env.DB.prepare(`
+      SELECT s.id,s.mission_id AS missionId,s.status,s.created_at AS createdAt,
+             s.reviewed_at AS reviewedAt,m.title
+      FROM mission_submissions s
+      LEFT JOIN oxide_admin_missions m ON m.id=s.mission_id
+      WHERE s.user_id=?
+      ORDER BY s.created_at DESC,s.id DESC
+      LIMIT 30
+    `).bind(userId).all()).results || []});
   } catch (error) {
     console.error("Mission status API error:", diagnosticStage, error);
     const diagnostic = `${diagnosticStage}: ${String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180)}`;
