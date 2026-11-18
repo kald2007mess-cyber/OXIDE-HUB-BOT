@@ -163,6 +163,7 @@ export async function onRequestPost({ request, env }) {
         first_name = excluded.first_name,
         last_name = excluded.last_name,
         photo_url = COALESCE(excluded.photo_url, oxide_profiles.photo_url),
+        telegram_url = excluded.telegram_url,
         updated_at = excluded.updated_at
     `).bind(
       telegramId, userUuid, publicId, username,
