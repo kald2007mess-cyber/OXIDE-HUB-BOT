@@ -144,6 +144,7 @@ export async function onRequestPost({ request, env }) {
           SELECT user_uuid,?,points,'wallet_mining','wallet_mining',?,?
           FROM users WHERE user_uuid = ?
             AND EXISTS (SELECT 1 FROM oxide_wallet_state WHERE user_id = ? AND last_mining_at = ?)
+            AND changes() = 1
         `).bind(reward,miningReference,now,userId,userId,now)
       ]);
       if (Number(results?.[0]?.meta?.changes || 0) !== 1) return json({ success: true, ...(await walletSnapshot(env.DB, userId)) });
