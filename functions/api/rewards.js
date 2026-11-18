@@ -137,6 +137,14 @@ export async function onRequestPost({ request, env }) {
 
     return json({ success: true, orderId, points: Number(debit.points), status: "pending" });
   } catch {
+    // If the order row was created, the request is already registered. Do not refund
+    // or report failure just because the Telegram notification/update failed.
+    if (orderId) {
+      const saved = await env.DB.prepare(
+        "SELECT points FROM users WHERE user_uuid = ? AND status = 'active'"
+      ).bind(userUuid).first().catch(() => null);
+      return json({ success: true, orderId, points: Number(saved?.points ?? 0), status: "pending" });
+    }
     if (debitDone && userUuid && offer) {
       try {
         const now = Math.floor(Date.now() / 1000);
