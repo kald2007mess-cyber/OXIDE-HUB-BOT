@@ -40,9 +40,10 @@ export async function onRequestPost({ request, env }) {
 
     stage = "CREATE_CONVERSATION";
     await env.DB.prepare(`
-      INSERT OR IGNORE INTO support_conversations
+      INSERT INTO support_conversations
       (user_id, status, created_at, updated_at)
       VALUES (?, 'open', ?, ?)
+      ON CONFLICT(user_id) DO NOTHING
     `).bind(userId, now, now).run();
 
     stage = "READ_CONVERSATION";
