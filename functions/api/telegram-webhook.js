@@ -30,6 +30,20 @@ export async function onRequestPost({ request, env }) {
     const message = update.message;
     if (!message?.chat?.id || !message?.from?.id || typeof message.text !== "string") return json({ ok: true });
 
+    // Clear every Telegram bot-command menu scope and restore the default chat menu.
+    // This removes the four-square command list without disabling /start or /admin handlers.
+    for (const scope of [
+      undefined,
+      { type: "all_private_chats" },
+      { type: "all_group_chats" },
+      { type: "all_chat_administrators" }
+    ]) {
+      await telegramCall(env.TELEGRAM_BOT_TOKEN, "deleteMyCommands", scope ? { scope } : {});
+    }
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
+      menu_button: { type: "default" }
+    });
+
     // An administrator can reply directly to the support notification in Telegram.
     // The reply is stored in the same conversation and appears in the user's support tab.
     if (message.reply_to_message &&
