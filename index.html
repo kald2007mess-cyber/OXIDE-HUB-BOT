@@ -826,7 +826,7 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-profile-top{display:flex;align-items:center;gap:13px;position:relative}
 .oxide-profile-avatar{width:68px;height:68px;flex:0 0 68px;border-radius:20px;display:grid;place-items:center;font-size:31px;background:linear-gradient(145deg,#543078,#261638);border:2px solid #a966e5;box-shadow:0 0 19px rgba(166,92,231,.25)}
 .oxide-profile-identity{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}
-.oxide-account-stat-icon{font-size:30px!important;line-height:1.2}.oxide-shards-balance::before{content:"🪙";display:inline-block;font-size:25px;vertical-align:middle;margin-inline-end:8px}.balance-number::before{content:"🪙";display:inline-block;font-size:25px;vertical-align:middle;margin-inline-end:8px}.tap-balance::before,.skills-wallet::before{font-size:28px}
+.oxide-account-stat-icon{font-size:30px!important;line-height:1.2}.tap-balance::before,.skills-wallet::before{font-size:36px}
 .oxide-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:18px;display:block}.oxide-telegram-link{font-size:11px;color:#d9b5ff;text-decoration:none;font-weight:800}.oxide-ranking-profile{display:flex;align-items:center;gap:9px}.oxide-ranking-avatar{width:34px;height:34px;flex:0 0 34px;object-fit:cover;border-radius:50%;border:1px solid rgba(197,151,255,.55)}.oxide-ranking-identity{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px}.oxide-ranking-identity small,.oxide-ranking-identity a{font-size:10px;color:#c7a8ee;text-decoration:none;overflow-wrap:anywhere}.oxide-ranking-identity .ranking-id{font-size:11px;}
 .oxide-profile-identity strong{font-size:18px;color:#fff;max-width:100%;overflow-wrap:anywhere}
 .oxide-profile-identity>span{font-size:11px;color:#ad96c2}
@@ -966,13 +966,7 @@ body.outside-telegram .telegram-gate{display:flex!important}
   <h2 class="maintenance-title">الموقع تحت الصيانة</h2>
   <p class="maintenance-message" id="maintenanceMessage">نعتذر عن الإزعاج، الموقع تحت الصيانة حالياً. سنعود قريباً.</p>
 </section>
-<nav class="navigation" aria-label="Main navigation">
-<button class="nav-item active" id="homeTab" type="button" onclick="showPage('home')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9 21v-7h6v7"/></svg></span><span class="nav-label" id="navHome">الرئيسية</span></button>
-<button class="nav-item" id="missionsTab" type="button" onclick="showPage('missions')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="nav-label">المهمات</span></button>
-<button class="nav-item" id="rewardsTab" type="button" onclick="showPage('rewards')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14"/><path d="M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7Z"/><path d="M12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></span><span class="nav-label" id="navRewards">السحب</span></button>
-<button class="nav-item" id="referralTab" type="button" onclick="showPage('referral')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6M17 11h6"/></svg></span><span class="nav-label" id="navReferral">إحالة</span></button>
-<button class="nav-item" id="newsTab" type="button" onclick="showPage('account')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="nav-label" id="navNews">حسابي</span><span class="oxide-new-badge" id="newsUnreadBadge" aria-label="أخبار جديدة"></span></button>
-</nav>
+
 <div id="homePage" class="tap-home">
   <div class="tap-heading"><span class="tap-eyebrow">OXIDE HUB • TAP TO EARN</span><h1>اجمع عملات OXIDE</h1><p>كل ضغطة تقرّبك من مكافأتك القادمة</p></div>
   <div class="tap-balance"><span>رصيد النقرات التجريبي</span><strong id="tapBalance">0.00</strong><small>OXIDE COINS</small></div>
@@ -990,6 +984,13 @@ body.outside-telegram .telegram-gate{display:flex!important}
     <footer class="tap-home-footer">OXIDE HUB © 2026<br>Created by SKIMI_17</footer>
   </div>
 </div>
+<nav class="navigation" aria-label="Main navigation">
+<button class="nav-item active" id="homeTab" type="button" onclick="showPage('home')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9 21v-7h6v7"/></svg></span><span class="nav-label" id="navHome">الرئيسية</span></button>
+<button class="nav-item" id="missionsTab" type="button" onclick="showPage('missions')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="nav-label">المهمات</span></button>
+<button class="nav-item" id="rewardsTab" type="button" onclick="showPage('rewards')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14"/><path d="M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7Z"/><path d="M12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></span><span class="nav-label" id="navRewards">السحب</span></button>
+<button class="nav-item" id="referralTab" type="button" onclick="showPage('referral')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6M17 11h6"/></svg></span><span class="nav-label" id="navReferral">إحالة</span></button>
+<button class="nav-item" id="newsTab" type="button" onclick="showPage('account')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="nav-label" id="navNews">حسابي</span><span class="oxide-new-badge" id="newsUnreadBadge" aria-label="أخبار جديدة"></span></button>
+</nav>
 <section id="skillsPage" class="oxide-skills-page" style="display:none">
   <button class="skills-back" type="button" onclick="showPage('home')">← العودة للرئيسية</button>
   <header class="skills-hero"><span class="skills-kicker">OXIDE HUB • SKILL CENTER</span><div class="skills-emblem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.7 9.3 21.5 12l-6.8 2.7-2.7 6.8-2.7-6.8L2.5 12l6.8-2.7L12 2.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m18.5 2 .7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7.7-2.1Z" fill="currentColor"/></svg></div><h2>مركز المهارات</h2><p>طوّر قدراتك وارفع إنتاجك داخل OXIDE HUB</p><div class="skills-wallet"><span>رصيدك الحالي</span><strong id="skillsBalance">0.000</strong><small>OXIDE COINS</small></div></header>
