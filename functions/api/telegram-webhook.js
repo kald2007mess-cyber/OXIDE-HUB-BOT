@@ -138,6 +138,51 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: true });
     }
 
+    // Owner-only command to publish the official OXIDE HUB explainer post to the channel.
+    const publishMatch = message.text.trim().match(/^\/publish_oxide(?:@\\w+)?$/);
+    if (publishMatch) {
+      if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
+          String(message.chat.type) === "private" &&
+          String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
+        const postText = [
+          "🌌 كيف تعمل منصة OXIDE HUB؟",
+          "",
+          "منصة OXIDE HUB تمنح المستخدمين فرصة جمع النقاط من خلال أنشطة ومهام متنوعة.",
+          "",
+          "⭐ داخل المنصة ستجد:",
+          "",
+          "- المهام والأنشطة.",
+          "- نظام الإحالات.",
+          "- محفظة النقاط.",
+          "- مكافآت اختيارية مقابل مشاهدة الإعلانات.",
+          "",
+          "💜 هدفنا تقديم تجربة واضحة وشفافة، مع توضيح شروط المكافآت والسحب للمستخدمين.",
+          "",
+          "📢 تابعوا قناتنا لمعرفة آخر التحديثات.",
+          "",
+          "🔗https://t.me/OxideHubOfficial",
+          "",
+          "OXIDE HUB TEAM 🚀"
+        ].join("\\n");
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+          chat_id: "@OxideHubOfficial",
+          text: postText,
+          reply_markup: {
+            inline_keyboard: [[{
+              text: "🚀 Open OXIDE HUB",
+              url: "https://t.me/OxideHub_bot"
+            }]]
+          },
+          disable_web_page_preview: true
+        });
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+          chat_id: message.chat.id,
+          text: "✅ تم إرسال المنشور إلى قناة @OxideHubOfficial مع زر فتح البوت."
+        });
+      }
+      return json({ ok: true });
+    }
+
     const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
 
