@@ -723,7 +723,7 @@ html,body{overscroll-behavior-y:auto!important}
 
 
 /* OXIDE HUB - referral page inspired by the supplied Shards layout */
-.oxide-referral-page{max-width:520px;margin:0 auto;padding:12px 13px 105px;color:#f5f0ff;text-align:left}
+.oxide-referral-page{max-width:520px;margin:0 auto;padding:12px 13px 105px;color:#f5f0ff;text-align:right}
 .oxide-shards-summary{padding:18px 16px 20px;text-align:center;background:linear-gradient(145deg,rgba(45,23,75,.94),rgba(14,10,31,.96));border:1px solid rgba(177,119,231,.42);border-radius:19px;box-shadow:0 8px 26px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.06)}
 .oxide-shards-caption{font-size:12px;font-weight:800;letter-spacing:2.6px;color:#c9a8f2}
 .oxide-shards-balance{font-size:36px;line-height:1.25;font-weight:900;color:#fff;margin-top:5px;text-shadow:0 0 18px rgba(181,117,255,.35)}
@@ -1115,7 +1115,7 @@ body.outside-telegram .telegram-gate{display:flex!important}
 <section id="missionsPage" class="oxide-missions-page" style="display:none">
   <div class="oxide-missions-glass-frame">
   <div class="oxide-shards-summary">
-    <div class="oxide-shards-caption">YOUR SHARDS</div>
+    <div class="oxide-shards-caption">رصيدك من العملات</div>
     <div class="oxide-shards-balance" id="missionTopBalance">60</div>
   </div>
   <div class="oxide-missions-heading">
@@ -1143,42 +1143,42 @@ body.outside-telegram .telegram-gate{display:flex!important}
     <div class="oxide-shards-balance" id="referralShardBalance">—</div>
   </div>
   <div class="oxide-referral-heading">
-    <div class="oxide-referral-eyebrow">REFERRAL</div>
-    <h2>Invite friends, earn shards</h2>
+    <div class="oxide-referral-eyebrow">الإحالات</div>
+    <h2>ادعُ أصدقاءك واربح</h2>
   </div>
   <div class="oxide-invite-card">
     <div class="oxide-invite-icon">↗</div>
-    <div class="oxide-invite-title">Invite &amp; Earn</div>
-    <div class="oxide-invite-description">Get <strong>50 shards</strong> per successful referral</div>
+    <div class="oxide-invite-title">ادعُ واربح</div>
+    <div class="oxide-invite-description">اربح <strong>50 عملة</strong> عن كل إحالة ناجحة</div>
   </div>
   <div class="oxide-referral-stats">
     <div class="oxide-referral-stat">
-      <div class="oxide-stat-label">Total Referrals</div>
+      <div class="oxide-stat-label">إجمالي الإحالات</div>
       <div class="oxide-stat-value" id="referralCount">0</div>
     </div>
     <div class="oxide-referral-stat">
-      <div class="oxide-stat-label">Earned Shards</div>
+      <div class="oxide-stat-label">العملات المكتسبة</div>
       <div class="oxide-stat-value" id="referralEarned">0</div>
-      <div class="oxide-stat-unit">+50 per invite</div>
+      <div class="oxide-stat-unit">+50 لكل دعوة</div>
     </div>
   </div>
   <div class="oxide-link-card">
-    <div class="oxide-link-heading"><span class="oxide-link-icon">🔗</span><span>Link</span></div>
-    <div class="oxide-link-label">Your Referral Link</div>
-    <input class="referral-link oxide-referral-input" id="referralLink" type="text" readonly value="" placeholder="Your referral link will appear here" aria-label="Your Referral Link">
-    <div class="oxide-link-hint">Tap to copy or use buttons below</div>
+    <div class="oxide-link-heading"><span class="oxide-link-icon">🔗</span><span>الرابط</span></div>
+    <div class="oxide-link-label">رابط الدعوة الخاص بك</div>
+    <input class="referral-link oxide-referral-input" id="referralLink" type="text" readonly value="" placeholder="سيظهر رابط الدعوة هنا" aria-label="Your Referral Link">
+    <div class="oxide-link-hint">اضغط للنسخ أو استخدم الأزرار أدناه</div>
     <div class="oxide-link-actions">
-      <button class="referral-button oxide-copy-button" id="copyReferralButton" type="button" onclick="copyReferralLink()">Copy</button>
-      <button class="referral-button oxide-share-button" id="shareReferralButton" type="button" onclick="shareReferralLink()">Share ↗</button>
+      <button class="referral-button oxide-copy-button" id="copyReferralButton" type="button" onclick="copyReferralLink()">نسخ</button>
+      <button class="referral-button oxide-share-button" id="shareReferralButton" type="button" onclick="shareReferralLink()">مشاركة ↗</button>
     </div>
     <div class="referral-status" id="referralStatus" role="status"></div>
   </div>
   <div class="oxide-how-card">
-    <h3>How it works</h3>
-    <div class="oxide-how-step"><span class="oxide-step-number">1</span><span>Share your referral link with friends</span></div>
-    <div class="oxide-how-step"><span class="oxide-step-number">2</span><span>They sign up and join using your link</span></div>
-    <div class="oxide-how-step"><span class="oxide-step-number">3</span><span>You earn 50 shards per successful referral</span></div>
-    <div class="oxide-how-note">Track your earnings in real-time</div>
+    <h3>كيف تعمل الإحالة؟</h3>
+    <div class="oxide-how-step"><span class="oxide-step-number">1</span><span>شارك رابط الدعوة مع أصدقائك</span></div>
+    <div class="oxide-how-step"><span class="oxide-step-number">2</span><span>يسجّل أصدقاؤك وينضمون عبر رابطك</span></div>
+    <div class="oxide-how-step"><span class="oxide-step-number">3</span><span>اربح 50 عملة عن كل إحالة ناجحة</span></div>
+    <div class="oxide-how-note">تابع أرباحك لحظة بلحظة</div>
   </div>
   <div class="referral-ranking oxide-referral-ranking">
     <h3 id="pointsRankingTitle">🏆 أفضل 10 في العملات</h3>
