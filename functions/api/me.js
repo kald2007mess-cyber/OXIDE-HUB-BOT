@@ -10,9 +10,11 @@ export async function onRequestGet({ request, env }) {
     if (!userUuid) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
 
     const row = await env.DB.prepare(`
-      SELECT user_uuid, public_id, points, status
-      FROM users
-      WHERE user_uuid = ?
+      SELECT u.user_uuid, u.public_id, u.points, u.status,
+             p.username, p.first_name, p.last_name, p.photo_url, p.telegram_url
+      FROM users u
+      LEFT JOIN oxide_profiles p ON p.user_uuid = u.user_uuid
+      WHERE u.user_uuid = ?
       LIMIT 1
     `).bind(userUuid).first();
 
@@ -24,7 +26,12 @@ export async function onRequestGet({ request, env }) {
       success: true,
       userId: row.user_uuid,
       displayId: row.public_id,
-      points: Number(row.points || 0)
+      points: Number(row.points || 0),
+      username: row.username || "",
+      firstName: row.first_name || "",
+      lastName: row.last_name || "",
+      photoUrl: row.photo_url || "",
+      telegramUrl: row.telegram_url || (row.username ? "https://t.me/" + row.username : "")
     });
   } catch {
     return json({ success: false, error: "COULD_NOT_LOAD_USER_PROFILE" }, 500);
