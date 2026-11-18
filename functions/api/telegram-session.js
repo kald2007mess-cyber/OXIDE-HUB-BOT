@@ -53,10 +53,12 @@ async function stableUserUuid(telegramId) {
 }
 
 export async function onRequestPost({ request, env }) {
+  let diagnosticStage = "START";
   try {
     if (!env.DB || !env.SESSION_SECRET || !env.TELEGRAM_BOT_TOKEN) {
       return json({ success: false, error: "SERVER_CONFIGURATION_MISSING" }, 500);
     }
+    diagnosticStage = "READ_TELEGRAM_DATA";
     const body = await request.json().catch(() => ({}));
     const verified = await telegramUser(String(body.initData || ""), env.TELEGRAM_BOT_TOKEN);
     if (!verified) return json({ success: false, error: "INVALID_TELEGRAM_INIT_DATA" }, 403);
@@ -66,6 +68,7 @@ export async function onRequestPost({ request, env }) {
     const now = Math.floor(Date.now() / 1000);
     const initialPublicId = "OX-" + userUuid.replace(/-/g, "").slice(0, 8).toUpperCase();
 
+    diagnosticStage = "CREATE_TELEGRAM_IDENTITIES";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS telegram_identities (
         telegram_user_id TEXT PRIMARY KEY,
@@ -74,18 +77,21 @@ export async function onRequestPost({ request, env }) {
       )
     `).run();
 
+    diagnosticStage = "CREATE_USER";
     const createdUser = await env.DB.prepare(`
       INSERT OR IGNORE INTO users
         (user_uuid, public_id, points, status, created_at, updated_at)
       VALUES (?, ?, 0, 'active', ?, ?)
     `).bind(userUuid, initialPublicId, now, now).run();
 
+    diagnosticStage = "READ_USER";
     const userRow = await env.DB.prepare(
       "SELECT user_uuid, status FROM users WHERE user_uuid = ? LIMIT 1"
     ).bind(userUuid).first();
 
     // Keep legacy app modules (referrals, support, progress and mission reviews)
     // attached to the same authenticated Telegram UUID.
+    diagnosticStage = "CREATE_VISITOR_TABLE";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS visitors (
         user_id TEXT PRIMARY KEY,
@@ -98,6 +104,7 @@ export async function onRequestPost({ request, env }) {
 
     // If this is a migrated legacy visitor, preserve the existing points
     // when creating the new Telegram account instead of resetting the balance.
+    diagnosticStage = "MIGRATE_POINTS";
     if (Number(createdUser.meta?.changes || 0) === 1) {
       await env.DB.prepare(`
         UPDATE users SET points = COALESCE(
@@ -107,21 +114,25 @@ export async function onRequestPost({ request, env }) {
       `).bind(userUuid, now, userUuid).run();
     }
 
+    diagnosticStage = "READ_ACCOUNT_POINTS";
     const account = await env.DB.prepare(
       "SELECT points FROM users WHERE user_uuid = ?"
     ).bind(userUuid).first();
 
+    diagnosticStage = "CREATE_VISITOR";
     await env.DB.prepare(`
       INSERT OR IGNORE INTO visitors
         (user_id, progress, points, cycle_started_at, created_at)
       VALUES (?, 0, ?, ?, ?)
     `).bind(userUuid, Number(account?.points || 0), now, now).run();
 
+    diagnosticStage = "LINK_TELEGRAM_IDENTITY";
     await env.DB.prepare(`
       INSERT OR IGNORE INTO telegram_identities (telegram_user_id, user_uuid, created_at)
       VALUES (?, ?, ?)
     `).bind(telegramId, userUuid, now).run();
 
+    diagnosticStage = "VERIFY_TELEGRAM_IDENTITY";
     const identity = await env.DB.prepare(
       "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
     ).bind(telegramId).first();
@@ -137,6 +148,7 @@ export async function onRequestPost({ request, env }) {
           "SHA-256", encoder.encode(env.SESSION_SECRET + ":" + clientIp)
         )))
       : "";
+    diagnosticStage = "CREATE_SECURITY_SIGNALS";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS oxide_security_signals (
         user_uuid TEXT PRIMARY KEY,
@@ -145,7 +157,8 @@ export async function onRequestPost({ request, env }) {
       )
     `).run();
     if (ipDigest) {
-      await env.DB.prepare(`
+      diagnosticStage = "SAVE_SECURITY_SIGNAL";
+    await env.DB.prepare(`
         INSERT INTO oxide_security_signals(user_uuid,ip_hash,updated_at)
         VALUES(?,?,?)
         ON CONFLICT(user_uuid) DO UPDATE SET
@@ -155,6 +168,7 @@ export async function onRequestPost({ request, env }) {
 
     // Enforce the configured rule: the third distinct Telegram account on one IP
     // bans every account associated with that IP. Only a keyed digest is stored.
+    diagnosticStage = "CREATE_IP_ACCOUNT_TABLE";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS oxide_ip_accounts (
         ip_hash TEXT NOT NULL,
@@ -179,7 +193,8 @@ export async function onRequestPost({ request, env }) {
 
     let ipBanned = false;
     if (ipDigest) {
-      await env.DB.prepare(`
+      diagnosticStage = "SAVE_IP_ACCOUNT";
+    await env.DB.prepare(`
         INSERT INTO oxide_ip_accounts
           (ip_hash, user_uuid, telegram_user_id, first_seen_at, last_seen_at)
         VALUES (?, ?, ?, ?, ?)
@@ -188,25 +203,29 @@ export async function onRequestPost({ request, env }) {
           last_seen_at = excluded.last_seen_at
       `).bind(ipDigest, userUuid, telegramId, now).run();
 
-      const accountCount = await env.DB.prepare(`
+      diagnosticStage = "COUNT_IP_ACCOUNTS";
+    const accountCount = await env.DB.prepare(`
         SELECT COUNT(DISTINCT user_uuid) AS total
         FROM oxide_ip_accounts WHERE ip_hash = ?
       `).bind(ipDigest).first();
 
       if (Number(accountCount?.total || 0) >= 3) {
-        await env.DB.prepare(`
+        diagnosticStage = "SAVE_IP_BAN";
+    await env.DB.prepare(`
           INSERT OR IGNORE INTO oxide_ip_bans (ip_hash, reason, created_at)
           VALUES (?, 'three_accounts_same_ip', ?)
         `).bind(ipDigest, now).run();
       }
 
-      const ipBan = await env.DB.prepare(
+      diagnosticStage = "CHECK_IP_BAN";
+    const ipBan = await env.DB.prepare(
         "SELECT ip_hash FROM oxide_ip_bans WHERE ip_hash = ? LIMIT 1"
       ).bind(ipDigest).first();
       ipBanned = !!ipBan;
 
       if (ipBanned) {
-        await env.DB.prepare(`
+        diagnosticStage = "BAN_USERS";
+    await env.DB.prepare(`
           UPDATE users SET status = 'banned', updated_at = ?
           WHERE user_uuid IN (
             SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
@@ -237,7 +256,8 @@ export async function onRequestPost({ request, env }) {
               )
             `).run();
           }
-          await env.DB.prepare(`
+          diagnosticStage = "REVOKE_BANNED_SESSIONS";
+    await env.DB.prepare(`
             UPDATE ${table} SET revoked_at = ?
             WHERE user_uuid IN (
               SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
@@ -248,7 +268,8 @@ export async function onRequestPost({ request, env }) {
     }
 
     if (ipBanned || userRow?.status === "banned") {
-      const supportCookie = await createSupportSessionCookie(env, env.DB, userUuid);
+      diagnosticStage = "CREATE_SUPPORT_COOKIE";
+    const supportCookie = await createSupportSessionCookie(env, env.DB, userUuid);
       const blocked = json({
         success: false,
         blocked: true,
@@ -266,6 +287,7 @@ export async function onRequestPost({ request, env }) {
 
     // A Telegram deep-link attribution is recorded first; rewards wait for a genuinely
     // approved mission. Shared IPs are a review signal, not proof of fraud.
+    diagnosticStage = "CREATE_PENDING_REFERRALS";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS oxide_pending_referrals (
         referred_telegram_id TEXT PRIMARY KEY,
@@ -273,6 +295,7 @@ export async function onRequestPost({ request, env }) {
         created_at INTEGER NOT NULL
       )
     `).run();
+    diagnosticStage = "CREATE_REFERRALS_TABLE";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS referrals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -285,6 +308,7 @@ export async function onRequestPost({ request, env }) {
         risk_reason TEXT NOT NULL DEFAULT ''
       )
     `).run();
+    diagnosticStage = "CHECK_REFERRAL_COLUMNS";
     const referralColumns = await env.DB.prepare("PRAGMA table_info(referrals)").all();
     const knownReferralColumns = new Set((referralColumns.results || []).map(column => column.name));
     if (!knownReferralColumns.has("status")) {
@@ -297,34 +321,40 @@ export async function onRequestPost({ request, env }) {
       await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
     }
     // Existing referrals with an awarded balance were already paid by the legacy flow.
+    diagnosticStage = "MIGRATE_REFERRAL_STATUS";
     await env.DB.prepare(`
       UPDATE referrals SET status = 'rewarded'
       WHERE points_awarded > 0 AND status = 'pending'
     `).run();
 
+    diagnosticStage = "READ_PENDING_REFERRAL";
     const pendingReferral = await env.DB.prepare(
       "SELECT referrer_telegram_id FROM oxide_pending_referrals WHERE referred_telegram_id = ? LIMIT 1"
     ).bind(telegramId).first();
     if (pendingReferral) {
-      const referrerIdentity = await env.DB.prepare(
+      diagnosticStage = "READ_REFERRER";
+    const referrerIdentity = await env.DB.prepare(
         "SELECT user_uuid FROM telegram_identities WHERE telegram_user_id = ? LIMIT 1"
       ).bind(String(pendingReferral.referrer_telegram_id)).first();
       if (referrerIdentity && referrerIdentity.user_uuid !== userUuid) {
-        const existingReferral = await env.DB.prepare(
+        diagnosticStage = "CHECK_EXISTING_REFERRAL";
+    const existingReferral = await env.DB.prepare(
           "SELECT id FROM referrals WHERE referred_id = ? LIMIT 1"
         ).bind(userUuid).first();
         if (!existingReferral) {
           let riskScore = 0;
           const reasons = [];
           if (ipDigest) {
-            const referrerSignal = await env.DB.prepare(
+            diagnosticStage = "READ_REFERRER_SIGNAL";
+    const referrerSignal = await env.DB.prepare(
               "SELECT ip_hash FROM oxide_security_signals WHERE user_uuid = ? LIMIT 1"
             ).bind(referrerIdentity.user_uuid).first();
             if (referrerSignal?.ip_hash && referrerSignal.ip_hash === ipDigest) {
               riskScore += 70;
               reasons.push("same_ip_as_referrer");
             }
-            const sameIpAccounts = await env.DB.prepare(`
+            diagnosticStage = "COUNT_REFERRAL_IP_ACCOUNTS";
+    const sameIpAccounts = await env.DB.prepare(`
               SELECT COUNT(*) AS total FROM oxide_security_signals
               WHERE ip_hash = ? AND updated_at >= ?
             `).bind(ipDigest, now - 30 * 86400).first();
@@ -334,7 +364,8 @@ export async function onRequestPost({ request, env }) {
             }
           }
           const riskStatus = riskScore >= 70 ? "review" : "pending";
-          await env.DB.prepare(`
+          diagnosticStage = "SAVE_REFERRAL";
+    await env.DB.prepare(`
             INSERT OR IGNORE INTO referrals
               (referrer_id,referred_id,points_awarded,created_at,status,risk_score,risk_reason)
             VALUES(?,?,0,?,?,?,?)
@@ -344,15 +375,18 @@ export async function onRequestPost({ request, env }) {
           ).run();
         }
       }
-      await env.DB.prepare(
+      diagnosticStage = "DELETE_PENDING_REFERRAL";
+    await env.DB.prepare(
         "DELETE FROM oxide_pending_referrals WHERE referred_telegram_id = ?"
       ).bind(telegramId).run();
     }
 
     // Persist the Telegram profile and a stable, collision-free public OX ID.
     const publicId = "OX-" + telegramId;
+    diagnosticStage = "UPDATE_PUBLIC_ID";
     await env.DB.prepare("UPDATE users SET public_id = ?, updated_at = ? WHERE user_uuid = ?")
       .bind(publicId, now, userUuid).run();
+    diagnosticStage = "CREATE_PROFILE_TABLE";
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS oxide_profiles (
         telegram_user_id TEXT PRIMARY KEY,
@@ -369,6 +403,7 @@ export async function onRequestPost({ request, env }) {
     const username = String(user.username || "").replace(/^@/, "").slice(0, 64);
     const photoUrl = typeof user.photo_url === "string" && /^https:\/\//i.test(user.photo_url)
       ? user.photo_url.slice(0, 2048) : null;
+    diagnosticStage = "SAVE_PROFILE";
     await env.DB.prepare(`
       INSERT INTO oxide_profiles
         (telegram_user_id, user_uuid, public_id, username, first_name, last_name, photo_url, telegram_url, updated_at)
@@ -387,6 +422,7 @@ export async function onRequestPost({ request, env }) {
       photoUrl, username ? "https://t.me/" + username : "tg://user?id=" + telegramId, now
     ).run();
 
+    diagnosticStage = "CREATE_SESSION_COOKIE";
     const cookie = await createSessionCookie(env, env.DB, userUuid);
     const response = json({
       success: true,
@@ -397,7 +433,7 @@ export async function onRequestPost({ request, env }) {
     return new Response(response.body, { status: 200, headers });
   } catch (error) {
     console.error("OXIDE telegram session failure:", error);
-    const diagnostic = String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180);
+    const diagnostic = `${diagnosticStage}: ${String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180)}`;
     return json({ success: false, error: "TELEGRAM_SESSION_FAILED", diagnostic }, 500);
   }
 }
