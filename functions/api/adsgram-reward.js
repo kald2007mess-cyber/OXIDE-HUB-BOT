@@ -32,6 +32,18 @@ export async function onRequestPost({ request, env }) {
     `).run();
 
     await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS point_ledger (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_uuid TEXT NOT NULL,
+        delta REAL NOT NULL,
+        balance_after REAL NOT NULL,
+        reason TEXT NOT NULL,
+        reference_type TEXT NOT NULL,
+        reference_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    `).run();
+    await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS adsgram_reward_state (
         user_id TEXT PRIMARY KEY,
         last_claim_at INTEGER NOT NULL DEFAULT 0
@@ -76,7 +88,15 @@ export async function onRequestPost({ request, env }) {
       ).bind(REWARD_POINTS, userId),
       env.DB.prepare(
         "UPDATE users SET points = (SELECT points FROM visitors WHERE user_id = ?), updated_at = ? WHERE user_uuid = ? AND changes() = 1"
-      ).bind(userId, now, userId)
+      ).bind(userId, now, userId),
+      env.DB.prepare(`
+        INSERT INTO point_ledger
+          (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+        SELECT u.user_uuid,?,u.points,'adsgram_ad_reward','adsgram_ad',CAST(c.completed_ads AS TEXT),?
+        FROM users u JOIN reward_ad_cycles c ON c.user_id = u.user_uuid
+        WHERE u.user_uuid = ?
+          AND EXISTS (SELECT 1 FROM adsgram_reward_state WHERE user_id = ? AND last_claim_at = ?)
+      `).bind(REWARD_POINTS,now,userId,userId,now)
     ]);
 
     if (Number(results?.[0]?.meta?.changes || 0) !== 1) {
