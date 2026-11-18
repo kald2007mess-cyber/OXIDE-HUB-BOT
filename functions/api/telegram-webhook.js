@@ -62,6 +62,31 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    // Owner-only /admin command. The Mini App still verifies Telegram initData server-side.
+    const adminMatch = message.text.trim().match(/^\\/admin(?:@\\w+)?$/);
+    if (adminMatch) {
+      const ownerId = String(env.OXIDE_OWNER_TELEGRAM_ID || "");
+      if (!ownerId || String(message.from.id) !== ownerId) {
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+          chat_id: message.chat.id,
+          text: "⛔ هذا الأمر مخصص لمالك OXIDE HUB فقط."
+        });
+        return json({ ok: true });
+      }
+      const adminUrl = new URL("/admin.html", env.TELEGRAM_WEBAPP_URL).toString();
+      await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+        chat_id: message.chat.id,
+        text: "👑 تم التحقق من حساب المالك. افتح لوحة الإدارة من الزر التالي:",
+        reply_markup: {
+          inline_keyboard: [[{
+            text: "⚙️ فتح لوحة الإدارة",
+            web_app: { url: adminUrl }
+          }]]
+        }
+      });
+      return json({ ok: true });
+    }
+
     const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
 
