@@ -89,7 +89,7 @@ export async function onRequestPost({ request, env }) {
         const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "🔐 لوحة إدارة OXIDE HUB: افتح صفحة الإدارة من رابط الموقع."
+          text: `🔐 لوحة إدارة OXIDE HUB\n\nرابط لوحة التحكم:\n${adminUrl}`
         });
       }
       return json({ ok: true });
