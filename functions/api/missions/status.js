@@ -67,27 +67,40 @@ export async function onRequestGet({ request, env }) {
     const result = await env.DB.prepare(`
       SELECT m.id, m.title, m.description, m.platform, m.target_url,
              m.reward_points,
-             COALESCE(s.status, 'not_submitted') AS status
+             CASE
+               WHEN m.platform='telegram_join' AND tc.user_id IS NOT NULL THEN 'approved'
+               ELSE COALESCE(s.status, 'not_submitted')
+             END AS status
       FROM oxide_admin_missions m
       LEFT JOIN mission_submissions s
         ON s.mission_id = m.id AND s.user_id = ?
         AND s.id = (SELECT MAX(s2.id) FROM mission_submissions s2
                     WHERE s2.mission_id = m.id AND s2.user_id = ?)
+      LEFT JOIN telegram_channel_claims tc
+        ON tc.user_id = ? AND tc.mission_id = m.id
       WHERE COALESCE(m.enabled, 1) = 1
       ORDER BY m.id ASC
-    `).bind(userId,userId).all();
+    `).bind(userId,userId,userId).all();
     return json({success:true,points:Number(user?.points ?? 0),missions:(result.results||[]).map(m=>({
       id:Number(m.id),title:m.title,description:m.description,platform:m.platform,
       targetUrl:m.target_url,rewardPoints:Number(m.reward_points||0),status:m.status === "rejected" ? "not_submitted" : m.status
     })),submissions:(await env.DB.prepare(`
-      SELECT s.id,s.mission_id AS missionId,s.status,s.created_at AS createdAt,
-             s.reviewed_at AS reviewedAt,m.title
-      FROM mission_submissions s
-      LEFT JOIN oxide_admin_missions m ON m.id=s.mission_id
-      WHERE s.user_id=?
-      ORDER BY s.created_at DESC,s.id DESC
+      SELECT * FROM (
+        SELECT s.id,s.mission_id AS missionId,s.status,s.created_at AS createdAt,
+               s.reviewed_at AS reviewedAt,m.title
+        FROM mission_submissions s
+        LEFT JOIN oxide_admin_missions m ON m.id=s.mission_id
+        WHERE s.user_id=?
+        UNION ALL
+        SELECT -tc.mission_id AS id,tc.mission_id AS missionId,'approved' AS status,
+               tc.claimed_at AS createdAt,tc.claimed_at AS reviewedAt,m.title
+        FROM telegram_channel_claims tc
+        LEFT JOIN oxide_admin_missions m ON m.id=tc.mission_id
+        WHERE tc.user_id=?
+      )
+      ORDER BY createdAt DESC,id DESC
       LIMIT 30
-    `).bind(userId).all()).results || []});
+    `).bind(userId,userId).all()).results || []});
   } catch (error) {
     console.error("Mission status API error:", diagnosticStage, error);
     const diagnostic = `${diagnosticStage}: ${String(error?.message || error || "UNKNOWN_ERROR").slice(0, 180)}`;
