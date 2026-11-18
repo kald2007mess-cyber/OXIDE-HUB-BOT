@@ -10,6 +10,29 @@ function json(data, status = 200) {
   });
 }
 
+
+async function ensureMissionSubmissionsTable(DB) {
+  await DB.prepare(`CREATE TABLE IF NOT EXISTS mission_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    mission_id INTEGER NOT NULL,
+    proof_file_id TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at INTEGER NOT NULL,
+    reviewed_at INTEGER
+  )`).run();
+  const columns = await DB.prepare("PRAGMA table_info(mission_submissions)").all();
+  const names = (columns.results || []).map(column => column.name);
+  if (!names.includes("user_id")) {
+    await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN user_id TEXT").run();
+    if (names.includes("user_uuid")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = user_uuid WHERE user_id IS NULL OR user_id = ''").run();
+    } else if (names.includes("visitor_id")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
+    }
+  }
+}
+
 async function ensurePointLedger(DB) {
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
@@ -387,6 +410,7 @@ export async function onRequestPost({ request, env }) {
 
     const auth = await authorizeAdmin(String(body.initData || ""), env, "tasks");
     if (!auth.ok) return adminAuthResponse(auth);
+    await ensureMissionSubmissionsTable(env.DB);
     await ensurePointLedger(env.DB);
 
     if (action === "list") {
