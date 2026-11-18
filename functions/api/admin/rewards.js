@@ -11,21 +11,21 @@ async function ensureTable(DB){
 }
 function normalizePublicId(value){return String(value||"").trim().toUpperCase();}
 async function findRewardUser(DB,target){
- const exact=await DB.prepare(\`
+ const exact=await DB.prepare(`
   SELECT v.user_id FROM visitors v
   INNER JOIN users u ON u.user_uuid = v.user_id
   WHERE UPPER(u.public_id) = ?
   LIMIT 2
- \`).bind(target).all();
+ `).bind(target).all();
  if(exact.results?.length===1)return exact.results[0].user_id;
  if(exact.results?.length>1)return null;
  const legacy=target.match(/^OX-([A-F0-9]{8})$/);
  if(!legacy)return undefined;
- const matches=await DB.prepare(\`
+ const matches=await DB.prepare(`
   SELECT user_id FROM visitors
   WHERE UPPER(SUBSTR(REPLACE(user_id,'-',''),1,8)) = ?
   LIMIT 2
- \`).bind(legacy[1]).all();
+ `).bind(legacy[1]).all();
  if(matches.results?.length===1)return matches.results[0].user_id;
  return matches.results?.length>1?null:undefined;
 }
@@ -55,10 +55,10 @@ export async function onRequestPost({request,env}){
   const userId=await findRewardUser(env.DB,normalizedTarget);
   if(userId===null)return json({success:false,error:"USER_ID_AMBIGUOUS"},404);
   if(!userId)return json({success:false,error:"USER_NOT_FOUND"},404);
-  await env.DB.prepare(\`
+  await env.DB.prepare(`
    INSERT INTO oxide_notifications(user_id,type,title,body,reward_points,created_at)
    VALUES(?,'reward',?,?,?,?)
-  \`).bind(userId,title,message,points,now).run();
+  `).bind(userId,title,message,points,now).run();
   return json({success:true,sent:1,target:"user"});
  }catch(error){return json({success:false,error:"ADMIN_REWARD_SEND_FAILED"},500);}
 }
