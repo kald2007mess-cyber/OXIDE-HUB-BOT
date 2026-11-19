@@ -58,16 +58,6 @@ async function ensureTables(DB) {
       await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
     }
   }
-  const submissionColumnNames = (submissionColumns.results || []).map(column => column.name);
-  if (!submissionColumnNames.includes("user_id")) {
-    await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN user_id TEXT").run();
-    if (submissionColumnNames.includes("user_uuid")) {
-      await DB.prepare("UPDATE mission_submissions SET user_id = user_uuid WHERE user_id IS NULL OR user_id = ''").run();
-    } else if (submissionColumnNames.includes("visitor_id")) {
-      await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
-    }
-  }
-
 }
 
 export async function onRequestGet({ request, env }) {
