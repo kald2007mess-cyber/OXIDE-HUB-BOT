@@ -265,6 +265,15 @@ export async function onRequestPost({ request, env }) {
     diagnosticStage = "CHECK_REFERRAL_COLUMNS";
     const referralColumns = await env.DB.prepare("PRAGMA table_info(referrals)").all();
     const knownReferralColumns = new Set((referralColumns.results || []).map(column => column.name));
+    // Migrate the legacy UUID column names without dropping or rebuilding referral data.
+    if (!knownReferralColumns.has("referrer_id")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referrer_id TEXT").run();
+      knownReferralColumns.add("referrer_id");
+    }
+    if (!knownReferralColumns.has("referred_id")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referred_id TEXT").run();
+      knownReferralColumns.add("referred_id");
+    }
     if (!knownReferralColumns.has("status")) {
       await env.DB.prepare("ALTER TABLE referrals ADD COLUMN status TEXT NOT NULL DEFAULT 'pending'").run();
     }
@@ -274,6 +283,14 @@ export async function onRequestPost({ request, env }) {
     if (!knownReferralColumns.has("risk_reason")) {
       await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
     }
+    if (knownReferralColumns.has("referrer_uuid")) {
+      await env.DB.prepare("UPDATE referrals SET referrer_id = referrer_uuid WHERE referrer_id IS NULL OR referrer_id = ''").run();
+    }
+    if (knownReferralColumns.has("referred_uuid")) {
+      await env.DB.prepare("UPDATE referrals SET referred_id = referred_uuid WHERE referred_id IS NULL OR referred_id = ''").run();
+    }
+    await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_referrals_referred_id ON referrals(referred_id)").run();
+    await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_referrals_referrer_id ON referrals(referrer_id)").run();
     // Existing referrals with an awarded balance were already paid by the legacy flow.
     diagnosticStage = "MIGRATE_REFERRAL_STATUS";
     await env.DB.prepare(`
@@ -319,14 +336,22 @@ export async function onRequestPost({ request, env }) {
           }
           const riskStatus = riskScore >= 70 ? "review" : "pending";
           diagnosticStage = "SAVE_REFERRAL";
-    await env.DB.prepare(`
-            INSERT OR IGNORE INTO referrals
-              (referrer_id,referred_id,points_awarded,created_at,status,risk_score,risk_reason)
-            VALUES(?,?,0,?,?,?,?)
-          `).bind(
-            referrerIdentity.user_uuid, userUuid, now, riskStatus,
-            riskScore, reasons.join(",")
-          ).run();
+    const referralInsertColumns = ["referrer_id", "referred_id", "points_awarded", "created_at", "status", "risk_score", "risk_reason"];
+          const referralInsertValues = [referrerIdentity.user_uuid, userUuid, 0, now, riskStatus, riskScore, reasons.join(",")];
+          // Legacy tables retain NOT NULL UUID columns, so populate both naming schemes when present.
+          if (knownReferralColumns.has("referrer_uuid")) {
+            referralInsertColumns.push("referrer_uuid");
+            referralInsertValues.push(referrerIdentity.user_uuid);
+          }
+          if (knownReferralColumns.has("referred_uuid")) {
+            referralInsertColumns.push("referred_uuid");
+            referralInsertValues.push(userUuid);
+          }
+          const referralPlaceholders = referralInsertColumns.map(() => "?").join(",");
+          await env.DB.prepare(`
+            INSERT OR IGNORE INTO referrals (${referralInsertColumns.join(",")})
+            VALUES(${referralPlaceholders})
+          `).bind(...referralInsertValues).run();
         }
       }
       diagnosticStage = "DELETE_PENDING_REFERRAL";
