@@ -859,7 +859,7 @@ html,body{overscroll-behavior-y:auto!important}
 .oxide-achievement{padding:12px 5px;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px;background:linear-gradient(145deg,rgba(37,26,55,.95),rgba(17,14,34,.95));border:1px solid rgba(157,111,197,.23)}
 .oxide-achievement>span{font-size:25px;filter:grayscale(.35)}
 .oxide-achievement b{font-size:10px;color:#dfc6f3}
-.oxide-achievement small{font-size:9px;color:#a58bb9}
+.oxide-achievement small{font-size:9px;color:#a58bb9}.oxide-achievement.unlocked{border-color:rgba(67,214,154,.65);background:linear-gradient(145deg,rgba(27,76,65,.96),rgba(17,34,34,.98));box-shadow:0 0 12px rgba(67,214,154,.12)}.oxide-achievement.unlocked>span{filter:none}.oxide-achievement.unlocked small{color:#43d69a;font-weight:800}
 .oxide-account-menu{overflow:hidden;padding:3px 12px}
 .oxide-account-menu-item,.oxide-account-language{width:100%;min-height:65px;display:flex;align-items:center;gap:11px;padding:10px 2px;border:0;border-bottom:1px solid rgba(174,130,205,.13);background:transparent;color:#fff;text-align:right;font-family:inherit}
 .oxide-account-menu-item:last-child{border-bottom:0}
@@ -1103,9 +1103,9 @@ body.outside-telegram .telegram-gate{display:flex!important}
  </div>
  <div class="oxide-account-section-title"><span>إنجازاتي</span><small>شارات رحلتك</small></div>
  <div class="oxide-account-achievements">
-  <div class="oxide-achievement"><span>🚀</span><b>البداية</b><small>قريبًا</small></div>
-  <div class="oxide-achievement"><span>🔥</span><b>النشاط</b><small>قريبًا</small></div>
-  <div class="oxide-achievement"><span>🏆</span><b>الأسطورة</b><small>قريبًا</small></div>
+  <div class="oxide-achievement" data-achievement="beginner"><span>🚀</span><b>البداية</b><small>0/1</small></div>
+  <div class="oxide-achievement" data-achievement="active"><span>🔥</span><b>النشاط</b><small>0/3</small></div>
+  <div class="oxide-achievement" data-achievement="legend"><span>🏆</span><b>الأسطورة</b><small>0/10</small></div>
  </div>
  <div class="oxide-account-section-title"><span>إعدادات الحساب</span><small>إدارة تجربتك</small></div>
  <div class="oxide-account-menu">
@@ -1723,6 +1723,15 @@ function renderAccountProfile(){
  if(earned&&earnedSource)earned.textContent=earnedSource.textContent.trim()||"—";
  if(ads)ads.textContent=String(Number(islandCompleted)||0);
  if(refs&&refSource)refs.textContent=refSource.textContent.trim()||"—";
+ const missionCount=Math.max(0,Number(profile.stats?.completedMissions)||0);
+ const achievementRules={beginner:1,active:3,legend:10};
+ const achievementLabels=currentLanguage==="en"?{done:"Unlocked"}:currentLanguage==="ru"?{done:"Получено"}:{done:"مكتمل"};
+ document.querySelectorAll("[data-achievement]").forEach(item=>{
+  const key=item.dataset.achievement,required=achievementRules[key]||0,unlocked=missionCount>=required;
+  item.classList.toggle("unlocked",unlocked);
+  const small=item.querySelector("small");
+  if(small)small.textContent=unlocked?achievementLabels.done:missionCount+"/"+required;
+ });
 }
 
 function showPage(page){
