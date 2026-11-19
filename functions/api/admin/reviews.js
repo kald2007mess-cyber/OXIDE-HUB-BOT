@@ -180,6 +180,10 @@ async function reviewMission(DB, id, decision) {
         UPDATE mission_submissions
         SET status = 'approved', reviewed_at = ?
         WHERE id = ? AND status = 'pending'
+          AND EXISTS (
+            SELECT 1 FROM users
+            WHERE user_uuid = ? AND status = 'active'
+          )
       `).bind(now, id),
       DB.prepare(`
         INSERT INTO point_ledger
