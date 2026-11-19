@@ -56,36 +56,34 @@ async function readProgress(DB, userId, now) {
   return Math.min(MAX_ADS, Math.max(0, Number(cycle?.completed_ads || 0)));
 }
 
-async function awardVerifiedAd(DB, userId, now) {
+async function awardVerifiedAd(DB, userUuid, now) {
   await DB.prepare(
     "INSERT OR IGNORE INTO adsgram_reward_state(user_id,last_claim_at) VALUES(?,0)"
-  ).bind(userId).run();
+  ).bind(userUuid).run();
 
-  const current = await readProgress(DB, userId, now);
+  const current = await readProgress(DB, userUuid, now);
   if (current >= MAX_ADS) return { success: false, error: "AD_CYCLE_COMPLETE" };
 
   const reference = crypto.randomUUID();
   const results = await DB.batch([
     DB.prepare(
       "UPDATE adsgram_reward_state SET last_claim_at=? WHERE user_id=? AND last_claim_at<=?"
-    ).bind(now, userId, now - CLAIM_COOLDOWN_SECONDS),
+    ).bind(now, userUuid, now - CLAIM_COOLDOWN_SECONDS),
     DB.prepare(
       "UPDATE reward_ad_cycles SET completed_ads=completed_ads+1 WHERE user_id=? AND completed_ads<? AND changes()=1"
-    ).bind(userId, MAX_ADS),
+    ).bind(userUuid, MAX_ADS),
     DB.prepare(
-      "UPDATE visitors SET points=points+? WHERE user_id=? AND changes()=1"
-    ).bind(REWARD_POINTS, userId),
-    DB.prepare(
-      "UPDATE users SET points=(SELECT points FROM visitors WHERE user_id=?),updated_at=? WHERE user_uuid=? AND changes()=1"
-    ).bind(userId, now, userId),
+      "UPDATE users SET points=points+?,updated_at=? WHERE user_uuid=? AND status='active' AND changes()=1"
+    ).bind(REWARD_POINTS, now, userUuid),
     DB.prepare(`
-      INSERT INTO point_ledger(user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+      INSERT INTO point_ledger
+        (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
       SELECT user_uuid,?,points,'adsgram_ad_reward','adsgram_ad',?,?
       FROM users
       WHERE user_uuid=?
         AND EXISTS(SELECT 1 FROM adsgram_reward_state WHERE user_id=? AND last_claim_at=?)
         AND changes()=1
-    `).bind(REWARD_POINTS, reference, now, userId, userId, now)
+    `).bind(REWARD_POINTS, reference, now, userUuid, userUuid, now)
   ]);
 
   if (Number(results?.[0]?.meta?.changes || 0) !== 1) {
@@ -93,14 +91,13 @@ async function awardVerifiedAd(DB, userId, now) {
   }
   if (Number(results?.[1]?.meta?.changes || 0) !== 1 ||
       Number(results?.[2]?.meta?.changes || 0) !== 1 ||
-      Number(results?.[3]?.meta?.changes || 0) !== 1 ||
-      Number(results?.[4]?.meta?.changes || 0) !== 1) {
+      Number(results?.[3]?.meta?.changes || 0) !== 1) {
     return { success: false, error: "REWARD_NOT_APPLIED" };
   }
 
   const [balance, completed] = await Promise.all([
-    DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userId).first(),
-    DB.prepare("SELECT completed_ads FROM reward_ad_cycles WHERE user_id=?").bind(userId).first()
+    DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userUuid).first(),
+    DB.prepare("SELECT completed_ads FROM reward_ad_cycles WHERE user_id=?").bind(userUuid).first()
   ]);
   return {
     success: true,
