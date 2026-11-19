@@ -2,7 +2,6 @@ import { getVisitor, json } from "../_lib/session.js";
 
 const CHANNEL = "@OxideHubOfficial";
 const CHANNEL_URL = "https://t.me/OxideHubOfficial";
-const REWARD = 50;
 
 async function ensureTables(DB) {
   await DB.prepare(`
@@ -99,13 +98,17 @@ export async function onRequestPost({ request, env }) {
       ORDER BY id ASC LIMIT 1
     `).bind(CHANNEL_URL).first();
     if (!mission) return json({ success:false, error:"MISSION_NOT_AVAILABLE" },404);
+    const reward = Math.max(0, Math.floor(Number(mission.reward_points) || 0));
+    if (reward <= 0) {
+      return json({ success:false, error:"MISSION_REWARD_NOT_CONFIGURED" },409);
+    }
 
     stage = "CHECK_EXISTING_CLAIM";
     const existing = await env.DB.prepare(`
       SELECT 1 FROM telegram_channel_claims WHERE user_id=? AND mission_id=? LIMIT 1
     `).bind(userId, mission.id).first();
     if (existing) {
-      return json({ success:true, alreadyCompleted:true, points:Number(user.points||0), rewardPoints:REWARD });
+      return json({ success:true, alreadyCompleted:true, points:Number(user.points||0), rewardPoints:reward });
     }
 
     stage = "VERIFY_TELEGRAM_MEMBERSHIP";
@@ -147,13 +150,13 @@ export async function onRequestPost({ request, env }) {
       env.DB.prepare(`
         UPDATE users SET points=points+?, updated_at=?
         WHERE user_uuid=? AND status='active' AND changes()=1
-      `).bind(REWARD,now,userId),
+      `).bind(reward,now,userId),
       env.DB.prepare(`
         INSERT INTO point_ledger
           (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
         SELECT user_uuid,?,points,'telegram_channel_join','telegram_channel',?,?
         FROM users WHERE user_uuid=? AND changes()=1
-      `).bind(REWARD,String(mission.id),now,userId),
+      `).bind(reward,String(mission.id),now,userId),
       env.DB.prepare(`
         UPDATE visitors SET points=(SELECT points FROM users WHERE user_uuid=?)
         WHERE user_id=? AND EXISTS (
@@ -166,7 +169,7 @@ export async function onRequestPost({ request, env }) {
     const credited = Number(claimResults[1]?.meta?.changes || 0) === 1;
     if (!claimed) {
       const latest = await env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userId).first();
-      return json({success:true,alreadyCompleted:true,points:Number(latest?.points||0),rewardPoints:REWARD});
+      return json({success:true,alreadyCompleted:true,points:Number(latest?.points||0),rewardPoints:reward});
     }
     if (!credited) {
       await env.DB.prepare("DELETE FROM telegram_channel_claims WHERE user_id=? AND mission_id=?")
@@ -178,7 +181,7 @@ export async function onRequestPost({ request, env }) {
     return json({
       success:true,
       alreadyCompleted:false,
-      rewardPoints:REWARD,
+      rewardPoints:reward,
       points:Number(updated?.points||0)
     });
   } catch (error) {
