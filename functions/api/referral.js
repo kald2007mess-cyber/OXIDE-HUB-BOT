@@ -107,12 +107,13 @@ export async function onRequestGet({ request, env }) {
 
     try {
       pointsRanking = await env.DB.prepare(`
-        SELECT v.user_id, COALESCE(u.public_id, p.public_id) AS display_id,
-               v.points, p.username, p.photo_url, p.telegram_url
-        FROM visitors v
-        LEFT JOIN users u ON u.user_uuid = v.user_id
-        LEFT JOIN oxide_profiles p ON p.user_uuid = v.user_id
-        ORDER BY COALESCE(v.points, 0) DESC, v.created_at ASC, v.user_id ASC
+        SELECT u.user_uuid AS user_id, COALESCE(u.public_id, p.public_id) AS display_id,
+               u.points, p.username, p.photo_url, p.telegram_url
+        FROM users u
+        LEFT JOIN visitors v ON v.user_id = u.user_uuid
+        LEFT JOIN oxide_profiles p ON p.user_uuid = u.user_uuid
+        WHERE u.status = 'active'
+        ORDER BY COALESCE(u.points, 0) DESC, u.created_at ASC, u.user_uuid ASC
         LIMIT 10
       `).all();
     } catch (rankingError) {
