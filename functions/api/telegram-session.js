@@ -191,10 +191,9 @@ export async function onRequestPost({ request, env }) {
       )
     `).run();
 
-    let ipBanned = false;
     if (ipDigest) {
       diagnosticStage = "SAVE_IP_ACCOUNT";
-    await env.DB.prepare(`
+      await env.DB.prepare(`
         INSERT INTO oxide_ip_accounts
           (ip_hash, user_uuid, telegram_user_id, first_seen_at, last_seen_at)
         VALUES (?, ?, ?, ?, ?)
@@ -202,72 +201,27 @@ export async function onRequestPost({ request, env }) {
           telegram_user_id = excluded.telegram_user_id,
           last_seen_at = excluded.last_seen_at
       `).bind(ipDigest, userUuid, telegramId, now, now).run();
-
-      diagnosticStage = "COUNT_IP_ACCOUNTS";
-    const accountCount = await env.DB.prepare(`
-        SELECT COUNT(DISTINCT user_uuid) AS total
-        FROM oxide_ip_accounts WHERE ip_hash = ?
-      `).bind(ipDigest).first();
-
-      if (Number(accountCount?.total || 0) >= 3) {
-        diagnosticStage = "SAVE_IP_BAN";
-    await env.DB.prepare(`
-          INSERT OR IGNORE INTO oxide_ip_bans (ip_hash, reason, created_at)
-          VALUES (?, 'three_accounts_same_ip', ?)
-        `).bind(ipDigest, now).run();
-      }
-
-      diagnosticStage = "CHECK_IP_BAN";
-    const ipBan = await env.DB.prepare(
-        "SELECT ip_hash FROM oxide_ip_bans WHERE ip_hash = ? LIMIT 1"
-      ).bind(ipDigest).first();
-      ipBanned = !!ipBan;
-
-      if (ipBanned) {
-        diagnosticStage = "BAN_USERS";
-    await env.DB.prepare(`
-          UPDATE users SET status = 'banned', updated_at = ?
-          WHERE user_uuid IN (
-            SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
-          )
-        `).bind(now, ipDigest).run();
-
-        for (const table of ["app_sessions", "oxide_support_sessions"]) {
-          if (table === "app_sessions") {
-            await env.DB.prepare(`
-              CREATE TABLE IF NOT EXISTS app_sessions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_uuid TEXT NOT NULL,
-                token_hash TEXT NOT NULL UNIQUE,
-                expires_at INTEGER NOT NULL,
-                created_at INTEGER NOT NULL,
-                revoked_at INTEGER
-              )
-            `).run();
-          } else {
-            await env.DB.prepare(`
-              CREATE TABLE IF NOT EXISTS oxide_support_sessions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_uuid TEXT NOT NULL,
-                token_hash TEXT NOT NULL UNIQUE,
-                expires_at INTEGER NOT NULL,
-                created_at INTEGER NOT NULL,
-                revoked_at INTEGER
-              )
-            `).run();
-          }
-          diagnosticStage = "REVOKE_BANNED_SESSIONS";
-    await env.DB.prepare(`
-            UPDATE ${table} SET revoked_at = ?
-            WHERE user_uuid IN (
-              SELECT user_uuid FROM oxide_ip_accounts WHERE ip_hash = ?
-            ) AND revoked_at IS NULL
-          `).bind(now, ipDigest).run();
-        }
-      }
     }
 
-    if (ipBanned || userRow?.status === "banned") {
+    // A shared IP is only a risk signal, never proof that accounts are fraudulent.
+    // Recover accounts previously auto-banned by the old three-accounts-per-IP rule.
+    diagnosticStage = "RECOVER_SHARED_IP_FALSE_POSITIVE";
+    const recoveredAccount = await env.DB.prepare(`
+      UPDATE users SET status = 'active', updated_at = ?
+      WHERE user_uuid = ? AND status = 'banned'
+        AND EXISTS (
+          SELECT 1
+          FROM oxide_ip_accounts a
+          INNER JOIN oxide_ip_bans b ON b.ip_hash = a.ip_hash
+          WHERE a.user_uuid = users.user_uuid
+            AND b.reason = 'three_accounts_same_ip'
+        )
+    `).bind(now, userUuid).run();
+    if (Number(recoveredAccount.meta?.changes || 0) === 1) {
+      userRow.status = "active";
+    }
+
+    if (userRow?.status === "banned") {
       diagnosticStage = "CREATE_SUPPORT_COOKIE";
     const supportCookie = await createSupportSessionCookie(env, env.DB, userUuid);
       const blocked = json({
