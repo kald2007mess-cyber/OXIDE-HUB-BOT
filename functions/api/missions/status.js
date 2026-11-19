@@ -39,7 +39,25 @@ async function ensureTables(DB) {
     "https://t.me/OxideHubOfficial"
   ).run();
 
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS telegram_channel_claims (
+      user_id TEXT NOT NULL,
+      mission_id INTEGER NOT NULL,
+      claimed_at INTEGER NOT NULL,
+      PRIMARY KEY(user_id, mission_id)
+    )
+  `).run();
+
   const submissionColumns = await DB.prepare("PRAGMA table_info(mission_submissions)").all();
+  const submissionColumnNames = (submissionColumns.results || []).map(column => column.name);
+  if (!submissionColumnNames.includes("user_id")) {
+    await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN user_id TEXT").run();
+    if (submissionColumnNames.includes("user_uuid")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = user_uuid WHERE user_id IS NULL OR user_id = ''").run();
+    } else if (submissionColumnNames.includes("visitor_id")) {
+      await DB.prepare("UPDATE mission_submissions SET user_id = visitor_id WHERE user_id IS NULL OR user_id = ''").run();
+    }
+  }
   const submissionColumnNames = (submissionColumns.results || []).map(column => column.name);
   if (!submissionColumnNames.includes("user_id")) {
     await DB.prepare("ALTER TABLE mission_submissions ADD COLUMN user_id TEXT").run();
