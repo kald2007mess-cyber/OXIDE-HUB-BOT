@@ -43,7 +43,7 @@ export async function onRequestGet({ request, env }) {
       }, 401);
     }
 
-    // Ensure referral storage exists before reading the user's personal link.
+    // Ensure referral storage exists and migrate legacy UUID column names in place.
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS referrals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,15 +53,24 @@ export async function onRequestGet({ request, env }) {
         created_at INTEGER NOT NULL
       )
     `).run();
-    // Index creation is an optimization; do not block personal referral data if it fails.
-    try {
-      await env.DB.prepare(`
-        CREATE INDEX IF NOT EXISTS idx_referrals_referrer
-        ON referrals(referrer_id)
-      `).run();
-    } catch (indexError) {
-      console.error("Referral index unavailable:", indexError);
+    const referralInfo = await env.DB.prepare("PRAGMA table_info(referrals)").all();
+    const referralColumnNames = new Set((referralInfo.results || []).map(column => column.name));
+    if (!referralColumnNames.has("referrer_id")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referrer_id TEXT").run();
+      referralColumnNames.add("referrer_id");
     }
+    if (!referralColumnNames.has("referred_id")) {
+      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referred_id TEXT").run();
+      referralColumnNames.add("referred_id");
+    }
+    if (referralColumnNames.has("referrer_uuid")) {
+      await env.DB.prepare("UPDATE referrals SET referrer_id = referrer_uuid WHERE referrer_id IS NULL OR referrer_id = ''").run();
+    }
+    if (referralColumnNames.has("referred_uuid")) {
+      await env.DB.prepare("UPDATE referrals SET referred_id = referred_uuid WHERE referred_id IS NULL OR referred_id = ''").run();
+    }
+    await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_referrals_referred_id ON referrals(referred_id)").run();
+    await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id)").run();
 
     const account = await env.DB.prepare(`
       SELECT user_uuid, public_id, points
