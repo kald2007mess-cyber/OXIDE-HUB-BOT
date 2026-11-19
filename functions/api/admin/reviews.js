@@ -165,7 +165,7 @@ async function reviewMission(DB, id, decision) {
     const results = await DB.batch([
       DB.prepare(`
         UPDATE users SET points = points + ?, updated_at = ?
-        WHERE user_uuid = ? AND EXISTS (
+        WHERE user_uuid = ? AND status = 'active' AND EXISTS (
           SELECT 1 FROM mission_submissions
           WHERE id = ? AND status = 'pending'
         )
@@ -184,7 +184,7 @@ async function reviewMission(DB, id, decision) {
             SELECT 1 FROM users
             WHERE user_uuid = ? AND status = 'active'
           )
-      `).bind(now, id),
+      `).bind(now, id, submission.user_id),
       DB.prepare(`
         INSERT INTO point_ledger
           (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
