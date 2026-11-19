@@ -22,21 +22,23 @@ export async function onRequestGet({ request, env }) {
       return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
     }
 
-    const [missionStats, referralStats] = await Promise.all([
+    const [approvedStats, channelStats, referralStats] = await Promise.all([
       env.DB.prepare(`
-        SELECT
-          (SELECT COUNT(DISTINCT mission_id) FROM mission_submissions
-           WHERE user_id = ? AND status = 'approved') AS approved_missions,
-          (SELECT COUNT(*) FROM telegram_channel_claims WHERE user_id = ?) AS channel_claims
-      `).bind(userUuid, userUuid).first().catch(() => null),
+        SELECT COUNT(DISTINCT mission_id) AS total
+        FROM mission_submissions
+        WHERE user_id = ? AND status = 'approved'
+      `).bind(userUuid).first().catch(() => null),
+      env.DB.prepare(
+        "SELECT COUNT(*) AS total FROM telegram_channel_claims WHERE user_id = ?"
+      ).bind(userUuid).first().catch(() => null),
       env.DB.prepare(`
         SELECT COUNT(*) AS total
         FROM referrals
         WHERE referrer_id = ? AND status = 'rewarded'
       `).bind(userUuid).first().catch(() => null)
     ]);
-    const completedMissions = Number(missionStats?.approved_missions || 0) +
-      Number(missionStats?.channel_claims || 0);
+    const completedMissions = Number(approvedStats?.total || 0) +
+      Number(channelStats?.total || 0);
     const successfulReferrals = Number(referralStats?.total || 0);
 
     return json({
