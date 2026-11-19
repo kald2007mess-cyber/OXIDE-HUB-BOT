@@ -53,7 +53,7 @@ export async function onRequestPost({ request, env }) {
     await ensureTables(env.DB);
     const mission = await env.DB.prepare("SELECT id,title FROM oxide_admin_missions WHERE id = ? AND COALESCE(enabled,1)=1").bind(missionId).first();
     if (!mission) return json({success:false,error:"MISSION_NOT_AVAILABLE"},404);
-    const previous = await env.DB.prepare("SELECT status FROM mission_submissions WHERE user_id=? AND mission_id=? ORDER BY id DESC LIMIT 1").bind(userId,missionId).first();
+    const previous = await env.DB.prepare("SELECT id,status FROM mission_submissions WHERE user_id=? AND mission_id=? ORDER BY id DESC LIMIT 1").bind(userId,missionId).first();
     if (previous?.status === "approved") return json({success:false,error:"MISSION_ALREADY_COMPLETED"},409);
     if (previous?.status === "pending") return json({success:false,error:"ALREADY_PENDING"},409);
 
@@ -81,7 +81,27 @@ export async function onRequestPost({ request, env }) {
 
     const submissionColumns = await env.DB.prepare("PRAGMA table_info(mission_submissions)").all();
     const hasLegacyUserUuid = (submissionColumns.results || []).some(column => column.name === "user_uuid");
-    if (hasLegacyUserUuid) {
+
+    // A rejected submission may be unique per user/mission in older D1 schemas.
+    // Reuse that row instead of inserting a duplicate and blocking resubmission.
+    if (previous?.status === "rejected") {
+      const update = hasLegacyUserUuid
+        ? await env.DB.prepare(`
+            UPDATE mission_submissions
+            SET user_uuid=?, user_id=?, proof_file_id=?, status='pending',
+                created_at=?, reviewed_at=NULL
+            WHERE id=? AND status='rejected'
+          `).bind(userId,userId,fileId,now,Number(previous.id)).run()
+        : await env.DB.prepare(`
+            UPDATE mission_submissions
+            SET user_id=?, proof_file_id=?, status='pending',
+                created_at=?, reviewed_at=NULL
+            WHERE id=? AND status='rejected'
+          `).bind(userId,fileId,now,Number(previous.id)).run();
+      if (Number(update.meta?.changes || 0) !== 1) {
+        return json({success:false,error:"SUBMISSION_STATE_CHANGED"},409);
+      }
+    } else if (hasLegacyUserUuid) {
       await env.DB.prepare("INSERT INTO mission_submissions(user_uuid,user_id,mission_id,proof_file_id,status,created_at) VALUES(?,?,?,?, 'pending', ?)")
         .bind(userId,userId,missionId,fileId,now).run();
     } else {
