@@ -128,7 +128,7 @@ export async function onRequestGet({ request, env }) {
     if (suppliedSecret || callbackUserId) {
       if (!env.ADSGRAM_REWARD_SECRET ||
           !safeEqual(suppliedSecret, String(env.ADSGRAM_REWARD_SECRET)) ||
-          !/^\\d{5,20}$/.test(callbackUserId)) {
+          !/^[0-9]{5,20}$/.test(callbackUserId)) {
         return json({ success: false, error: "INVALID_REWARD_CALLBACK" }, 403);
       }
       const identity = await env.DB.prepare(
