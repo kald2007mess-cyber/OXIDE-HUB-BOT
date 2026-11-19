@@ -95,6 +95,14 @@ async function awardVerifiedAd(DB, userUuid, now) {
     return { success: false, error: "REWARD_NOT_APPLIED" };
   }
 
+  // Keep legacy rankings and wallet screens in sync with users.points.
+  await DB.prepare(`
+    INSERT INTO visitors (user_id, progress, points, cycle_started_at, created_at)
+    SELECT user_uuid, 0, points, ?, ?
+    FROM users WHERE user_uuid = ?
+    ON CONFLICT(user_id) DO UPDATE SET points = excluded.points
+  `).bind(now, now, userUuid).run();
+
   const [balance, completed] = await Promise.all([
     DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userUuid).first(),
     DB.prepare("SELECT completed_ads FROM reward_ad_cycles WHERE user_id=?").bind(userUuid).first()
