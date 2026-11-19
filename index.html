@@ -976,6 +976,20 @@ body.outside-telegram .telegram-gate{display:flex!important}
 
 /* Slightly lower the tap coin without changing its size or behavior */
 @media(max-width:600px){#homePage .tap-coin{position:relative!important;top:35px!important;transform:translateY(35px)!important}}
+
+/* OXIDE_CORE_ONLY_CLEANUP_2026: hide unfinished/placeholder features, preserve core flows. */
+#vipPage,
+.oxide-level-foot,
+.oxide-account-achievements,
+.oxide-task-feature,
+.oxide-featured-grid,
+.oxide-watch-soon,
+.stage,
+.platform-button,
+.platform-soon-label {
+  display: none !important;
+}
+
 </style>
 </head>
 <body>
