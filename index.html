@@ -135,7 +135,7 @@ body{margin:0;min-height:100vh;background-color:#030816;font-family:Arial,sans-s
 .mission-status-pill.pending{background:rgba(255,197,46,.09);border-color:rgba(255,197,46,.35);color:#ffd36a}
 .mission-description{color:#b4c6dc;font-size:11px;line-height:1.7;margin:11px 0}
 .mission-reward-row{display:flex;align-items:center;justify-content:space-between;color:#8ea6c8;font-size:10px;margin:9px 0}
-.mission-reward{color:#43d69a;font-size:14px;font-weight:900}
+.mission-reward{color:#43d69a;font-size:14px;font-weight:900}.mission-reward-coin{width:35px;height:35px;object-fit:contain;vertical-align:middle;display:inline-block;margin-inline-start:3px;filter:drop-shadow(0 0 4px rgba(173,91,255,.6))}
 .mission-link-button,.mission-submit-button{display:block;width:100%;text-align:center;text-decoration:none;border:1px solid #34739b;border-radius:9px;padding:11px;color:#fff;font-size:11px;font-weight:800;background:#1b3049;font-family:Arial,sans-serif}
 .mission-submit-button{margin-top:8px;border-color:#1599d0;background:linear-gradient(135deg,#087ed0,#07518e);cursor:pointer}
 .mission-submit-button:disabled{opacity:.6;cursor:not-allowed}
@@ -2233,7 +2233,12 @@ function renderMissionCards(){
     rewardLabel.textContent = ui.reward;
     const rewardValue = document.createElement("span");
     rewardValue.className = "mission-reward";
-    rewardValue.textContent = "+" + Number(mission.rewardPoints || 0).toLocaleString() + " PTS";
+    const rewardAmount = "+" + Number(mission.rewardPoints || 0).toLocaleString() + " ";
+    const rewardCoin = document.createElement("img");
+    rewardCoin.className = "mission-reward-coin";
+    rewardCoin.src = "https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png";
+    rewardCoin.alt = "OXIDE Coin";
+    rewardValue.append(document.createTextNode(rewardAmount), rewardCoin);
     rewardRow.append(rewardLabel, rewardValue);
     card.appendChild(rewardRow);
 
