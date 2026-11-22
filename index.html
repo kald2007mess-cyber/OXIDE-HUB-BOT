@@ -888,6 +888,17 @@ html,body{overscroll-behavior-y:auto!important}
 .telegram-gate-note{margin:13px 0 0;color:#83a8ca;font-size:11px;line-height:1.7}
 body.telegram-authorized .telegram-gate{display:none}
 
+/* Secure browser login panel; does not alter the Telegram Mini App. */
+.oxide-browser-login{max-width:430px;margin:0 auto 18px;padding:17px 14px;border:1px solid rgba(0,183,255,.55);border-radius:15px;background:linear-gradient(150deg,rgba(10,34,62,.96),rgba(5,14,32,.96));box-shadow:0 0 18px rgba(0,145,255,.13);text-align:center}
+.oxide-browser-login[hidden]{display:none!important}
+.oxide-browser-login-icon{font-size:27px;margin-bottom:6px}
+.oxide-browser-login strong{display:block;color:#fff;font-size:16px}
+.oxide-browser-login p{color:#b8c9dd;font-size:12px;line-height:1.8;margin:8px 0 13px}
+#telegramLoginWidget{display:flex;justify-content:center;min-height:42px}
+#oxideBrowserLoginStatus{min-height:20px;margin-top:8px;color:#ffd36a;font-size:11px;line-height:1.6}
+.oxide-browser-login>a{display:inline-block;margin-top:7px;color:#70d5ff;font-size:11px;text-decoration:none}
+body.telegram-authorized #oxideBrowserLogin{display:none!important}
+
 /* Mobile-first layout refinements: preserve the existing visual design. */
 html,body{max-width:100%;overflow-x:hidden}
 img,video,canvas,svg{max-width:100%;height:auto}
@@ -1000,6 +1011,14 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
  <div id="notificationsList"><div class="notification-empty">جارٍ تحميل الإشعارات...</div></div>
 </section>
 <div class="brand-block"><div class="logo">OXIDE HUB</div><div class="subtitle">SURVIVE • EXPLORE • DOMINATE</div></div>
+<section id="oxideBrowserLogin" class="oxide-browser-login" hidden>
+ <div class="oxide-browser-login-icon">🔐</div>
+ <strong>تسجيل الدخول إلى OXIDE HUB</strong>
+ <p>سجّل الدخول بحساب Telegram لفتح المهام والإحالات والمحفظة وحفظ رصيدك.</p>
+ <div id="telegramLoginWidget"></div>
+ <div id="oxideBrowserLoginStatus" role="status" aria-live="polite"></div>
+ <a href="https://t.me/OxideHub_bot/oxidehub" target="_blank" rel="noopener noreferrer">أو افتح التطبيق مباشرة داخل Telegram</a>
+</section>
 <section class="maintenance-panel" id="maintenancePanel" role="status" aria-live="polite">
   <div class="maintenance-icon">🛠️</div>
   <h2 class="maintenance-title">الموقع تحت الصيانة</h2>
@@ -1628,7 +1647,81 @@ function showBlockedScreen(){
   });
  }
 }
-async function loadUserId(){if(userIdLoaded)return true;try{const tg=window.Telegram&&window.Telegram.WebApp;if(!tg||!tg.initData){const platform=tg&&tg.platform?String(tg.platform):"missing";const initLength=tg&&typeof tg.initData==="string"?tg.initData.length:0;const telegramUA=/Telegram/i.test(navigator.userAgent||"");throw new Error("OPEN_FROM_TELEGRAM [WebApp="+(tg?"yes":"no")+", platform="+platform+", initDataLength="+initLength+", TelegramUA="+(telegramUA?"yes":"no")+"]");}tg.ready();tg.expand();const auth=await fetch("/api/telegram-session",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData})});const authData=await auth.json();if(authData.blocked){userIdLoaded=true;document.body.classList.add("telegram-authorized");showBlockedScreen();return false;}if(!auth.ok||!authData.success)throw new Error(authData.diagnostic||authData.error||"TELEGRAM_AUTH_FAILED");const response=await fetch("/api/me",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success||!data.displayId)throw new Error("User ID loading failed");userDisplayId=data.displayId;telegramProfileData=data;userIdLoaded=true;document.body.classList.add("telegram-authorized");document.getElementById("userIdValue").textContent=userDisplayId;renderAccountProfile();const authButton=document.getElementById("authOpenButton");if(authButton)authButton.textContent="✓ Telegram";return true;}catch(error){console.error("Telegram login diagnostic:",error);document.getElementById("userIdValue").textContent=(currentLanguage==="ru"?"Ошибка входа: ":"Login failed: ")+String(error?.message||"UNKNOWN_ERROR");return false}}
+function showBrowserLoginWidget(){
+ const panel=document.getElementById("oxideBrowserLogin");
+ const holder=document.getElementById("telegramLoginWidget");
+ if(!panel||!holder)return;
+ panel.hidden=false;
+ if(holder.dataset.loaded==="yes")return;
+ holder.dataset.loaded="yes";
+ const script=document.createElement("script");
+ script.async=true;
+ script.src="https://telegram.org/js/telegram-widget.js?22";
+ script.setAttribute("data-telegram-login","OxideHub_bot");
+ script.setAttribute("data-size","large");
+ script.setAttribute("data-userpic","false");
+ script.setAttribute("data-radius","10");
+ script.setAttribute("data-onauth","onTelegramAuth(user)");
+ script.setAttribute("data-request-access","write");
+ holder.appendChild(script);
+}
+window.onTelegramAuth=async function(user){
+ const panel=document.getElementById("oxideBrowserLogin");
+ const status=document.getElementById("oxideBrowserLoginStatus");
+ if(status)status.textContent=currentLanguage==="ru"?"Выполняется безопасный вход...":"جارٍ تسجيل الدخول بأمان...";
+ try{
+  const response=await fetch("/api/browser-login",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify(user||{})});
+  const data=await response.json();
+  if(data.blocked){if(panel)panel.hidden=true;document.body.classList.add("telegram-authorized");showBlockedScreen();return;}
+  if(!response.ok||!data.success)throw new Error(data.diagnostic||data.error||"TELEGRAM_LOGIN_FAILED");
+  if(status)status.textContent=currentLanguage==="ru"?"Вход выполнен.":"تم تسجيل الدخول، جارٍ فتح حسابك...";
+  const check=await fetch("/api/me",{method:"GET",cache:"no-store",credentials:"same-origin"});
+  const profile=await check.json();
+  if(!check.ok||!profile.success||!profile.displayId)throw new Error("SESSION_NOT_CREATED");
+  window.location.reload();
+ }catch(error){
+  console.error("OXIDE browser login diagnostic:",error);
+  if(status)status.textContent=(currentLanguage==="ru"?"Ошибка входа: ":"تعذر تسجيل الدخول: ")+String(error?.message||"UNKNOWN_ERROR");
+ }
+};
+async function loadUserId(){
+ if(userIdLoaded)return true;
+ try{
+  const tg=window.Telegram&&window.Telegram.WebApp;
+  if(!tg||!tg.initData){
+   const response=await fetch("/api/me",{method:"GET",cache:"no-store",credentials:"same-origin"});
+   const data=await response.json().catch(()=>({}));
+   if(response.ok&&data.success&&data.displayId){
+    userDisplayId=data.displayId;telegramProfileData=data;userIdLoaded=true;
+    document.body.classList.add("telegram-authorized");
+    const value=document.getElementById("userIdValue");if(value)value.textContent=userDisplayId;
+    renderAccountProfile();
+    const panel=document.getElementById("oxideBrowserLogin");if(panel)panel.hidden=true;
+    return true;
+   }
+   showBrowserLoginWidget();
+   return false;
+  }
+  tg.ready();tg.expand();
+  const auth=await fetch("/api/telegram-session",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData})});
+  const authData=await auth.json();
+  if(authData.blocked){userIdLoaded=true;document.body.classList.add("telegram-authorized");showBlockedScreen();return false;}
+  if(!auth.ok||!authData.success)throw new Error(authData.diagnostic||authData.error||"TELEGRAM_AUTH_FAILED");
+  const response=await fetch("/api/me",{method:"GET",cache:"no-store",credentials:"same-origin"});
+  const data=await response.json();
+  if(!response.ok||!data.success||!data.displayId)throw new Error("User ID loading failed");
+  userDisplayId=data.displayId;telegramProfileData=data;userIdLoaded=true;
+  document.body.classList.add("telegram-authorized");
+  document.getElementById("userIdValue").textContent=userDisplayId;renderAccountProfile();
+  const authButton=document.getElementById("authOpenButton");if(authButton)authButton.textContent="✓ Telegram";
+  return true;
+ }catch(error){
+  console.error("Telegram login diagnostic:",error);
+  const value=document.getElementById("userIdValue");
+  if(value)value.textContent=(currentLanguage==="ru"?"Ошибка входа: ":"Login failed: ")+String(error?.message||"UNKNOWN_ERROR");
+  return false;
+ }
+}
 async function copyUserId(){if(!userDisplayId)await loadUserId();if(!userDisplayId)return;try{await navigator.clipboard.writeText(userDisplayId);const label=document.getElementById("copyIdButtonText");if(label){label.textContent=currentLanguage==="ru"?"Скопировано":"Copied";setTimeout(()=>{label.textContent=t("copyId")},1800)}}catch(error){document.getElementById("userIdValue").textContent=userDisplayId}}
 
 /* OXIDE HUB notification center */
@@ -2890,6 +2983,9 @@ initializeOxideHub();
  window.renderOxideSkills();
  setTimeout(()=>window.loadOxideWallet(),0);
 })();
+
+// Show browser sign-in only for ordinary web visitors; Telegram Mini App auth stays unchanged.
+if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))setTimeout(()=>loadUserId(),0);
 
 </script>
 
