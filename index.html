@@ -887,7 +887,6 @@ html,body{overscroll-behavior-y:auto!important}
 .telegram-gate-button:active{transform:scale(.98)}
 .telegram-gate-note{margin:13px 0 0;color:#83a8ca;font-size:11px;line-height:1.7}
 body.telegram-authorized .telegram-gate{display:none}
-body:not(.telegram-authorized){overflow:hidden}
 
 /* Mobile-first layout refinements: preserve the existing visual design. */
 html,body{max-width:100%;overflow-x:hidden}
@@ -918,11 +917,6 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
  .telegram-gate-card{padding:20px 14px}
  .telegram-gate-button{font-size:14px;padding:12px 8px}
 }
-
-
-/* Final overrides: the welcome card is browser-only, never shown in Telegram. */
-.telegram-gate{display:none!important}
-body.outside-telegram .telegram-gate{display:flex!important}
 
 
 /* FIX: pin storage/reward details directly above the fixed bottom tabs */
@@ -993,29 +987,7 @@ body.outside-telegram .telegram-gate{display:flex!important}
 </style>
 </head>
 <body>
-<script>
-(function(){
- const tg=window.Telegram&&window.Telegram.WebApp;
- const ua=navigator.userAgent||"";
- const inTelegram=!!(tg&&typeof tg.initData==="string"&&tg.initData.length>0);
- document.body.classList.toggle("outside-telegram",!inTelegram);
-})();
-</script>
-<section class="telegram-gate" aria-labelledby="telegramGateTitle">
- <div class="telegram-gate-card">
-  <div class="telegram-gate-icon">🚀</div>
-  <h1 class="telegram-gate-title" id="telegramGateTitle">مرحباً بك في OXIDE HUB</h1>
-  <p class="telegram-gate-description">منصة OXIDE HUB مصممة للعمل من داخل Telegram Mini App. افتح البوت الرسمي لتدخل إلى المنصة وتستكشف المهمات والميزات المتاحة من مكان واحد.</p>
-  <div class="telegram-gate-steps">
-   <strong>كيف تبدأ؟</strong><br>
-   ١. اضغط على زر «فتح البوت» أدناه.<br>
-   ٢. انتقل إلى محادثة البوت في Telegram واضغط «Start» إذا ظهرت لك.<br>
-   ٣. افتح التطبيق من زر «افتح بوت» داخل Telegram.
-  </div>
-  <a class="telegram-gate-button" href="https://t.me/OxideHub_bot" target="_blank" rel="noopener noreferrer">✈️ فتح بوت OXIDE HUB في تيليجرام</a>
-  <p class="telegram-gate-note">للحصول على أفضل تجربة، افتح المنصة من داخل تطبيق Telegram الرسمي.</p>
- </div>
-</section>
+
 <div class="stars"></div>
 <div class="rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <main class="container">
