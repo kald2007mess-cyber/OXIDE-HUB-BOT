@@ -82,8 +82,9 @@ export async function onRequestPost({ request, env }) {
       .map(([key, value]) => key + "=" + value).join("\n");
     initParams.set("hash", toHex(await hmac(webAppSecret, webAppCheck)));
 
-    const headers = new Headers(request.headers);
-    headers.set("Content-Type", "application/json");
+    const headers = new Headers({ "Content-Type": "application/json" });
+    const clientIp = request.headers.get("CF-Connecting-IP");
+    if (clientIp) headers.set("CF-Connecting-IP", clientIp);
     const internalRequest = new Request(new URL("/api/telegram-session", request.url), {
       method: "POST",
       headers,
