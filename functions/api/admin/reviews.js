@@ -235,7 +235,7 @@ async function reviewMission(DB, id, decision) {
         const referralTime = Math.floor(Date.now() / 1000);
         await DB.batch([
           DB.prepare(`
-            UPDATE referrals SET status = 'rewarded', points_awarded = 50
+            UPDATE referrals SET status = 'rewarded', points_awarded = 30
             WHERE id = ? AND referred_id = ? AND status = 'pending'
               AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
@@ -248,17 +248,17 @@ async function reviewMission(DB, id, decision) {
           DB.prepare(`
             INSERT INTO point_ledger
               (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-            SELECT user_uuid,50,points,'referral_reward','referral',CAST(? AS TEXT),?
+            SELECT user_uuid,30,points,'referral_reward','referral',CAST(? AS TEXT),?
             FROM users WHERE user_uuid = ? AND changes() = 1
           `).bind(referral.id,referralTime,referral.referrer_id),
           DB.prepare(`
-            UPDATE users SET points = points + 30, updated_at = ?
+            UPDATE users SET points = points + 50, updated_at = ?
             WHERE user_uuid = ? AND status = 'active' AND changes() = 1
           `).bind(referralTime, submission.user_id),
           DB.prepare(`
             INSERT INTO point_ledger
               (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-            SELECT user_uuid,30,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
+            SELECT user_uuid,50,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
             FROM users WHERE user_uuid = ? AND changes() = 1
           `).bind(referral.id,referralTime,submission.user_id),
           DB.prepare(`
@@ -333,7 +333,7 @@ async function reviewReferral(DB, id, decision) {
 
   const results = await DB.batch([
     DB.prepare(`
-      UPDATE referrals SET status = 'rewarded', points_awarded = 50
+      UPDATE referrals SET status = 'rewarded', points_awarded = 30
       WHERE id = ? AND status = 'review'
         AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
         AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
@@ -346,17 +346,17 @@ async function reviewReferral(DB, id, decision) {
     DB.prepare(`
       INSERT INTO point_ledger
         (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-      SELECT user_uuid,50,points,'referral_reward','referral',CAST(? AS TEXT),?
+      SELECT user_uuid,30,points,'referral_reward','referral',CAST(? AS TEXT),?
       FROM users WHERE user_uuid = ? AND changes() = 1
     `).bind(id,now,referral.referrer_id),
     DB.prepare(`
-      UPDATE users SET points = points + 30, updated_at = ?
+      UPDATE users SET points = points + 50, updated_at = ?
       WHERE user_uuid = ? AND status = 'active' AND changes() = 1
     `).bind(now, referral.referred_id),
     DB.prepare(`
       INSERT INTO point_ledger
         (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-      SELECT user_uuid,30,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
+      SELECT user_uuid,50,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
       FROM users WHERE user_uuid = ? AND changes() = 1
     `).bind(id,now,referral.referred_id),
     DB.prepare(`
@@ -382,7 +382,7 @@ async function reviewReferral(DB, id, decision) {
       Number(results[3]?.meta?.changes || 0) !== 1) {
     return { success: false, status: 409, error: "REFERRAL_REWARD_FAILED" };
   }
-  return { success: true, message: "تم اعتماد الإحالة وإضافة 50 للمُحيل و30 للمستخدم المدعو." };
+  return { success: true, message: "تم اعتماد الإحالة وإضافة 30 لصاحب رابط الدعوة و50 للمستخدم المدعو." };
 }
 
 async function reviewRedemption(DB, id, decision) {
