@@ -540,7 +540,7 @@ export async function onRequestPost({ request, env }) {
       const type = String(body.type || "");
       const id = Number(body.id);
       const decision = String(body.decision || "");
-      if (!["missions", "redemptions"].includes(type) ||
+      if (!["missions", "redemptions", "referrals"].includes(type) ||
           !Number.isSafeInteger(id) || id < 1 ||
           !["approve", "reject"].includes(decision)) {
         return json({ success: false, error: "INVALID_REVIEW_ACTION" }, 400);
