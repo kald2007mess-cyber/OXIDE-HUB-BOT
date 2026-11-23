@@ -995,6 +995,29 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
   display: none !important;
 }
 
+
+/* OXIDE energy system inspired by the reference tap game */
+.tap-energy-panel{width:100%;max-width:360px;margin:4px auto 9px;padding:13px 14px;border:1px solid rgba(183,111,255,.38);border-radius:16px;background:linear-gradient(135deg,rgba(54,25,83,.96),rgba(17,10,35,.96));box-shadow:inset 0 1px rgba(255,255,255,.06),0 8px 22px rgba(0,0,0,.2);text-align:right}
+.tap-energy-heading,.tap-energy-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tap-energy-heading{font-size:12px;color:#e8d7ff}.tap-energy-heading strong{font-size:17px;color:#fff;font-variant-numeric:tabular-nums;direction:ltr}
+.tap-energy-track{height:10px;margin:10px 0 9px;border-radius:20px;background:#170d29;border:1px solid #51336d;overflow:hidden}
+.tap-energy-track span{display:block;width:100%;height:100%;border-radius:20px;background:linear-gradient(90deg,#8b3ee8,#c47aff,#f1c4ff);box-shadow:0 0 12px #bb65ff88;transition:width .25s}
+.tap-energy-bottom{font-size:10px;color:#bda8d5}.tap-energy-bottom button{border:1px solid #bd80f2;border-radius:10px;padding:7px 12px;background:linear-gradient(135deg,#7c2fc2,#4b197d);color:#fff;font:800 11px Arial;box-shadow:0 0 12px #a84cff33}
+.tap-value-upgrade{width:100%;max-width:360px;margin:0 auto 8px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(183,111,255,.3);border-radius:13px;background:rgba(27,15,45,.9);color:#e9dcfa;font:700 11px Arial;text-align:right}
+.tap-value-upgrade strong{color:#d8a7ff;font-size:14px;direction:ltr}
+.tap-upgrade-overlay{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,2,12,.78);backdrop-filter:blur(8px)}
+.tap-upgrade-overlay[hidden]{display:none!important}
+.tap-upgrade-dialog{width:min(100%,360px);padding:17px;border:1px solid #b66bf1;border-radius:19px;background:linear-gradient(145deg,#32164e,#120b22);box-shadow:0 18px 55px #000b,0 0 25px #a84cff33;color:#fff;text-align:right}
+.tap-upgrade-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.tap-upgrade-head strong{font-size:15px;color:#f4e6ff}.tap-upgrade-head button{width:31px;height:31px;border:1px solid #ffffff30;border-radius:50%;background:#ffffff0b;color:#fff;font-size:22px}
+.tap-upgrade-level{text-align:center;margin:14px 0;color:#d8b0ff;font-size:11px;font-weight:800}
+.tap-upgrade-values{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tap-upgrade-values div{padding:12px 8px;border:1px solid #ffffff18;border-radius:12px;background:#ffffff08;text-align:center}.tap-upgrade-values small{display:block;color:#c6b0d9;font-size:10px}.tap-upgrade-values b{display:block;margin-top:6px;color:#e0baff;font-size:20px;direction:ltr}
+.tap-upgrade-cost{display:flex;justify-content:space-between;align-items:center;margin:13px 0;padding:11px;border-radius:11px;background:#0003;color:#cbb8dc;font-size:11px}.tap-upgrade-cost strong{color:#ffe2a1;font-size:14px}
+.tap-upgrade-confirm{width:100%;min-height:44px;border:1px solid #d5a4ff;border-radius:12px;background:linear-gradient(120deg,#8438c9,#55218d);color:#fff;font:850 14px Arial;box-shadow:0 0 15px #9e4de833}
+.tap-upgrade-confirm:disabled{opacity:.45;filter:grayscale(.7)}
+.tap-upgrade-feedback{min-height:16px;margin:9px 0 0;text-align:center;color:#c9b0df;font-size:10px}
+#skillsPage.oxide-skills-page{display:none!important}
+@media(max-width:380px){.tap-energy-panel,.tap-value-upgrade{max-width:100%}.tap-energy-heading strong{font-size:15px}}
+
 </style>
 </head>
 <body>
@@ -1031,13 +1054,39 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
   <div class="tap-stage">
     <div class="tap-aura"></div>
     <button class="tap-coin" id="tapCoin" type="button" aria-label="اضغط لجمع عملة"><img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="OXIDE purple flame coin"></button>
-    <button class="tap-skills-shortcut" type="button" onclick="showPage('skills')" aria-label="فتح المهارات"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.4 9.6 21.2 12l-6.8 2.4L12 21.2l-2.4-6.8L2.8 12l6.8-2.4L12 2.8Z"/><path d="m19 2 .7 2.3L22 5l-2.3.7L19 8l-.7-2.3L16 5l2.3-.7L19 2Z"/></svg><small>SKILLS</small></button>
+    
     <div class="tap-hint">اضغط على العملة</div>
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
   <div class="tap-bottom-info">
-    <div class="tap-meter" aria-label="سعة التخزين"><div class="tap-meter-top"><span>مساحة التخزين</span><strong id="tapStorageText">0 / 1000</strong></div><div class="tap-meter-track"><span id="tapStorageFill"></span></div><div class="tap-meter-foot"><span id="tapStorageLevel">STORAGE LV1</span><span id="tapStoragePercent">0%</span></div></div>
+    <section class="tap-energy-panel" aria-label="الطاقة">
+      <div class="tap-energy-heading"><span>الطاقة المتبقية</span><strong id="tapEnergyText">500 / 500</strong></div>
+      <div class="tap-energy-track"><span id="tapEnergyFill"></span></div>
+      <div class="tap-energy-bottom"><span id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span><button type="button" id="tapEnergyUpgradeOpen">⚡ الطاقة</button></div>
+    </section>
+    <button type="button" class="tap-value-upgrade" id="tapTapUpgradeOpen"><span>قيمة الضغطة</span><strong id="tapRewardText">+0.01 OXIDE</strong></button>
     <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b id="tapRewardText">+0.01</b> عملة</span></div>
+
+    <div class="tap-upgrade-overlay" id="tapUpgradeOverlay" hidden>
+      <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="tapUpgradeTitle">
+        <div class="tap-upgrade-head"><strong id="tapUpgradeTitle">تطوير قيمة الضغطة</strong><button type="button" data-close-upgrade="tap" aria-label="إغلاق">×</button></div>
+        <div class="tap-upgrade-level" id="tapUpgradeLevel">المستوى 1 / 6</div>
+        <div class="tap-upgrade-values"><div><small>القيمة الحالية</small><b id="tapCurrentValue">+0.01</b></div><div><small>بعد التطوير</small><b id="tapNextValue">+0.02</b></div></div>
+        <div class="tap-upgrade-cost"><span>تكلفة التطوير</span><strong id="tapUpgradeCost">100 OXIDE</strong></div>
+        <button type="button" class="tap-upgrade-confirm" id="tapUpgradeConfirm">تطوير</button>
+        <p class="tap-upgrade-feedback" id="tapUpgradeFeedback"></p>
+      </div>
+    </div>
+    <div class="tap-upgrade-overlay" id="energyUpgradeOverlay" hidden>
+      <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="energyUpgradeTitle">
+        <div class="tap-upgrade-head"><strong id="energyUpgradeTitle">تطوير سعة الطاقة</strong><button type="button" data-close-upgrade="energy" aria-label="إغلاق">×</button></div>
+        <div class="tap-upgrade-level" id="energyUpgradeLevel">المستوى 1 / 5</div>
+        <div class="tap-upgrade-values"><div><small>السعة الحالية</small><b id="energyCurrentCapacity">500</b></div><div><small>بعد التطوير</small><b id="energyNextCapacity">1000</b></div></div>
+        <div class="tap-upgrade-cost"><span>تكلفة التطوير</span><strong id="energyUpgradeCost">100 OXIDE</strong></div>
+        <button type="button" class="tap-upgrade-confirm" id="energyUpgradeConfirm">تطوير ⚡</button>
+        <p class="tap-upgrade-feedback" id="energyUpgradeFeedback"></p>
+      </div>
+    </div>
     <div id="tapNotice" class="tap-notice" role="status"></div>
     <footer class="tap-home-footer">OXIDE HUB © 2026<br>Created by SKIMI_17</footer>
   </div>
@@ -2909,79 +2958,112 @@ initializeOxideHub();
 
 
 
-/* OXIDE persistent skills: taps, upgrades, and mining use the authenticated server wallet. */
+/* OXIDE persistent wallet + AUREX-style energy/tap upgrades. */
 (function(){
  const coin=document.getElementById("tapCoin"),balance=document.getElementById("tapBalance"),layer=document.getElementById("tapFloatLayer");
  if(!coin||!balance||!layer)return;
- const levels={tap:1,storage:1,mining:1};
- const tapRates=[0,0.01,0.05,0.1],storageCaps=[0,1000,1500,2000],miningRates=[0,0.001,0.01,0.05];
- const upgradeCosts={tap:[0,100,500],storage:[0,150,600],mining:[0,300,1200]};
- let total=0,taps=0,walletReady=false;
- const fmt=n=>Number(n).toFixed(3);
- function setBalance(){balance.textContent=fmt(total);const b=document.getElementById("skillsBalance");if(b)b.textContent=fmt(total)}
- async function walletRequest(payload={}){const response=await fetch("/api/wallet",{method:payload.action?"POST":"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:payload.action?JSON.stringify(payload):undefined});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"WALLET_REQUEST_FAILED");return data}
- function applyWallet(data){total=Number(data.points||0);taps=Number(data.taps||0);if(data.levels){levels.tap=Number(data.levels.tap||1);levels.storage=Number(data.levels.storage||1);levels.mining=Number(data.levels.mining||1)}walletReady=true;renderOxideSkills();const shard=document.getElementById("referralShardBalance");if(shard)shard.textContent=fmt(total);const account=document.getElementById("accountBalanceValue");if(account)account.textContent=fmt(total)}
- window.loadOxideWallet=async function(){try{const data=await walletRequest();applyWallet(data);return true}catch(error){walletReady=false;console.error("Persistent wallet load failed:",error);const status=document.getElementById("skillsStatus");if(status)status.textContent=ox("walletLoadError");return false}};
+ const tapRates=[0,0.01,0.02,0.03,0.05,0.08,0.12];
+ const tapCosts=[0,100,300,750,1500,3000];
+ const energyCaps=[0,500,1000,1500,2000,3000];
+ const energyCosts=[0,100,300,750,1500];
+ const levels={tap:1,storage:1,mining:1,energy:1};
+ let total=0,taps=0,walletReady=false,energy=500,maxEnergy=500,energyUpdatedAt=Date.now(),energyLevel=1;
+ let actionBusy=false;
+ const fmt=n=>Number(n||0).toFixed(3);
+ const $=id=>document.getElementById(id);
+ const regenMs=()=>7200000/Math.max(1,maxEnergy);
+ function updateLocalEnergy(){
+  const now=Date.now();
+  if(energy>=maxEnergy){energy=maxEnergy;energyUpdatedAt=now;return}
+  const gained=Math.floor(Math.max(0,now-energyUpdatedAt)/regenMs());
+  if(gained>0){energy=Math.min(maxEnergy,energy+gained);energyUpdatedAt=energy>=maxEnergy?now:energyUpdatedAt+gained*regenMs()}
+ }
+ function render(){
+  balance.textContent=fmt(total);
+  const skillsBalance=$("skillsBalance");if(skillsBalance)skillsBalance.textContent=fmt(total);
+  const account=$("accountBalanceValue");if(account)account.textContent=fmt(total);
+  const shard=$("referralShardBalance");if(shard)shard.textContent=fmt(total);
+  const energyText=$("tapEnergyText");if(energyText)energyText.textContent=Math.floor(energy)+" / "+maxEnergy;
+  const energyFill=$("tapEnergyFill");if(energyFill)energyFill.style.width=Math.max(0,Math.min(100,energy/maxEnergy*100))+"%";
+  const reward=tapRates[Math.max(1,Math.min(6,levels.tap))]||0.01;
+  const rewardText=$("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2)+" OXIDE";
+  const tapLevel=Math.max(1,Math.min(6,levels.tap)),tapNext=tapLevel<6;
+  if($("tapUpgradeLevel"))$("tapUpgradeLevel").textContent="المستوى "+tapLevel+" / 6";
+  if($("tapCurrentValue"))$("tapCurrentValue").textContent="+"+reward.toFixed(2);
+  if($("tapNextValue"))$("tapNextValue").textContent=tapNext?"+"+tapRates[tapLevel+1].toFixed(2):"MAX";
+  if($("tapUpgradeCost"))$("tapUpgradeCost").textContent=tapNext?tapCosts[tapLevel]+" OXIDE":"MAX";
+  if($("tapUpgradeConfirm"))$("tapUpgradeConfirm").disabled=!walletReady||!tapNext||total<tapCosts[tapLevel]||actionBusy;
+  const eLevel=Math.max(1,Math.min(5,energyLevel)),eNext=eLevel<5;
+  if($("energyUpgradeLevel"))$("energyUpgradeLevel").textContent="المستوى "+eLevel+" / 5";
+  if($("energyCurrentCapacity"))$("energyCurrentCapacity").textContent=String(maxEnergy);
+  if($("energyNextCapacity"))$("energyNextCapacity").textContent=eNext?String(energyCaps[eLevel+1]):"MAX";
+  if($("energyUpgradeCost"))$("energyUpgradeCost").textContent=eNext?energyCosts[eLevel]+" OXIDE":"MAX";
+  if($("energyUpgradeConfirm"))$("energyUpgradeConfirm").disabled=!walletReady||!eNext||total<energyCosts[eLevel]||actionBusy;
+  const notice=$("tapNotice");if(notice&&energy<1)notice.textContent="انتهت الطاقة. انتظر حتى تتجدد أو طوّر سعتها.";
+  else if(notice&&notice.textContent.indexOf("انتهت الطاقة")===0)notice.textContent="";
+ }
+ async function walletRequest(payload){
+  const response=await fetch("/api/wallet",{method:payload&&payload.action?"POST":"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:payload&&payload.action?JSON.stringify(payload):undefined});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.success){const err=new Error(data.error||"WALLET_REQUEST_FAILED");err.status=response.status;err.data=data;throw err}
+  return data;
+ }
+ function applyWallet(data){
+  total=Number(data.points||0);taps=Number(data.taps||0);
+  if(data.levels){levels.tap=Number(data.levels.tap||1);levels.storage=Number(data.levels.storage||1);levels.mining=Number(data.levels.mining||1);energyLevel=Number(data.levels.energy||1)}
+  energy=Math.max(0,Number(data.energy??500));maxEnergy=Math.max(1,Number(data.maxEnergy||500));
+  energyUpdatedAt=Number(data.energyUpdatedAtMs||data.serverTimeMs||Date.now());
+  walletReady=true;render();
+  const b=$("walletBalance");if(b)b.textContent=fmt(total);
+  const a=$("walletAvailable");if(a)a.textContent=fmt(total);
+  const ton=$("walletTonValue");if(ton)ton.textContent=(total/100000).toFixed(4);
+  const profile=$("accountBalanceValue");if(profile)profile.textContent=fmt(total);
+ }
+ window.renderOxideSkills=render;
+ window.loadOxideWallet=async function(){try{applyWallet(await walletRequest());return true}catch(error){walletReady=false;console.error("Wallet load failed:",error);const status=$("skillsStatus");if(status)status.textContent="تعذر تحميل المحفظة. حاول مجدداً.";render();return false}};
  window.loadOxideWalletHistory=async function(){
-  const list=document.getElementById("walletHistoryList");if(!list)return;
+  const list=$("walletHistoryList");if(!list)return;
   list.textContent=currentLanguage==="en"?"Loading wallet history...":"جارٍ تحميل سجل المحفظة...";
   try{
    const response=await fetch("/api/wallet/history",{method:"GET",credentials:"same-origin",cache:"no-store"});
-   const data=await response.json();
-   if(!response.ok||!data.success)throw new Error(data.error||"WALLET_HISTORY_FAILED");
-   const items=Array.isArray(data.items)?data.items:[];
-   list.replaceChildren();
+   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"WALLET_HISTORY_FAILED");
+   const items=Array.isArray(data.items)?data.items:[];list.replaceChildren();
    if(!items.length){const empty=document.createElement("div");empty.className="wallet-history-empty";empty.textContent=currentLanguage==="en"?"No wallet transactions yet.":"لا توجد عمليات في المحفظة بعد.";list.appendChild(empty);return}
-   const labels={
-    adsgram_ad_reward:["مكافأة إعلان","Ad reward"],telegram_channel_join:["مكافأة الاشتراك في القناة","Channel join reward"],mission_approved:["مكافأة مهمة","Mission reward"],referral_reward:["مكافأة إحالة","Referral reward"],referral_invited_bonus:["مكافأة التسجيل عبر إحالة","Referral signup bonus"],wallet_tap:["مكافأة الضغط","Tap reward"],wallet_upgrade:["تطوير المهارات","Skill upgrade"],wallet_mining:["مكافأة التعدين","Mining reward"],redemption_request:["طلب استبدال","Redemption request"],redemption_compensation:["إرجاع نقاط","Points refund"]
-   };
-   for(const item of items){
-    const card=document.createElement("article");card.className="wallet-history-item";
-    const reason=document.createElement("div");reason.className="wallet-history-reason";reason.textContent=(labels[item.reason]||[item.reason,item.reason])[currentLanguage==="en"?1:0];
-    const date=document.createElement("div");date.className="wallet-history-date";date.textContent=item.createdAt?new Date(item.createdAt*1000).toLocaleString(currentLanguage==="en"?"en-GB":"ar-DZ"):"";
-    const balanceLine=document.createElement("div");balanceLine.className="wallet-history-balance";balanceLine.textContent=(currentLanguage==="en"?"Balance after: ":"الرصيد بعد العملية: ")+Number(item.balanceAfter||0).toFixed(3);
-    const delta=document.createElement("div");delta.className="wallet-history-delta "+(Number(item.delta)>=0?"positive":"negative");delta.textContent=(Number(item.delta)>0?"+":"")+Number(item.delta).toFixed(3);
-    card.append(reason,date,balanceLine,delta);list.appendChild(card);
-   }
-  }catch(error){console.error("Wallet history error:",error);list.textContent=currentLanguage==="en"?"Could not load wallet history. Try again.":"تعذر تحميل سجل المحفظة. حاول مجددًا."}
+   const labels={adsgram_ad_reward:"مكافأة إعلان",telegram_channel_join:"مكافأة الاشتراك في القناة",mission_approved:"مكافأة مهمة",referral_reward:"مكافأة إحالة",referral_invited_bonus:"مكافأة التسجيل عبر إحالة",wallet_tap:"مكافأة الضغط",wallet_upgrade:"تطوير",wallet_mining:"مكافأة التعدين",redemption_request:"طلب استبدال",redemption_compensation:"إرجاع نقاط"};
+   for(const item of items){const card=document.createElement("article");card.className="wallet-history-item";const reason=document.createElement("div");reason.className="wallet-history-reason";reason.textContent=labels[item.reason]||item.reason;const date=document.createElement("div");date.className="wallet-history-date";date.textContent=item.createdAt?new Date(item.createdAt*1000).toLocaleString("ar-DZ"):"";const amount=document.createElement("div");amount.className="wallet-history-delta "+(Number(item.delta)>=0?"positive":"negative");amount.textContent=(Number(item.delta)>0?"+":"")+Number(item.delta).toFixed(3);card.append(reason,date,amount);list.appendChild(card)}
+  }catch(error){console.error("Wallet history error:",error);list.textContent="تعذر تحميل سجل المحفظة. حاول مجدداً."}
  };
- async function performWalletAction(payload){try{const data=await walletRequest(payload);applyWallet(data);return true}catch(error){if(error.message==="STORAGE_FULL"){const status=document.getElementById("skillsStatus");if(status)status.textContent=ox("storageFull")}else if(error.message==="INSUFFICIENT_BALANCE_OR_CONFLICT"){const status=document.getElementById("skillsStatus");if(status)status.textContent=currentLanguage==="ru"?"Недостаточно средств или возник конфликт. Обновите баланс.":"Insufficient balance or a conflict occurred. Refresh your balance."}else{console.error("Wallet action failed:",error)}return false}}
- function updateMeter(){
-  const cap=storageCaps[levels.storage],pct=Math.min(100,taps/cap*100);
-  const text=document.getElementById("tapStorageText"),fill=document.getElementById("tapStorageFill"),level=document.getElementById("tapStorageLevel"),percent=document.getElementById("tapStoragePercent");
-  if(text)text.textContent=taps+" / "+cap;if(fill)fill.style.width=pct+"%";if(level)level.textContent="STORAGE LV"+levels.storage;if(percent)percent.textContent=Math.floor(pct)+"%";
-  const notice=document.getElementById("tapNotice");if(notice&&taps>=cap)notice.textContent=ox("storageUpgrade");
+ async function performAction(payload){
+  if(actionBusy)return false;actionBusy=true;render();
+  try{const data=await walletRequest(payload);applyWallet(data);return true}
+  catch(error){
+   if(error.status===409&&error.data&&Number.isFinite(Number(error.data.energy))){energy=Number(error.data.energy);maxEnergy=Number(error.data.maxEnergy||maxEnergy);energyUpdatedAt=Number(error.data.energyUpdatedAtMs||Date.now());render()}
+   console.error("Wallet action failed:",error);
+   const notice=$("tapNotice");
+   if(notice)notice.textContent=error.message==="ENERGY_EMPTY"?"انتهت الطاقة. انتظر حتى تتجدد.":error.message==="INSUFFICIENT_BALANCE_OR_CONFLICT"?"رصيدك غير كافٍ للتطوير.":"تعذر تنفيذ العملية. حاول مجدداً.";
+   return false;
+  }finally{actionBusy=false;render()}
  }
- function updateSkillCard(kind){
-  const level=levels[kind],max=3,rateIds={tap:"tapSkillRate",storage:"storageSkillRate",mining:"miningSkillRate"},levelIds={tap:"tapSkillLevel",storage:"storageSkillLevel",mining:"miningSkillLevel"},nextIds={tap:"tapSkillNext",storage:"storageSkillNext",mining:"miningSkillNext"},buttonIds={tap:"tapSkillUpgrade",storage:"storageSkillUpgrade",mining:"miningSkillUpgrade"};
-  const rates={tap:tapRates,storage:storageCaps,mining:miningRates},units={tap:"",storage:"",mining:currentLanguage==="ru"?" / сек":" / sec"},names={tap:currentLanguage==="ru"?"Нажатие":"Tap",storage:currentLanguage==="ru"?"Ёмкость":"Storage capacity",mining:currentLanguage==="ru"?"Монета":"Coin"};
-  const rate=document.getElementById(rateIds[kind]),lv=document.getElementById(levelIds[kind]),next=document.getElementById(nextIds[kind]),button=document.getElementById(buttonIds[kind]);
-  if(rate)rate.textContent=kind==="tap"?"+"+rates[kind][level].toFixed(2):kind==="mining"?rates[kind][level].toFixed(3):String(rates[kind][level]);
-  if(lv)lv.textContent="LV"+level;
-  if(button){if(level>=max){button.textContent=ox("maxLevel");button.disabled=true;button.classList.remove("is-affordable")}else{const canAfford=total>=upgradeCosts[kind][level];button.innerHTML=ox("upgrade")+" "+upgradeCosts[kind][level]+' <img class="oxide-coin-inline" src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="Coin">';button.disabled=!canAfford;button.classList.toggle("is-affordable",canAfford)}}
-  if(next){next.textContent=level>=max?(currentLanguage==="ru"?"Открыт максимальный уровень":"Highest level unlocked"):((currentLanguage==="ru"?"Следующий уровень: ":"Next level: ")+(kind==="tap"?"+"+rates[kind][level+1].toFixed(2):kind==="mining"?rates[kind][level+1].toFixed(3)+(currentLanguage==="ru"?" / сек":" / sec"):rates[kind][level+1]));}
- }
- window.renderOxideSkills=function(){setBalance();["tap","storage","mining"].forEach(updateSkillCard);updateMeter();const reward=document.getElementById("tapRewardText");if(reward)reward.textContent="+"+tapRates[levels.tap].toFixed(2);};
- async function upgrade(kind){
-  if(!walletReady)return;
-  const level=levels[kind];if(level>=3)return;
-  const ok=await performWalletAction({action:"upgrade",kind});
-  const status=document.getElementById("skillsStatus");
-  if(ok&&status)status.textContent=ox("upgradeSuccess")+levels[kind]+" ✨";
- }
- ["tap","storage","mining"].forEach(kind=>{const button=document.getElementById(kind+"SkillUpgrade");if(button)button.addEventListener("click",()=>upgrade(kind))});
+ function openOverlay(id){const el=$(id);if(el)el.hidden=false}
+ function closeOverlay(id){const el=$(id);if(el)el.hidden=true}
+ $("tapTapUpgradeOpen")?.addEventListener("click",()=>{render();openOverlay("tapUpgradeOverlay")});
+ $("tapEnergyUpgradeOpen")?.addEventListener("click",()=>{render();openOverlay("energyUpgradeOverlay")});
+ $("tapUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"tap"});if(ok&&$("tapUpgradeFeedback"))$("tapUpgradeFeedback").textContent="تم تطوير قيمة الضغطة بنجاح ✨"});
+ $("energyUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"energy"});if(ok&&$("energyUpgradeFeedback"))$("energyUpgradeFeedback").textContent="تمت زيادة سعة الطاقة بنجاح ⚡"});
+ document.querySelectorAll("[data-close-upgrade]").forEach(button=>button.addEventListener("click",()=>closeOverlay(button.dataset.closeUpgrade==="tap"?"tapUpgradeOverlay":"energyUpgradeOverlay")));
+ ["tapUpgradeOverlay","energyUpgradeOverlay"].forEach(id=>$(id)?.addEventListener("click",event=>{if(event.target.id===id)closeOverlay(id)}));
  coin.addEventListener("click",async function(){
-  if(!walletReady)return;
-  const reward=tapRates[levels.tap];
-  const ok=await performWalletAction({action:"tap"});if(!ok)return;
-  updateMeter();["tap","storage","mining"].forEach(updateSkillCard);
-  const rewardText=document.getElementById("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2);
+  if(!walletReady||actionBusy)return;
+  updateLocalEnergy();render();
+  if(energy<1){const n=$("tapNotice");if(n)n.textContent="انتهت الطاقة. انتظر حتى تتجدد.";return}
+  const reward=tapRates[Math.max(1,Math.min(6,levels.tap))]||0.01;
+  const ok=await performAction({action:"tap"});if(!ok)return;
   coin.classList.remove("tap-hit");void coin.offsetWidth;coin.classList.add("tap-hit");
-  const el=document.createElement("span");el.className="tap-plus";el.innerHTML="+"+reward.toFixed(2)+' <img class="oxide-coin-inline" src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="Coin">';el.style.left=(42+Math.random()*16)+"%";el.style.top=(38+Math.random()*18)+"%";layer.appendChild(el);setTimeout(()=>el.remove(),900);
+  const el=document.createElement("span");el.className="tap-plus";el.textContent="+"+reward.toFixed(2);el.style.left=(42+Math.random()*16)+"%";el.style.top=(38+Math.random()*18)+"%";layer.appendChild(el);setTimeout(()=>el.remove(),900);
  });
- setInterval(async()=>{if(document.hidden||!walletReady)return;await performWalletAction({action:"claim_mining"})},15000);
- window.renderOxideSkills();
- setTimeout(()=>window.loadOxideWallet(),0);
+ setInterval(()=>{if(!walletReady)return;updateLocalEnergy();render()},1000);
+ setInterval(async()=>{if(document.hidden||!walletReady||actionBusy)return;await performAction({action:"claim_mining"})},15000);
+ window.loadOxideWallet();
 })();
 
 // Show browser sign-in only for ordinary web visitors; Telegram Mini App auth stays unchanged.
