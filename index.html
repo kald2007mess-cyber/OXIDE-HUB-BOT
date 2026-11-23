@@ -3001,7 +3001,7 @@ initializeOxideHub();
   const energyText=$("tapEnergyText");if(energyText)energyText.textContent=Math.floor(energy)+" / "+maxEnergy;
   const energyFill=$("tapEnergyFill");if(energyFill)energyFill.style.width=Math.max(0,Math.min(100,energy/maxEnergy*100))+"%";
   const reward=tapRates[Math.max(1,Math.min(6,levels.tap))]||0.01;
-  const rewardText=$("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2)+" OXIDE";
+  const rewardText=$("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2);
   const footerReward=document.querySelector(".tap-footer b");if(footerReward)footerReward.textContent="+"+reward.toFixed(2);
   const tapLevel=Math.max(1,Math.min(6,levels.tap)),tapNext=tapLevel<6;
   if($("tapUpgradeLevel"))$("tapUpgradeLevel").textContent="المستوى "+tapLevel+" / 6";
