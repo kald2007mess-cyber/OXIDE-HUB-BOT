@@ -125,6 +125,11 @@ export async function onRequestGet({ request, env }) {
           )
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
+          AND r.referrer_id <> r.referred_id
+          AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
+          AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referred_id)
+          AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referrer_id LIMIT 1)
+              <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referred_id LIMIT 1)
         ORDER BY r.id ASC
         LIMIT 100
       `).all();
@@ -138,6 +143,11 @@ export async function onRequestGet({ request, env }) {
               AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+              AND referrer_id <> referred_id
+              AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referrer_id)
+              AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referred_id)
+              AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrer_id LIMIT 1)
+                  <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referred_id LIMIT 1)
           `).bind(referral.id, referral.referred_id, referral.referrer_id, referral.referred_id),
           env.DB.prepare(`
             UPDATE users SET points = points + 30, updated_at = ?
