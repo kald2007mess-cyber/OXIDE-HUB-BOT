@@ -141,20 +141,21 @@ export async function onRequestPost({ request, env }) {
       const state = await env.DB.prepare("SELECT taps, tap_level, energy, max_energy, energy_updated_at_ms FROM oxide_wallet_state WHERE user_id = ?").bind(userId).first();
       const energyNow = Number(state?.energy ?? 0);
       const maxEnergy = Math.max(1, Number(state?.max_energy || 500));
-      if (energyNow < 1) {
+      const count = Math.max(1, Math.min(10, Math.floor(Number(body.count) || 1)));
+      if (energyNow < count) {
         return json({ success: false, error: "ENERGY_EMPTY", energy: energyNow, maxEnergy, energyUpdatedAtMs: Number(state?.energy_updated_at_ms || Date.now()), serverTimeMs: Date.now() }, 409);
       }
       const level = Math.max(1, Math.min(6, Number(state?.tap_level || 1)));
-      const reward = TAP_RATES[level] || 0.01;
+      const reward = (TAP_RATES[level] || 0.01) * count;
       const expectedEnergyTime = Number(state?.energy_updated_at_ms || Date.now());
       const reference = crypto.randomUUID();
       const results = await env.DB.batch([
         env.DB.prepare(`
           UPDATE oxide_wallet_state
-          SET taps = taps + 1, energy = energy - 1, updated_at = ?
+          SET taps = taps + ?, energy = energy - ?, updated_at = ?
           WHERE user_id = ? AND energy = ? AND energy_updated_at_ms = ?
             AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
-        `).bind(now, userId, energyNow, expectedEnergyTime, userId),
+        `).bind(count, count, now, userId, energyNow, expectedEnergyTime, userId),
         env.DB.prepare(`
           UPDATE users SET points = points + ?, updated_at = ?
           WHERE user_uuid = ? AND status = 'active' AND changes() = 1
