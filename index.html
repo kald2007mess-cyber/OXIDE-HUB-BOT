@@ -1038,32 +1038,15 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 
 
 
-/* OXIDE HUB purple launch welcome screen */
-#oxideLaunchScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:24px 16px;background-color:#09031b;background-image:linear-gradient(180deg,rgba(12,3,32,.48),rgba(8,2,24,.78)),url("https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/0f491c816275a507c251569eda688e8cad319aeb/file_000000000c0481f4ad8b6c4815f86872.png");background-position:center;background-size:cover;background-repeat:no-repeat;color:#fff}
+/* OXIDE HUB image-only launch screen */
+#oxideLaunchScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;padding:0;background:#080313 url("https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/0f491c816275a507c251569eda688e8cad319aeb/file_000000000c0481f4ad8b6c4815f86872.png") center center/contain no-repeat;color:#fff}
 #oxideLaunchScreen[hidden]{display:none!important}
-.oxide-launch-stars{position:absolute;inset:0;pointer-events:none;opacity:.55;background-image:radial-gradient(2px 2px at 18% 20%,#fff,transparent),radial-gradient(1px 1px at 76% 16%,#e9caff,transparent),radial-gradient(2px 2px at 82% 72%,#fff,transparent),radial-gradient(1px 1px at 27% 82%,#d8b4ff,transparent),radial-gradient(1px 1px at 54% 43%,#fff,transparent);background-size:260px 230px;animation:oxideLaunchStars 38s linear infinite}
-@keyframes oxideLaunchStars{from{transform:translateY(0)}to{transform:translateY(-90px)}}
-.oxide-launch-card{position:relative;width:min(100%,430px);padding:28px 19px 20px;border:1px solid rgba(190,125,255,.48);border-radius:25px;background:linear-gradient(155deg,rgba(43,19,83,.82),rgba(13,8,36,.91));box-shadow:0 0 45px rgba(148,70,255,.24),inset 0 1px rgba(255,255,255,.1);text-align:center;backdrop-filter:blur(12px)}
-.oxide-launch-brand{font-size:13px;letter-spacing:4px;font-weight:900;color:#e8ceff;text-shadow:0 0 15px #a65bff}
-.oxide-launch-orbit{width:112px;height:112px;margin:19px auto 12px;border-radius:50%;display:grid;place-items:center;font-size:57px;background:radial-gradient(circle at 35% 30%,#d9b5ff,#8e42dc 42%,#32105e 75%);border:1px solid rgba(235,211,255,.75);box-shadow:0 0 28px rgba(173,93,255,.55),inset -12px -12px 22px rgba(17,4,39,.55);animation:oxideLaunchFloat 4s ease-in-out infinite}
-@keyframes oxideLaunchFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.oxide-launch-title{font-size:23px;font-weight:900;margin:10px 0 7px;color:#fff}
-.oxide-launch-subtitle{font-size:12px;line-height:1.8;color:#d5c3ed;margin:0 0 19px}
-.oxide-launch-count-label{font-size:11px;color:#c8a8ee;letter-spacing:2px;font-weight:bold;margin-bottom:9px}
-.oxide-launch-countdown{direction:ltr;display:flex;justify-content:center;align-items:center;gap:8px;margin:0 auto 20px}
-.oxide-launch-time{min-width:76px;padding:12px 7px 9px;border:1px solid rgba(191,124,255,.55);border-radius:13px;background:rgba(29,11,57,.8);box-shadow:inset 0 0 17px rgba(163,83,255,.12)}
-.oxide-launch-time strong{display:block;font-size:27px;line-height:1.1;color:#fff;text-shadow:0 0 13px #ad66ff;font-variant-numeric:tabular-nums}
-.oxide-launch-time span{display:block;margin-top:6px;font-size:9px;color:#c9a9e9}
-.oxide-launch-colon{font-size:25px;color:#d7aaff;font-weight:900;margin-top:-13px}
-.oxide-launch-invite-label{font-size:12px;color:#e7d5ff;margin:0 0 8px;font-weight:bold}
-.oxide-launch-link-row{display:flex;gap:7px;direction:ltr;margin-bottom:11px}
-#launchReferralLink{flex:1;min-width:0;padding:11px 9px;border-radius:10px;border:1px solid rgba(184,122,255,.42);background:rgba(5,3,20,.6);color:#e8d5ff;font-size:10px;text-align:left;outline:none}
-.oxide-launch-copy{padding:0 12px;border:1px solid #b27aff;border-radius:10px;background:linear-gradient(135deg,#8e42dc,#5d24a4);color:#fff;font-weight:bold;font-size:11px}
-.oxide-launch-share,.oxide-launch-enter{width:100%;padding:13px 12px;border-radius:12px;font-family:Arial,sans-serif;font-size:14px;font-weight:900;cursor:pointer}
-.oxide-launch-share{border:1px solid #d5adff;background:linear-gradient(135deg,#a75cff,#6e2cc0);color:#fff;box-shadow:0 0 18px rgba(163,87,255,.25)}
-.oxide-launch-enter{margin-top:9px;border:1px solid rgba(221,198,255,.3);background:rgba(255,255,255,.07);color:#e8d9fa}
-.oxide-launch-foot{font-size:9px;color:#a992c5;margin:13px 0 0;line-height:1.6}
-@media(max-width:360px){.oxide-launch-card{padding:23px 13px 17px}.oxide-launch-time{min-width:66px}.oxide-launch-time strong{font-size:24px}}
+#oxideLaunchScreen .oxide-launch-card{display:none!important}
+#oxideLaunchScreen .oxide-launch-stars{display:none!important}
+#oxideLaunchTimer{position:absolute;left:50%;bottom:max(5%,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:2;display:flex;gap:5px;align-items:center;justify-content:center;direction:ltr;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.16);color:#fff;font:700 clamp(14px,4vw,22px)/1.1 Arial,sans-serif;letter-spacing:1px;text-shadow:0 1px 5px #000;pointer-events:none;white-space:nowrap}
+#oxideLaunchTimer span{font-variant-numeric:tabular-nums}
+#oxideLaunchTapArea{position:absolute;inset:0;z-index:1;border:0;padding:0;margin:0;background:transparent;cursor:pointer}
+
 
 </style>
 </head>
@@ -1071,30 +1054,9 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 
 <div class="stars"></div>
 
-<div id="oxideLaunchScreen" role="dialog" aria-modal="true" aria-label="OXIDE HUB launch screen">
-  <div class="oxide-launch-stars" aria-hidden="true"></div>
-  <section class="oxide-launch-card">
-    <div class="oxide-launch-brand">✦ OXIDE HUB ✦</div>
-    <div class="oxide-launch-orbit" aria-hidden="true">🚀</div>
-    <h1 class="oxide-launch-title">استعد للانطلاق!</h1>
-    <p class="oxide-launch-subtitle">رحلتك نحو المكافآت تبدأ هنا. ادعُ أصدقاءك وانطلقوا معاً في عالم OXIDE HUB.</p>
-    <div class="oxide-launch-count-label">العد التنازلي للانطلاق</div>
-    <div class="oxide-launch-countdown" aria-live="off">
-      <div class="oxide-launch-time"><strong id="oxideLaunchHours">23</strong><span>ساعة</span></div>
-      <div class="oxide-launch-colon">:</div>
-      <div class="oxide-launch-time"><strong id="oxideLaunchMinutes">59</strong><span>دقيقة</span></div>
-      <div class="oxide-launch-colon">:</div>
-      <div class="oxide-launch-time"><strong id="oxideLaunchSeconds">59</strong><span>ثانية</span></div>
-    </div>
-    <p class="oxide-launch-invite-label">🔗 رابط دعوتك الخاص</p>
-    <div class="oxide-launch-link-row">
-      <input id="launchReferralLink" type="text" readonly value="" placeholder="جارٍ تجهيز رابط الدعوة...">
-      <button class="oxide-launch-copy" type="button" onclick="copyLaunchReferralLink()">نسخ</button>
-    </div>
-    <button class="oxide-launch-share" type="button" onclick="shareLaunchReferralLink()">👥 دعوة الأصدقاء</button>
-    <button class="oxide-launch-enter" type="button" onclick="closeOxideLaunchScreen()">دخول إلى المنصة ←</button>
-    <p class="oxide-launch-foot">شارك رابطك مع أصدقائك لتحصلوا على مكافآت الإحالة.</p>
-  </section>
+<div id="oxideLaunchScreen" role="dialog" aria-modal="true" aria-label="OXIDE HUB">
+  <button id="oxideLaunchTapArea" type="button" aria-label="دخول إلى المنصة" onclick="closeOxideLaunchScreen()"></button>
+  <div id="oxideLaunchTimer" aria-live="off"><span id="oxideLaunchHours">23</span>:<span id="oxideLaunchMinutes">59</span>:<span id="oxideLaunchSeconds">59</span></div>
 </div>
 
 <div class="rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
@@ -3190,7 +3152,7 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
 
 
 <script>
-/* Persistent per-device launch countdown and personalized invite actions. */
+/* Persistent per-device launch countdown. */
 (function(){
  const screen=document.getElementById("oxideLaunchScreen");
  if(!screen)return;
@@ -3208,43 +3170,15 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
  function tick(){
   const remaining=Math.max(0,deadline-Date.now());
   const total=Math.floor(remaining/1000);
-  const h=Math.floor(total/3600),m=Math.floor((total%3600)/60),sec=total%60;
   const pad=n=>String(n).padStart(2,"0");
-  document.getElementById("oxideLaunchHours").textContent=pad(h);
-  document.getElementById("oxideLaunchMinutes").textContent=pad(m);
-  document.getElementById("oxideLaunchSeconds").textContent=pad(sec);
+  document.getElementById("oxideLaunchHours").textContent=pad(Math.floor(total/3600));
+  document.getElementById("oxideLaunchMinutes").textContent=pad(Math.floor((total%3600)/60));
+  document.getElementById("oxideLaunchSeconds").textContent=pad(total%60);
   if(remaining<=0){close();if(timer)clearInterval(timer)}
  }
- async function ensureLink(){
-  if(!window.referralLinkValue&&typeof window.loadReferral==="function")await window.loadReferral();
-  const value=window.referralLinkValue||document.getElementById("referralLink")?.value||"";
-  if(value)document.getElementById("launchReferralLink").value=value;
-  return value;
- }
- window.copyLaunchReferralLink=async function(){
-  const value=await ensureLink();if(!value)return;
-  try{await navigator.clipboard.writeText(value);const b=screen.querySelector(".oxide-launch-copy");b.textContent="تم النسخ ✓";setTimeout(()=>b.textContent="نسخ",1800)}
-  catch(error){const input=document.getElementById("launchReferralLink");input.value=value;input.focus();input.select()}
- };
- window.shareLaunchReferralLink=async function(){
-  const value=await ensureLink();if(!value)return;
-  const message="🚀 انضم إلى OXIDE HUB واجمع العملات والمكافآت! 💎";
-  const url="https://t.me/share/url?url="+encodeURIComponent(value)+"&text="+encodeURIComponent(message);
-  if(window.Telegram?.WebApp?.openTelegramLink)window.Telegram.WebApp.openTelegramLink(url);
-  else window.open(url,"_blank","noopener,noreferrer");
- };
  tick();
  if(deadline>Date.now())timer=setInterval(tick,1000);
- // Load the user's unique referral URL in the background after Telegram identity is ready.
- const waitForReferral=setInterval(async()=>{
-  if(document.getElementById("referralLink")?.value){
-   document.getElementById("launchReferralLink").value=document.getElementById("referralLink").value;
-   clearInterval(waitForReferral);
-  }
- },700);
- setTimeout(()=>clearInterval(waitForReferral),15000);
-})();
-</script>
+})();</script>
 
 </body>
 </html>
