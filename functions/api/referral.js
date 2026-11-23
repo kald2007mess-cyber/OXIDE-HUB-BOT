@@ -26,6 +26,7 @@ function shortId(id) {
 }
 
 export async function onRequestGet({ request, env }) {
+  let diagnosticStage = "START";
   try {
     if (!env.DB || !env.SESSION_SECRET) {
       return json({
@@ -34,6 +35,7 @@ export async function onRequestGet({ request, env }) {
       }, 500);
     }
 
+    diagnosticStage = "READ_SESSION";
     const userId = await getVisitor(request, env);
 
     if (!userId) {
@@ -43,136 +45,145 @@ export async function onRequestGet({ request, env }) {
       }, 401);
     }
 
-    // Ensure referral storage exists and migrate legacy UUID column names in place.
-    await env.DB.prepare(`
-      CREATE TABLE IF NOT EXISTS referrals (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        referrer_id TEXT NOT NULL,
-        referred_id TEXT NOT NULL UNIQUE,
-        points_awarded INTEGER NOT NULL DEFAULT 0,
-        created_at INTEGER NOT NULL
-      )
-    `).run();
-    const referralInfo = await env.DB.prepare("PRAGMA table_info(referrals)").all();
-    const referralColumnNames = new Set((referralInfo.results || []).map(column => column.name));
-    if (!referralColumnNames.has("referrer_id")) {
-      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referrer_id TEXT").run();
-      referralColumnNames.add("referrer_id");
-    }
-    if (!referralColumnNames.has("referred_id")) {
-      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referred_id TEXT").run();
-      referralColumnNames.add("referred_id");
-    }
-    if (referralColumnNames.has("referrer_uuid")) {
-      await env.DB.prepare("UPDATE referrals SET referrer_id = referrer_uuid WHERE referrer_id IS NULL OR referrer_id = ''").run();
-    }
-    if (referralColumnNames.has("referred_uuid")) {
-      await env.DB.prepare("UPDATE referrals SET referred_id = referred_uuid WHERE referred_id IS NULL OR referred_id = ''").run();
-    }
-    await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_referrals_referred_id ON referrals(referred_id)").run();
-    if (!referralColumnNames.has("status")) {
-      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN status TEXT NOT NULL DEFAULT 'pending'").run();
-      referralColumnNames.add("status");
-    }
-    if (!referralColumnNames.has("risk_score")) {
-      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_score INTEGER NOT NULL DEFAULT 0").run();
-      referralColumnNames.add("risk_score");
-    }
-    if (!referralColumnNames.has("risk_reason")) {
-      await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
-      referralColumnNames.add("risk_reason");
-    }
-    await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id)").run();
-
-    await env.DB.prepare(`
-      CREATE TABLE IF NOT EXISTS mission_submissions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT NOT NULL,
-        mission_id INTEGER NOT NULL,
-        proof_file_id TEXT,
-        status TEXT NOT NULL DEFAULT 'pending',
-        created_at INTEGER NOT NULL,
-        reviewed_at INTEGER
-      )
-    `).run();
-
-    // Recover eligible referrals left pending if an earlier reward batch failed.
-    // Only referrals with an approved mission and no high-risk flag are paid.
-    await env.DB.prepare(`
-      CREATE TABLE IF NOT EXISTS point_ledger (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_uuid TEXT NOT NULL,
-        delta INTEGER NOT NULL,
-        balance_after INTEGER NOT NULL,
-        reason TEXT NOT NULL,
-        reference_type TEXT NOT NULL,
-        reference_id TEXT NOT NULL,
-        created_at INTEGER NOT NULL
-      )
-    `).run();
-    const eligibleReferrals = await env.DB.prepare(`
-      SELECT r.id, r.referrer_id, r.referred_id
-      FROM referrals r
-      WHERE r.status = 'pending' AND COALESCE(r.risk_score, 0) < 70
-        AND EXISTS (
-          SELECT 1 FROM mission_submissions s
-          WHERE s.user_id = r.referred_id AND s.status = 'approved'
+    // Referral tables and reward recovery are auxiliary: if an older D1 schema
+    // needs migration, it must not prevent the user from receiving their invite link.
+    try {
+      // Ensure referral storage exists and migrate legacy UUID column names in place.
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS referrals (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          referrer_id TEXT NOT NULL,
+          referred_id TEXT NOT NULL UNIQUE,
+          points_awarded INTEGER NOT NULL DEFAULT 0,
+          created_at INTEGER NOT NULL
         )
-        AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
-        AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
-      ORDER BY r.id ASC
-      LIMIT 100
-    `).all();
-
-    for (const referral of eligibleReferrals.results || []) {
-      const paidAt = Math.floor(Date.now() / 1000);
-      await env.DB.batch([
-        env.DB.prepare(`
-          UPDATE referrals SET status = 'rewarded', points_awarded = 30
-          WHERE id = ? AND status = 'pending' AND COALESCE(risk_score, 0) < 70
-            AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
-            AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
-            AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
-        `).bind(referral.id, referral.referred_id, referral.referrer_id, referral.referred_id),
-        env.DB.prepare(`
-          UPDATE users SET points = points + 30, updated_at = ?
-          WHERE user_uuid = ? AND status = 'active' AND changes() = 1
-        `).bind(paidAt, referral.referrer_id),
-        env.DB.prepare(`
-          INSERT INTO point_ledger
-            (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
-          SELECT user_uuid, 30, points, 'referral_reward', 'referral', CAST(? AS TEXT), ?
-          FROM users WHERE user_uuid = ? AND changes() = 1
-        `).bind(referral.id, paidAt, referral.referrer_id),
-        env.DB.prepare(`
-          UPDATE users SET points = points + 50, updated_at = ?
-          WHERE user_uuid = ? AND status = 'active' AND changes() = 1
-        `).bind(paidAt, referral.referred_id),
-        env.DB.prepare(`
-          INSERT INTO point_ledger
-            (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
-          SELECT user_uuid, 50, points, 'referral_invited_bonus', 'referral', CAST(? AS TEXT), ?
-          FROM users WHERE user_uuid = ? AND changes() = 1
-        `).bind(referral.id, paidAt, referral.referred_id),
-        env.DB.prepare(`
-          UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
-          WHERE user_id = ? AND EXISTS (
-            SELECT 1 FROM point_ledger
-            WHERE user_uuid = ? AND reason = 'referral_reward'
-              AND reference_type = 'referral' AND reference_id = CAST(? AS TEXT)
+      `).run();
+      const referralInfo = await env.DB.prepare("PRAGMA table_info(referrals)").all();
+      const referralColumnNames = new Set((referralInfo.results || []).map(column => column.name));
+      if (!referralColumnNames.has("referrer_id")) {
+        await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referrer_id TEXT").run();
+        referralColumnNames.add("referrer_id");
+      }
+      if (!referralColumnNames.has("referred_id")) {
+        await env.DB.prepare("ALTER TABLE referrals ADD COLUMN referred_id TEXT").run();
+        referralColumnNames.add("referred_id");
+      }
+      if (referralColumnNames.has("referrer_uuid")) {
+        await env.DB.prepare("UPDATE referrals SET referrer_id = referrer_uuid WHERE referrer_id IS NULL OR referrer_id = ''").run();
+      }
+      if (referralColumnNames.has("referred_uuid")) {
+        await env.DB.prepare("UPDATE referrals SET referred_id = referred_uuid WHERE referred_id IS NULL OR referred_id = ''").run();
+      }
+      await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_referrals_referred_id ON referrals(referred_id)").run();
+      if (!referralColumnNames.has("status")) {
+        await env.DB.prepare("ALTER TABLE referrals ADD COLUMN status TEXT NOT NULL DEFAULT 'pending'").run();
+        referralColumnNames.add("status");
+      }
+      if (!referralColumnNames.has("risk_score")) {
+        await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_score INTEGER NOT NULL DEFAULT 0").run();
+        referralColumnNames.add("risk_score");
+      }
+      if (!referralColumnNames.has("risk_reason")) {
+        await env.DB.prepare("ALTER TABLE referrals ADD COLUMN risk_reason TEXT NOT NULL DEFAULT ''").run();
+        referralColumnNames.add("risk_reason");
+      }
+      await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id)").run();
+  
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS mission_submissions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          mission_id INTEGER NOT NULL,
+          proof_file_id TEXT,
+          status TEXT NOT NULL DEFAULT 'pending',
+          created_at INTEGER NOT NULL,
+          reviewed_at INTEGER
+        )
+      `).run();
+  
+      // Recover eligible referrals left pending if an earlier reward batch failed.
+      // Only referrals with an approved mission and no high-risk flag are paid.
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS point_ledger (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_uuid TEXT NOT NULL,
+          delta INTEGER NOT NULL,
+          balance_after INTEGER NOT NULL,
+          reason TEXT NOT NULL,
+          reference_type TEXT NOT NULL,
+          reference_id TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )
+      `).run();
+      const eligibleReferrals = await env.DB.prepare(`
+        SELECT r.id, r.referrer_id, r.referred_id
+        FROM referrals r
+        WHERE r.status = 'pending' AND COALESCE(r.risk_score, 0) < 70
+          AND EXISTS (
+            SELECT 1 FROM mission_submissions s
+            WHERE s.user_id = r.referred_id AND s.status = 'approved'
           )
-        `).bind(referral.referrer_id, referral.referrer_id, referral.referrer_id, referral.id),
-        env.DB.prepare(`
-          UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
-          WHERE user_id = ? AND EXISTS (
-            SELECT 1 FROM point_ledger
-            WHERE user_uuid = ? AND reason = 'referral_invited_bonus'
-              AND reference_type = 'referral' AND reference_id = CAST(? AS TEXT)
-          )
-        `).bind(referral.referred_id, referral.referred_id, referral.referred_id, referral.id)
-      ]);
+          AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
+          AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
+        ORDER BY r.id ASC
+        LIMIT 100
+      `).all();
+  
+      for (const referral of eligibleReferrals.results || []) {
+        const paidAt = Math.floor(Date.now() / 1000);
+        await env.DB.batch([
+          env.DB.prepare(`
+            UPDATE referrals SET status = 'rewarded', points_awarded = 30
+            WHERE id = ? AND status = 'pending' AND COALESCE(risk_score, 0) < 70
+              AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
+              AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+              AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+          `).bind(referral.id, referral.referred_id, referral.referrer_id, referral.referred_id),
+          env.DB.prepare(`
+            UPDATE users SET points = points + 30, updated_at = ?
+            WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+          `).bind(paidAt, referral.referrer_id),
+          env.DB.prepare(`
+            INSERT INTO point_ledger
+              (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
+            SELECT user_uuid, 30, points, 'referral_reward', 'referral', CAST(? AS TEXT), ?
+            FROM users WHERE user_uuid = ? AND changes() = 1
+          `).bind(referral.id, paidAt, referral.referrer_id),
+          env.DB.prepare(`
+            UPDATE users SET points = points + 50, updated_at = ?
+            WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+          `).bind(paidAt, referral.referred_id),
+          env.DB.prepare(`
+            INSERT INTO point_ledger
+              (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
+            SELECT user_uuid, 50, points, 'referral_invited_bonus', 'referral', CAST(? AS TEXT), ?
+            FROM users WHERE user_uuid = ? AND changes() = 1
+          `).bind(referral.id, paidAt, referral.referred_id),
+          env.DB.prepare(`
+            UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+            WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM point_ledger
+              WHERE user_uuid = ? AND reason = 'referral_reward'
+                AND reference_type = 'referral' AND reference_id = CAST(? AS TEXT)
+            )
+          `).bind(referral.referrer_id, referral.referrer_id, referral.referrer_id, referral.id),
+          env.DB.prepare(`
+            UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+            WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM point_ledger
+              WHERE user_uuid = ? AND reason = 'referral_invited_bonus'
+                AND reference_type = 'referral' AND reference_id = CAST(? AS TEXT)
+            )
+          `).bind(referral.referred_id, referral.referred_id, referral.referred_id, referral.id)
+        ]);
+      }
+  
+  
+    } catch (referralSetupError) {
+      console.error("Referral storage/recovery step failed; continuing with invite link:", referralSetupError);
     }
 
+    diagnosticStage = "READ_ACCOUNT";
     const account = await env.DB.prepare(`
       SELECT user_uuid, public_id, points
       FROM users
@@ -186,6 +197,7 @@ export async function onRequestGet({ request, env }) {
 
     // Telegram deep links require the real numeric Telegram ID, not the
     // public OX- display code. Resolve it from the verified identity table.
+    diagnosticStage = "READ_TELEGRAM_IDENTITY";
     const telegramIdentity = await env.DB.prepare(`
       SELECT telegram_user_id
       FROM telegram_identities
@@ -284,7 +296,7 @@ export async function onRequestGet({ request, env }) {
     });
 
   } catch (error) {
-    console.error("Referral data load failed:", error);
+    console.error("Referral data load failed at", diagnosticStage, error);
     return json({
       success: false,
       error: "Could not load referral data"
