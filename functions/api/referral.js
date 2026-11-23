@@ -135,7 +135,7 @@ export async function onRequestGet({ request, env }) {
             AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
         `).bind(referral.id, referral.referred_id, referral.referrer_id, referral.referred_id),
         env.DB.prepare(`
-          UPDATE users SET points = points + 50, updated_at = ?
+          UPDATE users SET points = points + 30, updated_at = ?
           WHERE user_uuid = ? AND status = 'active' AND changes() = 1
         `).bind(paidAt, referral.referrer_id),
         env.DB.prepare(`
@@ -145,7 +145,7 @@ export async function onRequestGet({ request, env }) {
           FROM users WHERE user_uuid = ? AND changes() = 1
         `).bind(referral.id, paidAt, referral.referrer_id),
         env.DB.prepare(`
-          UPDATE users SET points = points + 30, updated_at = ?
+          UPDATE users SET points = points + 50, updated_at = ?
           WHERE user_uuid = ? AND status = 'active' AND changes() = 1
         `).bind(paidAt, referral.referred_id),
         env.DB.prepare(`
