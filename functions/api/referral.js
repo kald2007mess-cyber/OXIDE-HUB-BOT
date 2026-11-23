@@ -128,7 +128,7 @@ export async function onRequestGet({ request, env }) {
       const paidAt = Math.floor(Date.now() / 1000);
       await env.DB.batch([
         env.DB.prepare(`
-          UPDATE referrals SET status = 'rewarded', points_awarded = 50
+          UPDATE referrals SET status = 'rewarded', points_awarded = 30
           WHERE id = ? AND status = 'pending' AND COALESCE(risk_score, 0) < 70
             AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
             AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
@@ -141,7 +141,7 @@ export async function onRequestGet({ request, env }) {
         env.DB.prepare(`
           INSERT INTO point_ledger
             (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
-          SELECT user_uuid, 50, points, 'referral_reward', 'referral', CAST(? AS TEXT), ?
+          SELECT user_uuid, 30, points, 'referral_reward', 'referral', CAST(? AS TEXT), ?
           FROM users WHERE user_uuid = ? AND changes() = 1
         `).bind(referral.id, paidAt, referral.referrer_id),
         env.DB.prepare(`
@@ -151,7 +151,7 @@ export async function onRequestGet({ request, env }) {
         env.DB.prepare(`
           INSERT INTO point_ledger
             (user_uuid, delta, balance_after, reason, reference_type, reference_id, created_at)
-          SELECT user_uuid, 30, points, 'referral_invited_bonus', 'referral', CAST(? AS TEXT), ?
+          SELECT user_uuid, 50, points, 'referral_invited_bonus', 'referral', CAST(? AS TEXT), ?
           FROM users WHERE user_uuid = ? AND changes() = 1
         `).bind(referral.id, paidAt, referral.referred_id),
         env.DB.prepare(`
