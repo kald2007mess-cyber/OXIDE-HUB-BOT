@@ -2968,7 +2968,7 @@ initializeOxideHub();
  const energyCosts=[0,100,300,750,1500];
  const levels={tap:1,storage:1,mining:1,energy:1};
  let total=0,taps=0,walletReady=false,energy=500,maxEnergy=500,energyUpdatedAt=Date.now(),energyLevel=1;
- let actionBusy=false;
+ let actionBusy=false,tapPending=false,queuedTaps=0,tapFlushTimer=null;
  const fmt=n=>Number(n||0).toFixed(3);
  const $=id=>document.getElementById(id);
  const regenMs=()=>7200000/Math.max(1,maxEnergy);
@@ -3052,17 +3052,33 @@ initializeOxideHub();
  $("energyUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"energy"});if(ok&&$("energyUpgradeFeedback"))$("energyUpgradeFeedback").textContent="تمت زيادة سعة الطاقة بنجاح ⚡"});
  document.querySelectorAll("[data-close-upgrade]").forEach(button=>button.addEventListener("click",()=>closeOverlay(button.dataset.closeUpgrade==="tap"?"tapUpgradeOverlay":"energyUpgradeOverlay")));
  ["tapUpgradeOverlay","energyUpgradeOverlay"].forEach(id=>$(id)?.addEventListener("click",event=>{if(event.target.id===id)closeOverlay(id)}));
- coin.addEventListener("click",async function(){
-  if(!walletReady||actionBusy)return;
+ async function flushTapQueue(){
+  if(tapPending||actionBusy||!walletReady)return;
+  tapPending=true;
+  try{
+   while(queuedTaps>0&&walletReady){
+    updateLocalEnergy();
+    const count=Math.min(10,queuedTaps,Math.floor(energy));
+    if(count<1){queuedTaps=0;const n=$("tapNotice");if(n)n.textContent="انتهت الطاقة. انتظر حتى تتجدد.";render();break}
+    queuedTaps-=count;
+    const ok=await performAction({action:"tap",count});
+    if(!ok){queuedTaps=0;break}
+   }
+  }finally{tapPending=false;render()}
+ }
+ coin.addEventListener("click",function(){
+  if(!walletReady)return;
   updateLocalEnergy();render();
   if(energy<1){const n=$("tapNotice");if(n)n.textContent="انتهت الطاقة. انتظر حتى تتجدد.";return}
   const reward=tapRates[Math.max(1,Math.min(6,levels.tap))]||0.01;
-  const ok=await performAction({action:"tap"});if(!ok)return;
+  queuedTaps=Math.min(100,queuedTaps+1);
   coin.classList.remove("tap-hit");void coin.offsetWidth;coin.classList.add("tap-hit");
   const el=document.createElement("span");el.className="tap-plus";el.textContent="+"+reward.toFixed(2);el.style.left=(42+Math.random()*16)+"%";el.style.top=(38+Math.random()*18)+"%";layer.appendChild(el);setTimeout(()=>el.remove(),900);
+  if(tapFlushTimer)clearTimeout(tapFlushTimer);
+  tapFlushTimer=setTimeout(()=>{tapFlushTimer=null;flushTapQueue()},100);
  });
  setInterval(()=>{if(!walletReady)return;updateLocalEnergy();render()},1000);
- setInterval(async()=>{if(document.hidden||!walletReady||actionBusy)return;await performAction({action:"claim_mining"})},15000);
+ setInterval(async()=>{if(document.hidden||!walletReady||actionBusy||tapPending)return;await performAction({action:"claim_mining"})},15000);
  window.loadOxideWallet();
 })();
 
