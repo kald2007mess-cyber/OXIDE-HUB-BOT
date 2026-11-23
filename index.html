@@ -997,18 +997,21 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 
 
 /* OXIDE energy system inspired by the reference tap game */
-.tap-stats-row{width:100%;max-width:420px;margin:4px auto 9px;display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:stretch}
-.tap-energy-panel,.tap-value-upgrade{width:100%;min-width:0;min-height:76px;margin:0;padding:11px 10px;border:1px solid rgba(183,111,255,.38);border-radius:14px;background:linear-gradient(135deg,rgba(54,25,83,.96),rgba(17,10,35,.96));box-shadow:inset 0 1px rgba(255,255,255,.06),0 8px 22px rgba(0,0,0,.2);text-align:center}
-.tap-energy-heading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:11px;color:#e8d7ff}
-.tap-energy-heading strong{font-size:16px;color:#fff;font-variant-numeric:tabular-nums;direction:ltr}
-.tap-energy-track{height:7px;margin:9px 0 0;border-radius:20px;background:#170d29;border:1px solid #51336d;overflow:hidden}
+.tap-stats-row{width:100%;max-width:420px;margin:90px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
+.tap-energy-panel,.tap-value-upgrade{width:100%;min-width:0;min-height:76px;margin:0;padding:13px;border:1px solid rgba(183,111,255,.25);border-radius:17px;background:rgba(27,15,45,.88);box-shadow:inset 0 1px rgba(255,255,255,.05);text-align:center}
+.tap-stat-caption{display:block;font-size:12px;color:#cbb8dc;text-align:center}.tap-energy-heading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;color:#cbb8dc}
+.tap-energy-heading strong{font-size:19px;color:#f7dfa0;font-variant-numeric:tabular-nums;direction:ltr}
+.tap-energy-track{height:9px;margin:9px 0 0;border-radius:20px;background:#170d29;border:1px solid #51336d;overflow:hidden}
 .tap-energy-track span{display:block;width:100%;height:100%;border-radius:20px;background:linear-gradient(90deg,#8b3ee8,#c47aff,#f1c4ff);box-shadow:0 0 12px #bb65ff88;transition:width .25s}
-.tap-value-upgrade{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#e9dcfa;font:700 11px Arial}
-.tap-value-upgrade strong{color:#d8a7ff;font-size:16px;direction:ltr}
-.tap-energy-action{display:flex;justify-content:center;margin:0 auto 9px}
-.tap-energy-action button{min-width:130px;border:1px solid #bd80f2;border-radius:11px;padding:9px 20px;background:linear-gradient(135deg,#7c2fc2,#4b197d);color:#fff;font:800 12px Arial;box-shadow:0 0 12px #a84cff33}
-.tap-energy-regen{margin-top:6px;text-align:center;color:#bda8d5;font-size:9px}
-@media(max-width:380px){.tap-stats-row{gap:6px}.tap-energy-panel,.tap-value-upgrade{padding:9px 6px}.tap-energy-heading strong,.tap-value-upgrade strong{font-size:14px}}
+.tap-value-upgrade{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#cbb8dc;font:700 12px Arial}
+.tap-value-upgrade strong{display:flex;align-items:center;justify-content:center;gap:5px;color:#d8a7ff;font-size:19px;direction:ltr}
+.tap-value-upgrade img{width:25px;height:25px;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 0 5px #a84cff55)}
+.tap-energy-section{margin:16px auto 9px;padding:14px;border:1px solid rgba(183,111,255,.22);border-radius:18px;background:rgba(27,15,45,.78)}
+.tap-energy-section .tap-energy-bottom{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#e8d7ff;font-size:13px}
+.tap-energy-section .tap-energy-bottom button{border:0;padding:0;background:transparent;color:#d8a7ff;font:800 13px Arial}
+.tap-energy-section .tap-energy-regen{font-size:10px;color:#bda8d5}
+.tap-energy-section .tap-energy-track{height:9px;margin:0}
+@media(max-width:380px){.tap-stats-row{gap:6px;margin-top:75px}.tap-energy-panel,.tap-value-upgrade{padding:9px 6px}.tap-energy-heading strong,.tap-value-upgrade strong{font-size:16px}}
 .tap-upgrade-overlay{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,2,12,.78);backdrop-filter:blur(8px)}
 .tap-upgrade-overlay[hidden]{display:none!important}
 .tap-upgrade-dialog{width:min(100%,360px);padding:17px;border:1px solid #b66bf1;border-radius:19px;background:linear-gradient(145deg,#32164e,#120b22);box-shadow:0 18px 55px #000b,0 0 25px #a84cff33;color:#fff;text-align:right}
@@ -1063,15 +1066,20 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
     <div id="tapFloatLayer" class="tap-floats" aria-hidden="true"></div>
   </div>
   <div class="tap-bottom-info">
-    <div class="tap-stats-row">
-      <section class="tap-energy-panel" aria-label="الطاقة">
-        <div class="tap-energy-heading"><span>الطاقة المتبقية</span><strong id="tapEnergyText">500 / 500</strong></div>
-        <div class="tap-energy-track"><span id="tapEnergyFill"></span></div>
-        <div class="tap-energy-regen" id="tapEnergyRegen">تتجدد الطاقة تلقائياً</div>
-      </section>
-      <button type="button" class="tap-value-upgrade" id="tapTapUpgradeOpen"><span>قيمة الضغطة</span><strong id="tapRewardText">+0.01 OXIDE</strong></button>
-    </div>
-    <div class="tap-energy-action"><button type="button" id="tapEnergyUpgradeOpen">⚡ الطاقة</button></div>
+    <section class="tap-stats-row" aria-label="إحصائيات الضغط">
+      <div class="tap-energy-panel">
+        <span class="tap-stat-caption">الطاقة المتبقية</span>
+        <button type="button" class="tap-value-upgrade" id="tapEnergyUpgradeOpen" aria-label="تطوير سعة الطاقة"><strong id="tapEnergyText">500 / 500</strong></button>
+      </div>
+      <div class="tap-energy-panel">
+        <span class="tap-stat-caption">قيمة الضغطة</span>
+        <button type="button" class="tap-value-upgrade" id="tapTapUpgradeOpen"><strong><span id="tapRewardText">+0.01</span><img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="OXIDE"></strong></button>
+      </div>
+    </section>
+    <section class="tap-energy-section" aria-label="الطاقة">
+      <div class="tap-energy-bottom"><button type="button" id="tapEnergyUpgradeLabel">⚡ الطاقة</button><span class="tap-energy-regen" id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span></div>
+      <div class="tap-energy-track"><span id="tapEnergyFill"></span></div>
+    </section>
     <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b>+0.01</b> عملة</span></div>
 
     <div class="tap-upgrade-overlay" id="tapUpgradeOverlay" hidden>
@@ -3057,6 +3065,7 @@ initializeOxideHub();
  function closeOverlay(id){const el=$(id);if(el)el.hidden=true}
  $("tapTapUpgradeOpen")?.addEventListener("click",()=>{render();openOverlay("tapUpgradeOverlay")});
  $("tapEnergyUpgradeOpen")?.addEventListener("click",()=>{render();openOverlay("energyUpgradeOverlay")});
+  $("tapEnergyUpgradeLabel")?.addEventListener("click",()=>{render();openOverlay("energyUpgradeOverlay")});
  $("tapUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"tap"});if(ok&&$("tapUpgradeFeedback"))$("tapUpgradeFeedback").textContent="تم تطوير قيمة الضغطة بنجاح ✨"});
  $("energyUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"energy"});if(ok&&$("energyUpgradeFeedback"))$("energyUpgradeFeedback").textContent="تمت زيادة سعة الطاقة بنجاح ⚡"});
  document.querySelectorAll("[data-close-upgrade]").forEach(button=>button.addEventListener("click",()=>closeOverlay(button.dataset.closeUpgrade==="tap"?"tapUpgradeOverlay":"energyUpgradeOverlay")));
