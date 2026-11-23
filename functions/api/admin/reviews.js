@@ -137,7 +137,11 @@ async function getReviewItems(DB, type) {
              ru.created_at AS user_created_at,
              COALESCE(du.public_id, 'OX-' || UPPER(SUBSTR(REPLACE(r.referred_id, '-', ''), 1, 8))) AS invited_display_id,
              COALESCE(du.points, 0) AS invited_points,
-             r.risk_score, r.risk_reason, r.created_at
+             r.risk_score, r.risk_reason, r.created_at,
+             (SELECT COUNT(*) FROM mission_submissions ms
+              WHERE ms.user_id = r.referred_id AND ms.status = 'approved') AS approved_missions,
+             (SELECT COUNT(*) FROM mission_submissions ms
+              WHERE ms.user_id = r.referred_id AND ms.status = 'pending') AS pending_missions
       FROM referrals r
       LEFT JOIN users ru ON ru.user_uuid = r.referrer_id
       LEFT JOIN users du ON du.user_uuid = r.referred_id
@@ -229,6 +233,12 @@ async function reviewMission(DB, id, decision) {
       const referral = await DB.prepare(`
         SELECT id, referrer_id FROM referrals
         WHERE referred_id = ? AND status = 'pending'
+        AND COALESCE(risk_score, 0) < 70
+          AND referrer_id <> referred_id
+          AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referrals.referrer_id)
+          AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referrals.referred_id)
+          AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrals.referrer_id LIMIT 1)
+              <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrals.referred_id LIMIT 1)
         LIMIT 1
       `).bind(submission.user_id).first();
       if (referral?.referrer_id) {
@@ -240,6 +250,11 @@ async function reviewMission(DB, id, decision) {
               AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+              AND referrer_id <> referred_id
+              AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referrer_id)
+              AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referred_id)
+              AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrer_id LIMIT 1)
+                  <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referred_id LIMIT 1)
           `).bind(referral.id, submission.user_id, id, referral.referrer_id, submission.user_id),
           DB.prepare(`
             UPDATE users SET points = points + 30, updated_at = ?
@@ -319,6 +334,32 @@ async function reviewReferral(DB, id, decision) {
     return { success: false, status: 409, error: "REFERRAL_NOT_PENDING_REVIEW" };
   }
 
+  const eligibility = await DB.prepare(`
+    SELECT
+      EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active') AS referrer_active,
+      EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active') AS referred_active,
+      EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = ?) AS referrer_identity,
+      EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = ?) AS referred_identity,
+      (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = ? LIMIT 1) AS referrer_telegram_id,
+      (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = ? LIMIT 1) AS referred_telegram_id,
+      (SELECT COUNT(*) FROM mission_submissions WHERE user_id = ? AND status = 'approved') AS approved_missions,
+      EXISTS (SELECT 1 FROM point_ledger WHERE user_uuid = ? AND reason = 'referral_reward'
+              AND reference_type = 'referral' AND reference_id = CAST(? AS TEXT)) AS already_paid
+  `).bind(
+    referral.referrer_id, referral.referred_id,
+    referral.referrer_id, referral.referred_id,
+    referral.referrer_id, referral.referred_id,
+    referral.referred_id, referral.referrer_id, id
+  ).first();
+  if (decision === "approve" &&
+      (!eligibility?.referrer_active || !eligibility?.referred_active ||
+       !eligibility?.referrer_identity || !eligibility?.referred_identity ||
+       !eligibility?.referrer_telegram_id || !eligibility?.referred_telegram_id ||
+       String(eligibility.referrer_telegram_id) === String(eligibility.referred_telegram_id) ||
+       Number(eligibility.approved_missions || 0) < 1 || eligibility.already_paid)) {
+    return { success: false, status: 409, error: "REFERRAL_NOT_ELIGIBLE",
+      details: "يلزم حسابان نشطان بهويتين مختلفتين، ومهمة معتمدة واحدة على الأقل، وعدم وجود مكافأة سابقة." };
+  }
   const now = Math.floor(Date.now() / 1000);
   if (decision === "reject") {
     const rejected = await DB.prepare(`
@@ -338,6 +379,11 @@ async function reviewReferral(DB, id, decision) {
         AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
         AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
         AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+        AND referrer_id <> referred_id
+        AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referrer_id)
+        AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referred_id)
+        AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrer_id LIMIT 1)
+            <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referred_id LIMIT 1)
     `).bind(id, referral.referred_id, referral.referrer_id, referral.referred_id),
     DB.prepare(`
       UPDATE users SET points = points + 30, updated_at = ?
