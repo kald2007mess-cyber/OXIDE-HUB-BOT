@@ -1065,7 +1065,7 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
       <div class="tap-energy-bottom"><span id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span><button type="button" id="tapEnergyUpgradeOpen">⚡ الطاقة</button></div>
     </section>
     <button type="button" class="tap-value-upgrade" id="tapTapUpgradeOpen"><span>قيمة الضغطة</span><strong id="tapRewardText">+0.01 OXIDE</strong></button>
-    <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b id="tapRewardText">+0.01</b> عملة</span></div>
+    <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b>+0.01</b> عملة</span></div>
 
     <div class="tap-upgrade-overlay" id="tapUpgradeOverlay" hidden>
       <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="tapUpgradeTitle">
@@ -2987,6 +2987,7 @@ initializeOxideHub();
   const energyFill=$("tapEnergyFill");if(energyFill)energyFill.style.width=Math.max(0,Math.min(100,energy/maxEnergy*100))+"%";
   const reward=tapRates[Math.max(1,Math.min(6,levels.tap))]||0.01;
   const rewardText=$("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2)+" OXIDE";
+  const footerReward=document.querySelector(".tap-footer b");if(footerReward)footerReward.textContent="+"+reward.toFixed(2);
   const tapLevel=Math.max(1,Math.min(6,levels.tap)),tapNext=tapLevel<6;
   if($("tapUpgradeLevel"))$("tapUpgradeLevel").textContent="المستوى "+tapLevel+" / 6";
   if($("tapCurrentValue"))$("tapCurrentValue").textContent="+"+reward.toFixed(2);
@@ -2999,6 +3000,7 @@ initializeOxideHub();
   if($("energyNextCapacity"))$("energyNextCapacity").textContent=eNext?String(energyCaps[eLevel+1]):"MAX";
   if($("energyUpgradeCost"))$("energyUpgradeCost").textContent=eNext?energyCosts[eLevel]+" OXIDE":"MAX";
   if($("energyUpgradeConfirm"))$("energyUpgradeConfirm").disabled=!walletReady||!eNext||total<energyCosts[eLevel]||actionBusy;
+  const regenLabel=$("tapEnergyRegen");if(regenLabel)regenLabel.textContent="+1 طاقة كل "+(regenMs()/1000).toFixed(1)+" ثانية";
   const notice=$("tapNotice");if(notice&&energy<1)notice.textContent="انتهت الطاقة. انتظر حتى تتجدد أو طوّر سعتها.";
   else if(notice&&notice.textContent.indexOf("انتهت الطاقة")===0)notice.textContent="";
  }
