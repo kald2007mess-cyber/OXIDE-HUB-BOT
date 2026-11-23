@@ -129,6 +129,29 @@ async function getReviewItems(DB, type) {
     return result.results || [];
   }
 
+  if (type === "referrals") {
+    const result = await DB.prepare(`
+      SELECT r.id, r.referrer_id AS user_id, r.referred_id,
+             COALESCE(ru.public_id, 'OX-' || UPPER(SUBSTR(REPLACE(r.referrer_id, '-', ''), 1, 8))) AS display_id,
+             COALESCE(ru.points, 0) AS points,
+             ru.created_at AS user_created_at,
+             COALESCE(du.public_id, 'OX-' || UPPER(SUBSTR(REPLACE(r.referred_id, '-', ''), 1, 8))) AS invited_display_id,
+             COALESCE(du.points, 0) AS invited_points,
+             r.risk_score, r.risk_reason, r.created_at
+      FROM referrals r
+      LEFT JOIN users ru ON ru.user_uuid = r.referrer_id
+      LEFT JOIN users du ON du.user_uuid = r.referred_id
+      WHERE r.status = 'review'
+        AND EXISTS (
+          SELECT 1 FROM mission_submissions s
+          WHERE s.user_id = r.referred_id AND s.status = 'approved'
+        )
+      ORDER BY r.created_at ASC, r.id ASC
+      LIMIT 50
+    `).all();
+    return result.results || [];
+  }
+
   const result = await DB.prepare(`
     SELECT o.id, o.user_uuid AS user_id, o.public_id AS display_id, o.offer_id, o.offer_name,
            o.points_cost, o.user_uuid_input, o.created_at,
@@ -287,6 +310,81 @@ async function reviewMission(DB, id, decision) {
   return { success: true, message: "تم رفض المهمة. يمكن للمستخدم إرسال دليل جديد." };
 }
 
+async function reviewReferral(DB, id, decision) {
+  const referral = await DB.prepare(`
+    SELECT id, referrer_id, referred_id, status
+    FROM referrals WHERE id = ? LIMIT 1
+  `).bind(id).first();
+  if (!referral || referral.status !== "review") {
+    return { success: false, status: 409, error: "REFERRAL_NOT_PENDING_REVIEW" };
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  if (decision === "reject") {
+    const rejected = await DB.prepare(`
+      UPDATE referrals SET status = 'rejected'
+      WHERE id = ? AND status = 'review'
+    `).bind(id).run();
+    if (Number(rejected.meta?.changes || 0) !== 1) {
+      return { success: false, status: 409, error: "REFERRAL_ALREADY_REVIEWED" };
+    }
+    return { success: true, message: "تم رفض الإحالة المشبوهة دون منح مكافأة." };
+  }
+
+  const results = await DB.batch([
+    DB.prepare(`
+      UPDATE referrals SET status = 'rewarded', points_awarded = 50
+      WHERE id = ? AND status = 'review'
+        AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
+        AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+        AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+    `).bind(id, referral.referred_id, referral.referrer_id, referral.referred_id),
+    DB.prepare(`
+      UPDATE users SET points = points + 50, updated_at = ?
+      WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+    `).bind(now, referral.referrer_id),
+    DB.prepare(`
+      INSERT INTO point_ledger
+        (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+      SELECT user_uuid,50,points,'referral_reward','referral',CAST(? AS TEXT),?
+      FROM users WHERE user_uuid = ? AND changes() = 1
+    `).bind(id,now,referral.referrer_id),
+    DB.prepare(`
+      UPDATE users SET points = points + 30, updated_at = ?
+      WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+    `).bind(now, referral.referred_id),
+    DB.prepare(`
+      INSERT INTO point_ledger
+        (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
+      SELECT user_uuid,30,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
+      FROM users WHERE user_uuid = ? AND changes() = 1
+    `).bind(id,now,referral.referred_id),
+    DB.prepare(`
+      UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+      WHERE user_id = ? AND EXISTS (
+        SELECT 1 FROM point_ledger WHERE user_uuid = ?
+          AND reason = 'referral_reward' AND reference_type = 'referral'
+          AND reference_id = CAST(? AS TEXT)
+      )
+    `).bind(referral.referrer_id,referral.referrer_id,referral.referrer_id,id),
+    DB.prepare(`
+      UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+      WHERE user_id = ? AND EXISTS (
+        SELECT 1 FROM point_ledger WHERE user_uuid = ?
+          AND reason = 'referral_invited_bonus' AND reference_type = 'referral'
+          AND reference_id = CAST(? AS TEXT)
+      )
+    `).bind(referral.referred_id,referral.referred_id,referral.referred_id,id)
+  ]);
+
+  if (Number(results[0]?.meta?.changes || 0) !== 1 ||
+      Number(results[1]?.meta?.changes || 0) !== 1 ||
+      Number(results[3]?.meta?.changes || 0) !== 1) {
+    return { success: false, status: 409, error: "REFERRAL_REWARD_FAILED" };
+  }
+  return { success: true, message: "تم اعتماد الإحالة وإضافة 50 للمُحيل و30 للمستخدم المدعو." };
+}
+
 async function reviewRedemption(DB, id, decision) {
   const order = await DB.prepare(`
     SELECT id, user_uuid AS user_id, public_id AS display_id, offer_name, points_cost, status
@@ -430,7 +528,7 @@ export async function onRequestPost({ request, env }) {
 
     if (action === "list") {
       const type = String(body.type || "");
-      if (!["missions", "redemptions"].includes(type)) {
+      if (!["missions", "redemptions", "referrals"].includes(type)) {
         return json({ success: false, error: "INVALID_REVIEW_TYPE" }, 400);
       }
       if (type === "redemptions") await ensureRedemptionOrdersTable(env.DB);
@@ -450,7 +548,9 @@ export async function onRequestPost({ request, env }) {
       if (type === "redemptions") await ensureRedemptionOrdersTable(env.DB);
       const result = type === "missions"
         ? await reviewMission(env.DB, id, decision)
-        : await reviewRedemption(env.DB, id, decision);
+        : type === "referrals"
+          ? await reviewReferral(env.DB, id, decision)
+          : await reviewRedemption(env.DB, id, decision);
       return json(result, result.status || (result.success ? 200 : 400));
     }
 
