@@ -213,53 +213,47 @@ async function reviewMission(DB, id, decision) {
         await DB.batch([
           DB.prepare(`
             UPDATE referrals SET status = 'rewarded', points_awarded = 50
-            WHERE referred_id = ? AND status = 'pending'
+            WHERE id = ? AND referred_id = ? AND status = 'pending'
               AND EXISTS (SELECT 1 FROM mission_submissions WHERE id = ? AND status = 'approved')
-          `).bind(submission.user_id, id),
+              AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+              AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
+          `).bind(referral.id, submission.user_id, id, referral.referrer_id, submission.user_id),
           DB.prepare(`
             UPDATE users SET points = points + 50, updated_at = ?
-            WHERE user_uuid = ? AND EXISTS (
-              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
-                AND points_awarded = 50
-            )
-          `).bind(referralTime, referral.referrer_id, submission.user_id),
-          DB.prepare(`
-            UPDATE users SET points = points + 30, updated_at = ?
-            WHERE user_uuid = ? AND EXISTS (
-              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
-                AND points_awarded = 50
-            )
-          `).bind(referralTime, submission.user_id, submission.user_id),
-          DB.prepare(`
-            UPDATE visitors SET points = (
-              SELECT points FROM users WHERE user_uuid = visitors.user_id
-            ) WHERE user_id = ? AND EXISTS (
-              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
-                AND points_awarded = 50
-            )
-          `).bind(referral.referrer_id, submission.user_id),
-          DB.prepare(`
-            UPDATE visitors SET points = (
-              SELECT points FROM users WHERE user_uuid = visitors.user_id
-            ) WHERE user_id = ? AND EXISTS (
-              SELECT 1 FROM referrals WHERE referred_id = ? AND status = 'rewarded'
-                AND points_awarded = 50
-            )
-          `).bind(submission.user_id, submission.user_id),
+            WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+          `).bind(referralTime, referral.referrer_id),
           DB.prepare(`
             INSERT INTO point_ledger
               (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
             SELECT user_uuid,50,points,'referral_reward','referral',CAST(? AS TEXT),?
-            FROM users WHERE user_uuid = ?
-              AND EXISTS (SELECT 1 FROM referrals WHERE id = ? AND status = 'rewarded' AND points_awarded = 50)
-          `).bind(referral.id,referralTime,referral.referrer_id,referral.id),
+            FROM users WHERE user_uuid = ? AND changes() = 1
+          `).bind(referral.id,referralTime,referral.referrer_id),
+          DB.prepare(`
+            UPDATE users SET points = points + 30, updated_at = ?
+            WHERE user_uuid = ? AND status = 'active' AND changes() = 1
+          `).bind(referralTime, submission.user_id),
           DB.prepare(`
             INSERT INTO point_ledger
               (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
             SELECT user_uuid,30,points,'referral_invited_bonus','referral',CAST(? AS TEXT),?
-            FROM users WHERE user_uuid = ?
-              AND EXISTS (SELECT 1 FROM referrals WHERE id = ? AND status = 'rewarded' AND points_awarded = 50)
-          `).bind(referral.id,referralTime,submission.user_id,referral.id)
+            FROM users WHERE user_uuid = ? AND changes() = 1
+          `).bind(referral.id,referralTime,submission.user_id),
+          DB.prepare(`
+            UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+            WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM point_ledger WHERE user_uuid = ?
+                AND reason = 'referral_reward' AND reference_type = 'referral'
+                AND reference_id = CAST(? AS TEXT)
+            )
+          `).bind(referral.referrer_id,referral.referrer_id,referral.referrer_id,referral.id),
+          DB.prepare(`
+            UPDATE visitors SET points = (SELECT points FROM users WHERE user_uuid = ?)
+            WHERE user_id = ? AND EXISTS (
+              SELECT 1 FROM point_ledger WHERE user_uuid = ?
+                AND reason = 'referral_invited_bonus' AND reference_type = 'referral'
+                AND reference_id = CAST(? AS TEXT)
+            )
+          `).bind(submission.user_id,submission.user_id,submission.user_id,referral.id)
         ]);
       }
     } catch (referralRewardError) {
