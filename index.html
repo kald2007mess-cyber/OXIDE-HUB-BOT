@@ -3195,7 +3195,7 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
  const screen=document.getElementById("oxideLaunchScreen");
  if(!screen)return;
  const KEY="oxide_launch_deadline_v1";
- let deadline=0;
+ let deadline=0,timer=null;
  try{
   deadline=Number(localStorage.getItem(KEY)||0);
   if(!Number.isFinite(deadline)||deadline<=0){
@@ -3213,7 +3213,7 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
   document.getElementById("oxideLaunchHours").textContent=pad(h);
   document.getElementById("oxideLaunchMinutes").textContent=pad(m);
   document.getElementById("oxideLaunchSeconds").textContent=pad(sec);
-  if(remaining<=0){close();clearInterval(timer)}
+  if(remaining<=0){close();if(timer)clearInterval(timer)}
  }
  async function ensureLink(){
   if(!window.referralLinkValue&&typeof window.loadReferral==="function")await window.loadReferral();
@@ -3234,7 +3234,7 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
   else window.open(url,"_blank","noopener,noreferrer");
  };
  tick();
- const timer=setInterval(tick,1000);
+ if(deadline>Date.now())timer=setInterval(tick,1000);
  // Load the user's unique referral URL in the background after Telegram identity is ready.
  const waitForReferral=setInterval(async()=>{
   if(document.getElementById("referralLink")?.value){
