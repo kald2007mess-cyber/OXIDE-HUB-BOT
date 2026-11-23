@@ -84,6 +84,18 @@ export async function onRequestGet({ request, env }) {
     }
     await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id)").run();
 
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS mission_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        mission_id INTEGER NOT NULL,
+        proof_file_id TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        created_at INTEGER NOT NULL,
+        reviewed_at INTEGER
+      )
+    `).run();
+
     // Recover eligible referrals left pending if an earlier reward batch failed.
     // Only referrals with an approved mission and no high-risk flag are paid.
     await env.DB.prepare(`
