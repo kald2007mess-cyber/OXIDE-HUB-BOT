@@ -224,10 +224,35 @@ export async function onRequestGet({ request, env }) {
     let stats = { total: 0, earned: 0 };
     try {
       stats = await env.DB.prepare(`
-        SELECT COUNT(*) AS total,
-               COALESCE(SUM(points_awarded), 0) AS earned
-        FROM referrals
-        WHERE referrer_id = ?
+        SELECT
+          COUNT(*) AS total,
+          COALESCE(SUM(points_awarded), 0) AS earned,
+          COALESCE(SUM(CASE WHEN
+            COALESCE(r.risk_score, 0) < 70
+            AND r.referrer_id <> r.referred_id
+            AND EXISTS (SELECT 1 FROM mission_submissions ms
+                        WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+            AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
+            AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
+            AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
+            AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referred_id)
+            AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referrer_id LIMIT 1)
+                <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referred_id LIMIT 1)
+          THEN 1 ELSE 0 END), 0) AS eligible,
+          COUNT(*) - COALESCE(SUM(CASE WHEN
+            COALESCE(r.risk_score, 0) < 70
+            AND r.referrer_id <> r.referred_id
+            AND EXISTS (SELECT 1 FROM mission_submissions ms
+                        WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+            AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
+            AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
+            AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
+            AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referred_id)
+            AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referrer_id LIMIT 1)
+                <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referred_id LIMIT 1)
+          THEN 1 ELSE 0 END), 0) AS ineligible
+        FROM referrals r
+        WHERE r.referrer_id = ?
       `).bind(userId).first() || stats;
     } catch (statsError) {
       console.error("Referral statistics unavailable:", statsError);
@@ -277,7 +302,9 @@ export async function onRequestGet({ request, env }) {
         userId: account.public_id || shortId(userId),
         points: Number(account.points || 0),
         referrals: Number(stats?.total || 0),
-        earned: Number(stats?.earned || 0)
+        earned: Number(stats?.earned || 0),
+        eligible: Number(stats?.eligible || 0),
+        ineligible: Number(stats?.ineligible || 0)
       },
 
       pointsRanking: (pointsRanking.results || []).map(
