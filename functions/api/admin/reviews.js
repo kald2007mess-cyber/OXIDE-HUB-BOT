@@ -242,7 +242,7 @@ async function reviewMission(DB, id, decision) {
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
           `).bind(referral.id, submission.user_id, id, referral.referrer_id, submission.user_id),
           DB.prepare(`
-            UPDATE users SET points = points + 50, updated_at = ?
+            UPDATE users SET points = points + 30, updated_at = ?
             WHERE user_uuid = ? AND status = 'active' AND changes() = 1
           `).bind(referralTime, referral.referrer_id),
           DB.prepare(`
@@ -340,7 +340,7 @@ async function reviewReferral(DB, id, decision) {
         AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
     `).bind(id, referral.referred_id, referral.referrer_id, referral.referred_id),
     DB.prepare(`
-      UPDATE users SET points = points + 50, updated_at = ?
+      UPDATE users SET points = points + 30, updated_at = ?
       WHERE user_uuid = ? AND status = 'active' AND changes() = 1
     `).bind(now, referral.referrer_id),
     DB.prepare(`
