@@ -1039,20 +1039,30 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 
 
 
-#oxideLaunchGate{position:fixed;inset:0;z-index:99999;display:none;overflow:auto;padding:22px 16px 30px;background:radial-gradient(ellipse at 50% 18%,#401080 0,#120522 48%,#05020d 100%);color:#fff;text-align:center;font-family:Arial,sans-serif}
-#oxideLaunchGate.active{display:flex;align-items:center;justify-content:center}
-.oxide-launch-inner{width:min(100%,480px);margin:auto}
-.oxide-launch-lock{font-size:76px;filter:drop-shadow(0 0 18px #a020ff);margin:0 auto 8px}
-.oxide-launch-title{font-size:27px;font-weight:900;text-shadow:0 0 15px #b84cff;margin:12px 0}
-.oxide-launch-sub{color:#d8aaff;font-size:16px;margin:8px 0 18px}
-.oxide-launch-clock{font:900 clamp(38px,11vw,58px)/1.2 monospace;letter-spacing:2px;padding:18px 8px;border:2px solid #a72cff;border-radius:18px;background:#10051f;box-shadow:0 0 24px #8b20ff,inset 0 0 22px #501080;margin:16px 0}
-.oxide-launch-count{padding:13px;border:1px solid #8c31df;border-radius:14px;background:#10051f;margin:14px 0;font-size:17px}
-.oxide-launch-link{width:100%;padding:14px 10px;border:1px solid #8f32dd;border-radius:12px;background:#080313;color:#fff;text-align:center;font-size:13px;direction:ltr}
-.oxide-launch-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
-.oxide-launch-actions button{border:1px solid #ad54ff;border-radius:12px;padding:13px 8px;background:linear-gradient(120deg,#491078,#21083c);color:white;font-weight:800}
-.oxide-launch-rocket{width:82%;margin:24px auto 0;padding:18px;border:2px solid #4b405e;border-radius:18px;background:linear-gradient(120deg,#171320,#09070e);color:#777;font-size:28px;filter:grayscale(1);opacity:.65;box-shadow:none}
-.oxide-launch-rocket.ready{border-color:#d16aff;color:#fff;filter:none;opacity:1;box-shadow:0 0 28px #b72cff,inset 0 0 20px #7020a5;animation:oxideLaunchPulse 1.4s infinite alternate}
+#oxideLaunchGate{position:fixed;inset:0;z-index:99999;display:none;overflow-y:auto;overflow-x:hidden;padding:14px 12px 24px;background:radial-gradient(ellipse at 50% 30%,rgba(91,0,190,.36),transparent 43%),radial-gradient(ellipse at 50% 100%,#230052 0,#090018 55%,#02010a 100%);color:#fff;text-align:center;font-family:Arial,sans-serif;isolation:isolate}
+#oxideLaunchGate:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(2px 2px at 8% 12%,#fff,transparent 70%),radial-gradient(1px 1px at 23% 31%,#d99aff,transparent 70%),radial-gradient(2px 2px at 83% 19%,#fff,transparent 70%),radial-gradient(1px 1px at 72% 68%,#b65aff,transparent 70%),radial-gradient(2px 2px at 12% 83%,#fff,transparent 70%),radial-gradient(1px 1px at 91% 91%,#d99aff,transparent 70%);background-size:220px 230px;opacity:.85}
+#oxideLaunchGate.active{display:flex;align-items:flex-start;justify-content:center}
+.oxide-launch-inner{width:min(100%,430px);margin:auto;padding:5px 0 12px}
+.oxide-launch-lock{position:relative;display:grid;place-items:center;width:150px;height:150px;margin:0 auto 7px;font-size:82px;color:#f7eaff;filter:drop-shadow(0 0 12px #a500ff) drop-shadow(0 0 28px #7800ff)}
+.oxide-launch-lock:before{content:"";position:absolute;inset:18px 7px 0;border:2px solid #b43aff;border-radius:34px 34px 24px 24px;background:linear-gradient(145deg,#24104d,#070319 65%);box-shadow:0 0 18px #a000ff,inset 0 0 22px #6d1baf;z-index:-1;clip-path:polygon(15% 0,85% 0,100% 18%,100% 82%,85% 100%,15% 100%,0 82%,0 18%)}
+.oxide-launch-title{font-size:clamp(21px,6vw,27px);font-weight:900;text-shadow:0 0 12px #d34cff,0 0 24px #8d00ff;margin:5px 0 17px;line-height:1.45}
+.oxide-launch-sub{color:#f0d8ff;font-size:15px;font-weight:800;text-shadow:0 0 10px #9d29ff;margin:10px 0 9px}
+.oxide-launch-clock{position:relative;font:900 clamp(37px,10.5vw,56px)/1.2 monospace;letter-spacing:1px;padding:20px 5px;margin:10px 0 15px;border:2px solid #bd42ff;border-radius:17px;background:linear-gradient(110deg,#080016,#16002e 50%,#080016);box-shadow:0 0 9px #d300ff,0 0 24px #8c00ff,inset 0 0 22px #6a14a8;text-shadow:0 0 12px #d8a0ff;direction:ltr}
+.oxide-launch-count{position:relative;width:min(78%,330px);margin:14px auto;padding:13px 10px;border:2px solid #a62cff;border-radius:15px;background:linear-gradient(110deg,#090018,#19002e,#090018);box-shadow:0 0 12px #8700ff,inset 0 0 14px #4a087c;font-size:17px;font-weight:800;text-shadow:0 0 9px #b74cff}
+.oxide-launch-count:before,.oxide-launch-count:after{content:"❯❯";position:absolute;top:50%;transform:translateY(-50%);color:#b000ff;font-size:23px;text-shadow:0 0 12px #d000ff}
+.oxide-launch-count:before{right:calc(100% + 8px)}.oxide-launch-count:after{left:calc(100% + 8px);transform:translateY(-50%) scaleX(-1)}
+.oxide-launch-link-row{display:flex;align-items:center;gap:8px;padding:8px;border:2px solid #a62cff;border-radius:14px;background:linear-gradient(110deg,#080014,#160027,#080014);box-shadow:0 0 13px #9700ff,inset 0 0 15px #480078}
+.oxide-launch-link{display:block;flex:1;min-width:0;width:100%;padding:11px 7px;border:0;outline:0;background:transparent;color:#f4eaff;text-align:center;font-size:clamp(11px,3.2vw,14px);direction:ltr}
+.oxide-launch-copy{flex:0 0 48px;height:48px;border:1px solid #d04cff;border-radius:10px;background:linear-gradient(145deg,#5b08a7,#26004c);color:white;font-size:22px;box-shadow:0 0 12px #9d00ff}
+.oxide-launch-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.oxide-launch-actions button{min-height:59px;border:2px solid #a72dff;border-radius:13px;padding:12px 7px;background:linear-gradient(120deg,#16002e,#080014 55%,#1c0038);color:white;font-size:15px;font-weight:900;text-shadow:0 0 9px #d8a0ff;box-shadow:0 0 12px #8500ff,inset 0 0 12px #4a087c}
+.oxide-launch-rocket{position:relative;width:78%;min-height:86px;margin:20px auto 0;padding:14px;border:2px solid #51445f;border-radius:18px;background:linear-gradient(120deg,#171320,#09070e);color:#777;font-size:31px;filter:grayscale(1);opacity:.72;box-shadow:inset 0 0 18px #000}
+.oxide-launch-rocket:before,.oxide-launch-rocket:after{content:"❯❯";position:absolute;top:50%;transform:translateY(-50%);color:#8b25d7;font-size:23px;filter:grayscale(1);opacity:.7}
+.oxide-launch-rocket:before{right:calc(100% + 15px)}.oxide-launch-rocket:after{left:calc(100% + 15px);transform:translateY(-50%) scaleX(-1)}
+.oxide-launch-rocket.ready{border-color:#e3a0ff;color:#fff;filter:none;opacity:1;box-shadow:0 0 28px #b72cff,inset 0 0 20px #7020a5;animation:oxideLaunchPulse 1.4s infinite alternate}
+.oxide-launch-rocket.ready:before,.oxide-launch-rocket.ready:after{filter:none;opacity:1}
 @keyframes oxideLaunchPulse{to{box-shadow:0 0 42px #d64dff,inset 0 0 25px #9025d1}}
+@media(max-height:700px){.oxide-launch-lock{width:105px;height:105px;font-size:58px}.oxide-launch-lock:before{inset:12px 5px 0}.oxide-launch-title{margin:2px 0 9px}.oxide-launch-clock{padding:13px 5px;margin:7px 0 10px}.oxide-launch-count{margin:9px auto;padding:9px}.oxide-launch-rocket{margin-top:12px;min-height:65px}}
 
 </style>
 </head>
@@ -1310,15 +1320,18 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 </main>
 <section id="oxideLaunchGate" aria-live="polite">
  <div class="oxide-launch-inner">
-  <div class="oxide-launch-lock">🔒</div>
+  <div class="oxide-launch-lock" aria-hidden="true">🔒</div>
   <h1 class="oxide-launch-title">جارٍ إطلاق البوت بعد...</h1>
   <div class="oxide-launch-clock" id="oxideLaunchClock">22:00:00</div>
   <div class="oxide-launch-count">👥 عدد الدعوات: <strong id="oxideLaunchInvites">0</strong></div>
   <p class="oxide-launch-sub">رابط دعوتك الخاص</p>
-  <input class="oxide-launch-link" id="oxideLaunchReferral" readonly value="" aria-label="رابط الدعوة الخاص بك">
+  <div class="oxide-launch-link-row">
+   <input class="oxide-launch-link" id="oxideLaunchReferral" readonly value="" aria-label="رابط الدعوة الخاص بك">
+   <button class="oxide-launch-copy" type="button" onclick="copyOxideLaunchLink()" aria-label="نسخ رابط الدعوة">▢</button>
+  </div>
   <div class="oxide-launch-actions">
-   <button type="button" onclick="copyOxideLaunchLink()">نسخ الرابط</button>
-   <button type="button" onclick="shareOxideLaunchLink()">مشاركة رابط</button>
+   <button type="button" onclick="shareOxideLaunchLink()">♧ مشاركة رابط</button>
+   <button type="button" onclick="copyOxideLaunchLink()">⧉ نسخ الرابط</button>
   </div>
   <button type="button" class="oxide-launch-rocket" id="oxideLaunchRocket" disabled onclick="enterOxideAfterLaunch()">🚀</button>
   <p class="oxide-launch-sub" id="oxideLaunchStatus">زر الإطلاق سيتفعّل عند انتهاء العدّ التنازلي</p>
