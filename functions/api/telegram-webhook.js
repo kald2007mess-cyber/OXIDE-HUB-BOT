@@ -199,7 +199,7 @@ export async function onRequestPost({ request, env }) {
     const words = botTexts[language];
 
     // Private owner-only admin command. Open the admin panel inside Telegram's Web App.
-    const adminMatch = message.text.trim().match(/^\/admin(?:@\w+)?$/);
+    const adminMatch = messageText.match(/^\/admin(?:@\w+)?$/);
     if (adminMatch) {
       if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
           String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
@@ -219,7 +219,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Owner-only command to publish the official OXIDE HUB explainer post to the channel.
-    const publishMatch = message.text.trim().match(/^\/publish_oxide(?:@\w+)?$/);
+    const publishMatch = messageText.match(/^\/publish_oxide(?:@\w+)?$/);
     if (publishMatch) {
       if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
           String(message.chat.type) === "private" &&
@@ -263,7 +263,7 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: true });
     }
 
-    const startMatch = message.text.trim().match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
+    const startMatch = messageText.match(/^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/);
     if (!startMatch) return json({ ok: true });
 
     // Telegram deep-link referrals are stored until the invited user opens the Mini App.
