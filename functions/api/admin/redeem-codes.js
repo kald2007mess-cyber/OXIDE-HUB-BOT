@@ -38,3 +38,44 @@ export async function onRequestPost({request,env}){
   return json({success:false,error:"CREATE_REDEEM_CODE_FAILED"},500);
  }
 }
+
+
+export async function onRequestGet({request,env}){
+ try{
+  if(!env.DB)return json({success:false,error:"DATABASE_NOT_CONFIGURED"},500);
+  const url=new URL(request.url);
+  const auth=await authorizeAdmin(url.searchParams.get("initData")||"",env,"security");
+  if(!auth.ok)return adminAuthResponse(auth);
+  if(!auth.owner)return json({success:false,error:"OWNER_ONLY"},403);
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
+   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
+   active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,code_id INTEGER NOT NULL,user_uuid TEXT NOT NULL,
+   claim_token TEXT NOT NULL UNIQUE,claimed_at INTEGER NOT NULL,
+   UNIQUE(code_id,user_uuid)
+  )`).run();
+  try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
+  const codeId=Number(url.searchParams.get("codeId")||0);
+  if(codeId>0){
+   const code=await env.DB.prepare("SELECT id,code,gift_count AS giftCount,coins,used_count AS usedCount,active,created_at AS createdAt,expires_at AS expiresAt FROM oxide_redeem_codes WHERE id=?").bind(codeId).first();
+   if(!code)return json({success:false,error:"CODE_NOT_FOUND"},404);
+   const users=await env.DB.prepare(`SELECT u.public_id AS id,u.user_uuid AS userUuid,u.points,
+     p.first_name AS firstName,p.last_name AS lastName,p.username,p.photo_url AS photoUrl
+     FROM oxide_redeem_claims c
+     JOIN users u ON u.user_uuid=c.user_uuid
+     LEFT JOIN oxide_profiles p ON p.user_uuid=u.user_uuid
+     WHERE c.code_id=? ORDER BY c.claimed_at DESC`).bind(codeId).all();
+   return json({success:true,code,users:users.results||[]});
+  }
+  const rows=await env.DB.prepare(`SELECT id,code,gift_count AS giftCount,coins,
+    used_count AS usedCount,active,created_at AS createdAt,expires_at AS expiresAt
+    FROM oxide_redeem_codes ORDER BY created_at DESC,id DESC LIMIT 200`).all();
+  return json({success:true,codes:rows.results||[],now:Math.floor(Date.now()/1000)});
+ }catch(error){
+  console.error("Admin redeem codes list error:",error);
+  return json({success:false,error:"LOAD_REDEEM_CODES_FAILED"},500);
+ }
+}
