@@ -401,6 +401,26 @@ export async function onRequestPost({ request, env }) {
       photoUrl, username ? "https://t.me/" + username : "tg://user?id=" + telegramId, now
     ).run();
 
+    diagnosticStage = "RECORD_USER_ACTIVITY";
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS oxide_user_activity (
+        user_uuid TEXT PRIMARY KEY,
+        telegram_user_id TEXT NOT NULL,
+        first_seen_at INTEGER NOT NULL,
+        last_seen_at INTEGER NOT NULL,
+        visit_count INTEGER NOT NULL DEFAULT 1
+      )
+    `).run();
+    await env.DB.prepare(`
+      INSERT INTO oxide_user_activity
+        (user_uuid, telegram_user_id, first_seen_at, last_seen_at, visit_count)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(user_uuid) DO UPDATE SET
+        telegram_user_id = excluded.telegram_user_id,
+        last_seen_at = excluded.last_seen_at,
+        visit_count = oxide_user_activity.visit_count + 1
+    `).bind(userUuid, telegramId, now, now).run();
+
     diagnosticStage = "CREATE_SESSION_COOKIE";
     const cookie = await createSessionCookie(env, env.DB, userUuid);
     const response = json({
