@@ -294,6 +294,22 @@ button{border-radius:12px}
 
 </div>
 <script>
+/* Early diagnostics: report startup errors even if the main admin script cannot execute. */
+(function(){
+ const show=function(message){
+  const box=document.getElementById("status");
+  if(box) box.textContent="تعذر تشغيل لوحة الإدارة: "+String(message||"خطأ JavaScript").slice(0,220);
+ };
+ window.addEventListener("error",function(event){
+  if(event&&event.message) show(event.message+" — السطر "+(event.lineno||"?"));
+ });
+ window.addEventListener("unhandledrejection",function(event){
+  const reason=event&&event.reason;
+  show(reason&&reason.message?reason.message:reason||"Promise rejection");
+ });
+})();
+</script>
+<script>
 const tg=window.Telegram?.WebApp;
 const statusBox=document.getElementById("status");
 let maintenanceEnabled=false,maintenanceMessage="",maintenanceReady=false,maintenanceBusy=false;
