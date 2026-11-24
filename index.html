@@ -1871,7 +1871,7 @@ async function loadNotifications(openPanel=false){
    const body=document.createElement("div");body.className="notification-body";body.textContent=String(n.body||"");
    const meta=document.createElement("div");meta.className="notification-meta";meta.textContent=new Date(Number(n.created_at||0)*1000).toLocaleString();
    card.append(title,body,meta);
-   if(n.type==="reward"&&Number(n.reward_points)>0){
+   if((n.type==="reward"||n.type==="redeem_code")&&Number(n.reward_points)>0){
     const button=document.createElement("button");button.className="notification-claim";
     button.textContent=n.claimed_at?(currentLanguage==="ru"?"Получено ✓":"Claimed ✓"):"🎁 "+(currentLanguage==="ru"?"Получить ":"Claim ")+Number(n.reward_points).toLocaleString()+(currentLanguage==="ru"?" очков":" points");
     button.disabled=Boolean(n.claimed_at);if(!n.claimed_at)button.addEventListener("click",()=>claimNotification(Number(n.id),button));
@@ -3212,13 +3212,12 @@ async function submitRedeemCode(){
   const response=await fetch("/api/redeem-code",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({code})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok||!result.success){
-   const messages={CODE_NOT_FOUND:"الرمز غير صحيح أو غير موجود.",CODE_ALREADY_REDEEMED:"لقد استرددت هذا الرمز من قبل.",CODE_EXHAUSTED:"انتهت جميع هدايا هذا الرمز.",CODE_NOT_AVAILABLE:"هذا الرمز غير متاح حاليًا.",NO_TELEGRAM_SESSION:"سجّل الدخول إلى تيليجرام أولاً."};
+   const messages={CODE_NOT_FOUND:"الرمز غير صحيح أو غير موجود.",CODE_ALREADY_REDEEMED:"لقد استرددت هذا الرمز من قبل.",CODE_EXHAUSTED:"انتهت جميع هدايا هذا الرمز.",CODE_EXPIRED:"انتهت صلاحية هذا الرمز وأصبح غير صالح.",CODE_NOT_AVAILABLE:"هذا الرمز غير متاح حاليًا.",NO_TELEGRAM_SESSION:"سجّل الدخول إلى تيليجرام أولاً."};
    throw new Error(messages[result.error]||"تعذر استرداد الرمز. حاول مرة أخرى.");
   }
-  status.textContent="تم الاسترداد بنجاح! أضيفت "+Number(result.coins||0).toLocaleString("en")+" عملة إلى رصيدك.";
-  const balance=Number(result.points||0).toLocaleString("en");
-  ["accountBalanceValue","pointsBalance","referralShardBalance","missionTopBalance"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=balance;});
+  status.textContent="تم استرداد الرمز بنجاح! لديك "+Number(result.coins||0).toLocaleString("en")+" عملة جاهزة للاستلام. افتح الإشعارات واضغط «استلام» لإضافتها إلى رصيدك.";
   input.value="";
+  await loadNotifications(false);
  }catch(error){status.textContent=error.message||"حدث خطأ أثناء الاسترداد."}
  finally{button.disabled=false;}
 }
