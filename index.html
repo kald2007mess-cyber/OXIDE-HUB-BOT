@@ -1416,7 +1416,7 @@ progress:"İlerleme:",stage:"Aşama",watch:"REKLAMI İZLE",completed:"TAMAMLANDI
 translations.id={...translations.en,
 progress:"Progres:",stage:"Tahap",watch:"TONTON IKLAN",completed:"SELESAI",locked:"TERKUNCI",android:"UNDUH ANDROID",iphone:"UNDUH iPHONE",beta:"UNDUH BETA",soon:"🔒 SEGERA",home:"BERANDA",rewards:"HADIAH",referral:"UNDANGAN",news:"BERITA",searching:"Mencari iklan yang tersedia...",noAd:"Belum ada iklan. Coba lagi nanti.",popup:"Izinkan pop-up untuk melanjutkan.",opened:"Iklan dibuka:",seconds:"detik. Selesaikan dan tunggu konfirmasi hadiah.",confirmed:"Iklan berhasil diselesaikan! Lanjut ke tahap berikutnya.",complete:"Semua tiga iklan selesai! Halaman unduhan sekarang tersedia.",session:"Sesi iklan masih aktif. Selesaikan atau tunggu 5 menit.",error:"Terjadi kesalahan. Silakan coba lagi.",refreshError:"Progres tidak dapat diperbarui. Periksa koneksi.",guideTitle:"PANDUAN PENGGUNAAN",guideNote:"Terima kasih telah menggunakan OXIDE HUB ❤️",balance:"Saldo Anda",redeem:"TUKAR",insufficient:"Poin tidak mencukupi",pending:"Permintaan berhasil dibuat! Status: Pending",loading:"Memuat...",refError:"Data referral tidak dapat dimuat.",refRegistered:"Referral berhasil didaftarkan!",newsTitle:"Berita",newsEmpty:"Belum ada berita.",newsError:"Berita gagal dimuat.",views:"dilihat",comments:"komentar",writeComment:"Tulis komentar...",send:"Kirim",commentError:"Komentar gagal dikirim.",commentSent:"Komentar dipublikasikan.",noComments:"Belum ada komentar.",newsLoading:"Memuat berita..."};
 
-function t(key){return translations[currentLanguage]?.[key]||translations.en[key]||translations.ar[key]||key}
+function t(key){return translations[currentLanguage]?.[key]||translations.ar[key]||translations.en[key]||key}
 function supportText(key){
  const data={
  ar:{title:"💬 الدعم الفني",description:"أرسل رسالتك وسيرد عليك فريق OXIDE HUB هنا.",placeholder:"اكتب رسالتك هنا...",send:"إرسال",you:"أنت",admin:"دعم OXIDE HUB",empty:"لا توجد رسائل بعد. اكتب رسالتك لبدء المحادثة.",loading:"جاري تحميل المحادثة...",sending:"جاري إرسال الرسالة...",sent:"تم إرسال رسالتك.",failed:"تعذر إرسال الرسالة. حاول مجددًا.",loadFailed:"تعذر تحميل المحادثة. أعد تحميل الصفحة.",media:"[أرسل فريق الدعم ملفًا مرفقًا]",mediaNote:"هذه النسخة تعرض المرفقات النصية فقط."},
@@ -1428,7 +1428,7 @@ function supportText(key){
  id:{title:"💬 Dukungan",description:"Kirim pesan dan tim OXIDE HUB akan membalas di sini.",placeholder:"Tulis pesan Anda...",send:"Kirim",you:"Anda",admin:"Dukungan OXIDE HUB",empty:"Belum ada pesan. Kirim pesan untuk memulai.",loading:"Memuat percakapan...",sending:"Mengirim pesan...",sent:"Pesan Anda telah dikirim.",failed:"Pesan gagal dikirim. Coba lagi.",loadFailed:"Percakapan gagal dimuat. Muat ulang halaman.",media:"[Dukungan mengirim lampiran]",mediaNote:"Lampiran ditampilkan sebagai pemberitahuan pesan."},
  de:{title:"💬 Support",description:"Sende eine Nachricht. Das OXIDE-HUB-Team antwortet hier.",placeholder:"Nachricht schreiben...",send:"Senden",you:"Du",admin:"OXIDE HUB Support",empty:"Noch keine Nachrichten. Schreibe eine Nachricht, um zu beginnen.",loading:"Unterhaltung wird geladen...",sending:"Nachricht wird gesendet...",sent:"Deine Nachricht wurde gesendet.",failed:"Nachricht konnte nicht gesendet werden. Bitte erneut versuchen.",loadFailed:"Unterhaltung konnte nicht geladen werden. Seite neu laden.",media:"[Support hat einen Anhang gesendet]",mediaNote:"Anhänge werden in der Unterhaltung angezeigt."}
  };
- return data[currentLanguage]?.[key] || data.en[key] || key;
+ return data[currentLanguage]?.[key] || data.ar[key] || data.en[key] || key;
 }
 function clearActiveSession(){localStorage.removeItem(LOCK_KEY);if(activePopup&&!activePopup.closed){try{activePopup.close()}catch{}}activePopup=null}
 function getActiveSession(){try{if(activePopup&&activePopup.closed){clearActiveSession();return null}const raw=localStorage.getItem(LOCK_KEY);if(!raw)return null;const session=JSON.parse(raw);const startedAt=Number(session.startedAt);if(!session||!Number.isFinite(startedAt)||startedAt>Date.now()||Date.now()-startedAt>=LOCK_DURATION){clearActiveSession();return null}return session}catch{clearActiveSession();return null}}
@@ -1517,7 +1517,7 @@ function translateRemainingStaticText(language){
  };
  Object.assign(words.en,more.en);Object.assign(words.ru,more.ru);
 
- const dict=words[language]||words.en;
+ const dict=language==="ar"?Object.fromEntries(Object.entries(words.en).map(([arabic,translated])=>[translated,arabic])):(words[language]||words.en);
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
  for(const node of nodes){
