@@ -195,7 +195,7 @@ export async function onRequestGet({ request, env }) {
 
     diagnosticStage = "READ_ACCOUNT";
     const account = await env.DB.prepare(`
-      SELECT user_uuid, public_id, points
+      SELECT user_uuid, public_id, points, created_at
       FROM users
       WHERE user_uuid = ?
       LIMIT 1
@@ -306,10 +306,45 @@ export async function onRequestGet({ request, env }) {
       console.error("Referral ranking unavailable:", rankingError);
     }
 
+    let currentRanks = { points: null, referrals: null };
+    try {
+      const pointsRank = await env.DB.prepare(`
+        SELECT rank FROM (
+          SELECT user_uuid,
+                 ROW_NUMBER() OVER (ORDER BY COALESCE(points, 0) DESC, created_at ASC, user_uuid ASC) AS rank
+          FROM users
+          WHERE status = 'active'
+        )
+        WHERE user_uuid = ?
+      `).bind(userId).first();
+      const referralsRank = await env.DB.prepare(`
+        SELECT rank FROM (
+          SELECT referrer_id,
+                 COUNT(*) AS total,
+                 ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC, referrer_id ASC) AS rank
+          FROM referrals
+          GROUP BY referrer_id
+          HAVING COUNT(*) > 0
+        )
+        WHERE referrer_id = ?
+      `).bind(userId).first();
+      currentRanks = {
+        points: { rank: Number(pointsRank?.rank || 0), value: Number(account.points || 0) },
+        referrals: { rank: Number(referralsRank?.rank || 0), value: Number(stats?.total || 0) }
+      };
+    } catch (currentRankError) {
+      console.error("Current user ranking unavailable:", currentRankError);
+      currentRanks = {
+        points: { rank: 0, value: Number(account.points || 0) },
+        referrals: { rank: 0, value: Number(stats?.total || 0) }
+      };
+    }
+
     return json({
       success: true,
 
       referralCode: String(telegramIdentity.telegram_user_id),
+      currentRanks,
 
       user: {
         userId: account.public_id || shortId(userId),
