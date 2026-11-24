@@ -1,11 +1,8 @@
 import { getVisitor, json } from "./_lib/session.js";
 
-const OFFERS = [
-  { id: 1, name: "55 COINS", points: 1500 },
-  { id: 2, name: "145 COINS", points: 3500 },
-  { id: 3, name: "PREMIUM", points: 3000 },
-  { id: 4, name: "25 BP COINS", points: 3500 }
-];
+const DEFAULT_OFFERS = [{id:1,name:"55 COINS",points:1500,image_url:""},{id:2,name:"145 COINS",points:3500,image_url:""},{id:3,name:"PREMIUM",points:3000,image_url:""},{id:4,name:"25 BP COINS",points:3500,image_url:""}];
+async function ensureOffersTable(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_redemption_offers (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,points INTEGER NOT NULL,image_url TEXT NOT NULL DEFAULT '',active INTEGER NOT NULL DEFAULT 1,sort_order INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL)").run();const count=await DB.prepare("SELECT COUNT(*) AS total FROM oxide_redemption_offers").first();if(!Number(count?.total||0)){const now=Math.floor(Date.now()/1000);for(const offer of DEFAULT_OFFERS){await DB.prepare("INSERT INTO oxide_redemption_offers(id,name,points,image_url,active,sort_order,created_at,updated_at) VALUES(?,?,?,?,1,?,?,?)").bind(offer.id,offer.name,offer.points,"",offer.id,now,now).run();}}}
+async function getActiveOffers(DB){await ensureOffersTable(DB);const result=await DB.prepare("SELECT id,name,points,image_url FROM oxide_redemption_offers WHERE active=1 ORDER BY sort_order ASC,id ASC").all();return result.results||[];}
 
 async function ensureOrdersTable(DB) {
   await DB.prepare(`
@@ -48,7 +45,8 @@ export async function onRequestGet({ request, env }) {
     if (!userUuid) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     const user = await env.DB.prepare("SELECT points FROM users WHERE user_uuid = ? AND status = 'active'").bind(userUuid).first();
     if (!user) return json({ success: false, error: "USER_NOT_FOUND" }, 404);
-    return json({ success: true, points: Number(user.points), offers: OFFERS });
+    const offers = await getActiveOffers(env.DB);
+    return json({ success: true, points: Number(user.points), offers });
   } catch {
     return json({ success: false, error: "COULD_NOT_LOAD_REWARDS" }, 500);
   }
@@ -66,7 +64,9 @@ export async function onRequestPost({ request, env }) {
     userUuid = await getVisitor(request, env);
     if (!userUuid) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     const body = await request.json().catch(() => ({}));
-    offer = OFFERS.find(item => item.id === Number(body.offerId));
+    await ensureOffersTable(env.DB);
+    offer = await env.DB.prepare("SELECT id,name,points FROM oxide_redemption_offers WHERE id=? AND active=1").bind(Number(body.offerId)).first();
+    if (offer) offer = { ...offer, id: Number(offer.id), points: Number(offer.points) };
     if (!offer) return json({ success: false, error: "INVALID_OFFER" }, 400);
 
     const enteredUuid = String(body.userUuid || "").trim().toUpperCase();
