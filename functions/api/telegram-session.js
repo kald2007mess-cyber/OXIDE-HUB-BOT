@@ -421,6 +421,61 @@ export async function onRequestPost({ request, env }) {
         visit_count = oxide_user_activity.visit_count + 1
     `).bind(userUuid, telegramId, now, now).run();
 
+    // Notify the owner on every successful Mini App entry, for both new and returning users.
+    // Notification failures must never prevent the user's session from being created.
+    diagnosticStage = "NOTIFY_ADMIN_OF_USER_ENTRY";
+    try {
+      const [latestAccount, visitorProgress] = await Promise.all([
+        env.DB.prepare(
+          "SELECT points, public_id FROM users WHERE user_uuid = ? LIMIT 1"
+        ).bind(userUuid).first(),
+        env.DB.prepare(
+          "SELECT progress FROM visitors WHERE user_id = ? LIMIT 1"
+        ).bind(userUuid).first()
+      ]);
+      const isNewUser = Number(createdUser.meta?.changes || 0) === 1;
+      const displayName = [user.first_name, user.last_name]
+        .filter(Boolean).join(" ").slice(0, 180) || "بدون اسم";
+      const displayUsername = username ? "@" + username : "غير محدد";
+      const taskProgress = Math.max(0, Math.min(3, Number(visitorProgress?.progress || 0)));
+      const entryTime = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Africa/Algiers",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).format(new Date());
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_ADMIN_ID) {
+        await fetch(
+          `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: env.TELEGRAM_ADMIN_ID,
+              text: [
+                isNewUser ? "🆕 مستخدم جديد دخل OXIDE HUB" : "🔁 مستخدم عاد إلى OXIDE HUB",
+                "",
+                "👤 الاسم: " + displayName,
+                "🔗 المستخدم: " + displayUsername,
+                "🆔 Telegram ID: " + telegramId,
+                "🪪 OX: " + String(latestAccount?.public_id || publicId),
+                "⭐ النقاط: " + Number(latestAccount?.points || 0),
+                "📋 المهام: " + taskProgress + "/3",
+                "🕒 وقت الدخول: " + entryTime
+              ].join("\n"),
+              disable_web_page_preview: true
+            })
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error("OXIDE admin entry notification failed:", notificationError);
+    }
+
     diagnosticStage = "CREATE_SESSION_COOKIE";
     const cookie = await createSessionCookie(env, env.DB, userUuid);
     const response = json({
