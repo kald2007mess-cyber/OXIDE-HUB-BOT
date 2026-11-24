@@ -3157,7 +3157,7 @@ initializeOxideHub();
   tapFlushTimer=setTimeout(()=>{tapFlushTimer=null;flushTapQueue()},100);
  });
  setInterval(()=>{if(!walletReady)return;updateLocalEnergy();render()},1000);
- setInterval(async()=>{if(document.hidden||!walletReady||actionBusy||tapPending)return;await performAction({action:"claim_mining"})},15000);
+ // Automatic passive mining disabled; coins are earned only by manual taps.
  window.loadOxideWallet();
 })();
 
