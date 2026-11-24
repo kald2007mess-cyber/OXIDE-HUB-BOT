@@ -279,6 +279,12 @@ button{border-radius:12px}
 <button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>المكافآت والإشعارات</span><small>إرسال مكافأة قابلة للاستلام</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="action('security')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>الأمان والصلاحيات</span></button>
 </div>
+<div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important">
+<h3 style="color:#ff9b9b">⚠️ تصفير بيانات المنصة</h3>
+<p class="note">تصفير نقاط المستخدمين والمهام وسجل الدخول وسجل النقاط. الإحالات وسجلاتها لن تتغير نهائياً.</p>
+<button class="danger" id="resetDataButton" onclick="resetOxideData()">تصفير النقاط والمهمات والسجل</button>
+<div class="platform-status" id="resetDataStatus">هذا الإجراء للمالك فقط ويتطلب تأكيداً قبل التنفيذ.</div>
+</div>
 <div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ إدارة صيانة الموقع</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
 </div>
 
@@ -676,6 +682,23 @@ async function uploadPlatform(){
 }
 function backToMenu(){document.getElementById("platformPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 
+async function resetOxideData(){
+ const button=document.getElementById("resetDataButton");
+ const status=document.getElementById("resetDataStatus");
+ if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
+ if(!confirm("تحذير: سيتم تصفير نقاط جميع المستخدمين، المهمات، سجل النقاط وسجل الدخول. الإحالات لن تتغير. هل تريد المتابعة؟"))return;
+ if(prompt("للتأكيد النهائي، اكتب RESET")!=="RESET"){status.textContent="تم إلغاء العملية؛ لم تتغير أي بيانات.";return;}
+ button.disabled=true;status.textContent="جارٍ تصفير البيانات بأمان...";
+ try{
+  const response=await fetch("/api/admin/reset-data",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET OXIDE DATA"})});
+  const result=await response.json();
+  if(!response.ok||!result.success)throw new Error(result.error||"RESET_FAILED");
+  status.textContent="تم التصفير بنجاح. النقاط والمهمات والسجلات أصبحت 0، والإحالات بقيت كما هي.";
+  if(typeof loadUsers==="function"&& !document.getElementById("usersPage").classList.contains("hidden"))loadUsers();
+  if(typeof loadActivity==="function"&& !document.getElementById("activityPage").classList.contains("hidden"))loadActivity();
+ }catch(error){status.textContent="فشل التصفير: "+error.message;}
+ finally{button.disabled=false;}
+}
 /* سجل دخول المستخدمين */
 let activityPage=1,activityPages=1,activityQuery="",activityBusy=false;
 function activityDate(value){const n=Number(value||0);return n?new Date(n*1000).toLocaleString("ar-DZ",{dateStyle:"medium",timeStyle:"short"}):"غير متوفر";}
