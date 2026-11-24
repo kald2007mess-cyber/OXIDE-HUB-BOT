@@ -1346,7 +1346,7 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
   </header>
   <div class="oxide-leaderboard-tabs" role="tablist" aria-label="نوع الترتيب">
     <button type="button" class="active" id="oxideCoinsTab" role="tab" aria-selected="true" onclick="showOxideLeaderboardTab('points')">🪙 حسب العملات</button>
-    <button type="button" id="oxideReferralsTab" role="tab" aria-selected="false" onclick="showOxideLeaderboardTab('referrals')">👥 الإحالات المؤهلة</button>
+    <button type="button" id="oxideReferralsTab" role="tab" aria-selected="false" onclick="showOxideLeaderboardTab('referrals')">👥 الدعوات</button>
   </div>
   <div class="oxide-leaderboard-content">
     <div class="oxide-leaderboard-caption" id="oxideLeaderboardCaption">🏆 أفضل 10 في العملات</div>
@@ -1654,7 +1654,7 @@ function applyReferralPageLanguage(language){
  steps.forEach((node,index)=>{if(stepText[index])node.textContent=stepText[index]});
  set(".oxide-how-note",en?"🎁 The inviter receives 30 coins, and the invited friend receives 50 bonus coins after completing an admin-approved mission.":"🎁 صاحب رابط الدعوة يحصل على 30 عملة، والصديق المدعو يحصل على 50 عملة إضافية بعد إكمال مهمة وموافقة الإدارة.");
  set("#pointsRankingTitle",en?"🏆 Top 10 by points":"🏆 أفضل 10 في العملات");
- set("#referralRankingTitle",en?"👥 Top 10 by eligible referrals":"👥 أفضل 10 في الإحالات المؤهلة");
+ set("#referralRankingTitle",en?"👥 Top 10 by eligible referrals":"👥 أفضل 10 في الدعوات");
  const loading=root.querySelectorAll("#pointsRanking .ranking-row,#referralRanking .ranking-row");
  loading.forEach(node=>{if(/جاري التحميل|loading/i.test(node.textContent))node.textContent=en?"Loading...":"جاري التحميل..."});
 }
