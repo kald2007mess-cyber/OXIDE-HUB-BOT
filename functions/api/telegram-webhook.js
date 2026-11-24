@@ -122,7 +122,11 @@ export async function onRequestPost({ request, env }) {
       String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID);
 
     // Owner-only channel publishing wizard: /post, then send a photo/video with caption.
-    if (isOwnerPrivateChat && /^\\/post(?:@\\w+)?$/.test(messageText)) {
+    if (isOwnerPrivateChat && (/^\\/post(?:@\\w+)?$/.test(messageText) || messageText === "ارسل منشور" || messageText === "أرسل منشور")) {
+      if (!env.DB) {
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", { chat_id: message.chat.id, text: "تعذر بدء النشر: قاعدة البيانات غير متاحة حالياً." });
+        return json({ ok: true });
+      }
       await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_channel_post_drafts (
         owner_telegram_id TEXT PRIMARY KEY,
         requested_at INTEGER NOT NULL
