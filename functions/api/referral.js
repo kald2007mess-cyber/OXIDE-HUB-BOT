@@ -291,18 +291,7 @@ export async function onRequestGet({ request, env }) {
     try {
       referralRanking = await env.DB.prepare(`
         SELECT r.referrer_id,
-               COUNT(CASE WHEN
-                 COALESCE(r.risk_score, 0) < 70
-                 AND r.referrer_id <> r.referred_id
-                 AND EXISTS (SELECT 1 FROM mission_submissions ms
-                             WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
-                 AND EXISTS (SELECT 1 FROM users ur WHERE ur.user_uuid = r.referrer_id AND ur.status = 'active')
-                 AND EXISTS (SELECT 1 FROM users ud WHERE ud.user_uuid = r.referred_id AND ud.status = 'active')
-                 AND EXISTS (SELECT 1 FROM telegram_identities tir WHERE tir.user_uuid = r.referrer_id)
-                 AND EXISTS (SELECT 1 FROM telegram_identities tid WHERE tid.user_uuid = r.referred_id)
-                 AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referrer_id LIMIT 1)
-                     <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = r.referred_id LIMIT 1)
-               THEN 1 END) AS total,
+               COUNT(*) AS total,
                COALESCE(u.public_id, p.public_id) AS display_id,
                p.username, p.photo_url, p.telegram_url
         FROM referrals r
