@@ -1150,7 +1150,7 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
       <div class="tap-energy-bottom"><button type="button" id="tapEnergyUpgradeLabel">⚡ الطاقة</button><span class="tap-energy-regen" id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span></div>
       <div class="tap-energy-track"><span id="tapEnergyFill"></span></div>
     </section>
-    <div class="tap-footer"><span class="tap-fire">🔥</span><span>مكافأة الضغطة الواحدة <b>+0.01</b> عملة</span></div>
+    
 
     <div class="tap-upgrade-overlay" id="tapUpgradeOverlay" hidden>
       <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="tapUpgradeTitle">
@@ -3204,7 +3204,7 @@ initializeOxideHub();
  let actionBusy=false,tapPending=false,queuedTaps=0,tapFlushTimer=null;
  const fmt=n=>Number(n||0).toFixed(3);
  const $=id=>document.getElementById(id);
- const regenMs=()=>7200000/Math.max(1,maxEnergy);
+ const regenMs=()=>10800000/Math.max(1,maxEnergy);
  function updateLocalEnergy(){
   const now=Date.now();
   if(energy>=maxEnergy){energy=maxEnergy;energyUpdatedAt=now;return}
