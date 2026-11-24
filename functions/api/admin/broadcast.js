@@ -45,7 +45,7 @@ async function runBroadcast(env,jobId,body,mediaType,fileId){
    .bind(Math.floor(Date.now()/1000),jobId).run().catch(()=>{});
  }
 }
-export async function onRequestPost({request,env,waitUntil}){
+export async function onRequestPost({request,env,context}){
  try{
   if(!env.DB||!env.TELEGRAM_BOT_TOKEN||!env.TELEGRAM_ADMIN_ID)return json({success:false,error:"SERVER_CONFIGURATION_MISSING"},500);
   const contentType=request.headers.get("Content-Type")||"";
@@ -66,6 +66,7 @@ export async function onRequestPost({request,env,waitUntil}){
   if(!body&&!file)return json({success:false,error:"EMPTY_POST"},400);
   let fileId=null;
   if(file&&typeof file==="object"&&typeof file.arrayBuffer==="function"&&file.size>0){
+   if(body.length>1024)return json({success:false,error:"CAPTION_TOO_LONG"},400);
    if(file.size>50*1024*1024)return json({success:false,error:"MEDIA_TOO_LARGE"},413);
    if(file.type.startsWith("image/"))mediaType="photo";
    else if(file.type.startsWith("video/"))mediaType="video";
@@ -87,7 +88,7 @@ export async function onRequestPost({request,env,waitUntil}){
   const jobId=Number(created.meta?.last_row_id||0);
   if(!jobId)return json({success:false,error:"BROADCAST_JOB_CREATE_FAILED"},500);
   const task=runBroadcast(env,jobId,body,mediaType,fileId);
-  if(typeof waitUntil==="function")waitUntil(task);
+  if(typeof context?.waitUntil==="function")context.waitUntil(task);
   else await task;
   const total=await env.DB.prepare("SELECT COUNT(DISTINCT ti.telegram_user_id) AS total FROM telegram_identities ti INNER JOIN users u ON u.user_uuid=ti.user_uuid WHERE u.status='active'").first();
   return json({success:true,jobId,total:Number(total?.total||0),status:"queued"});
