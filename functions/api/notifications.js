@@ -91,8 +91,8 @@ export async function onRequestPost({ request, env }) {
       env.DB.prepare(`
         UPDATE oxide_notifications
         SET claimed_at = ?, read_at = COALESCE(read_at, ?), claim_token = ?
-        WHERE id = ? AND user_id = ? AND type = 'reward'
-          AND type IN ('reward','redeem_code') AND reward_points > 0 AND claimed_at IS NULL
+        WHERE id = ? AND user_id = ? AND type IN ('reward','redeem_code')
+          AND reward_points > 0 AND claimed_at IS NULL
       `).bind(now, now, token, id, userId),
       env.DB.prepare(`
         UPDATE users SET points = points + (
