@@ -4,12 +4,18 @@ async function ensureTables(DB){
  await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
-  active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL
+  active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
  )`).run();
+ try{await DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
  await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
   id INTEGER PRIMARY KEY AUTOINCREMENT,code_id INTEGER NOT NULL,user_uuid TEXT NOT NULL,
   claim_token TEXT NOT NULL UNIQUE,claimed_at INTEGER NOT NULL,
   UNIQUE(code_id,user_uuid)
+ )`).run();
+ await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_notifications(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,type TEXT NOT NULL,
+  title TEXT NOT NULL,body TEXT NOT NULL DEFAULT '',reward_points INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,read_at INTEGER,claimed_at INTEGER,claim_token TEXT
  )`).run();
  await DB.prepare(`CREATE TABLE IF NOT EXISTS point_ledger(
   id INTEGER PRIMARY KEY AUTOINCREMENT,user_uuid TEXT NOT NULL,delta INTEGER NOT NULL,
@@ -34,40 +40,33 @@ export async function onRequestPost({request,env}){
    env.DB.prepare(`INSERT OR IGNORE INTO oxide_redeem_claims(code_id,user_uuid,claim_token,claimed_at)
     SELECT id,?,?,? FROM oxide_redeem_codes
     WHERE code=? AND active=1 AND used_count<gift_count
-    AND NOT EXISTS(SELECT 1 FROM oxide_redeem_claims c WHERE c.code_id=oxide_redeem_codes.id AND c.user_uuid=?)
-   `).bind(userUuid,token,now,code,userUuid),
+      AND (expires_at IS NULL OR expires_at>?)
+      AND NOT EXISTS(SELECT 1 FROM oxide_redeem_claims c WHERE c.code_id=oxide_redeem_codes.id AND c.user_uuid=?)
+   `).bind(userUuid,token,now,code,now,userUuid),
    env.DB.prepare(`UPDATE oxide_redeem_codes SET used_count=used_count+1
     WHERE EXISTS(SELECT 1 FROM oxide_redeem_claims WHERE claim_token=?)
    `).bind(token),
-   env.DB.prepare(`UPDATE users SET points=points+(SELECT coins FROM oxide_redeem_codes
-    WHERE id=(SELECT code_id FROM oxide_redeem_claims WHERE claim_token=? LIMIT 1)),updated_at=?
-    WHERE user_uuid=? AND status='active'
-    AND EXISTS(SELECT 1 FROM oxide_redeem_claims WHERE claim_token=?)
-   `).bind(token,now,userUuid,token),
-   env.DB.prepare(`UPDATE visitors SET points=(SELECT points FROM users WHERE user_uuid=?)
-    WHERE user_id=? AND EXISTS(SELECT 1 FROM oxide_redeem_claims WHERE claim_token=?)
-   `).bind(userUuid,userUuid,token),
-   env.DB.prepare(`INSERT INTO point_ledger(user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-    SELECT ?,c.coins,u.points,'Redeem code: '||c.code,'redeem_code',c.code,?
-    FROM oxide_redeem_claims r
-    JOIN oxide_redeem_codes c ON c.id=r.code_id
-    JOIN users u ON u.user_uuid=r.user_uuid
+   env.DB.prepare(`INSERT INTO oxide_notifications(user_id,type,title,body,reward_points,created_at)
+    SELECT r.user_uuid,'redeem_code','🎁 مكافأة رمز استرداد',
+      'تم استرداد الرمز '||c.code||' بنجاح. اضغط زر استلام لإضافة المكافأة إلى رصيدك.',
+      c.coins,?
+    FROM oxide_redeem_claims r JOIN oxide_redeem_codes c ON c.id=r.code_id
     WHERE r.claim_token=?
-   `).bind(userUuid,now,token)
+   `).bind(now,token)
   ]);
   const inserted=Number(result?.[0]?.meta?.changes||0);
   if(!inserted){
-   const existing=await env.DB.prepare(`SELECT c.gift_count,c.used_count,
+   const existing=await env.DB.prepare(`SELECT c.gift_count,c.used_count,c.expires_at,
     EXISTS(SELECT 1 FROM oxide_redeem_claims r WHERE r.code_id=c.id AND r.user_uuid=?) AS claimed
     FROM oxide_redeem_codes c WHERE c.code=? AND c.active=1
    `).bind(userUuid,code).first();
    if(!existing)return json({success:false,error:"CODE_NOT_FOUND"},404);
    if(Number(existing.claimed))return json({success:false,error:"CODE_ALREADY_REDEEMED"},409);
+   if(existing.expires_at!==null&&existing.expires_at!==undefined&&Number(existing.expires_at)<=now)return json({success:false,error:"CODE_EXPIRED"},410);
    if(Number(existing.used_count)>=Number(existing.gift_count))return json({success:false,error:"CODE_EXHAUSTED"},409);
    return json({success:false,error:"CODE_NOT_AVAILABLE"},409);
   }
-  const account=await env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userUuid).first();
   const reward=await env.DB.prepare("SELECT coins FROM oxide_redeem_codes WHERE code=?").bind(code).first();
-  return json({success:true,coins:Number(reward?.coins||0),points:Number(account?.points||0)});
+  return json({success:true,coins:Number(reward?.coins||0),notificationCreated:true});
  }catch(error){return json({success:false,error:"REDEEM_CODE_FAILED"},500);}
 }
