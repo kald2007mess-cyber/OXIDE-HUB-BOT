@@ -18,16 +18,20 @@ export async function onRequestPost({request,env}){
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
    id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
    gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
-   active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL
+   active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
   )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
    id INTEGER PRIMARY KEY AUTOINCREMENT,code_id INTEGER NOT NULL,user_uuid TEXT NOT NULL,
    claim_token TEXT NOT NULL UNIQUE,claimed_at INTEGER NOT NULL,
    UNIQUE(code_id,user_uuid)
   )`).run();
-  await env.DB.prepare("INSERT INTO oxide_redeem_codes(code,gift_count,coins,created_at) VALUES(?,?,?,?)")
-   .bind(code,giftCount,coins,Math.floor(Date.now()/1000)).run();
-  return json({success:true,code,giftCount,coins});
+  try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
+  const expiryHours=Number(body.expiryHours);
+  if(!Number.isSafeInteger(expiryHours)||expiryHours<1||expiryHours>8760)return json({success:false,error:"INVALID_EXPIRY_HOURS"},400);
+  const now=Math.floor(Date.now()/1000),expiresAt=now+expiryHours*3600;
+  await env.DB.prepare("INSERT INTO oxide_redeem_codes(code,gift_count,coins,created_at,expires_at) VALUES(?,?,?,?,?)")
+   .bind(code,giftCount,coins,now,expiresAt).run();
+  return json({success:true,code,giftCount,coins,expiryHours,expiresAt});
  }catch(error){
   const message=String(error?.message||"");
   if(/UNIQUE constraint failed.*code/i.test(message))return json({success:false,error:"CODE_ALREADY_EXISTS"},409);
