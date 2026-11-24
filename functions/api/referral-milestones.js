@@ -26,12 +26,14 @@ async function getProgress(DB, userId) {
     FROM referrals
     WHERE referrer_id = ? AND status = 'rewarded'
   `).bind(userId).first();
+  const total = await DB.prepare("SELECT COUNT(*) AS total FROM referrals WHERE referrer_id = ?").bind(userId).first();
   const claims = await DB.prepare(`
     SELECT milestone_id FROM referral_milestone_claims
     WHERE user_id = ? ORDER BY milestone_id
   `).bind(userId).all();
   return {
     eligible: Number(eligible?.total || 0),
+    total: Number(total?.total || 0),
     claimed: (claims.results || []).map(row => Number(row.milestone_id))
   };
 }
@@ -74,9 +76,9 @@ export async function onRequestPost({ request, env }) {
         SELECT ?, ?, ?, ?
         WHERE (
           SELECT COUNT(*) FROM referrals
-          WHERE referrer_id = ? AND status = 'rewarded'
+          WHERE referrer_id = ? AND (? = 5 AND status = 'rewarded' OR ? <> 5)
         ) >= ?
-      `).bind(userId, milestoneId, milestone.reward, claimedAt, userId, milestone.target),
+      `).bind(userId, milestoneId, milestone.reward, claimedAt, userId, milestoneId, milestoneId, milestone.target),
       env.DB.prepare(`
         UPDATE users SET points = points + ?, updated_at = ?
         WHERE user_uuid = ? AND status = 'active' AND changes() = 1
