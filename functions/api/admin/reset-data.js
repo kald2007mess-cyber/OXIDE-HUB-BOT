@@ -21,6 +21,33 @@ export async function onRequestPost({ request, env }) {
       return json({ success: false, error: "CONFIRMATION_REQUIRED" }, 400);
     }
 
+    // Ensure resettable activity tables exist even on a newly initialized database.
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS mission_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      mission_id INTEGER NOT NULL,
+      proof_file_id TEXT,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at INTEGER NOT NULL,
+      reviewed_at INTEGER
+    )`).run();
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS telegram_channel_claims (
+      user_id TEXT NOT NULL,
+      mission_id INTEGER NOT NULL,
+      claimed_at INTEGER NOT NULL,
+      PRIMARY KEY(user_id, mission_id)
+    )`).run();
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS point_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_uuid TEXT NOT NULL,
+      delta REAL NOT NULL,
+      balance_after REAL NOT NULL,
+      reason TEXT NOT NULL,
+      reference_type TEXT NOT NULL,
+      reference_id TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )`).run();
+
     // Deliberately preserve referrals and every referral-related record.
     // Keep user accounts, profiles, missions, wallet upgrades and referral history.
     const statements = [
