@@ -16,9 +16,10 @@ async function ensure(DB){
  )`).run();
 }
 async function sendToUser(token,chatId,body,mediaType,fileId){
- if(mediaType==="photo")return telegram(token,"sendPhoto",{chat_id:chatId,photo:fileId,caption:body||undefined});
- if(mediaType==="video")return telegram(token,"sendVideo",{chat_id:chatId,video:fileId,caption:body||undefined});
- return telegram(token,"sendMessage",{chat_id:chatId,text:body,disable_web_page_preview:false});
+ const reply_markup={inline_keyboard:[[{text:"🚀 افتح بوت OXIDE HUB",url:"https://t.me/OxideHub_bot"}]]};
+ if(mediaType==="photo")return telegram(token,"sendPhoto",{chat_id:chatId,photo:fileId,caption:body||undefined,reply_markup});
+ if(mediaType==="video")return telegram(token,"sendVideo",{chat_id:chatId,video:fileId,caption:body||undefined,reply_markup});
+ return telegram(token,"sendMessage",{chat_id:chatId,text:body,disable_web_page_preview:false,reply_markup});
 }
 async function runBroadcast(env,jobId,body,mediaType,fileId){
  const DB=env.DB;
