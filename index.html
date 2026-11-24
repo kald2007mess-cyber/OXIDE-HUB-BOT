@@ -1202,9 +1202,9 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
    <div><span>رقم حسابك</span><strong id="userIdValue">—</strong></div>
    <button class="oxide-copy-id" id="copyIdButton" type="button" onclick="copyUserId()"><span id="copyIdButtonText">نسخ</span> ⧉</button>
   </div>
-  <div class="oxide-level-head"><span>مستوى الحساب</span><strong>المستوى 1</strong></div>
-  <div class="oxide-level-track"><span></span></div>
-  <div class="oxide-level-foot"><span>نظام الخبرة قادم قريبًا</span><span>0%</span></div>
+  <div class="oxide-level-head"><span>مستوى الحساب</span><strong id="accountLevelValue">المستوى 1</strong></div>
+  <div class="oxide-level-track"><span id="accountLevelFill"></span></div>
+  <div class="oxide-level-foot"><span id="accountLevelProgress">0 / 500 عملة للمستوى التالي</span><span id="accountLevelPercent">0%</span></div>
  </section>
  <div class="oxide-account-section-title"><span>محفظتي</span><small>أرصدتك داخل المنصة</small></div>
  <div class="oxide-account-wallet-grid">
@@ -1912,6 +1912,21 @@ async function claimNotification(id,button){
 function filterOxideTasks(category,button){document.querySelectorAll(".oxide-filter-chip").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll(".oxide-new-task-card").forEach(card=>{const categories=(card.dataset.taskCategory||"").split(/\\s+/);card.style.display=category==="all"||categories.includes(category)?"":"none";});}
 
 
+function updateAccountLevel(points){
+ const total=Math.max(0,Number(points)||0);
+ const level=Math.floor(total/500)+1;
+ const progress=total%500;
+ const percent=Math.floor(progress/500*100);
+ const levelValue=document.getElementById("accountLevelValue");
+ const fill=document.getElementById("accountLevelFill");
+ const progressText=document.getElementById("accountLevelProgress");
+ const percentText=document.getElementById("accountLevelPercent");
+ if(levelValue)levelValue.textContent="المستوى "+level;
+ if(fill)fill.style.width=percent+"%";
+ if(progressText)progressText.textContent=progress.toLocaleString("en",{maximumFractionDigits:2})+" / 500 عملة للمستوى التالي";
+ if(percentText)percentText.textContent=percent+"%";
+}
+
 function renderAccountProfile(){
  const tgUser=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user;
  const profile=telegramProfileData||{};
@@ -1924,6 +1939,7 @@ function renderAccountProfile(){
  const balance=document.getElementById("accountBalanceValue"),earned=document.getElementById("accountEarnedValue"),ads=document.getElementById("accountAdsValue"),refs=document.getElementById("accountReferralsValue");
  const shard=document.getElementById("referralShardBalance"),earnedSource=document.getElementById("referralEarned"),refSource=document.getElementById("referralCount");
  if(balance&&shard)balance.textContent=shard.textContent.trim()||"—";
+ updateAccountLevel(shard?shard.textContent.trim():balance?.textContent||0);
  if(earned&&earnedSource)earned.textContent=earnedSource.textContent.trim()||"—";
  if(ads)ads.textContent=String(Number(islandCompleted)||0);
  if(refs&&refSource)refs.textContent=refSource.textContent.trim()||"—";
@@ -3058,6 +3074,7 @@ initializeOxideHub();
   balance.textContent=fmt(total);
   const skillsBalance=$("skillsBalance");if(skillsBalance)skillsBalance.textContent=fmt(total);
   const account=$("accountBalanceValue");if(account)account.textContent=fmt(total);
+  updateAccountLevel(total);
   const shard=$("referralShardBalance");if(shard)shard.textContent=fmt(total);
   const energyText=$("tapEnergyText");if(energyText)energyText.textContent=Math.floor(energy)+" / "+maxEnergy;
   const energyFill=$("tapEnergyFill");if(energyFill)energyFill.style.width=Math.max(0,Math.min(100,energy/maxEnergy*100))+"%";
