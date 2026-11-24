@@ -11,6 +11,7 @@
  <filter id="soft" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="34"/></filter>
  <pattern id="hex" width="48" height="42" patternUnits="userSpaceOnUse"><path d="M12 1 24 8v14l-12 7L0 22V8Z M36 22l12 7v14l-12 7-12-7V29Z" fill="none" stroke="#9d45ff" stroke-opacity=".16" stroke-width="1.5"/></pattern>
 </defs>
+<style>@keyframes coinSpin{0%{transform:perspective(900px) rotateY(0deg)}50%{transform:perspective(900px) rotateY(180deg)}100%{transform:perspective(900px) rotateY(360deg)}}#coin{transform-box:fill-box;transform-origin:center;animation:coinSpin 5.8s cubic-bezier(.45,.05,.55,.95) infinite;transform-style:preserve-3d}</style>
 <rect width="900" height="1600" fill="url(#space)"/>
 <rect width="900" height="1600" fill="url(#hex)" opacity=".42"/>
 <ellipse cx="450" cy="690" rx="510" ry="500" fill="url(#nebula)" filter="url(#soft)"/>
@@ -54,4 +55,10 @@
 <path d="M0 1370 110 1280 180 1340 270 1270 360 1380 450 1300 540 1380 650 1280 760 1360 900 1270" fill="none" stroke="#a52fff" stroke-width="7" filter="url(#glow)"/>
 <path d="M0 1490q220-90 450 0t450 0v110H0Z" fill="#12072c" stroke="#6e2bd1" stroke-width="6"/>
 <g fill="#c879ff" filter="url(#glow)"><path d="m30 1100 65-125 58 125-58-30Z"/><path d="m770 1100 65-125 58 125-58-30Z"/><path d="m180 1190 45-90 42 90-42-22Z"/><path d="m635 1190 45-90 42 90-42-22Z"/></g>
+
+<g id="loadingFrame" filter="url(#glow)">
+ <path d="M92 1160 122 1132H778l30 28v58l-30 28H122l-30-28Z" fill="#070416" fill-opacity=".96" stroke="#d9a2ff" stroke-width="7"/>
+ <path d="M111 1160 132 1145H768l21 15v58l-21 15H132l-21-15Z" fill="none" stroke="#7623d7" stroke-width="5"/>
+ <path d="M130 1170H770" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+</g>
 </svg>
