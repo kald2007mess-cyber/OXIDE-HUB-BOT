@@ -243,7 +243,13 @@ button{border-radius:12px}
 .support-admin-status{min-height:20px;color:#91a9c2;font-size:11px;text-align:center;padding:5px}
 @media(max-width:700px){.support-admin-layout{grid-template-columns:minmax(0,1fr)}.support-admin-sidebar{min-height:0}.support-admin-list{max-height:240px}.support-admin-chat{min-height:390px}.support-admin-thread{min-height:230px;max-height:380px}}
 
-.points-audit-button{margin-top:11px;background:linear-gradient(110deg,#12658c,#3b3b86);border:1px solid #53cfff}.points-audit{margin-top:12px;padding:13px;border:1px solid #3b6686;border-radius:12px;background:rgba(5,15,29,.82);line-height:1.7}.points-audit h4{margin:14px 0 8px;color:#8be2ff}.audit-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.audit-stat{padding:10px;border:1px solid #294661;border-radius:9px;background:#102238;color:#b8c9da;font-size:12px}.audit-stat b{display:block;color:#fff;font-size:17px;overflow-wrap:anywhere}.audit-row{padding:10px 0;border-bottom:1px solid #263c54;font-size:12px;overflow-wrap:anywhere}.audit-positive{color:#80efb4}.audit-negative{color:#ffaaaa}.audit-muted{color:#9eb2c9;font-size:12px}.audit-warning{padding:10px;border:1px solid #876c35;background:#3a2e16;color:#ffe3a0;border-radius:9px;font-size:12px;margin:9px 0}.audit-pill{display:inline-block;padding:2px 7px;border-radius:20px;background:#193b54;color:#a9e5ff;margin-inline-start:5px}</style>
+.points-audit-button{margin-top:11px;background:linear-gradient(110deg,#12658c,#3b3b86);border:1px solid #53cfff}.points-audit{margin-top:12px;padding:13px;border:1px solid #3b6686;border-radius:12px;background:rgba(5,15,29,.82);line-height:1.7}.points-audit h4{margin:14px 0 8px;color:#8be2ff}.audit-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.audit-stat{padding:10px;border:1px solid #294661;border-radius:9px;background:#102238;color:#b8c9da;font-size:12px}.audit-stat b{display:block;color:#fff;font-size:17px;overflow-wrap:anywhere}.audit-row{padding:10px 0;border-bottom:1px solid #263c54;font-size:12px;overflow-wrap:anywhere}.audit-positive{color:#80efb4}.audit-negative{color:#ffaaaa}.audit-muted{color:#9eb2c9;font-size:12px}.audit-warning{padding:10px;border:1px solid #876c35;background:#3a2e16;color:#ffe3a0;border-radius:9px;font-size:12px;margin:9px 0}.audit-pill{display:inline-block;padding:2px 7px;border-radius:20px;background:#193b54;color:#a9e5ff;margin-inline-start:5px}
+/* OXIDE HUB admin broadcast composer */
+#broadcastPage .card{max-width:760px;margin:0 auto}
+#broadcastMessage{width:100%;min-height:145px;padding:13px;border:1px solid rgba(112,160,225,.27);border-radius:12px;background:rgba(5,13,31,.82);color:#fff;font:14px/1.7 Arial,sans-serif;resize:vertical}
+#broadcastMedia{width:100%;padding:12px;border:1px dashed rgba(125,163,220,.45);border-radius:12px;background:rgba(5,13,31,.6);color:#dce8fa}
+#broadcastPage .platform-status{padding:12px;margin-top:10px;line-height:1.7}
+</style>
 </head>
 <body>
 <div class="oxide-admin-stars" aria-hidden="true"></div>
@@ -277,6 +283,7 @@ button{border-radius:12px}
 <button class="menu-tile green" data-admin-permission="tasks" onclick="action('tasks')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg></div><span>إدارة المهمات</span></button>
 <button id="siteTile" data-admin-permission="maintenance" class="menu-tile site-off" onclick="toggleMaintenance()"><div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div><span>إدارة الموقع</span><small id="siteTileStatus">جارٍ التحميل...</small></button>
 <button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>المكافآت والإشعارات</span><small>إرسال مكافأة قابلة للاستلام</small></button>
+<button class="menu-tile blue" data-owner-only="true" onclick="openBroadcastPage()"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/><path d="M11 13 2 9"/></svg></div><span>منشور</span><small>إرسال رسالة لجميع المستخدمين</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="action('security')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>الأمان والصلاحيات</span></button>
 </div>
 <div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important">
@@ -288,6 +295,7 @@ button{border-radius:12px}
 <div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ إدارة صيانة الموقع</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
 </div>
 
+<div id="broadcastPage" class="hidden"><div class="card"><button class="back" onclick="closeBroadcastPage()">⬅ العودة إلى لوحة الإدارة</button><h3>📢 منشور جديد</h3><p class="note">اكتب رسالتك، ويمكنك إرفاق صورة أو فيديو. عند النشر سيرسل البوت المنشور إلى جميع المستخدمين المسجلين والنشطين.</p><div class="field"><label>نص الرسالة</label><textarea id="broadcastMessage" maxlength="4000" rows="6" placeholder="اكتب الرسالة التي تريد إرسالها إلى المستخدمين..."></textarea></div><div class="field"><label>إرفاق صورة أو فيديو (اختياري)</label><input id="broadcastMedia" type="file" accept="image/*,video/*"></div><div class="platform-status" id="broadcastMediaInfo">يمكن نشر رسالة نصية فقط أو إرفاق صورة أو فيديو. الحد الأقصى للملف 50 ميغابايت.</div><button id="broadcastPublishButton" onclick="publishBroadcast()">📢 نشر إلى جميع المستخدمين</button><div class="platform-status" id="broadcastStatus">لن يتم الإرسال قبل تأكيدك.</div><button class="secondary" id="broadcastRefreshButton" onclick="refreshBroadcastStatus()" style="margin-top:10px">تحديث حالة النشر</button></div></div>
 <div id="activityPage" class="hidden"><div class="card"><button class="back" onclick="closeActivity()">⬅ العودة إلى لوحة الإدارة</button><h3>سجل دخول المستخدمين</h3><div class="users-summary"><div class="users-stat">إجمالي السجلات<strong id="activityTotal">—</strong></div><div class="users-stat">الصفحة الحالية<strong id="activityPageNumber">1</strong></div></div><div class="users-toolbar"><input id="activitySearch" type="search" placeholder="ابحث بالـ ID أو الاسم أو اسم المستخدم" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchActivity()">بحث</button></div><div class="platform-status" id="activityStatus">جارٍ تحميل السجل...</div><div id="activityList"></div><div class="users-pagination"><button class="secondary" id="activityPrev" onclick="changeActivityPage(-1)" disabled>السابق</button><button class="secondary" id="activityNext" onclick="changeActivityPage(1)" disabled>التالي</button></div><p class="note">يسجل هذا القسم مرات فتح التطبيق من تيليجرام بعد نشر التحديث. السجلات السابقة غير متاحة بأثر رجعي.</p></div></div>
 <div id="usersPage" class="hidden"><div class="card"><button class="back" onclick="closeUsers()">⬅ العودة إلى لوحة الإدارة</button><h3>👥 معلومات المستخدمين</h3><div class="users-summary"><div class="users-stat">إجمالي المستخدمين<strong id="usersTotal">—</strong></div><div class="users-stat">الصفحة الحالية<strong id="usersPageNumber">1</strong></div></div><div class="users-toolbar"><input id="usersSearch" type="search" placeholder="ابحث بـ OX أو اسم المستخدم أو الاسم" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchUsers()">بحث</button></div><div class="platform-status" id="usersStatus">جارٍ تحميل المستخدمين...</div><div id="usersList"></div><div class="users-pagination"><button class="secondary" id="usersPrev" onclick="changeUsersPage(-1)" disabled>السابق</button><button class="secondary" id="usersNext" onclick="changeUsersPage(1)" disabled>التالي</button></div><p class="note">تعرض هذه الصفحة بيانات المستخدمين المسجلة في قاعدة بيانات الموقع.</p></div></div>
 <div id="tasksPage" class="hidden"><div class="card"><button class="back" onclick="closeTasks()">⬅ العودة إلى لوحة الإدارة</button><h3>🎯 إدارة المهمات</h3><div class="platform-status" id="tasksStatus">جارٍ تحميل المهمات...</div><div class="tasks-summary"><div class="task-stat">إجمالي المهمات<strong id="tasksTotal">—</strong></div><div class="task-stat">المهمات المفعّلة<strong id="tasksEnabled">—</strong></div><div class="task-stat">إجمالي الإكمالات<strong id="tasksCompleted">—</strong></div></div><div class="task-form"><h3 id="taskFormHeading">إضافة مهمة</h3><div class="field"><label>اسم المهمة</label><input id="taskTitle" maxlength="120" placeholder="مثال: متابعة حساب TikTok"></div><div class="field"><label>المنصة</label><select id="taskPlatform" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="tiktok">TikTok</option><option value="telegram">Telegram</option></select></div><div class="field"><label>وصف المهمة</label><textarea id="taskDescription" maxlength="1000" placeholder="اشرح المطلوب من المستخدم"></textarea></div><div class="field"><label>رابط المهمة (HTTPS)</label><input id="taskUrl" type="url" placeholder="https://..."></div><div class="field"><label>النقاط عند القبول</label><input id="taskReward" type="number" min="0" max="100000" value="50"></div><div class="field"><label>ترتيب المهمة</label><input id="taskOrder" type="number" min="0" value="1"></div><div class="field"><label>الحالة</label><select id="taskEnabled" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">مفعّلة</option><option value="0">متوقفة</option></select></div><button id="taskSaveButton" onclick="saveTask()">💾 حفظ المهمة</button><button id="taskCancelButton" class="secondary hidden" onclick="resetTaskForm()">إلغاء التعديل</button></div><h3>المهمات الحالية</h3><div id="tasksList"><div class="task-empty">جارٍ التحميل...</div></div><div id="taskCompletedPanel" class="hidden"><hr style="border:0;border-top:1px solid #294661;margin:20px 0"><h3 id="taskCompletedHeading">المستخدمون الذين أكملوا المهمة</h3><div class="platform-status" id="taskCompletedStatus"></div><div id="taskCompletedUsers"></div><button class="secondary" onclick="closeCompletedUsers()">إغلاق قائمة المستخدمين</button></div><p class="note">عدد الإكمالات يعرض الطلبات التي تمت الموافقة عليها فقط. لا يمكن حذف مهمة لها طلبات محفوظة؛ أوقفها بدلًا من ذلك للحفاظ على السجل.</p></div></div>
@@ -991,6 +999,48 @@ async function createRedeemCode(){
  finally{button.disabled=false;}
 }
 
+
+async function openBroadcastPage(){
+ if(!adminOwner){alert("نشر الرسائل متاح للمالك فقط.");return;}
+ document.getElementById("mainMenu").classList.add("hidden");
+ document.getElementById("broadcastPage").classList.remove("hidden");
+ document.getElementById("broadcastStatus").textContent="لن يتم الإرسال قبل تأكيدك.";
+}
+function closeBroadcastPage(){
+ document.getElementById("broadcastPage").classList.add("hidden");
+ document.getElementById("mainMenu").classList.remove("hidden");
+}
+async function publishBroadcast(){
+ if(!adminOwner)return;
+ const button=document.getElementById("broadcastPublishButton"),status=document.getElementById("broadcastStatus");
+ const message=document.getElementById("broadcastMessage").value.trim();
+ const input=document.getElementById("broadcastMedia"),file=input.files?.[0]||null;
+ if(!message&&!file){alert("اكتب رسالة أو اختر صورة أو فيديو.");return;}
+ if(file&&file.size>50*1024*1024){alert("حجم الملف يجب ألا يتجاوز 50 ميغابايت.");return;}
+ if(file&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")){alert("يمكن إرفاق صورة أو فيديو فقط.");return;}
+ if(!confirm("سيتم إرسال هذا المنشور إلى جميع المستخدمين النشطين عبر البوت. هل تريد المتابعة؟"))return;
+ button.disabled=true;status.textContent="جارٍ تجهيز المنشور وإرساله إلى البوت...";
+ try{
+  const form=new FormData();form.append("initData",tg.initData);form.append("message",message);if(file)form.append("media",file,file.name);
+  const response=await fetch("/api/admin/broadcast",{method:"POST",body:form,credentials:"same-origin",cache:"no-store"});
+  const result=await response.json();if(!response.ok||!result.success)throw new Error(result.detail||result.error||"BROADCAST_FAILED");
+  status.textContent="تم قبول المنشور للإرسال. عدد المستخدمين المستهدفين: "+Number(result.total||0)+". جارٍ الإرسال في الخلفية.";
+  document.getElementById("broadcastMessage").value="";input.value="";
+  await refreshBroadcastStatus();
+ }catch(error){status.textContent="تعذر نشر الرسالة: "+error.message;alert(status.textContent);}
+ finally{button.disabled=false;}
+}
+async function refreshBroadcastStatus(){
+ const status=document.getElementById("broadcastStatus");if(!tg?.initData)return;
+ try{
+  const response=await fetch("/api/admin/broadcast?initData="+encodeURIComponent(tg.initData),{method:"GET",credentials:"same-origin",cache:"no-store"});
+  const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"STATUS_FAILED");
+  if(!result.job){status.textContent="لا توجد منشورات سابقة.";return;}
+  const job=result.job;
+  const labels={queued:"في قائمة الانتظار",sending:"جارٍ الإرسال",completed:"اكتمل الإرسال",failed:"توقف الإرسال بسبب خطأ"};
+  status.textContent="حالة آخر منشور: "+(labels[job.status]||job.status)+" — تم الإرسال: "+Number(job.sent||0)+" — فشل: "+Number(job.failed||0)+" — إجمالي المستهدفين: "+Number(job.total||0);
+ }catch(error){status.textContent="تعذر تحديث حالة النشر: "+error.message;}
+}
 /* بقية أقسام الإدارة */
 function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("قسم الأمان والصلاحيات خاص بالمالك.");return;}openSecurity();return;}if(["users","news","tasks","reviews","support"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("ليس لديك صلاحية لهذا القسم.");return;}if(name==="activity"){openActivity();return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}if(name==="support"){openSupportAdmin();return;}const messages={stats:"إحصائيات الموقع"};alert((messages[name]||"هذا القسم")+"\\nهذه الوظيفة لم يتم ربطها بعد.");}
 
