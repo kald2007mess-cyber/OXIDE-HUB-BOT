@@ -177,7 +177,13 @@ export async function onRequestPost({ request, env }) {
           await telegramCall(env.TELEGRAM_BOT_TOKEN, mediaType, {
             chat_id: "@OxideHubOfficial",
             [photo ? "photo" : "video"]: media,
-            caption: caption || undefined
+            caption: caption || undefined,
+            reply_markup: {
+              inline_keyboard: [[{
+                text: "🚀 افتح بوت OXIDE HUB",
+                url: "https://t.me/OxideHub_bot"
+              }]]
+            }
           });
           await env.DB.prepare("DELETE FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
             .bind(String(message.from.id)).run();
