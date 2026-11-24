@@ -76,9 +76,9 @@ export async function onRequestPost({ request, env }) {
         SELECT ?, ?, ?, ?
         WHERE (
           SELECT COUNT(*) FROM referrals
-          WHERE referrer_id = ? AND (? = 5 AND status = 'rewarded' OR ? <> 5)
+          WHERE referrer_id = ? AND status = 'rewarded'
         ) >= ?
-      `).bind(userId, milestoneId, milestone.reward, claimedAt, userId, milestoneId, milestoneId, milestone.target),
+      `).bind(userId, milestoneId, milestone.reward, claimedAt, userId, milestone.target),
       env.DB.prepare(`
         UPDATE users SET points = points + ?, updated_at = ?
         WHERE user_uuid = ? AND status = 'active' AND changes() = 1
