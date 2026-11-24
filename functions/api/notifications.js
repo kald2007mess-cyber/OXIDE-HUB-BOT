@@ -92,7 +92,7 @@ export async function onRequestPost({ request, env }) {
         UPDATE oxide_notifications
         SET claimed_at = ?, read_at = COALESCE(read_at, ?), claim_token = ?
         WHERE id = ? AND user_id = ? AND type = 'reward'
-          AND reward_points > 0 AND claimed_at IS NULL
+          AND type IN ('reward','redeem_code') AND reward_points > 0 AND claimed_at IS NULL
       `).bind(now, now, token, id, userId),
       env.DB.prepare(`
         UPDATE users SET points = points + (
@@ -116,7 +116,7 @@ export async function onRequestPost({ request, env }) {
       env.DB.prepare(`
         INSERT INTO point_ledger
           (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-        SELECT u.user_uuid,n.reward_points,u.points,'notification_reward','notification',CAST(n.id AS TEXT),?
+        SELECT u.user_uuid,n.reward_points,u.points,CASE WHEN n.type='redeem_code' THEN 'Redeem code reward' ELSE 'notification_reward' END,CASE WHEN n.type='redeem_code' THEN 'redeem_code' ELSE 'notification' END,CAST(n.id AS TEXT),?
         FROM users u JOIN oxide_notifications n ON n.user_id = u.user_uuid
         WHERE u.user_uuid = ? AND n.id = ? AND n.claim_token = ?
       `).bind(now,userId,id,token)
