@@ -71,7 +71,7 @@ async function refreshEnergy(DB, userId, nowMs = Date.now()) {
   const maxEnergy = Math.max(1, Number(state.max_energy || 500));
   let energy = Math.max(0, Math.min(maxEnergy, Number(state.energy ?? maxEnergy)));
   let updatedAtMs = Number(state.energy_updated_at_ms || nowMs);
-  const regenMs = 7200000 / maxEnergy;
+  const regenMs = 10800000 / maxEnergy;
   if (energy >= maxEnergy) {
     energy = maxEnergy;
     updatedAtMs = nowMs;
@@ -105,7 +105,7 @@ async function walletSnapshot(DB, userId) {
     energy: Number(state?.energy ?? 500),
     maxEnergy: Number(state?.max_energy || 500),
     energyUpdatedAtMs: Number(state?.energy_updated_at_ms || Date.now()),
-    energyRegenMs: 7200000 / Math.max(1, Number(state?.max_energy || 500)),
+    energyRegenMs: 10800000 / Math.max(1, Number(state?.max_energy || 500)),
     serverTimeMs: Date.now()
   };
 }
