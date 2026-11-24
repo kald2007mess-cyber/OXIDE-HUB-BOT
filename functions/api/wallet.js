@@ -249,36 +249,7 @@ export async function onRequestPost({ request, env }) {
       }
 
     } else if (action === "claim_mining") {
-      const state = await env.DB.prepare("SELECT mining_level, last_mining_at FROM oxide_wallet_state WHERE user_id = ?").bind(userId).first();
-      const level = Number(state?.mining_level || 1);
-      const previousMiningAt = Number(state?.last_mining_at || now);
-      const elapsed = Math.max(0, Math.min(3600, now - previousMiningAt));
-      const reward = Math.round(elapsed * MINING_RATES[level] * 1000) / 1000;
-      const reference = crypto.randomUUID();
-      const results = await env.DB.batch([
-        env.DB.prepare(`
-          UPDATE oxide_wallet_state SET last_mining_at = ?, updated_at = ?
-          WHERE user_id = ? AND last_mining_at = ?
-            AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
-        `).bind(now, now, userId, previousMiningAt, userId),
-        env.DB.prepare(`
-          UPDATE users SET points = points + ?, updated_at = ?
-          WHERE user_uuid = ? AND status = 'active' AND changes() = 1
-        `).bind(reward, now, userId),
-        env.DB.prepare(`
-          INSERT INTO point_ledger
-            (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
-          SELECT user_uuid,?,points,'wallet_mining','wallet_mining',?,?
-          FROM users WHERE user_uuid = ? AND changes() = 1
-        `).bind(reward, reference, now, userId)
-      ]);
-      if (Number(results?.[0]?.meta?.changes || 0) !== 1 ||
-          Number(results?.[1]?.meta?.changes || 0) !== 1 ||
-          Number(results?.[2]?.meta?.changes || 0) !== 1) {
-        return json({ success: true, ...(await walletSnapshot(env.DB, userId)) });
-      }
-      await syncLegacyPoints(env.DB, userId, now);
-
+      return json({ success: false, error: "AUTOMATIC_MINING_DISABLED" }, 403);
     } else {
       return json({ success: false, error: "INVALID_ACTION" }, 400);
     }
