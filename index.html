@@ -1038,6 +1038,22 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 
 
 
+
+#oxideLaunchGate{position:fixed;inset:0;z-index:99999;display:none;overflow:auto;padding:22px 16px 30px;background:radial-gradient(ellipse at 50% 18%,#401080 0,#120522 48%,#05020d 100%);color:#fff;text-align:center;font-family:Arial,sans-serif}
+#oxideLaunchGate.active{display:flex;align-items:center;justify-content:center}
+.oxide-launch-inner{width:min(100%,480px);margin:auto}
+.oxide-launch-lock{font-size:76px;filter:drop-shadow(0 0 18px #a020ff);margin:0 auto 8px}
+.oxide-launch-title{font-size:27px;font-weight:900;text-shadow:0 0 15px #b84cff;margin:12px 0}
+.oxide-launch-sub{color:#d8aaff;font-size:16px;margin:8px 0 18px}
+.oxide-launch-clock{font:900 clamp(38px,11vw,58px)/1.2 monospace;letter-spacing:2px;padding:18px 8px;border:2px solid #a72cff;border-radius:18px;background:#10051f;box-shadow:0 0 24px #8b20ff,inset 0 0 22px #501080;margin:16px 0}
+.oxide-launch-count{padding:13px;border:1px solid #8c31df;border-radius:14px;background:#10051f;margin:14px 0;font-size:17px}
+.oxide-launch-link{width:100%;padding:14px 10px;border:1px solid #8f32dd;border-radius:12px;background:#080313;color:#fff;text-align:center;font-size:13px;direction:ltr}
+.oxide-launch-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.oxide-launch-actions button{border:1px solid #ad54ff;border-radius:12px;padding:13px 8px;background:linear-gradient(120deg,#491078,#21083c);color:white;font-weight:800}
+.oxide-launch-rocket{width:82%;margin:24px auto 0;padding:18px;border:2px solid #4b405e;border-radius:18px;background:linear-gradient(120deg,#171320,#09070e);color:#777;font-size:28px;filter:grayscale(1);opacity:.65;box-shadow:none}
+.oxide-launch-rocket.ready{border-color:#d16aff;color:#fff;filter:none;opacity:1;box-shadow:0 0 28px #b72cff,inset 0 0 20px #7020a5;animation:oxideLaunchPulse 1.4s infinite alternate}
+@keyframes oxideLaunchPulse{to{box-shadow:0 0 42px #d64dff,inset 0 0 25px #9025d1}}
+
 </style>
 </head>
 <body>
@@ -1292,6 +1308,22 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 </section>
 
 </main>
+<section id="oxideLaunchGate" aria-live="polite">
+ <div class="oxide-launch-inner">
+  <div class="oxide-launch-lock">🔒</div>
+  <h1 class="oxide-launch-title">جارٍ إطلاق البوت بعد...</h1>
+  <div class="oxide-launch-clock" id="oxideLaunchClock">22:00:00</div>
+  <div class="oxide-launch-count">👥 عدد الدعوات: <strong id="oxideLaunchInvites">0</strong></div>
+  <p class="oxide-launch-sub">رابط دعوتك الخاص</p>
+  <input class="oxide-launch-link" id="oxideLaunchReferral" readonly value="" aria-label="رابط الدعوة الخاص بك">
+  <div class="oxide-launch-actions">
+   <button type="button" onclick="copyOxideLaunchLink()">نسخ الرابط</button>
+   <button type="button" onclick="shareOxideLaunchLink()">مشاركة رابط</button>
+  </div>
+  <button type="button" class="oxide-launch-rocket" id="oxideLaunchRocket" disabled onclick="enterOxideAfterLaunch()">🚀</button>
+  <p class="oxide-launch-sub" id="oxideLaunchStatus">زر الإطلاق سيتفعّل عند انتهاء العدّ التنازلي</p>
+ </div>
+</section>
 
 <script>
 let MAINTENANCE_MODE=false;
@@ -3140,5 +3172,48 @@ if(!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData))s
 
 </script>
 
+<script>
+(function(){
+ const gate=document.getElementById("oxideLaunchGate");
+ if(!gate)return;
+ let launchEndsAt=0,launchTimer=null,launchUrl="";
+ const clock=document.getElementById("oxideLaunchClock");
+ const rocket=document.getElementById("oxideLaunchRocket");
+ const status=document.getElementById("oxideLaunchStatus");
+ function fmt(n){const h=Math.floor(n/3600),m=Math.floor((n%3600)/60),s=n%60;return [h,m,s].map(x=>String(x).padStart(2,"0")).join(":");}
+ function tick(){
+  const left=Math.max(0,launchEndsAt-Math.floor(Date.now()/1000));
+  clock.textContent=fmt(left);
+  if(left===0){clearInterval(launchTimer);rocket.disabled=false;rocket.classList.add("ready");status.textContent="🚀 انتهى الانتظار! اضغط لإطلاق البوت";}
+ }
+ window.copyOxideLaunchLink=async function(){if(!launchUrl)return;try{await navigator.clipboard.writeText(launchUrl);status.textContent="تم نسخ رابط الدعوة";}catch{const f=document.getElementById("oxideLaunchReferral");f.select();status.textContent="حدد الرابط وانسخه";}};
+ window.shareOxideLaunchLink=function(){if(!launchUrl)return;window.open("https://t.me/share/url?url="+encodeURIComponent(launchUrl)+"&text="+encodeURIComponent("🚀 انضم إلى OXIDE HUB"),"_blank","noopener,noreferrer");};
+ window.enterOxideAfterLaunch=function(){if(launchEndsAt>Date.now()/1000)return;gate.classList.remove("active");document.body.classList.remove("oxide-launch-locked");};
+ async function init(){
+  try{
+   const r=await fetch("/api/launch",{cache:"no-store"}),d=await r.json();
+   if(!r.ok||!d.success||!d.active)return;
+   launchEndsAt=Number(d.endsAt||0);
+   const tg=window.Telegram?.WebApp;
+   if(tg?.initData){
+    const auth=await fetch("/api/telegram-session",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData})});
+    const ad=await auth.json();
+    if(auth.ok&&ad.success){
+     const rr=await fetch("/api/referral",{cache:"no-store",credentials:"same-origin"}),rd=await rr.json();
+     if(rr.ok&&rd.success&&rd.referralCode){
+      const id=String(rd.referralCode).replace(/^OX-/i,"");
+      launchUrl="https://t.me/OxideHub_bot?start=ref_"+encodeURIComponent(id);
+      document.getElementById("oxideLaunchReferral").value=launchUrl;
+      document.getElementById("oxideLaunchInvites").textContent=Number(rd.user?.referrals||0).toLocaleString();
+     }
+    }
+   }
+   gate.classList.add("active");document.body.classList.add("oxide-launch-locked");
+   tick();launchTimer=setInterval(tick,1000);
+  }catch(e){console.error("OXIDE launch gate:",e);}
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+})();
+</script>
 </body>
 </html>
