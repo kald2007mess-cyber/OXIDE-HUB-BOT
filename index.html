@@ -1526,7 +1526,7 @@ function translateRemainingStaticText(language){
  }
  document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>["placeholder","aria-label","title","alt"].forEach(attr=>{const value=el.getAttribute(attr);if(!value||!/[\u0600-\u06FF]/.test(value))return;if(dict[value])el.setAttribute(attr,dict[value]);}));
  document.querySelectorAll("#language option[value='ar'],#accountLanguage option[value='ar']").forEach(option=>option.textContent=dict["العربية"]);
- document.querySelectorAll("#language,#accountLanguage").forEach(el=>el.setAttribute("aria-label",language==="ru"?"Язык приложения":"App language"));
+ document.querySelectorAll("#language,#accountLanguage").forEach(el=>el.setAttribute("aria-label",language==="ru"?"Язык приложения":language==="ar"?"لغة التطبيق":"App language"));
 }
 
  const set=(selector,key)=>{const el=document.querySelector(selector);if(el&&p[key]!==undefined)el.textContent=p[key]};
