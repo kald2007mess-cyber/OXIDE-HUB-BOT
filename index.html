@@ -1074,6 +1074,8 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 .oxide-leaderboard-tabs button.active{background:linear-gradient(135deg,#7541b7,#43236f);border-color:#bd91ff;color:white;box-shadow:0 6px 20px rgba(117,65,183,.22)}
 .oxide-leaderboard-content{max-width:520px;margin:0 auto;padding:14px;border:1px solid rgba(164,120,221,.3);border-radius:16px;background:linear-gradient(150deg,rgba(35,24,55,.98),rgba(13,10,24,.99));box-shadow:0 12px 35px rgba(0,0,0,.28)}
 .oxide-leaderboard-caption{margin:2px 0 12px;color:#d9bdff;font-size:14px;font-weight:900;text-align:center}
+.oxide-current-rank{direction:rtl;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 15px;border:1px solid rgba(188,145,255,.42);border-radius:15px;background:linear-gradient(125deg,rgba(82,47,126,.32),rgba(20,15,34,.96));box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.oxide-current-rank-label{color:#cdb5ed;font-size:11px;font-weight:800;margin-bottom:6px}.oxide-current-rank-place{color:#fff;font-size:19px;font-weight:900}.oxide-current-rank-score{padding:9px 11px;border:1px solid rgba(188,145,255,.3);border-radius:10px;background:rgba(117,65,183,.18);color:#e3c9ff;font-size:12px;font-weight:900;white-space:nowrap}
 .oxide-leaderboard-content .ranking-row{direction:ltr;display:grid;grid-template-columns:38px 44px minmax(0,1fr) auto;align-items:center;gap:11px;min-height:78px;padding:11px 12px;margin:0 0 9px;border:1px solid rgba(255,255,255,.075);border-radius:16px;background:rgba(10,8,20,.76);box-shadow:0 7px 18px rgba(0,0,0,.2);backdrop-filter:blur(10px)}
 .oxide-leaderboard-content .ranking-row:last-child{margin-bottom:0}
 .oxide-leaderboard-content .ranking-row:nth-child(1){background:linear-gradient(105deg,rgba(115,91,27,.42),rgba(63,53,24,.48));border-color:rgba(230,190,67,.48)}
@@ -1363,6 +1365,7 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
   <div class="oxide-leaderboard-content">
     <div class="oxide-leaderboard-caption" id="oxideLeaderboardCaption">🏆 أفضل 10 في العملات</div>
     <div id="oxideLeaderboardList"><div class="ranking-row">جاري التحميل...</div></div>
+    <div id="oxideCurrentRank" class="oxide-current-rank" aria-live="polite"><div><div class="oxide-current-rank-label">ترتيبك الحالي</div><div class="oxide-current-rank-place">جاري التحميل...</div></div></div>
   </div>
 </section>
 
@@ -1378,7 +1381,7 @@ const stages=document.getElementById("stages"),statusBox=document.getElementById
 let progress=0,busy=false,lastProgress=null,currentLanguage="ar",activePopup=null,rewardPoints=0,rewardOffers=[{id:1,name:"55 COINS",points:1500},{id:2,name:"145 COINS",points:3500},{id:3,name:"PREMIUM",points:3000},{id:4,name:"25 BP COINS",points:3500}],redeeming=false;
 let islandAds=[],islandCompleted=0,islandRemaining=0,islandCycleEndsAt=0,islandBusy=false,islandTimerInterval=null;
 let userDisplayId="",userIdLoaded=false,referralLinkValue="",referralLoaded=false,telegramProfileData=null;
-let oxidePointsRanking=[],oxideReferralsRanking=[],oxideLeaderboardMetric="points";
+let oxidePointsRanking=[],oxideReferralsRanking=[],oxideCurrentRanks={points:null,referrals:null},oxideLeaderboardMetric="points";
 const LOCK_KEY="oxide_active_ad_session";
 const rewardImages={1:"https://kald2007mess-cyber-github-io.pages.dev/oxide_55_coins.png",2:"https://kald2007mess-cyber-github-io.pages.dev/oxide_145_coins.png",3:"https://kald2007mess-cyber-github-io.pages.dev/oxide_premium.png",4:"https://kald2007mess-cyber-github-io.pages.dev/oxide_25_bp_coins.png"};
 let lastSupportMessageId=0,supportSending=false,supportPollingStarted=false;
@@ -2156,14 +2159,29 @@ function showOxideLeaderboardTab(metric){
  document.getElementById("oxideCoinsTab")?.setAttribute("aria-selected",String(coins));
  document.getElementById("oxideReferralsTab")?.setAttribute("aria-selected",String(!coins));
  const caption=document.getElementById("oxideLeaderboardCaption");
- if(caption)caption.textContent=coins?"🏆 أفضل 10 في العملات":"👥 أفضل 10 في الإحالات المؤهلة";
+ if(caption)caption.textContent=coins?"🏆 أفضل 10 في العملات":"👥 أفضل 10 في الدعوات";
  renderRanking("oxideLeaderboardList",coins?oxidePointsRanking:oxideReferralsRanking,coins?"points":"referrals");
+ renderOxideCurrentRank(coins?"points":"referrals");
 }
 
+function renderOxideCurrentRank(metric){
+ const box=document.getElementById("oxideCurrentRank");if(!box)return;
+ const isCoins=metric==="points",rankData=oxideCurrentRanks[metric],value=Number(rankData?.value??0),rank=Number(rankData?.rank)||0;
+ const label=currentLanguage==="en"?"Your current rank":"ترتيبك الحالي";
+ const rankText=rank>0?"#"+rank:(isCoins?"—":(currentLanguage==="en"?"No invitations yet":"لا توجد دعوات بعد"));
+ const scoreText=value.toLocaleString()+(isCoins?" pts":(currentLanguage==="en"?" invites":" دعوة"));
+ box.replaceChildren();
+ const info=document.createElement("div"),heading=document.createElement("div"),place=document.createElement("div"),score=document.createElement("div");
+ heading.className="oxide-current-rank-label";heading.textContent=label;
+ place.className="oxide-current-rank-place";place.textContent=rankText;
+ score.className="oxide-current-rank-score";score.textContent=scoreText;
+ info.append(heading,place);box.append(info,score);
+}
 function renderRanking(targetId,items,metric){const target=document.getElementById(targetId);target.innerHTML="";if(!Array.isArray(items)||!items.length){const row=document.createElement("div");row.className="ranking-row";row.style.display="block";row.style.textAlign="center";row.textContent=ox("noRanking");target.appendChild(row);return}items.slice(0,10).forEach((item,index)=>{const row=document.createElement("div");row.className="ranking-row oxide-ranking-profile";const place=document.createElement("span");place.className="ranking-place";place.textContent="#"+(index+1);const avatar=document.createElement("img");avatar.className="oxide-ranking-avatar";avatar.alt="";if(item.photoUrl)avatar.src=item.photoUrl;avatar.onerror=()=>{avatar.style.visibility="hidden"};const identity=document.createElement("span");identity.className="oxide-ranking-identity";const id=document.createElement("strong");id.className="ranking-id";id.textContent=item.displayId||safeRankingId(item);identity.appendChild(id);if(item.username){const username=document.createElement("small");username.textContent="@"+item.username;identity.appendChild(username)}if(item.telegramUrl){const link=document.createElement("a");link.href=item.telegramUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Telegram";identity.appendChild(link)}const score=document.createElement("span");score.className="ranking-score";score.textContent=Number(item[metric]||0).toLocaleString()+(metric==="points"?" pts":"");row.append(place,avatar,identity,score);target.appendChild(row)})}
 // Referral registration is exclusively handled by the Telegram deep-link flow.
 async function loadReferral(){const status=document.getElementById("referralStatus");if(status)status.textContent="";try{if(!userIdLoaded&&!await loadUserId())throw new Error("NO_TELEGRAM_SESSION");const response=await fetch("/api/referral",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success||typeof data.referralCode!=="string"||!data.referralCode)throw new Error(data.error||"Referral API must return referralCode");const telegramReferralId=String(data.referralCode).replace(/^OX-/i,"");if(!/^\d{5,20}$/.test(telegramReferralId))throw new Error("Invalid Telegram referral ID");referralLinkValue="https://t.me/OxideHub_bot?start=ref_"+encodeURIComponent(telegramReferralId);document.getElementById("referralLink").value=referralLinkValue;const launchLink=document.getElementById("launchReferralLink");if(launchLink)launchLink.value=referralLinkValue;document.getElementById("referralCount").textContent=Number(data.user?.referrals??data.referrals??0).toLocaleString();document.getElementById("referralEarned").textContent=Number(data.user?.earned??data.earned??0).toLocaleString();document.getElementById("referralEligible").textContent=Number(data.user?.eligible??data.eligible??0).toLocaleString();document.getElementById("referralIneligible").textContent=Number(data.user?.ineligible??data.ineligible??0).toLocaleString();const shardBalance=data.user?.points??data.user?.balance??data.points??null;document.getElementById("referralShardBalance").textContent=shardBalance===null?"—":Number(shardBalance).toLocaleString();oxidePointsRanking=Array.isArray(data.pointsRanking)?data.pointsRanking:[];
 oxideReferralsRanking=Array.isArray(data.referralRanking)?data.referralRanking:[];
+oxideCurrentRanks=data.currentRanks&&typeof data.currentRanks==="object"?data.currentRanks:{points:null,referrals:null};
 if(document.getElementById("oxideLeaderboardPage")?.style.display==="block")showOxideLeaderboardTab(oxideLeaderboardMetric);
 referralLoaded=true;status.textContent=""}catch(error){console.error("Referral loading failed:",error);if(status)status.textContent=(currentLanguage==="ru"?"Не удалось загрузить ссылку-приглашение: ":"Could not load referral link: ")+String(error?.message||"UNKNOWN_ERROR")}}
 async function copyReferralLink(){if(!referralLinkValue)await loadReferral();if(!referralLinkValue)return;try{await navigator.clipboard.writeText(referralLinkValue);document.getElementById("referralStatus").textContent=t("copied");setTimeout(()=>{document.getElementById("referralStatus").textContent=""},1800)}catch(error){const field=document.getElementById("referralLink");field.focus();field.select();document.getElementById("referralStatus").textContent=ox("copyManual")}}
