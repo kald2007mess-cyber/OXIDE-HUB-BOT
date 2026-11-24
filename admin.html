@@ -249,6 +249,8 @@ button{border-radius:12px}
 #broadcastMessage{width:100%;min-height:145px;padding:13px;border:1px solid rgba(112,160,225,.27);border-radius:12px;background:rgba(5,13,31,.82);color:#fff;font:14px/1.7 Arial,sans-serif;resize:vertical}
 #broadcastMedia{width:100%;padding:12px;border:1px dashed rgba(125,163,220,.45);border-radius:12px;background:rgba(5,13,31,.6);color:#dce8fa}
 #broadcastPage .platform-status{padding:12px;margin-top:10px;line-height:1.7}
+
+.redeem-code-history{margin-top:22px;padding-top:16px;border-top:1px solid rgba(112,160,225,.2)}.redeem-code-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;margin:9px 0;border:1px solid #294661;border-radius:13px;background:rgba(8,22,39,.76)}.redeem-code-main{min-width:0;display:flex;flex-direction:column;gap:6px}.redeem-code-main strong{direction:ltr;text-align:right;color:#fff;font-size:16px;overflow-wrap:anywhere}.redeem-code-main small{color:#a9bfd4;font-size:12px;line-height:1.6}.redeem-code-state{font-size:11px;font-weight:bold;padding:5px 8px;border-radius:20px;white-space:nowrap}.redeem-code-state.live{color:#8df0bd;background:#123d30;border:1px solid #23875e}.redeem-code-state.expired{color:#ffb2b2;background:#492326;border:1px solid #a74747}.redeem-code-edit{width:42px;min-width:42px;height:42px;padding:0;margin:0;background:rgba(46,82,130,.55);border:1px solid #4775a4;font-size:19px}.redeem-users-modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:14px}.redeem-users-modal.hidden{display:none!important}.redeem-users-panel{width:min(100%,560px);max-height:85vh;overflow:auto;padding:17px;border:1px solid rgba(102,220,255,.3);border-radius:18px;background:#0b162a;box-shadow:0 18px 55px #000b}.redeem-users-panel>button{width:auto;margin:0 0 12px}.redeem-user-row{display:flex;align-items:center;gap:12px;padding:11px;margin:8px 0;border:1px solid #294661;border-radius:12px;background:#101f35}.redeem-user-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:50%;overflow:hidden;background:#1b3451;display:grid;place-items:center;color:#9fdcff;font-weight:bold}.redeem-user-avatar img{width:100%;height:100%;object-fit:cover}.redeem-user-info{min-width:0;display:flex;flex-direction:column;gap:5px}.redeem-user-info strong{overflow-wrap:anywhere;color:#fff}.redeem-user-info small{color:#9fdcff;font-size:12px;overflow-wrap:anywhere}.redeem-user-points{margin-right:auto;color:#a7f3c0;font-weight:bold;white-space:nowrap;font-size:12px}@media(max-width:420px){.redeem-code-row{align-items:flex-start}.redeem-code-state{white-space:normal;text-align:center}.redeem-code-edit{flex:0 0 40px}}
 </style>
 </head>
 <body>
@@ -305,7 +307,7 @@ button{border-radius:12px}
 <div id="supportAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeSupportAdmin()">⬅ العودة إلى لوحة الإدارة</button><h3>💬 مركز الدعم الفني</h3><p class="note">اختر مستخدمًا من قائمة المحادثات لعرض رسائله والرد عليه مباشرة.</p><div class="support-admin-layout"><aside class="support-admin-sidebar"><div class="support-admin-sidebar-head"><strong>المحادثات</strong><small id="supportAdminCount">جارٍ تحميل المحادثات...</small></div><div class="support-admin-list" id="supportAdminList"><div class="support-admin-empty">جارٍ تحميل الرسائل...</div></div></aside><section class="support-admin-chat"><div class="support-admin-chat-head" id="supportAdminChatHead"><strong>اختر محادثة</strong></div><div class="support-admin-thread" id="supportAdminThread"><div class="support-admin-empty">ستظهر المحادثة هنا بعد اختيار المستخدم.</div></div><form class="support-admin-compose" id="supportAdminForm" onsubmit="sendAdminSupportReply(event);return false;"><textarea id="supportAdminInput" maxlength="2000" rows="2" placeholder="اكتب ردك هنا..." disabled required></textarea><button id="supportAdminSend" type="submit" disabled>إرسال</button></form><div class="support-admin-status" id="supportAdminStatus"></div></section></div></div></div>
 
 <div id="securityPage" class="hidden"><div class="card"><button class="back" onclick="closeSecurity()">⬅ العودة إلى لوحة الإدارة</button><h3>🛡️ الأمان والصلاحيات</h3><p class="note">هذا القسم خاص بالمالك فقط. يمكنك إضافة نائب ومنحه صلاحيات محددة أو سحبها في أي وقت.</p><div class="platform-status" id="securityStatus">جارٍ تحميل النواب...</div><div class="task-form"><h3>إضافة نائب جديد</h3><div class="field"><label>Telegram ID للنائب</label><input id="deputyTelegramId" inputmode="numeric" maxlength="20" placeholder="مثال: 123456789"></div><button id="addDeputyButton" onclick="addDeputy()">➕ إضافة النائب</button></div><h3>النواب الحاليون</h3><div id="deputiesList"><div class="task-empty">جارٍ التحميل...</div></div><p class="note">لا يمكن للنائب دخول قسم الأمان والصلاحيات. المالك وحده يستطيع إدارة النواب. صلاحيات الأقسام ستُفرض من الخادم عند ربط حماية كل قسم.</p></div></div>
-<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ العودة إلى لوحة الإدارة</button><h3>🎁 المكافآت والإشعارات</h3><p class="note">أرسل إشعار مكافأة إلى مستخدم محدد أو جميع المستخدمين. لا تُضاف النقاط إلا بعد ضغط المستخدم على «استلم المكافأة».</p><div class="field"><label>المستلم</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">جميع المستخدمين</option><option value="user">مستخدم محدد</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>رقم المستخدم (مثال: OX-1234ABCD)</label><input id="rewardUserId" maxlength="23" placeholder="OX-123456789"></div><div class="field"><label>عدد النقاط</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>عنوان الإشعار</label><input id="rewardTitle" maxlength="120" value="🎁 مكافأة جديدة"></div><div class="field"><label>رسالة للمستخدم</label><textarea id="rewardMessage" maxlength="500">لديك مكافأة جديدة جاهزة للاستلام.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 إرسال المكافأة</button><div class="platform-status" id="rewardSendStatus">المكافأة ستُضاف بعد استلام المستخدم لها.</div><div class="task-form" id="redeemCodeAdminForm" style="margin-top:22px"><h3>🎟️ إنشاء رمز استرداد</h3><p class="note">أنشئ رمزًا بعدد استخدامات محدد ومكافأة عملات ثابتة لكل مستخدم.</p><div class="field"><label>الرمز</label><input id="redeemCodeValue" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="مثال: OXIDE2026"></div><div class="field"><label>عدد الهدايا (عدد مرات الاسترداد)</label><input id="redeemCodeGiftCount" type="number" min="1" max="1000000" value="10"></div><div class="field"><label>عدد العملات لكل هدية</label><input id="redeemCodeCoins" type="number" min="1" max="100000000" value="100"></div><div class="field"><label>مدة صلاحية الرمز (بالساعات)</label><input id="redeemCodeExpiryHours" type="number" min="1" max="8760" value="24"><small class="note">بعد انتهاء المدة يصبح الرمز غير صالح تلقائياً.</small></div><button id="createRedeemCodeButton" type="button" onclick="createRedeemCode()">🎟️ إنشاء الرمز</button><div class="platform-status" id="redeemCodeStatus">كل مستخدم يستطيع استرداد الرمز مرة واحدة فقط.</div></div></div>
+<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ العودة إلى لوحة الإدارة</button><h3>🎁 المكافآت والإشعارات</h3><p class="note">أرسل إشعار مكافأة إلى مستخدم محدد أو جميع المستخدمين. لا تُضاف النقاط إلا بعد ضغط المستخدم على «استلم المكافأة».</p><div class="field"><label>المستلم</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">جميع المستخدمين</option><option value="user">مستخدم محدد</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>رقم المستخدم (مثال: OX-1234ABCD)</label><input id="rewardUserId" maxlength="23" placeholder="OX-123456789"></div><div class="field"><label>عدد النقاط</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>عنوان الإشعار</label><input id="rewardTitle" maxlength="120" value="🎁 مكافأة جديدة"></div><div class="field"><label>رسالة للمستخدم</label><textarea id="rewardMessage" maxlength="500">لديك مكافأة جديدة جاهزة للاستلام.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 إرسال المكافأة</button><div class="platform-status" id="rewardSendStatus">المكافأة ستُضاف بعد استلام المستخدم لها.</div><div class="task-form" id="redeemCodeAdminForm" style="margin-top:22px"><h3>🎟️ إنشاء رمز استرداد</h3><p class="note">أنشئ رمزًا بعدد استخدامات محدد ومكافأة عملات ثابتة لكل مستخدم.</p><div class="field"><label>الرمز</label><input id="redeemCodeValue" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="مثال: OXIDE2026"></div><div class="field"><label>عدد الهدايا (عدد مرات الاسترداد)</label><input id="redeemCodeGiftCount" type="number" min="1" max="1000000" value="10"></div><div class="field"><label>عدد العملات لكل هدية</label><input id="redeemCodeCoins" type="number" min="1" max="100000000" value="100"></div><div class="field"><label>مدة صلاحية الرمز (بالساعات)</label><input id="redeemCodeExpiryHours" type="number" min="1" max="8760" value="24"><small class="note">بعد انتهاء المدة يصبح الرمز غير صالح تلقائياً.</small></div><button id="createRedeemCodeButton" type="button" onclick="createRedeemCode()">🎟️ إنشاء الرمز</button><div class="platform-status" id="redeemCodeStatus">كل مستخدم يستطيع استرداد الرمز مرة واحدة فقط.</div><div class="redeem-code-history"><h3>📋 سجل رموز الاسترداد</h3><p class="note">حالة كل رمز وعدد مرات استرداده. اضغط على قلم الرمز لعرض الأشخاص الذين استردوه.</p><div id="redeemCodesHistory"><div class="task-empty">سيظهر سجل الرموز هنا.</div></div></div><div id="redeemCodeUsersModal" class="redeem-users-modal hidden"><div class="redeem-users-panel"><button class="secondary" type="button" onclick="closeRedeemCodeUsers()">✕ إغلاق</button><h3 id="redeemCodeUsersTitle">مستردّو الرمز</h3><div id="redeemCodeUsersList"></div></div></div></div></div>
 </div>
 </div>
 
@@ -960,7 +962,7 @@ async function deleteDeputy(telegramId){if(securityBusy)return;if(!confirm("حذ
 
 /* إرسال المكافآت للمستخدمين */
 document.getElementById("rewardTarget")?.addEventListener("change",function(){document.getElementById("rewardUserField").style.display=this.value==="user"?"block":"none";});
-function openAdminRewards(){if(!adminOwner){alert("إرسال المكافآت متاح للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("rewardsAdminPage").classList.remove("hidden");document.getElementById("rewardSendStatus").textContent="المكافأة ستُضاف بعد استلام المستخدم لها.";}
+function openAdminRewards(){if(!adminOwner){alert("إرسال المكافآت متاح للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("rewardsAdminPage").classList.remove("hidden");document.getElementById("rewardSendStatus").textContent="المكافأة ستُضاف بعد استلام المستخدم لها.";loadRedeemCodes();}
 function closeAdminRewards(){document.getElementById("rewardsAdminPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 async function sendAdminReward(){
  if(!adminOwner)return;
@@ -979,6 +981,58 @@ async function sendAdminReward(){
  }catch(error){status.textContent="تعذر إرسال المكافأة: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;}
 }
+
+
+async function redeemCodesRequest(codeId=0){
+ const url="/api/admin/redeem-codes?initData="+encodeURIComponent(tg?.initData||"")+(codeId?"&codeId="+encodeURIComponent(codeId):"");
+ const response=await fetch(url,{method:"GET",credentials:"same-origin",cache:"no-store"});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||!data.success)throw new Error(data.error||"LOAD_REDEEM_CODES_FAILED");
+ return data;
+}
+function renderRedeemCodes(codes,now){
+ const list=document.getElementById("redeemCodesHistory");list.replaceChildren();
+ if(!codes.length){list.innerHTML='<div class="task-empty">لا توجد رموز استرداد بعد.</div>';return;}
+ for(const code of codes){
+  const expired=code.expiresAt!==null&&code.expiresAt!==undefined&&Number(code.expiresAt)<=now;
+  const row=document.createElement("div");row.className="redeem-code-row";
+  const main=document.createElement("div");main.className="redeem-code-main";
+  const name=document.createElement("strong");name.textContent=code.code;
+  const meta=document.createElement("small");meta.textContent="المسترد: "+Number(code.usedCount||0)+" / "+Number(code.giftCount||0)+" • المكافأة: "+Number(code.coins||0).toLocaleString("en-US")+" نقطة";
+  const expiry=document.createElement("small");expiry.textContent=code.expiresAt?"ينتهي: "+new Date(Number(code.expiresAt)*1000).toLocaleString("ar-DZ"):"بدون تاريخ انتهاء";
+  main.append(name,meta,expiry);
+  const state=document.createElement("span");state.className="redeem-code-state "+(expired?"expired":"live");state.textContent=expired?"انتهت صلاحيته":"ما زال يعمل";
+  const edit=document.createElement("button");edit.type="button";edit.className="redeem-code-edit";edit.title="عرض مستردّي الرمز";edit.setAttribute("aria-label","عرض مستردّي الرمز "+code.code);edit.textContent="✎";edit.onclick=()=>openRedeemCodeUsers(code.id,code.code);
+  row.append(main,state,edit);list.append(row);
+ }
+}
+async function loadRedeemCodes(){
+ const list=document.getElementById("redeemCodesHistory");if(!list)return;
+ list.textContent="جارٍ تحميل سجل الرموز...";
+ try{const data=await redeemCodesRequest();renderRedeemCodes(data.codes||[],Number(data.now||Math.floor(Date.now()/1000)));}
+ catch(error){list.textContent="تعذر تحميل سجل الرموز: "+error.message;}
+}
+async function openRedeemCodeUsers(codeId,code){
+ const modal=document.getElementById("redeemCodeUsersModal"),list=document.getElementById("redeemCodeUsersList");
+ document.getElementById("redeemCodeUsersTitle").textContent="الأشخاص الذين استردوا: "+code;
+ modal.classList.remove("hidden");list.textContent="جارٍ تحميل الأشخاص...";
+ try{
+  const data=await redeemCodesRequest(codeId);list.replaceChildren();
+  if(!data.users?.length){list.innerHTML='<div class="task-empty">لم يسترد أي مستخدم هذا الرمز حتى الآن.</div>';return;}
+  for(const user of data.users){
+   const row=document.createElement("div");row.className="redeem-user-row";
+   const avatar=document.createElement("div");avatar.className="redeem-user-avatar";
+   if(user.photoUrl){const img=document.createElement("img");img.src=user.photoUrl;img.alt="";img.onerror=()=>{avatar.textContent="👤";};avatar.append(img);}else avatar.textContent="👤";
+   const info=document.createElement("div");info.className="redeem-user-info";
+   const name=document.createElement("strong");name.textContent=[user.firstName,user.lastName].filter(Boolean).join(" ")||"مستخدم OXIDE";
+   const username=document.createElement("small");username.textContent=user.username?"@"+user.username:"بدون اسم مستخدم";
+   const id=document.createElement("small");id.textContent=user.id||user.userUuid||"";
+   const points=document.createElement("span");points.className="redeem-user-points";points.textContent=Number(user.points||0).toLocaleString("en-US")+" نقطة";
+   info.append(name,username,id);row.append(avatar,info,points);list.append(row);
+  }
+ }catch(error){list.textContent="تعذر تحميل المستردّين: "+error.message;}
+}
+function closeRedeemCodeUsers(){document.getElementById("redeemCodeUsersModal").classList.add("hidden");}
 
 async function createRedeemCode(){
  if(!adminOwner){alert("إنشاء الرموز متاح للمالك فقط.");return;}
