@@ -122,7 +122,7 @@ export async function onRequestPost({ request, env }) {
       String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID);
 
     // Owner-only channel publishing wizard: /post, then send a photo/video with caption.
-    if (isOwnerPrivateChat && (/^\\/post(?:@\\w+)?$/.test(messageText) || messageText === "ارسل منشور" || messageText === "أرسل منشور")) {
+    if (isOwnerPrivateChat && (/^\/post(?:@\\w+)?$/.test(messageText) || messageText === "ارسل منشور" || messageText === "أرسل منشور")) {
       if (!env.DB) {
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", { chat_id: message.chat.id, text: "تعذر بدء النشر: قاعدة البيانات غير متاحة حالياً." });
         return json({ ok: true });
@@ -140,7 +140,7 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: true });
     }
 
-    if (isOwnerPrivateChat && /^\\/cancel(?:@\\w+)?$/.test(messageText)) {
+    if (isOwnerPrivateChat && /^\/cancel(?:@\\w+)?$/.test(messageText)) {
       if (env.DB) await env.DB.prepare("DELETE FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
         .bind(String(message.from.id)).run().catch(() => {});
       await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
