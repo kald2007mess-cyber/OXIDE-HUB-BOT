@@ -17,7 +17,7 @@ export async function onRequestGet({ env }) {
     ).all();
     const values = Object.fromEntries((rows.results||[]).map(x=>[x.setting_key,x.setting_value]));
     const now = Math.floor(Date.now()/1000);
-    const active = values.launch_active === "1" && Number(values.launch_ends_at||0) > now;
+    const active = values.launch_active === "1";
     return json({
       success:true, active,
       startedAt:Number(values.launch_started_at||0),
