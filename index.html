@@ -2182,20 +2182,21 @@ function renderRanking(targetId,items,metric){const target=document.getElementBy
 // Referral registration is exclusively handled by the Telegram deep-link flow.
 
 const OXIDE_REFERRAL_MILESTONES=[{id:5,target:5,reward:100},{id:10,target:10,reward:200},{id:20,target:20,reward:500}];
-let oxideReferralMilestoneData={eligible:0,claimed:[]};
+let oxideReferralMilestoneData={eligible:0,total:0,claimed:[]};
 function renderReferralMilestones(){
  const host=document.getElementById("referralMilestoneList");if(!host)return;
  host.replaceChildren();
  const eligible=Math.max(0,Number(oxideReferralMilestoneData.eligible||0));
+ const total=Math.max(0,Number(oxideReferralMilestoneData.total||0));
  const claimed=new Set((oxideReferralMilestoneData.claimed||[]).map(Number));
  OXIDE_REFERRAL_MILESTONES.forEach(task=>{
-  const done=claimed.has(task.id),progress=Math.min(100,Math.floor(eligible/task.target*100)),ready=eligible>=task.target&&!done;
+  const count=task.id===5?eligible:total;const done=claimed.has(task.id),progress=Math.min(100,Math.floor(count/task.target*100)),ready=count>=task.target&&!done;
   const card=document.createElement("article");card.className="oxide-referral-milestone-card";card.dataset.taskFilter="referrals";
   const top=document.createElement("div");top.className="oxide-new-task-top";
   const icon=document.createElement("div");icon.className="oxide-new-task-icon";icon.textContent="👥";
   const info=document.createElement("div");info.className="oxide-new-task-info";
-  const title=document.createElement("strong");title.textContent=task.target+" دعوات مؤهلة";
-  const sub=document.createElement("small");sub.textContent=eligible+" / "+task.target+" دعوات مؤهلة";
+  const title=document.createElement("strong");title.textContent=task.id===5?"5 دعوات مؤهلة":task.target+" دعوات";
+  const sub=document.createElement("small");sub.textContent=count+" / "+task.target+(task.id===5?" دعوات مؤهلة":" دعوات إجمالية");
   info.append(title,sub);
   const reward=document.createElement("span");reward.className="oxide-task-reward";reward.textContent="+"+task.reward+" 🪙";
   top.append(icon,info,reward);
@@ -2214,7 +2215,7 @@ async function loadReferralMilestones(){
   if(!userIdLoaded&&!await loadUserId())throw new Error("NO_TELEGRAM_SESSION");
   const response=await fetch("/api/referral-milestones",{method:"GET",credentials:"same-origin",cache:"no-store"});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"MILESTONES_FAILED");
-  oxideReferralMilestoneData={eligible:Number(data.eligible||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
+  oxideReferralMilestoneData={eligible:Number(data.eligible||0),total:Number(data.total||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
  }catch(error){console.error("Referral milestones failed:",error);if(host){host.replaceChildren();const message=document.createElement("div");message.className="mission-item";message.textContent="تعذر تحميل مهمات الدعوة. حاول تحديث الصفحة.";host.appendChild(message);}}
 }
 async function claimReferralMilestone(id,button){
