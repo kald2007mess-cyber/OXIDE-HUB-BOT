@@ -1873,7 +1873,7 @@ async function loadNotifications(openPanel=false){
    card.append(title,body,meta);
    if((n.type==="reward"||n.type==="redeem_code")&&Number(n.reward_points)>0){
     const button=document.createElement("button");button.className="notification-claim";
-    button.textContent=n.claimed_at?(currentLanguage==="ru"?"Получено ✓":"Claimed ✓"):"🎁 "+(currentLanguage==="ru"?"Получить ":"Claim ")+Number(n.reward_points).toLocaleString()+(currentLanguage==="ru"?" очков":" points");
+    button.textContent=n.claimed_at?(currentLanguage==="ru"?"Получено ✓":currentLanguage==="en"?"Claimed ✓":"تم الاستلام ✓"):"🎁 "+(currentLanguage==="ru"?"Получить ":currentLanguage==="en"?"Claim ":"استلام ")+Number(n.reward_points).toLocaleString()+(currentLanguage==="ru"?" очков":currentLanguage==="en"?" points":" عملة");
     button.disabled=Boolean(n.claimed_at);if(!n.claimed_at)button.addEventListener("click",()=>claimNotification(Number(n.id),button));
     card.appendChild(button);
    }
@@ -1903,7 +1903,7 @@ async function claimNotification(id,button){
   const response=await fetch("/api/notifications",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({action:"claim",id})});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"CLAIM_FAILED");
   button.textContent=ox("claimed");
-  const balance=document.getElementById("missionsBalance");if(balance&&Number.isFinite(Number(data.balance)))balance.textContent=Number(data.balance).toLocaleString();
+  if(Number.isFinite(Number(data.balance))){const balanceText=Number(data.balance).toLocaleString();["missionsBalance","accountBalanceValue","pointsBalance","referralShardBalance","missionTopBalance","tapBalance"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=balanceText;});}
   await loadNotifications(true);
   alert(ox("claimSuccess",{n:Number(data.pointsAwarded||0)}));
  }catch(error){button.disabled=false;button.textContent=ox("retryClaim");alert(error.message==="ALREADY_CLAIMED_OR_NOT_FOUND"?ox("claimExists"):ox("claimFailed"));}
