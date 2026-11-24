@@ -14,7 +14,7 @@ const botTexts = {
     adminButton: "فتح لوحة الإدارة 🔐",
     adminCommand: "لوحة الإدارة",
     welcome: "🚀 مرحبًا بك في OXIDE HUB!\n💎 أنجز المهام، اجمع العملات، وادعُ أصدقاءك لتربح المزيد!\n🔥 رحلتك نحو المكافآت تبدأ الآن!",
-    open: "تشغيل البوت 🚀"
+    open: "فتح OXIDE HUB"
   },
   en: {
     adminTitle: "🔐 OXIDE HUB Admin Panel",
@@ -22,7 +22,7 @@ const botTexts = {
     adminButton: "Open Admin Panel 🔐",
     adminCommand: "Admin panel",
     welcome: "🚀 Welcome to OXIDE HUB!\n💎 Complete tasks, collect coins, and invite friends to earn more!\n🔥 Your rewards journey starts now!",
-    open: "Launch Bot 🚀"
+    open: "Open OXIDE HUB"
   },
   ru: {
     adminTitle: "🔐 Панель администратора OXIDE HUB",
@@ -30,7 +30,7 @@ const botTexts = {
     adminButton: "Открыть панель 🔐",
     adminCommand: "Панель администратора",
     welcome: "🚀 Добро пожаловать в OXIDE HUB!\n💎 Выполняйте задания, собирайте монеты и приглашайте друзей, чтобы зарабатывать больше!\n🔥 Ваш путь к наградам начинается сейчас!",
-    open: "Запустить бота 🚀"
+    open: "Открыть OXIDE HUB"
   }
 };
 
