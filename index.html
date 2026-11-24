@@ -1957,7 +1957,7 @@ async function claimNotification(id,button){
 }
 
 
-function filterOxideTasks(category,button){document.querySelectorAll(".oxide-filter-chip").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll(".oxide-new-task-card").forEach(card=>{const categories=(card.dataset.taskCategory||"").split(/\\s+/);card.style.display=category==="all"||categories.includes(category)?"":"none";});}
+function filterOxideTasks(category,button){document.querySelectorAll(".oxide-filter-chip").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll(".oxide-new-task-card,#referralMilestoneList [data-task-filter]").forEach(card=>{const categories=(card.dataset.taskCategory||card.dataset.taskFilter||"").split(/\\s+/);card.style.display=category==="all"||categories.includes(category)?"":"none";});}
 
 
 function updateAccountLevel(points){
@@ -2223,7 +2223,7 @@ async function claimReferralMilestone(id,button){
  try{
   const response=await fetch("/api/referral-milestones",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({milestoneId:id})});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"CLAIM_FAILED");
-  oxideReferralMilestoneData={eligible:Number(data.eligible||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
+  oxideReferralMilestoneData={eligible:Number(data.eligible||0),total:Number(data.total||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
   if(typeof window.loadOxideWallet==="function")await window.loadOxideWallet();
   const balance=document.getElementById("referralShardBalance");if(balance&&Number.isFinite(Number(data.balance)))balance.textContent=Number(data.balance).toLocaleString();
   alert("تم استلام "+Number(data.reward||0)+" عملة بنجاح!");
