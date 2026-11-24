@@ -62,7 +62,9 @@ export async function onRequestPost({ request, env }) {
     }
     const update = await request.json();
     const message = update.message;
-    if (!message?.chat?.id || !message?.from?.id || typeof message.text !== "string") return json({ ok: true });
+    if (!message?.chat?.id || !message?.from?.id) return json({ ok: true });
+    const messageText = typeof message.text === "string" ? message.text.trim() : "";
+    const messageCaption = typeof message.caption === "string" ? message.caption.trim() : "";
 
     // Clear every Telegram bot-command menu scope and restore the default chat menu.
     // This removes the four-square command list without disabling /start or /admin handlers.
@@ -112,6 +114,80 @@ export async function onRequestPost({ request, env }) {
           `).bind(now, original.conversation_id).run();
         }
         return json({ ok: true, supportReplySaved: Boolean(replyText) });
+      }
+    }
+
+    const isOwnerPrivateChat = String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
+      String(message.chat.type) === "private" &&
+      String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID);
+
+    // Owner-only channel publishing wizard: /post, then send a photo/video with caption.
+    if (isOwnerPrivateChat && /^\\/post(?:@\\w+)?$/.test(messageText)) {
+      await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_channel_post_drafts (
+        owner_telegram_id TEXT PRIMARY KEY,
+        requested_at INTEGER NOT NULL
+      )`).run();
+      await env.DB.prepare("INSERT OR REPLACE INTO oxide_channel_post_drafts(owner_telegram_id,requested_at) VALUES(?,?)")
+        .bind(String(message.from.id), Math.floor(Date.now() / 1000)).run();
+      await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+        chat_id: message.chat.id,
+        text: "📢 أرسل الآن صورة أو فيديو مع النص المرافق له (Caption)، وسيُنشر تلقائياً في قناة @OxideHubOfficial.\n\nأرسل /cancel لإلغاء العملية."
+      });
+      return json({ ok: true });
+    }
+
+    if (isOwnerPrivateChat && /^\\/cancel(?:@\\w+)?$/.test(messageText)) {
+      if (env.DB) await env.DB.prepare("DELETE FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
+        .bind(String(message.from.id)).run().catch(() => {});
+      await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+        chat_id: message.chat.id,
+        text: "تم إلغاء تجهيز المنشور."
+      });
+      return json({ ok: true });
+    }
+
+    if (isOwnerPrivateChat && env.DB) {
+      await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_channel_post_drafts (
+        owner_telegram_id TEXT PRIMARY KEY,
+        requested_at INTEGER NOT NULL
+      )`).run();
+      const draft = await env.DB.prepare("SELECT requested_at FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
+        .bind(String(message.from.id)).first();
+      if (draft) {
+        const age = Math.floor(Date.now() / 1000) - Number(draft.requested_at || 0);
+        if (age > 600) {
+          await env.DB.prepare("DELETE FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
+            .bind(String(message.from.id)).run();
+          await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+            chat_id: message.chat.id,
+            text: "انتهت مهلة تجهيز المنشور. أرسل /post للبدء من جديد."
+          });
+          return json({ ok: true });
+        }
+        const photo = Array.isArray(message.photo) && message.photo.length ? message.photo[message.photo.length - 1] : null;
+        const video = message.video || null;
+        const caption = messageCaption.slice(0, 1024);
+        if (photo || video) {
+          const mediaType = photo ? "sendPhoto" : "sendVideo";
+          const media = photo ? photo.file_id : video.file_id;
+          await telegramCall(env.TELEGRAM_BOT_TOKEN, mediaType, {
+            chat_id: "@OxideHubOfficial",
+            [photo ? "photo" : "video"]: media,
+            caption: caption || undefined
+          });
+          await env.DB.prepare("DELETE FROM oxide_channel_post_drafts WHERE owner_telegram_id=?")
+            .bind(String(message.from.id)).run();
+          await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+            chat_id: message.chat.id,
+            text: "✅ تم نشر المنشور بنجاح في قناة @OxideHubOfficial."
+          });
+          return json({ ok: true, channelPostPublished: true });
+        }
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
+          chat_id: message.chat.id,
+          text: "أرسل صورة أو فيديو مع كتابة النص في خانة الوصف (Caption). أو أرسل /cancel للإلغاء."
+        });
+        return json({ ok: true });
       }
     }
 
