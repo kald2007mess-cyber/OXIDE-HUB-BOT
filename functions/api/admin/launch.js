@@ -22,7 +22,7 @@ export async function onRequestPost({request,env}) {
         "SELECT setting_key,setting_value FROM site_settings WHERE setting_key IN ('launch_active','launch_started_at','launch_ends_at')"
       ).all();
       const values=Object.fromEntries((rows.results||[]).map(x=>[x.setting_key,x.setting_value]));
-      const active=values.launch_active==="1" && Number(values.launch_ends_at||0)>now;
+      const active=values.launch_active==="1";
       return json({success:true,active,startedAt:Number(values.launch_started_at||0),endsAt:Number(values.launch_ends_at||0),remainingSeconds:active?Number(values.launch_ends_at)-now:0});
     }
     if(body.action==="start"){
