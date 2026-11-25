@@ -3349,6 +3349,7 @@ initializeOxideHub();
  $("energyUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"energy"});if(ok&&$("energyUpgradeFeedback"))$("energyUpgradeFeedback").textContent="تمت زيادة سعة الطاقة بنجاح ⚡"});
  document.querySelectorAll("[data-close-upgrade]").forEach(button=>button.addEventListener("click",()=>closeOverlay(button.dataset.closeUpgrade==="tap"?"tapUpgradeOverlay":"energyUpgradeOverlay")));
  ["tapUpgradeOverlay","energyUpgradeOverlay"].forEach(id=>$(id)?.addEventListener("click",event=>{if(event.target.id===id)closeOverlay(id)}));
+ $("islandWatchButton")?.addEventListener("click",watchIslandAd);
  async function flushTapQueue(){
   if(tapPending||actionBusy||!walletReady)return;
   tapPending=true;
