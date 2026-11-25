@@ -66,8 +66,23 @@ export async function onRequestPost({ request, env }) {
     const messageText = typeof message.text === "string" ? message.text.trim() : "";
     const messageCaption = typeof message.caption === "string" ? message.caption.trim() : "";
 
-    // Clear every Telegram bot-command menu scope and restore the default chat menu.
-    // This removes the four-square command list without disabling /start or /admin handlers.
+    // Keep the persistent chat menu button pointed at the OXIDE HUB Mini App.
+    // Reapply both the bot-wide default and this chat's override on every update,
+    // so an old /admin menu button cannot replace it later.
+    const oxideMenuButton = {
+      type: "web_app",
+      text: "Open OXIDE 🚀",
+      web_app: { url: env.TELEGRAM_WEBAPP_URL }
+    };
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
+      menu_button: oxideMenuButton
+    });
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
+      chat_id: message.chat.id,
+      menu_button: oxideMenuButton
+    });
+    // Remove command-menu entries globally; /admin remains available by typing it
+    // and its handler below still checks the owner Telegram ID.
     for (const scope of [
       undefined,
       { type: "all_private_chats" },
@@ -76,14 +91,6 @@ export async function onRequestPost({ request, env }) {
     ]) {
       await telegramCall(env.TELEGRAM_BOT_TOKEN, "deleteMyCommands", scope ? { scope } : {});
     }
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: { type: "default" }
-    });
-    // Also clear any menu-button override saved specifically for this private chat.
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      chat_id: message.chat.id,
-      menu_button: { type: "default" }
-    });
 
     // An administrator can reply directly to the support notification in Telegram.
     // The reply is stored in the same conversation and appears in the user's support tab.
@@ -302,16 +309,8 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // Show the admin command in Telegram; access remains restricted to the owner.
-    const botCommands = [{ command: "admin", description: words.adminCommand }];
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", { commands: botCommands });
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setMyCommands", {
-      commands: botCommands,
-      scope: { type: "all_private_chats" }
-    });
-    await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
-      menu_button: { type: "default" }
-    });
+    // Do not register /admin in the public command menu. The owner can still
+    // type /admin manually; the handler above enforces TELEGRAM_ADMIN_ID.
 
     // Send the OXIDE HUB welcome message without inline keyboard buttons.
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
