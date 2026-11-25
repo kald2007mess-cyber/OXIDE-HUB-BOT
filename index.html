@@ -989,9 +989,6 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 /* All small OXIDE coin icons are doubled across every page */
 #tapBalance::after,#skillsBalance::after,#pointsBalance::after,#missionTopBalance::after,#referralShardBalance::after{width:44px!important;height:44px!important;flex-basis:44px!important}
 
-/* Purple coin icon only in the floating reward shown after each tap */
-.tap-plus{display:inline-flex;align-items:center;gap:5px}
-.tap-plus::after{content:"O";display:inline-grid;place-items:center;width:17px;height:17px;flex:0 0 17px;border-radius:50%;font-size:9px;font-weight:1000;line-height:1;color:#fff;background:radial-gradient(circle at 32% 25%,#edc8ff 0%,#b85aff 28%,#7620c4 68%,#35105e 100%);border:1px solid #e7c3ff;box-shadow:0 0 7px #b34cff, inset 0 1px 2px #fff9}
 
 /* Keep the full tap coin hit-area clear on mobile; avoid double vertical offset */
 @media(max-width:600px){#homePage .tap-coin{position:relative!important;top:35px!important;transform:none!important;z-index:6!important;pointer-events:auto!important}#homePage .tap-coin img{pointer-events:none!important}}
