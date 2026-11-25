@@ -231,14 +231,14 @@ export async function onRequestPost({ request, env }) {
     if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     const body = await request.json().catch(() => ({}));
     const offer = String(body?.offer || "");
-    if (!PLATFORM_OFFERS.includes(offer)) return json({ success: false, error: "INVALID_OFFER" }, 400);
+    if (offer !== "island" && !PLATFORM_OFFERS.includes(offer)) return json({ success: false, error: "INVALID_OFFER" }, 400);
     const now = Math.floor(Date.now() / 1000);
-    const progress = await readPlatformProgress(env.DB, userId, now);
-    if (progress[offer] >= MAX_ADS) return json({ success: false, error: "OFFER_COMPLETE" }, 409);
+    const progress = offer === "island" ? null : await readPlatformProgress(env.DB, userId, now);
+    if (offer !== "island" && progress[offer] >= MAX_ADS) return json({ success: false, error: "OFFER_COMPLETE" }, 409);
     await env.DB.prepare(
       "INSERT INTO adsgram_pending_offer(user_id,offer,created_at) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET offer=excluded.offer,created_at=excluded.created_at"
     ).bind(userId, offer, now).run();
-    return json({ success: true, offer, completedAds: progress[offer], platformProgress: progress });
+    return json({ success: true, offer, completedAds: offer === "island" ? await readProgress(env.DB, userId, now) : progress[offer], platformProgress: progress });
   } catch (error) {
     console.error("AdsGram offer start failed:", error);
     return json({ success: false, error: "ADSGRAM_OFFER_START_FAILED" }, 500);
