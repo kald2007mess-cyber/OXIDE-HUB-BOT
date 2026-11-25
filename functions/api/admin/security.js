@@ -40,6 +40,14 @@ export async function onRequestPost({ request, env }) {
     const action = String(body.action || "");
 
     if (action === "list") {
+      // ترحيل صلاحية beta القديمة: كانت تتيح إدارة المنصات الثلاث كلها.
+      await env.DB.prepare(`
+        INSERT OR IGNORE INTO oxide_admin_deputy_permissions (telegram_id, permission)
+        SELECT telegram_id, 'platform_files'
+        FROM oxide_admin_deputy_permissions
+        WHERE permission = 'beta'
+      `).run();
+
       const result = await env.DB.prepare(`
         SELECT telegram_id, added_by, active, created_at
         FROM oxide_admin_deputies
