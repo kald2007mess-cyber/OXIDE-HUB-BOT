@@ -2039,7 +2039,18 @@ let oxideSwipePage="home";
   showPage(OXIDE_SWIPE_TABS[next]);
   const ids={home:"homePage",missions:"missionsPage",rewards:"rewardsPage",referral:"referralPage",account:"accountPage"};
   const page=document.getElementById(ids[OXIDE_SWIPE_TABS[next]]);
-  if(page){page.classList.remove("oxide-swipe-enter-next","oxide-swipe-enter-prev");void page.offsetWidth;page.classList.add(direction==="next"?"oxide-swipe-enter-next":"oxide-swipe-enter-prev");}
+  if(page&&typeof page.animate==="function"){
+   const fromTransform=direction==="next"
+    ?"perspective(1100px) rotateY(-72deg) translateZ(-130px) scale(.86)"
+    :"perspective(1100px) rotateY(72deg) translateZ(-130px) scale(.86)";
+   const origin=direction==="next"?"left center":"right center";
+   page.style.transformOrigin=origin;
+   page.animate([
+    {opacity:.18,transform:fromTransform,filter:"brightness(.48)"},
+    {opacity:.82,transform:"perspective(1100px) rotateY(13deg) translateZ(0) scale(.98)",filter:"brightness(.82)",offset:.68},
+    {opacity:1,transform:"perspective(1100px) rotateY(0deg) translateZ(0) scale(1)",filter:"brightness(1)"}
+   ],{duration:720,easing:"cubic-bezier(.18,.72,.2,1)",fill:"both"});
+  }
  },{passive:true});
  document.addEventListener("touchcancel",()=>{eligible=false;},{passive:true});
 })();
