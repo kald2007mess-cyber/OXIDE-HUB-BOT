@@ -211,11 +211,24 @@ export async function onRequestPost({ request, env }) {
     const language = getBotLanguage(message.from.language_code);
     const words = botTexts[language];
 
-    // Private owner-only admin command. Open the admin panel inside Telegram's Web App.
+    // Owner and active deputies can open the admin panel in a private chat.
+    // The admin API independently verifies Telegram initData and enforces each deputy's permissions.
     const adminMatch = messageText.match(/^\/admin(?:@\w+)?$/);
     if (adminMatch) {
-      if (String(message.from.id) === String(env.TELEGRAM_ADMIN_ID) &&
-          String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
+      const senderId = String(message.from.id);
+      const ownerId = String(env.OXIDE_OWNER_TELEGRAM_ID || env.TELEGRAM_ADMIN_ID || "");
+      const isPrivateChat = String(message.chat.type) === "private" &&
+        String(message.chat.id) === senderId;
+      let canOpenAdmin = isPrivateChat && senderId === ownerId;
+
+      if (isPrivateChat && !canOpenAdmin && env.DB) {
+        const deputy = await env.DB.prepare(
+          "SELECT telegram_id FROM oxide_admin_deputies WHERE telegram_id = ? AND active = 1 LIMIT 1"
+        ).bind(senderId).first();
+        canOpenAdmin = Boolean(deputy);
+      }
+
+      if (canOpenAdmin) {
         const adminUrl = env.TELEGRAM_WEBAPP_URL.replace(/\/$/, "") + "/admin.html";
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
