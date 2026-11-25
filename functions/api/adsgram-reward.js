@@ -120,7 +120,7 @@ async function notifyAdminAdWatch(env, DB, userUuid, result, offer, now) {
     const message = [
       "📺 مشاهدة إعلان مؤكدة — OXIDE HUB",
       "",
-      "🎯 القسم: " + (platformNames[offer] || String(offer).toUpperCase()),
+      "📱 نوع الإعلان: " + (platformNames[offer] || String(offer).toUpperCase()),
       "👤 الاسم: " + name,
       "🔗 المستخدم: " + username,
       "🆔 Telegram ID: " + String(profile?.telegram_user_id || "غير متوفر"),
