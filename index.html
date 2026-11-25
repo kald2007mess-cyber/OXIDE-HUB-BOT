@@ -1099,6 +1099,9 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 html,body,body *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none}
 input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default}
 #referralLink{-webkit-user-select:none!important;user-select:none!important}
+
+/* OXIDE HUB: protect official coin images from long-press copying */
+.tap-coin img,.oxide-coin-inline,.mission-reward-coin,.oxide-exchange-coin{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-user-drag:none!important;user-drag:none!important;pointer-events:none}
 </style>
 </head>
 <body>
@@ -3422,5 +3425,13 @@ async function submitRedeemCode(){
 document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemCodeModal();});
 </script>
 
+
+/* Prevent long-press context menu and dragging on OXIDE coin artwork only */
+(function protectOxideCoinImages(){
+ const coinSelector=".tap-coin img,.oxide-coin-inline,.mission-reward-coin,.oxide-exchange-coin";
+ ["contextmenu","dragstart","selectstart"].forEach(type=>document.addEventListener(type,event=>{
+  if(event.target instanceof Element&&event.target.closest(coinSelector))event.preventDefault();
+ },true));
+})();
 </body>
 </html>
