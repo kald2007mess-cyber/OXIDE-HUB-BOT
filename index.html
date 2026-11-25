@@ -2241,7 +2241,7 @@ function renderSupportLanguage(){const empty=document.getElementById("supportEmp
 function appendSupportMessage(message){const container=document.getElementById("supportMessages"),empty=container.querySelector(".support-empty");if(empty)empty.remove();const bubble=document.createElement("div"),isAdmin=message.sender==="admin"||message.sender==="support";bubble.className="support-message "+(isAdmin?"admin":"user");const sender=document.createElement("span");sender.className="support-sender";sender.textContent=isAdmin?supportText("admin"):supportText("you");const body=document.createElement("div");body.textContent=message.message_type&&message.message_type!=="text"?supportText("media"):String(message.message_text||"");bubble.append(sender,body);container.appendChild(bubble)}
 async function loadSupportMessages(initial=false){try{const response=await fetch("/api/support/messages?after="+(initial?0:lastSupportMessageId),{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"Support messages failed");const messages=Array.isArray(data.messages)?data.messages:[];trackSupportMessages(messages,initial);if(initial&&messages.length===0){const container=document.getElementById("supportMessages");if(!container.querySelector(".support-message")){container.innerHTML="";const empty=document.createElement("div");empty.className="support-empty";empty.dataset.placeholder="true";empty.textContent=supportText("empty");container.appendChild(empty)}}messages.forEach(message=>{const id=Number(message.id)||0;if(id>lastSupportMessageId){appendSupportMessage(message);lastSupportMessageId=id}});if(messages.length){const container=document.getElementById("supportMessages");container.scrollTop=container.scrollHeight}document.getElementById("supportStatus").textContent=""}catch(error){document.getElementById("supportStatus").textContent=supportText("loadFailed")}}
 async function sendSupportMessage(event){event.preventDefault();if(supportSending)return;const input=document.getElementById("supportInput"),button=document.getElementById("supportSend"),message=input.value.trim();if(!message)return;if(message.length>2000){document.getElementById("supportStatus").textContent=ox("tooLong");return}supportSending=true;button.disabled=true;document.getElementById("supportStatus").textContent=supportText("sending");try{const authenticated=await loadUserId();if(!authenticated)throw new Error("TELEGRAM_SESSION_CHECK_FAILED");const response=await fetch("/api/support/send",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({message})});const data=await response.json();if(!response.ok||!data.success){if(data.saved===true){input.value="";document.getElementById("supportStatus").textContent=ox("savedNoNotice");await loadSupportMessages(false);return}throw new Error((data.error||"Support send failed")+(data.diagnostic?" ["+data.diagnostic+"]":""))}input.value="";lastSupportMessageId=0;document.getElementById("supportMessages").innerHTML="";document.getElementById("supportStatus").textContent=supportText("sent");await loadSupportMessages(true)}catch(error){console.error("OXIDE support send diagnostic:",error);const detail=String(error?.message||"").slice(0,180);document.getElementById("supportStatus").textContent=supportText("failed")+(detail?" ("+detail+")":"")}finally{supportSending=false;button.disabled=false}}
-function startSupportChat(){if(supportPollingStarted)return;supportPollingStarted=true;loadUserId().finally(()=>loadSupportMessages(true));setInterval(()=>{if(!document.hidden)loadSupportMessages(true)},4000)}
+function startSupportChat(){if(supportPollingStarted)return;supportPollingStarted=true;setInterval(()=>{const page=document.getElementById("supportPage");if(!document.hidden&&page&&page.style.display!=="none")loadSupportMessages(false)},15000)}
 
 
 const missionTranslations = {
@@ -3070,7 +3070,7 @@ async function initializeOxideHub(){
  }catch(error){console.warn("Maintenance status could not be loaded; continuing with normal site startup.",error)}
  await boot();
 }
-async function boot(){/* Verify Telegram Mini App identity and establish the visitor cookie first. */if(!await loadUserId())return;/* Referral attribution is processed server-side from Telegram /start payloads. */if(window.loadOxideWallet)await window.loadOxideWallet();await loadReferral();getActiveSession();createStages();await refreshProgress();await loadSavedLanguage();if(sessionStorage.getItem("oxide_referral_notice")==="1"){document.getElementById("referralStatus").textContent=t("refRegistered");sessionStorage.removeItem("oxide_referral_notice")}loadRewards();loadIsland();loadMissionStatus();loadNotifications(false);startSupportChat();setInterval(()=>{if(getActiveSession()||!document.hidden)refreshProgress()},1000);window.addEventListener("focus",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false);loadNotifications(false)});document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)}});window.addEventListener("pageshow",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)});setInterval(()=>{if(!document.hidden){loadMissionStatus();checkNewsUpdates();loadNotifications(false);if(document.getElementById("rewardsPage").style.display==="block")loadRewardOrders()}},30000)}
+async function boot(){/* Verify Telegram Mini App identity and establish the visitor cookie first. */if(!await loadUserId())return;/* Referral attribution is processed server-side from Telegram /start payloads. */if(window.loadOxideWallet)await window.loadOxideWallet();await loadReferral();getActiveSession();createStages();await refreshProgress();await loadSavedLanguage();if(sessionStorage.getItem("oxide_referral_notice")==="1"){document.getElementById("referralStatus").textContent=t("refRegistered");sessionStorage.removeItem("oxide_referral_notice")}loadRewards();loadIsland();loadMissionStatus();loadNotifications(false);startSupportChat();setInterval(()=>{if(!document.hidden)refreshProgress()},10000);window.addEventListener("focus",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false);loadNotifications(false)});document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)}});window.addEventListener("pageshow",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)});setInterval(()=>{if(!document.hidden){loadMissionStatus();checkNewsUpdates();loadNotifications(false);if(document.getElementById("rewardsPage").style.display==="block")loadRewardOrders()}},30000)}
 initializeOxideHub();
 
 // OXIDE HUB platform availability: admin-controlled ON/OFF state.
@@ -3127,12 +3127,12 @@ initializeOxideHub();
  function resize(){
    const rect=canvas.getBoundingClientRect();
    w=Math.max(1,rect.width);h=Math.max(1,rect.height);
-   dpr=Math.min(window.devicePixelRatio||1,2.5);
+   dpr=Math.min(window.devicePixelRatio||1,1.5);
    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
    ctx.setTransform(dpr,0,0,dpr,0,0);
-   const count=Math.max(100,Math.min(440,Math.round(w*h/3000)));
+   const count=Math.max(45,Math.min(180,Math.round(w*h/7000)));
    raindrops=Array.from({length:count},()=>({x:rand(-20,w+20),y:rand(-h,h),len:rand(9,25),speed:rand(420,850),width:rand(.55,1.35),alpha:rand(.16,.48),drift:rand(-28,18)}));
-   glassDrops=Array.from({length:Math.max(24,Math.min(85,Math.round(w/7)))},()=>makeGlassDrop(true));
+   glassDrops=Array.from({length:Math.max(10,Math.min(40,Math.round(w/16)))},()=>makeGlassDrop(true));
  }
  function makeGlassDrop(initial=false){
    const r=rand(1.1,4.4);
@@ -3175,7 +3175,7 @@ initializeOxideHub();
    }
  }
  function frame(now){
-   if(document.hidden){raf=requestAnimationFrame(frame);return}
+   if(document.hidden){raf=0;return}
    const dt=Math.min(.04,(now-last||16.7)/1000);last=now;
    ctx.clearRect(0,0,w,h);
    drawRain(dt);drawGlassDrops(dt,now);
@@ -3183,7 +3183,7 @@ initializeOxideHub();
  }
  resize();
  if('ResizeObserver' in window){new ResizeObserver(resize).observe(canvas)}else window.addEventListener('resize',resize,{passive:true});
- document.addEventListener('visibilitychange',()=>{last=performance.now()});
+ document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0}else if(!raf){raf=requestAnimationFrame(frame)}});
  raf=requestAnimationFrame(frame);
 })();
 
