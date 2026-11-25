@@ -989,8 +989,8 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 /* All small OXIDE coin icons are doubled across every page */
 #tapBalance::after,#skillsBalance::after,#pointsBalance::after,#missionTopBalance::after,#referralShardBalance::after{width:44px!important;height:44px!important;flex-basis:44px!important}
 
-/* Slightly lower the tap coin without changing its size or behavior */
-@media(max-width:600px){#homePage .tap-coin{position:relative!important;top:35px!important;transform:translateY(35px)!important}}
+/* Keep the full tap coin hit-area clear on mobile; avoid double vertical offset */
+@media(max-width:600px){#homePage .tap-coin{position:relative!important;top:35px!important;transform:none!important;z-index:6!important;pointer-events:auto!important}#homePage .tap-coin img{pointer-events:none!important}}
 
 /* OXIDE_CORE_ONLY_CLEANUP_2026: hide unfinished/placeholder features, preserve core flows. */
 #vipPage,
