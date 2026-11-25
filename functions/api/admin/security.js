@@ -8,6 +8,7 @@ const ALLOWED_PERMISSIONS = [
   "android",
   "beta",
   "ios",
+  "platform_files",
   "maintenance",
   "stats"
 ];
