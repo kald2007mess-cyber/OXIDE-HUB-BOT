@@ -50,7 +50,7 @@ export async function authorizeAdmin(initData, env, requiredPermission = null) {
       ok: true,
       owner: true,
       telegramId,
-      permissions: ["users","news","tasks","support","android","beta","ios","maintenance","stats","security"]
+      permissions: ["users","news","tasks","support","android","beta","ios","maintenance","stats","security","platform_files"]
     };
   }
 
