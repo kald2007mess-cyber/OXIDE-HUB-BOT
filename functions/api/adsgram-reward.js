@@ -93,6 +93,55 @@ async function readPlatformProgress(DB, userId, now) {
   };
 }
 
+
+async function notifyAdminAdWatch(env, DB, userUuid, result, offer, now) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ADMIN_ID) return;
+  try {
+    const profile = await DB.prepare(`
+      SELECT telegram_user_id, username, first_name, last_name, public_id
+      FROM oxide_profiles WHERE user_uuid=? LIMIT 1
+    `).bind(userUuid).first();
+    const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "بدون اسم";
+    const username = profile?.username ? "@" + profile.username : "غير محدد";
+    const platformNames = {
+      beta: "BETA",
+      android: "ANDROID",
+      ios: "iOS",
+      island: "الجزيرة (Island)"
+    };
+    const progress = result.platformProgress && offer !== "island"
+      ? Number(result.platformProgress[offer] || 0) + "/10"
+      : Number(result.completedAds || 0) + "/10";
+    const time = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Africa/Algiers",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    }).format(new Date(now * 1000));
+    const message = [
+      "📺 مشاهدة إعلان مؤكدة — OXIDE HUB",
+      "",
+      "🎯 القسم: " + (platformNames[offer] || String(offer).toUpperCase()),
+      "👤 الاسم: " + name,
+      "🔗 المستخدم: " + username,
+      "🆔 Telegram ID: " + String(profile?.telegram_user_id || "غير متوفر"),
+      "🪪 OX: " + String(profile?.public_id || userUuid),
+      "📊 إعلانات هذا القسم: " + progress,
+      "💰 المكافأة: +" + Number(result.pointsAwarded || 0) + " نقطة",
+      "⭐ الرصيد الحالي: " + Number(result.points || 0),
+      "🕒 الوقت: " + time
+    ].join("\n");
+    const response = await fetch("https://api.telegram.org/bot" + env.TELEGRAM_BOT_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: env.TELEGRAM_ADMIN_ID, text: message, disable_web_page_preview: true })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) console.error("OXIDE ad watch admin notification failed:", data.description || response.status);
+  } catch (error) {
+    console.error("OXIDE ad watch admin notification failed:", error);
+  }
+}
+
 async function awardVerifiedAd(DB, userUuid, now, offer) {
   await DB.prepare(
     "INSERT OR IGNORE INTO adsgram_reward_state(user_id,last_claim_at) VALUES(?,0)"
@@ -204,6 +253,7 @@ export async function onRequestGet({ request, env }) {
       const offer = PLATFORM_OFFERS.includes(String(pending?.offer || "")) ? String(pending.offer) : "island";
       const now = Math.floor(Date.now() / 1000);
       const result = await awardVerifiedAd(env.DB, identity.user_uuid, now, offer);
+      if (result.success) await notifyAdminAdWatch(env, env.DB, identity.user_uuid, result, offer, now);
       return json(result, result.success ? 200 : result.error === "REWARD_COOLDOWN" ? 429 : 409);
     }
 
