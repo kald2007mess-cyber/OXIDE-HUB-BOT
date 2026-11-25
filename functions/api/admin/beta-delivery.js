@@ -22,7 +22,7 @@ export async function onRequestPost({request,env}){
   if(!env.DB||!env.SESSION_SECRET||!env.TELEGRAM_BOT_TOKEN||!env.TELEGRAM_ADMIN_ID)return out({success:false,error:"SERVER_CONFIGURATION_MISSING"},500);
   await ensure(env.DB);
   if((request.headers.get("Content-Type")||"").includes("multipart/form-data")){
-   const form=await request.formData(),offer=validOffer(form.get("offer")),auth=await authorizeAdmin(String(form.get("initData")||""),env,"beta");
+   const form=await request.formData(),offer=validOffer(form.get("offer")),auth=await authorizeAdmin(String(form.get("initData")||""),env,"platform_files");
    if(!auth.ok)return adminAuthResponse(auth);if(!offer)return out({success:false,error:"INVALID_OFFER"},400);
    const message=String(form.get("message")||"").trim();if(message.length>4000)return out({success:false,error:"MESSAGE_TOO_LONG"},400);
    const incoming=form.getAll("files").filter(f=>f&&typeof f.arrayBuffer==="function"&&f.size>0);if(incoming.length>MAX_FILES)return out({success:false,error:"TOO_MANY_FILES"},400);
@@ -34,7 +34,17 @@ export async function onRequestPost({request,env}){
   const body=await request.json().catch(()=>({})),offer=validOffer(body.offer);
   if(!offer)return out({success:false,error:"INVALID_OFFER"},400);
   if(body.action==="get"){
-   const auth=await authorizeAdmin(String(body.initData||""),env,"beta");if(!auth.ok)return adminAuthResponse(auth);
+   const auth=await authorizeAdmin(String(body.initData||""),env,"platform_files");if(!auth.ok)return adminAuthResponse(auth);
+   return out({success:true,offer,...await config(env.DB,offer)});
+  }
+  if(body.action==="remove_file"){
+   const auth=await authorizeAdmin(String(body.initData||""),env,"platform_files");if(!auth.ok)return adminAuthResponse(auth);
+   const index=Number(body.index);
+   if(!Number.isInteger(index)||index<0)return out({success:false,error:"INVALID_FILE_INDEX"},400);
+   const current=await config(env.DB,offer);
+   if(index>=current.files.length)return out({success:false,error:"FILE_NOT_FOUND"},404);
+   const files=current.files.filter((_,i)=>i!==index);
+   await env.DB.prepare("UPDATE platform_delivery_config SET files_json=?,updated_at=? WHERE offer=?").bind(JSON.stringify(files),Math.floor(Date.now()/1000),offer).run();
    return out({success:true,offer,...await config(env.DB,offer)});
   }
   const user=await getVisitor(request,env);if(!user)return out({success:false,error:"NO_TELEGRAM_SESSION"},401);
