@@ -40,6 +40,8 @@ async function storeFile(env,file) {
 export async function onRequestGet({request,env}) {
   try {
     if(!env.DB||!env.SESSION_SECRET)return out({success:false,error:"SERVER_CONFIGURATION_MISSING"},500);
+    const body=await request.json().catch(()=>({}));
+    if(body.action==="get") { const auth=await authorizeAdmin(String(body.initData||""),env,"beta");if(!auth.ok)return adminAuthResponse(auth);const settings=await config(env.DB);return out({success:true,...settings}); }
     const user=await getVisitor(request,env);if(!user)return out({success:false,error:"NO_TELEGRAM_SESSION"},401);
     await ensure(env.DB);
     const [identity,p,settings]=await Promise.all([
