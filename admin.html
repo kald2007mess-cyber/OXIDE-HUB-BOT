@@ -520,6 +520,9 @@ html[dir="ltr"] input,html[dir="ltr"] textarea,html[dir="ltr"] select{direction:
 html[dir="rtl"] .pm-editor-heading,html[dir="rtl"] .pm-upload-panel-head,html[dir="rtl"] .pm-saved-card-head,html[dir="rtl"] .pm-editor-footer,html[dir="rtl"] .pm-file-count-row{direction:rtl}
 html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 @media(max-width:520px){.pm-content-editor,.pm-upload-panel{padding:15px 12px}.pm-editor-heading,.pm-upload-panel-head{flex-direction:column}.pm-multi-picker{min-height:140px}}
+
+/* Single-file-at-a-time platform upload, unlimited list, SVG controls. */
+#betaDeliveryPage .pm-upload-panel-head h3{display:flex;align-items:center;gap:8px}#betaDeliveryPage .pm-upload-panel-head h3 svg,#betaDeliveryPage .pm-upload-cloud svg,#betaDeliveryPage .pm-add-file-button svg,#betaDeliveryPage .pm-pending-file button svg,#betaDeliveryPage .pm-saved-file button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}#betaDeliveryPage .pm-upload-cloud svg{width:34px;height:34px}#betaDeliveryPage .pm-add-file-button{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0;background:linear-gradient(110deg,#5633a0,#7549c5);border:1px solid #b98aff;color:#fff}#betaDeliveryPage .pm-pending-file{display:flex;align-items:center;justify-content:space-between;gap:12px}#betaDeliveryPage .pm-pending-file-info{display:flex;flex-direction:column;gap:4px;min-width:0}#betaDeliveryPage .pm-pending-file-info strong{overflow-wrap:anywhere}#betaDeliveryPage .pm-pending-file-info small{color:#a99ac3}#betaDeliveryPage .pm-delete-inline{width:42px;min-width:42px;display:grid;place-items:center;padding:8px;margin:0}#betaDeliveryPage .pm-limit-badge{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -600,14 +603,12 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
     <div class="pm-editor-footer"><span>Текст сохраняется отдельно для каждой платформы</span><strong id="pmMessageCount">0 / 4000</strong></div>
    </div>
    <div class="pm-upload-panel">
-    <div class="pm-upload-panel-head"><div><h3>📦 Файлы платформы</h3><p>Можно загрузить несколько файлов одновременно</p></div><span class="pm-limit-badge">Максимум 10 файлов</span></div>
-    <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud">⇧</span><strong>Нажмите, чтобы выбрать файлы, или перетащите их сюда</strong><small>APK / IPA / ZIP / PDF / изображения / видео • до 50 МБ на файл</small></label>
-    <input id="betaDeliveryFiles" class="pm-hidden-file" type="file" multiple>
-    <div id="pmPendingFiles" class="pm-pending-files"><span>Новые файлы не выбраны</span></div>
-    <div class="pm-file-count-row"><span>Файлы для загрузки</span><strong id="pmPendingCount">0 / 10</strong></div>
-   </div>
-   <div class="pm-legacy-inputs hidden" aria-hidden="true">
-    <input id="betaDeliveryFile1" type="file"><input id="betaDeliveryFile2" type="file"><input id="betaDeliveryMedia" type="file">
+    <div class="pm-upload-panel-head"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3" /></svg> Файлы платформы</h3><p>اختر ملفاً واحداً في كل مرة، وأضف ملفات أخرى عند الحاجة</p></div><span class="pm-limit-badge">حتى 3 GB لكل ملف</span></div>
+    <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4" /></svg></span><strong>اضغط لاختيار ملف واحد</strong><small>APK / IPA / ZIP / PDF / صور / فيديو • الحد الأقصى 3 GB للملف</small></label>
+    <input id="betaDeliveryFiles" class="pm-hidden-file" type="file">
+    <button type="button" class="pm-add-file-button" id="pmAddFileButton" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> إضافة ملف جديد</button>
+    <div id="pmPendingFiles" class="pm-pending-files"><span>لم تتم إضافة ملفات بعد</span></div>
+    <div class="pm-file-count-row"><span>عدد الملفات المضافة</span><strong id="pmPendingCount">0</strong></div>
    </div>
    <div class="pm-saved-card"><div class="pm-saved-card-head"><div><h3>🗂 Сохранённые файлы</h3><div class="pm-saved-subtitle">Текущие файлы этой платформы</div></div><span id="pmSavedCount" class="pm-saved-count">0 файлов</span></div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">Эти файлы получит пользователь после выполнения 10/10 и нажатия GO</div></div>
    
@@ -1534,10 +1535,10 @@ async function switchPlatformDelivery(offer){
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function renderPlatformDeliveryFiles(files){
  const box=document.getElementById("betaDeliveryCurrentFiles"),count=document.getElementById("pmSavedCount");
- count.textContent=files.length+" / 10 файлов";
+ count.textContent=files.length+" ملفات";
  if(!files.length){box.innerHTML='<div class="pm-empty-files">Для этой платформы пока нет сохранённых файлов</div>';return;}
  box.replaceChildren();
- files.forEach((file,index)=>{const row=document.createElement("div");row.className="pm-saved-file";const info=document.createElement("div");info.className="pm-saved-file-info";const name=document.createElement("strong");name.textContent=file.name||"file";const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";info.append(name,size);const del=document.createElement("button");del.className="pm-delete pm-delete-inline";del.type="button";del.textContent="حذف";del.setAttribute("aria-label","Удалить "+(file.name||"file"));del.onclick=()=>removePlatformDeliveryFile(index);row.append(info,del);box.append(row);});
+ files.forEach((file,index)=>{const row=document.createElement("div");row.className="pm-saved-file";const info=document.createElement("div");info.className="pm-saved-file-info";const name=document.createElement("strong");name.textContent=file.name||"file";const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";info.append(name,size);const del=document.createElement("button");del.className="pm-delete pm-delete-inline";del.type="button";del.innerHTML=platformSvgIcon("M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5");del.setAttribute("aria-label","Удалить "+(file.name||"file"));del.onclick=()=>removePlatformDeliveryFile(index);row.append(info,del);box.append(row);});
 }
 function setPlatformMediaType(type){
  const input=document.getElementById("betaDeliveryMedia"),image=type!=="video";
@@ -1547,19 +1548,42 @@ function setPlatformMediaType(type){
  document.getElementById("pmMediaTitle").textContent=image?"Добавить изображение":"Добавить видео";
  input.value="";document.getElementById("pmMediaSelected").textContent="";
 }
+const pendingPlatformFiles=[];
+const PLATFORM_DELIVERY_MAX_FILE_SIZE=3*1024*1024*1024;
+function platformSvgIcon(path){return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="'+path+'"/></svg>';}
 function updatePendingPlatformFiles(){
- const input=document.getElementById("betaDeliveryFiles"),files=Array.from(input.files||[]),box=document.getElementById("pmPendingFiles");
- document.getElementById("pmPendingCount").textContent=files.length+" / 10";
+ const box=document.getElementById("pmPendingFiles");
+ document.getElementById("pmPendingCount").textContent=String(pendingPlatformFiles.length);
  box.replaceChildren();
- if(!files.length){box.innerHTML="<span>Новые файлы не выбраны</span>";return;}
- files.forEach((file,index)=>{const row=document.createElement("div");row.className="pm-pending-file";const name=document.createElement("span");name.textContent=file.name;const size=document.createElement("small");size.textContent=(file.size/1024/1024).toFixed(2)+" MB";row.append(name,size);box.append(row);});
+ if(!pendingPlatformFiles.length){const empty=document.createElement("span");empty.textContent="لم تتم إضافة ملفات بعد";box.append(empty);return;}
+ pendingPlatformFiles.forEach((file,index)=>{
+  const row=document.createElement("div");row.className="pm-pending-file";
+  const info=document.createElement("div");info.className="pm-pending-file-info";
+  const name=document.createElement("strong");name.textContent=file.name;
+  const size=document.createElement("small");size.textContent=(file.size/1024/1024/1024).toFixed(2)+" GB";
+  info.append(name,size);
+  const remove=document.createElement("button");remove.type="button";remove.className="pm-delete pm-delete-inline";remove.setAttribute("aria-label","إزالة "+file.name);remove.innerHTML=platformSvgIcon("M5 5l14 14M19 5 5 19");remove.onclick=()=>{pendingPlatformFiles.splice(index,1);updatePendingPlatformFiles();};
+  row.append(info,remove);box.append(row);
+ });
 }
-document.addEventListener("change",event=>{if(event.target?.id==="betaDeliveryFiles")updatePendingPlatformFiles();});
+document.getElementById("betaDeliveryFiles").addEventListener("change",event=>{
+ const file=event.target.files?.[0];event.target.value="";
+ if(!file)return;
+ if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("الحد الأقصى لحجم كل ملف هو 3 GB.");return;}
+ pendingPlatformFiles.push(file);updatePendingPlatformFiles();
+});
 document.getElementById("betaDeliveryMessage").addEventListener("input",event=>{document.getElementById("pmMessageCount").textContent=event.target.value.length+" / 4000";});
 const platformDropZone=document.querySelector(".pm-multi-picker");
 ["dragenter","dragover"].forEach(type=>platformDropZone.addEventListener(type,event=>{event.preventDefault();platformDropZone.classList.add("drag-active");}));
 ["dragleave","drop"].forEach(type=>platformDropZone.addEventListener(type,event=>{event.preventDefault();platformDropZone.classList.remove("drag-active");}));
-platformDropZone.addEventListener("drop",event=>{const input=document.getElementById("betaDeliveryFiles"),transfer=new DataTransfer();Array.from(event.dataTransfer?.files||[]).forEach(file=>transfer.items.add(file));input.files=transfer.files;updatePendingPlatformFiles();});
+platformDropZone.addEventListener("drop",event=>{
+ event.preventDefault();
+ Array.from(event.dataTransfer?.files||[]).forEach(file=>{
+  if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("تم تجاهل "+file.name+" لأن الحد الأقصى لكل ملف هو 3 GB.");return;}
+  pendingPlatformFiles.push(file);
+ });
+ updatePendingPlatformFiles();
+});
 
 
 
@@ -1613,11 +1637,10 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
  throw lastError||new Error("PART_UPLOAD_FAILED");
 }
 async function saveBetaDelivery(){
- const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),input=document.getElementById("betaDeliveryFiles"),files=Array.from(input.files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
+ const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=pendingPlatformFiles.slice(),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
  if(!message&&!files.length){alert("Добавьте текст или выберите хотя бы один файл.");return;}
- if(files.length>10){alert("الحد الأقصى هو 10 файлов لكل منصة.");return;}
- if(files.some(file=>!file.size||file.size>50*1024*1024)){alert("Размер каждого файла не должен превышать 50 МБ.");return;}
+ if(files.some(file=>!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE)){alert("الحد الأقصى لحجم كل ملف هو 3 GB.");return;}
  if(!confirm("Текст и файлы будут сохранены отдельно для платформы "+currentDeliveryOffer.toUpperCase()+". Продолжить?"))return;
  button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="Подготовка файлов...";
  status.textContent="Загрузка файлов и сохранение содержимого...";
@@ -1642,12 +1665,12 @@ async function saveBetaDelivery(){
   label.textContent="Загрузка завершена, сохранение настроек платформы...";
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:uploaded.map(file=>file.key)});
   bar.style.width="100%";percent.textContent="100%";label.textContent="Сохранение успешно завершено";
-  input.value="";updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);
+  pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);
   status.textContent="Содержимое "+currentDeliveryOffer.toUpperCase()+" успешно сохранено. Количество файлов: "+(savedResult.files||[]).length;
  }catch(error){
   label.textContent="Загрузка остановлена — выберите те же файлы, чтобы продолжить";
   status.textContent="Не удалось сохранить содержимое: "+(error.message==="RESUME_FILE_MISMATCH"?"Выберите те же исходные файлы, чтобы продолжить загрузку.":error.message);alert(status.textContent);
- }finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить содержимое "+labels[currentDeliveryOffer];}
+ }finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="Сохранить содержимое "+labels[currentDeliveryOffer];}
 }
 
 function openBroadcastPage(){
