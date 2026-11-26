@@ -1862,7 +1862,7 @@ start();
  let saved="ru";try{const migrated=localStorage.getItem(defaultVersionKey)==="1";saved=migrated?(localStorage.getItem("oxide-admin-language")||"ru"):"ru";localStorage.setItem(defaultVersionKey,"1");if(!migrated)localStorage.setItem("oxide-admin-language","ru");}catch(_){}
  if(!LANGS[saved])saved="ru";
  select.value=saved;updateLanguageSwitcher(saved);
- if(saved!=="ar")setLanguage(saved);
+ setLanguage(saved);
 })();
 
 </script>
