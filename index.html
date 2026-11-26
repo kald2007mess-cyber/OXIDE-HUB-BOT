@@ -1163,7 +1163,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     <section class="tap-stats-row" aria-label="إحصائيات الضغط">
       <div class="tap-energy-panel">
         <span class="tap-stat-caption">الطاقة المتبقية</span>
-        <button type="button" class="tap-value-upgrade" id="tapEnergyUpgradeOpen" aria-label="تطوير سعة الطاقة"><strong id="tapEnergyText">500 / 500</strong></button>
+        <button type="button" class="tap-value-upgrade" id="tapEnergyUpgradeOpen" aria-label="Увеличить запас энергии"><strong id="tapEnergyText">500 / 500</strong></button>
       </div>
       <div class="tap-energy-panel">
         <span class="tap-stat-caption">قيمة الضغطة</span>
@@ -1178,7 +1178,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 
     <div class="tap-upgrade-overlay" id="tapUpgradeOverlay" hidden>
       <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="tapUpgradeTitle">
-        <div class="tap-upgrade-head"><strong id="tapUpgradeTitle">تطوير قيمة الضغطة</strong><button type="button" data-close-upgrade="tap" aria-label="إغلاق">×</button></div>
+        <div class="tap-upgrade-head"><strong id="tapUpgradeTitle">Улучшить награду за нажатие</strong><button type="button" data-close-upgrade="tap" aria-label="إغلاق">×</button></div>
         <div class="tap-upgrade-level" id="tapUpgradeLevel">المستوى 1 / 6</div>
         <div class="tap-upgrade-values"><div><small>القيمة الحالية</small><b id="tapCurrentValue">+0.01</b></div><div><small>بعد التطوير</small><b id="tapNextValue">+0.02</b></div></div>
         <div class="tap-upgrade-cost"><span>تكلفة التطوير</span><strong id="tapUpgradeCost">100 OXIDE</strong></div>
@@ -1188,7 +1188,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     </div>
     <div class="tap-upgrade-overlay" id="energyUpgradeOverlay" hidden>
       <div class="tap-upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="energyUpgradeTitle">
-        <div class="tap-upgrade-head"><strong id="energyUpgradeTitle">تطوير سعة الطاقة</strong><button type="button" data-close-upgrade="energy" aria-label="إغلاق">×</button></div>
+        <div class="tap-upgrade-head"><strong id="energyUpgradeTitle">Увеличить запас энергии</strong><button type="button" data-close-upgrade="energy" aria-label="إغلاق">×</button></div>
         <div class="tap-upgrade-level" id="energyUpgradeLevel">المستوى 1 / 5</div>
         <div class="tap-upgrade-values"><div><small>السعة الحالية</small><b id="energyCurrentCapacity">500</b></div><div><small>بعد التطوير</small><b id="energyNextCapacity">1000</b></div></div>
         <div class="tap-upgrade-cost"><span>تكلفة التطوير</span><strong id="energyUpgradeCost">100 OXIDE</strong></div>
@@ -1801,6 +1801,20 @@ function applyTapHomeLanguage(language){
  ru:{title:"Собирайте монеты OXIDE",desc:"Каждое нажатие приближает вас к следующей награде",balance:"Ваш текущий баланс",hint:"Нажмите на монету",storage:"Объём хранилища",reward:"Награда за одно нажатие",coin:"Монета",missions:"ЗАДАНИЯ",energy:"Остаток энергии",tapValue:"Награда за нажатие",energyTitle:"Энергия"}
  }[language];if(!w)return;
  const set=(q,v)=>{const n=document.querySelector(q);if(n)n.textContent=v};
+ const energyUpgradeTitle=language==="ru"?"Увеличить запас энергии":language==="en"?"Upgrade Energy Capacity":"تطوير سعة الطاقة";
+ const tapUpgradeTitle=language==="ru"?"Улучшить награду за нажатие":language==="en"?"Upgrade Tap Reward":"تطوير قيمة الضغطة";
+ const upgradeLabel=language==="ru"?"Улучшить":language==="en"?"Upgrade":"تطوير";
+ const currentValueLabel=language==="ru"?"Текущее значение":language==="en"?"Current value":"القيمة الحالية";
+ const nextValueLabel=language==="ru"?"После улучшения":language==="en"?"After upgrade":"بعد التطوير";
+ const upgradeCostLabel=language==="ru"?"Стоимость улучшения":language==="en"?"Upgrade cost":"تكلفة التطوير";
+ const capacityCurrentLabel=language==="ru"?"Текущая ёмкость":language==="en"?"Current capacity":"السعة الحالية";
+ const energyTitleNode=document.getElementById("energyUpgradeTitle");if(energyTitleNode)energyTitleNode.textContent=energyUpgradeTitle;
+ const tapTitleNode=document.getElementById("tapUpgradeTitle");if(tapTitleNode)tapTitleNode.textContent=tapUpgradeTitle;
+ const energyOpen=document.getElementById("tapEnergyUpgradeOpen");if(energyOpen)energyOpen.setAttribute("aria-label",energyUpgradeTitle);
+ const tapOpen=document.getElementById("tapTapUpgradeOpen");if(tapOpen)tapOpen.setAttribute("aria-label",tapUpgradeTitle);
+ const tapDialog=document.getElementById("tapUpgradeOverlay");if(tapDialog){const smalls=tapDialog.querySelectorAll(".tap-upgrade-values small");if(smalls[0])smalls[0].textContent=currentValueLabel;if(smalls[1])smalls[1].textContent=nextValueLabel;const cost=tapDialog.querySelector(".tap-upgrade-cost span");if(cost)cost.textContent=upgradeCostLabel;const confirm=document.getElementById("tapUpgradeConfirm");if(confirm)confirm.textContent=upgradeLabel;}
+ const energyDialog=document.getElementById("energyUpgradeOverlay");if(energyDialog){const smalls=energyDialog.querySelectorAll(".tap-upgrade-values small");if(smalls[0])smalls[0].textContent=capacityCurrentLabel;if(smalls[1])smalls[1].textContent=nextValueLabel;const cost=energyDialog.querySelector(".tap-upgrade-cost span");if(cost)cost.textContent=upgradeCostLabel;const confirm=document.getElementById("energyUpgradeConfirm");if(confirm)confirm.textContent=language==="ru"?"Улучшить ⚡":language==="en"?"Upgrade ⚡":"تطوير ⚡";}
+
  set(".tap-home .tap-heading h1",w.title);set(".tap-home .tap-heading p",w.desc);set(".tap-home .tap-balance>span",w.balance);set(".tap-home .tap-hint",w.hint);set(".tap-home .tap-meter-top>span",w.storage);set("#missionsTab .nav-label",w.missions);
  const caps=document.querySelectorAll(".tap-stats-row .tap-stat-caption");if(caps[0])caps[0].textContent=w.energy;if(caps[1])caps[1].textContent=w.tapValue;
  const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton)energyButton.textContent="⚡ "+w.energyTitle;
