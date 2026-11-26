@@ -2136,20 +2136,22 @@ function channelJoinClicked(){const join=document.getElementById("channelSubscri
 function closeChannelSubscribeModal(){const modal=document.getElementById("channelSubscribeModal");if(modal)modal.hidden=true;}
 async function verifyOxideChannelSubscription(){if(!pendingChannelOffer)return;const status=document.getElementById("channelSubscribeStatus"),check=document.getElementById("channelSubscribeCheck");if(check){check.disabled=true;check.textContent=currentLanguage==="ru"?"Проверка...":currentLanguage==="en"?"Checking...":"جارٍ التحقق...";}if(status)status.textContent="";try{await claimPlatformDelivery(pendingChannelOffer,true);}finally{if(check){check.disabled=false;check.textContent=currentLanguage==="ru"?"Я подписался":currentLanguage==="en"?"I've subscribed":"تحققت من الاشتراك";}}}
 async function claimPlatformDelivery(offer,subscriptionRetry=false){
- if(islandBusy||platformDeliveryBusy||!["beta","android","ios"].includes(offer))return;
- if(Number(platformAdProgress[offer]||0)<ISLAND_REQUIRED&&!platformGoAccess&&!platformPaidUnlocks[offer])return;
+ if(platformDeliveryBusy||!["beta","android","ios"].includes(offer))return;
  platformDeliveryBusy=true;const button=Array.from(document.querySelectorAll(".platform-ad-button")).find(x=>x.dataset.offer===offer);
- if(button&&!subscriptionRetry){button.disabled=true;button.textContent="OPENING...";}
- const message=document.getElementById("islandMessage");
+ if(button){button.disabled=true;if(!subscriptionRetry)button.textContent="OPENING...";}
  try{
   const response=await fetch("/api/platform-delivery?offer="+encodeURIComponent(offer),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json().catch(()=>({}));
-  if(result.subscriptionRequired){openChannelSubscribeModal(offer);const status=document.getElementById("channelSubscribeStatus");if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"يرجى الاشتراك في القناة أولاً.";return;}
+  if(result.subscriptionRequired){openChannelSubscribeModal(offer);const status=document.getElementById("channelSubscribeStatus");if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"⚠️ يجب الاشتراك في القناة أولاً.";return;}
   if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_FAILED");
   closeChannelSubscribeModal();pendingChannelOffer=null;openPlatformDeliveryViewer(offer,result);
   if(button)button.textContent="OPEN";
- }catch(error){if(message)message.textContent=error.message||"DELIVERY_FAILED";if(button)button.textContent="GO";}
- finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
+ }catch(error){
+  openChannelSubscribeModal(offer);
+  const status=document.getElementById("channelSubscribeStatus");
+  if(status)status.textContent=(error.message==="CHANNEL_CHECK_UNAVAILABLE"||error.message==="TELEGRAM_BOT_TOKEN_MISSING")?"تعذّر التحقق من اشتراك القناة حالياً. تأكد أن البوت مشرف في القناة ثم أعد المحاولة.":"تعذّر فتح الملفات: "+(error.message||"DELIVERY_FAILED");
+  if(button)button.textContent="GO";
+ }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
 }
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
 function openPlatformDeliveryViewer(offer,data){
