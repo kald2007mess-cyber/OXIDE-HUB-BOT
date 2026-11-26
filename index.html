@@ -3459,6 +3459,7 @@ async function submitRedeemCode(){
   }
   status.textContent=result.goAccess?"تم استرداد الرمز بنجاح! تم فتح GO في BETA وANDROID وiOS دون مشاهدة الإعلانات.":"تم استرداد الرمز بنجاح! لديك "+Number(result.coins||0).toLocaleString("en")+" عملة جاهزة للاستلام. افتح الإشعارات واضغط «استلام» لإضافتها إلى رصيدك.";
   input.value="";
+  if(result.goAccess)await loadPlatformAdProgress();
   await loadNotifications(false);
  }catch(error){status.textContent=error.message||"حدث خطأ أثناء الاسترداد."}
  finally{button.disabled=false;}
