@@ -1,10 +1,8 @@
 import { ensureSupportTables } from "./_lib/support.js";
 
-function getBotLanguage(languageCode) {
-  const code = String(languageCode || "").toLowerCase();
-  if (code.startsWith("ru")) return "ru";
-  if (code.startsWith("ar")) return "ar";
-  return "en";
+function getBotLanguage() {
+  // Russian is the default language for every new bot conversation.
+  return "ru";
 }
 
 const botTexts = {
