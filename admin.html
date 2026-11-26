@@ -296,7 +296,7 @@ button{border-radius:12px}
 <button class="danger" id="resetDataButton" onclick="resetOxideData()">تصفير النقاط والمهمات والسجل</button>
 <div class="platform-status" id="resetDataStatus">هذا الإجراء للمالك فقط ويتطلب تأكيداً قبل التنفيذ.</div>
 </div>
-<div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ إدارة صيانة الموقع</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
+<div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important"><h3 style="color:#ff9b9b">📺 تصفير عدّادات الإعلانات</h3><p class="note">إرجاع عدّاد مشاهدة الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS. لا يتم تغيير النقاط أو الإحالات.</p><button class="danger" id="resetAdsButton" onclick="resetAllAdsProgress()">إعادة جميع الإعلانات إلى 0/10</button><div class="platform-status" id="resetAdsStatus">هذا الإجراء للمالك فقط ويتطلب تأكيداً قبل التنفيذ.</div></div><div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ إدارة صيانة الموقع</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
 </div>
 
 <div id="redemptionOffersPage" class="hidden"><div class="card"><button class="back" onclick="closeRedemptionOffersPage()">⬅ العودة إلى لوحة الإدارة</button><h3>🎁 إدارة عروض الاستبدال</h3><p class="note">أضف عروض السحب أو عدّل اسم العرض وتكلفته وصورته، أو احذف العرض من واجهة المستخدمين.</p><div class="task-form"><h3 id="redemptionOfferFormTitle">إضافة عرض جديد</h3><input id="redemptionOfferId" type="hidden"><div class="field"><label>اسم العرض</label><input id="redemptionOfferName" maxlength="80" placeholder="مثال: 100 COINS"></div><div class="field"><label>تكلفة العرض بالنقاط</label><input id="redemptionOfferPoints" type="number" min="1" max="100000000" placeholder="1500"></div><div class="field"><label>رابط صورة العرض (اختياري)</label><input id="redemptionOfferImage" type="url" maxlength="1000" placeholder="https://..."></div><div class="field"><label>ترتيب العرض</label><input id="redemptionOfferOrder" type="number" min="0" value="1"></div><button id="redemptionOfferSave" onclick="saveRedemptionOffer()">حفظ العرض</button><button class="secondary" onclick="resetRedemptionOfferForm()">إلغاء التعديل</button></div><div class="platform-status" id="redemptionOffersStatus">جارٍ تحميل العروض...</div><div id="redemptionOffersList"></div></div></div>
@@ -696,6 +696,20 @@ async function uploadPlatform(){
 }
 function backToMenu(){document.getElementById("platformPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 
+async function resetAllAdsProgress(){
+ const button=document.getElementById("resetAdsButton"),status=document.getElementById("resetAdsStatus");
+ if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
+ if(!confirm("تأكيد: سيتم إرجاع عدّاد الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS. لن تتغير النقاط أو الإحالات. هل تريد المتابعة؟"))return;
+ if(prompt("للتأكيد النهائي، اكتب RESET ADS")!=="RESET ADS"){status.textContent="تم إلغاء العملية؛ لم تتغير العدّادات.";return;}
+ button.disabled=true;status.textContent="جارٍ تصفير عدّادات الإعلانات لجميع المستخدمين...";
+ try{
+  const response=await fetch("/api/admin/reset-ads",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET ALL ADS"})});
+  const result=await response.json();
+  if(!response.ok||!result.success)throw new Error(result.error||"RESET_FAILED");
+  status.textContent="تم بنجاح: أُعيدت عدّادات الإعلانات إلى 0/10 لجميع المستخدمين ("+result.resetUsers+" مستخدم).";
+ }catch(error){status.textContent="فشل تصفير الإعلانات: "+error.message;}
+ finally{button.disabled=false;}
+}
 async function resetOxideData(){
  const button=document.getElementById("resetDataButton");
  const status=document.getElementById("resetDataStatus");
