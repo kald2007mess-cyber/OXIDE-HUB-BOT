@@ -434,7 +434,7 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
  <div class="admin-welcome-copy"><span class="admin-kicker">OXIDE HUB / ADMIN SYSTEM</span><h2>Главная панель управления</h2><p>Управляйте сайтом, пользователями, заданиями и заявками из одной панели.</p></div>
  <div class="admin-live-mark"><span></span> Панель администратора подключена</div>
 </section>
-<section class="admin-dashboard" aria-label="ملخص الإدارة">
+<section class="admin-dashboard" aria-label="Сводка панели управления">
  <div class="admin-dashboard-head"><div><span class="admin-kicker">LIVE OVERVIEW</span><h3>Обзор</h3></div><button class="admin-refresh" onclick="loadAdminDashboard()">⟳ Обновить</button></div>
  <div class="admin-metric-grid">
   <article class="admin-metric"><span class="admin-metric-icon">♙</span><small>Всего пользователей</small><strong id="dashUsers">—</strong><em>Зарегистрированные пользователи</em></article>
@@ -446,8 +446,8 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 </section>
 <div class="admin-section-heading"><span class="admin-kicker">MANAGEMENT MODULES</span><h3>Разделы управления</h3><p>Выберите раздел, чтобы открыть его инструменты управления.</p></div>
 
-<section class="admin-menu-tools" aria-label="البحث في Разделы управления">
- <div class="admin-menu-search"><span aria-hidden="true">⌕</span><input id="adminMenuSearch" type="search" placeholder="Поиск раздела или функции..." autocomplete="off" oninput="filterAdminMenu()" aria-label="البحث في Разделы управления"><button type="button" id="adminMenuClear" onclick="clearAdminMenuSearch()" aria-label="Очистить поиск">×</button></div>
+<section class="admin-menu-tools" aria-label="Поиск по разделам управления">
+ <div class="admin-menu-search"><span aria-hidden="true">⌕</span><input id="adminMenuSearch" type="search" placeholder="Поиск раздела или функции..." autocomplete="off" oninput="filterAdminMenu()" aria-label="Поиск по разделам управления"><button type="button" id="adminMenuClear" onclick="clearAdminMenuSearch()" aria-label="Очистить поиск">×</button></div>
  <div class="admin-menu-filters" role="group" aria-label="Фильтр разделов">
   <button type="button" class="admin-filter-chip active" data-admin-filter="all" onclick="setAdminMenuFilter('all')">Все</button>
   <button type="button" class="admin-filter-chip" data-admin-filter="people" onclick="setAdminMenuFilter('people')">Пользователи и поддержка</button>
@@ -468,18 +468,18 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 <button class="menu-tile green" data-admin-permission="tasks" onclick="action('tasks')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg></div><span>Управление заданиями</span></button>
 <button id="siteTile" data-admin-permission="maintenance" class="menu-tile site-off" onclick="toggleMaintenance()"><div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div><span>Управление сайтом</span><small id="siteTileStatus">Загрузка...</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="openAdsEarningsPage()"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 6-7"/><path d="M16 6h4v4"/></svg></div><span>Доходы и реклама</span><small>AdsGram • USD₮</small></button>
-<button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>Награды والإشعارات</span><small>Отправка наград для получения</small></button>
+<button class="menu-tile green" data-owner-only="true" onclick="action('rewards')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7ZM12 7h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><span>Награды и уведомления</span><small>Отправка наград для получения</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="openRedemptionOffersPage()"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div><span>Предложения обмена</span><small>Добавление, изменение и удаление предложений вывода</small></button>
 <button class="menu-tile blue" data-owner-only="true" onclick="openBroadcastPage()"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/><path d="M11 13 2 9"/></svg></div><span>Рассылка</span><small>Отправка сообщения всем пользователям</small></button>
 <button class="menu-tile yellow" data-owner-only="true" onclick="action('security')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>Безопасность и права доступа</span></button>
 </div>
 <div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important">
 <h3 style="color:#ff9b9b">⚠️ Сброс данных платформы</h3>
-<p class="note">تصفير نقاط المستخدمين والمهام وЖурнал входов وسجل النقاط. الإحالات وسجلاتها لن تتغير نهائياً.</p>
+<p class="note">Баллы пользователей, задания, журнал входов и история начисления баллов будут сброшены. Реферальные данные и их история останутся без изменений.</p>
 <button class="danger" id="resetDataButton" onclick="resetOxideData()">Сброс баллов, заданий и журнала</button>
-<div class="platform-status" id="resetDataStatus">هذا الإجراء للمالك فقط ويتطلب تأكيداً قبل التنفيذ.</div>
+<div class="platform-status" id="resetDataStatus">Действие доступно только владельцу и требует подтверждения.</div>
 </div>
-<div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important"><h3 style="color:#ff9b9b">📺 تصفير عدّادات الإعلانات</h3><p class="note">إرجاع عدّاد مشاهدة الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS. لا يتم تغيير النقاط أو الإحالات.</p><button class="danger" id="resetAdsButton" onclick="resetAllAdsProgress()">إعادة جميع الإعلانات إلى 0/10</button><div class="platform-status" id="resetAdsStatus">هذا الإجراء للمالك فقط ويتطلب تأكيداً قبل التنفيذ.</div></div><div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ Управление техническим обслуживанием сайта</h3><div id="maintenanceState" class="maintenance-state">جارٍ تحميل حالة الصيانة...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>حالة الصيانة</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>رسالة الصيانة</button><p class="note" id="maintenanceInfo">يتم حفظ إعدادات الصيانة لجميع زوار الموقع.</p></div>
+<div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important"><h3 style="color:#ff9b9b">📺 Сброс счётчиков рекламы</h3><p class="note">Счётчик просмотров рекламы будет сброшен до 0/10 для всех пользователей BETA, ANDROID и iOS. Баллы и рефералы не изменятся.</p><button class="danger" id="resetAdsButton" onclick="resetAllAdsProgress()">Сбросить счётчики рекламы до 0/10</button><div class="platform-status" id="resetAdsStatus">Действие доступно только владельцу и требует подтверждения.</div></div><div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ Управление техническим обслуживанием сайта</h3><div id="maintenanceState" class="maintenance-state">Загрузка состояния обслуживания сайта...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>Состояние обслуживания</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>Сообщение об обслуживании</button><p class="note" id="maintenanceInfo">Настройки обслуживания сохраняются для всех посетителей сайта.</p></div>
 </div>
 
 <div id="redemptionOffersPage" class="hidden"><div class="card"><button class="back" onclick="closeRedemptionOffersPage()">⬅ Назад в панель управления</button><h3>🎁 إدارة Предложения обмена</h3><p class="note">أضف عروض السحب أو عدّل اسم العرض وتكلفته وصورته، أو احذف العرض من واجهة المستخدمين.</p><div class="task-form"><h3 id="redemptionOfferFormTitle">إضافة عرض جديد</h3><input id="redemptionOfferId" type="hidden"><div class="field"><label>اسم العرض</label><input id="redemptionOfferName" maxlength="80" placeholder="مثال: 100 COINS"></div><div class="field"><label>تكلفة العرض بالنقاط</label><input id="redemptionOfferPoints" type="number" min="1" max="100000000" placeholder="1500"></div><div class="field"><label>رابط صورة العرض (اختياري)</label><input id="redemptionOfferImage" type="url" maxlength="1000" placeholder="https://..."></div><div class="field"><label>ترتيب العرض</label><input id="redemptionOfferOrder" type="number" min="0" value="1"></div><button id="redemptionOfferSave" onclick="saveRedemptionOffer()">حفظ العرض</button><button class="secondary" onclick="resetRedemptionOfferForm()">إلغاء التعديل</button></div><div class="platform-status" id="redemptionOffersStatus">جارٍ تحميل العروض...</div><div id="redemptionOffersList"></div></div></div>
@@ -592,7 +592,7 @@ function filterAdminMenu(){
  }
  document.getElementById("adminMenuEmpty")?.classList.toggle("hidden",shown!==0);
  const count=document.getElementById("adminMenuResultCount");
- if(count)count.textContent=shown+" / "+document.querySelectorAll("#mainMenu .menu-grid .menu-tile:not(.hidden)").length+" أقسام";
+ if(count)count.textContent=shown+" / "+document.querySelectorAll("#mainMenu .menu-grid .menu-tile:not(.hidden)").length+" разделов";
 }
 function setAdminMenuFilter(filter){
  adminMenuFilter=["all","people","tasks","content","rewards","system"].includes(filter)?filter:"all";
@@ -615,30 +615,30 @@ async function apiMaintenance(data){
 }
 function renderMaintenance(){
  const state=document.getElementById("maintenanceState"),button=document.getElementById("maintenanceButton"),siteTile=document.getElementById("siteTile");
- if(maintenanceEnabled){state.textContent="🔴 الصيانة مفعّلة";state.className="maintenance-state state-on";button.textContent="إيقاف الصيانة";siteTile.classList.remove("site-on");siteTile.classList.add("site-off");document.getElementById("siteTileStatus").textContent="تحت الصيانة";}
- else{state.textContent="🟢 الموقع يعمل بشكل طبيعي";state.className="maintenance-state state-off";button.textContent="تشغيل الصيانة";siteTile.classList.remove("site-off");siteTile.classList.add("site-on");document.getElementById("siteTileStatus").textContent="الموقع يعمل";}
+ if(maintenanceEnabled){state.textContent="🔴 Обслуживание включено";state.className="maintenance-state state-on";button.textContent="Отключить обслуживание";siteTile.classList.remove("site-on");siteTile.classList.add("site-off");document.getElementById("siteTileStatus").textContent="На обслуживании";}
+ else{state.textContent="🟢 Сайт работает нормально";state.className="maintenance-state state-off";button.textContent="Включить обслуживание";siteTile.classList.remove("site-off");siteTile.classList.add("site-on");document.getElementById("siteTileStatus").textContent="Сайт работает";}
  document.getElementById("messageButton").disabled=false;button.disabled=false;maintenanceReady=true;
 }
 async function loadMaintenance(){
  try{const result=await apiMaintenance({action:"get"});maintenanceEnabled=result.maintenance===true;maintenanceMessage=String(result.message||"");renderMaintenance();}
- catch(error){document.getElementById("maintenanceState").textContent="تعذر تحميل إعدادات الصيانة. أعد تحميل اللوحة.";document.getElementById("maintenanceState").className="maintenance-state state-on";document.getElementById("maintenanceInfo").textContent="خطأ: "+error.message;document.getElementById("siteTileStatus").textContent="تعذر معرفة الحالة";}
+ catch(error){document.getElementById("maintenanceState").textContent="Не удалось загрузить настройки обслуживания. Обновите панель.";document.getElementById("maintenanceState").className="maintenance-state state-on";document.getElementById("maintenanceInfo").textContent="Ошибка: "+error.message;document.getElementById("siteTileStatus").textContent="Не удалось определить состояние";}
 }
 async function toggleMaintenance(){
- if(!hasAdminPermission("maintenance")){alert("ليس لديك صلاحية Управление сайтом.");return;}
+ if(!hasAdminPermission("maintenance")){alert("У вас нет прав на управление сайтом.");return;}
  if(!maintenanceReady||maintenanceBusy)return;const nextState=!maintenanceEnabled;
- if(!confirm(nextState?"هل تريد تشغيل الصيانة؟ سيتم تفعيل وضع الصيانة.":"هل تريد إيقاف الصيانة وإعادة الموقع للعمل؟"))return;
+ if(!confirm(nextState?"Включить режим обслуживания сайта?":"Отключить режим обслуживания и возобновить работу сайта?"))return;
  maintenanceBusy=true;document.getElementById("maintenanceButton").disabled=true;document.getElementById("messageButton").disabled=true;document.getElementById("siteTile").disabled=true;
- try{const result=await apiMaintenance({action:"save",maintenance:nextState,message:maintenanceMessage});maintenanceEnabled=result.maintenance;maintenanceMessage=result.message;renderMaintenance();alert(maintenanceEnabled?"تم تشغيل الصيانة وحفظ الإعدادات.":"تم إيقاف الصيانة وإعادة الحالة إلى العمل.");}
- catch(error){alert("تعذر حفظ حالة الصيانة: "+error.message);}
+ try{const result=await apiMaintenance({action:"save",maintenance:nextState,message:maintenanceMessage});maintenanceEnabled=result.maintenance;maintenanceMessage=result.message;renderMaintenance();alert(maintenanceEnabled?"Режим обслуживания включён. Настройки сохранены.":"Режим обслуживания отключён. Работа сайта возобновлена.");}
+ catch(error){alert("Не удалось сохранить состояние обслуживания: "+error.message);}
  finally{maintenanceBusy=false;document.getElementById("maintenanceButton").disabled=false;document.getElementById("messageButton").disabled=false;document.getElementById("siteTile").disabled=false;}
 }
 async function editMaintenanceMessage(){
- if(!hasAdminPermission("maintenance")){alert("ليس لديك صلاحية Управление сайтом.");return;}
- if(!maintenanceReady||maintenanceBusy)return;const entered=prompt("اكتب رسالة الصيانة الجديدة:",maintenanceMessage);if(entered===null)return;
- const newMessage=entered.trim();if(!newMessage){alert("الرسالة لا يمكن أن تكون فارغة.");return;}if(newMessage.length>1000){alert("الحد الأقصى للرسالة هو 1000 حرف.");return;}
+ if(!hasAdminPermission("maintenance")){alert("У вас нет прав на управление сайтом.");return;}
+ if(!maintenanceReady||maintenanceBusy)return;const entered=prompt("Введите новое сообщение об обслуживании:",maintenanceMessage);if(entered===null)return;
+ const newMessage=entered.trim();if(!newMessage){alert("Сообщение не может быть пустым.");return;}if(newMessage.length>1000){alert("Максимальная длина сообщения — 1000 символов.");return;}
  maintenanceBusy=true;document.getElementById("maintenanceButton").disabled=true;document.getElementById("messageButton").disabled=true;
- try{const result=await apiMaintenance({action:"save",maintenance:maintenanceEnabled,message:newMessage});maintenanceEnabled=result.maintenance;maintenanceMessage=result.message;renderMaintenance();alert("تم حفظ رسالة الصيانة بنجاح.");}
- catch(error){alert("تعذر حفظ الرسالة: "+error.message);}
+ try{const result=await apiMaintenance({action:"save",maintenance:maintenanceEnabled,message:newMessage});maintenanceEnabled=result.maintenance;maintenanceMessage=result.message;renderMaintenance();alert("Сообщение об обслуживании успешно сохранено.");}
+ catch(error){alert("Не удалось сохранить сообщение: "+error.message);}
  finally{maintenanceBusy=false;document.getElementById("maintenanceButton").disabled=false;document.getElementById("messageButton").disabled=false;}
 }
 async function apiDownloads(data){
@@ -969,13 +969,13 @@ async function resetAllAdsProgress(){
  if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
  if(!confirm("تأكيد: سيتم إرجاع عدّاد الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS. لن تتغير النقاط أو الإحالات. هل تريد المتابعة؟"))return;
  if(prompt("للتأكيد النهائي، اكتب RESET ADS")!=="RESET ADS"){status.textContent="تم إلغاء العملية؛ لم تتغير العدّادات.";return;}
- button.disabled=true;status.textContent="جارٍ تصفير عدّادات الإعلانات لجميع المستخدمين...";
+ button.disabled=true;status.textContent="Сброс счётчиков рекламы для всех пользователей...";
  try{
   const response=await fetch("/api/admin/reset-ads",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET ALL ADS"})});
   const result=await response.json();
   if(!response.ok||!result.success)throw new Error(result.error||"RESET_FAILED");
-  status.textContent="تم بنجاح: أُعيدت عدّادات الإعلانات إلى 0/10 لجميع المستخدمين ("+result.resetUsers+" مستخدم).";
- }catch(error){status.textContent="فشل تصفير الإعلانات: "+error.message;}
+  status.textContent="Готово: счётчики рекламы сброшены до 0/10 для всех пользователей ("+result.resetUsers+").";
+ }catch(error){status.textContent="Не удалось сбросить счётчики рекламы: "+error.message;}
  finally{button.disabled=false;}
 }
 async function resetOxideData(){
@@ -984,15 +984,15 @@ async function resetOxideData(){
  if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
  if(!confirm("تحذير: سيتم تصفير نقاط جميع المستخدمين، المهمات، سجل النقاط وЖурнал входов. الإحالات لن تتغير. هل تريد المتابعة؟"))return;
  if(prompt("للتأكيد النهائي، اكتب RESET")!=="RESET"){status.textContent="تم إلغاء العملية؛ لم تتغير أي بيانات.";return;}
- button.disabled=true;status.textContent="جارٍ تصفير البيانات بأمان...";
+ button.disabled=true;status.textContent="Безопасный сброс данных...";
  try{
   const response=await fetch("/api/admin/reset-data",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET OXIDE DATA"})});
   const result=await response.json();
   if(!response.ok||!result.success)throw new Error(result.error||"RESET_FAILED");
-  status.textContent="تم التصفير بنجاح. النقاط والمهمات والسجلات أصبحت 0، والإحالات بقيت كما هي.";
+  status.textContent="Сброс выполнен. Баллы, задания и журналы обнулены, реферальные данные сохранены.";
   if(typeof loadUsers==="function"&& !document.getElementById("usersPage").classList.contains("hidden"))loadUsers();
   if(typeof loadActivity==="function"&& !document.getElementById("activityPage").classList.contains("hidden"))loadActivity();
- }catch(error){status.textContent="فشل التصفير: "+error.message;}
+ }catch(error){status.textContent="Не удалось выполнить сброс: "+error.message;}
  finally{button.disabled=false;}
 }
 /* سجل دخول المستخدمين */
@@ -1012,7 +1012,7 @@ async function loadActivity(){
    const name=[row.firstName,row.lastName].filter(Boolean).join(" ")||"مستخدم OXIDE";const username=row.username?"@"+escapeHtml(row.username):"بدون اسم مستخدم";
    return '<article class="user-item"><div class="user-top"><strong>'+escapeHtml(name)+'</strong><span class="user-id">'+escapeHtml(row.publicId||("TG-"+row.telegramId))+'</span></div><div class="user-details"><div>اسم تيليجرام<br><b>'+username+'</b></div><div>آخر دخول<br><b>'+activityDate(row.lastSeenAt)+'</b></div><div>أول دخول مسجل<br><b>'+activityDate(row.firstSeenAt)+'</b></div><div>عدد مرات الدخول<br><b>'+Number(row.visitCount||0).toLocaleString("en-US")+'</b></div><div style="grid-column:1/-1">Telegram ID<br><b class="user-id">'+escapeHtml(row.telegramId)+'</b></div></div></article>';
   }).join("");
-  document.getElementById("activityPrev").disabled=activityPage<=1;document.getElementById("activityNext").disabled=activityPage>=activityPages;status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("activityPrev").disabled=activityPage<=1;document.getElementById("activityNext").disabled=activityPage>=activityPages;status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
  }catch(error){status.textContent="تعذر تحميل السجل: "+error.message;list.innerHTML='<div class="users-empty">تأكد من نشر ملف activity.js ثم أعد المحاولة.</div>';}
  finally{activityBusy=false;}
 }
@@ -1050,7 +1050,7 @@ async function loadAdsEarnings(){
   document.getElementById("adsEarningsImpressions").textContent=Number(data.impressions||0).toLocaleString("en-US");
   document.getElementById("adsEarningsClicks").textContent="غير متاح";
   renderAdsEarningsChart(data.daily||[]);
-  status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"})+" • توقيت الجزائر";
+  status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" • توقيت الجزائر";
  }catch(error){status.textContent="تعذر تحميل الإحصائيات: "+error.message;}
 }
 
@@ -1595,7 +1595,7 @@ async function loadAdminDashboard(){
  }
 
  await Promise.all(jobs);
- status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
+ status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
 }
 
 const ADMIN_WORKSPACES=[["redemptionOffersPage","redemptionOffersList","loadRedemptionOffers()","العروض","ابحث باسم العرض أو تكلفته"],["betaDeliveryPage","betaDeliveryCurrentFiles","loadBetaDelivery()","ملفات المنصة","ابحث في Сохранённые файлы"],["broadcastPage","broadcastStatus","refreshBroadcastStatus()","النشر","تابع حالة آخر Рассылка"],["activityPage","activityList","loadActivity()","Журнал входов","ابحث في السجلات المعروضة"],["usersPage","usersList","loadUsers()","المستخدمون","ابحث في المستخدمين المعروضين"],["tasksPage","tasksList","loadTasks()","المهمات","ابحث باسم المهمة أو المنصة"],["reviewsPage","reviewsList","loadReviews()","الطلبات","ابحث في الطلبات المعروضة"],["supportAdminPage","supportAdminList","loadSupportAdminConversations()","الدعم","ابحث عن محادثة أو مستخدم"],["securityPage","deputiesList","loadDeputies(true)","النواب والصلاحيات","ابحث عن نائب أو رقم Telegram"],["rewardsAdminPage","redeemCodesHistory","loadRedeemCodes()","رموز الاسترداد","ابحث عن رمز أو حالة استرداد"]];
