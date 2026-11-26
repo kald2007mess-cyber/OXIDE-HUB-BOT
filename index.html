@@ -2152,20 +2152,34 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
 }
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
 function openPlatformDeliveryViewer(offer,data){
- const modal=document.getElementById("platformDeliveryModal"),title=document.getElementById("platformDeliveryTitle"),message=document.getElementById("platformDeliveryMessage"),list=document.getElementById("platformDeliveryFiles"),status=document.getElementById("platformDeliveryViewerStatus");
+ const modal=document.getElementById("platformDeliveryModal"),title=document.getElementById("platformDeliveryTitle"),message=document.getElementById("platformDeliveryMessage"),list=document.getElementById("platformDeliveryFiles"),media=document.getElementById("platformDeliveryMedia"),mediaTitle=document.getElementById("platformDeliveryMediaTitle"),status=document.getElementById("platformDeliveryViewerStatus");
  if(!modal||!list)return;
- title.textContent=offer.toUpperCase()+" • DELIVERY";message.textContent=data.message||"Your files are ready.";list.replaceChildren();status.textContent="";
- (data.files||[]).forEach((file,index)=>{
+ const files=Array.isArray(data.files)?data.files:[];
+ title.textContent=offer.toUpperCase()+" • DELIVERY";
+ message.textContent=data.message||"Your files are ready.";
+ list.replaceChildren();if(media)media.replaceChildren();if(media)media.hidden=true;
+ if(mediaTitle)mediaTitle.hidden=true;status.textContent="";
+ files.forEach((file,index)=>{
   const card=document.createElement("article");card.className="oxide-delivery-file";
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";
-  card.append(name,size);
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-  if(String(file.contentType||"").startsWith("image/")){const preview=document.createElement("img");preview.src=url;preview.alt=file.name||"Preview";preview.loading="lazy";card.appendChild(preview);}
-  else if(String(file.contentType||"").startsWith("video/")){const preview=document.createElement("video");preview.src=url;preview.controls=true;preview.preload="metadata";card.appendChild(preview);}
-  const download=document.createElement("a");download.href=url;download.download=file.name||"download";download.textContent="⬇ Download file";download.className="oxide-delivery-download";card.appendChild(download);list.appendChild(card);
+  const download=document.createElement("a");download.href=url;download.download=file.name||"download";download.textContent="⬇ Download file";download.className="oxide-delivery-download";
+  card.append(name,size,download);list.appendChild(card);
  });
- if(!(data.files||[]).length){const empty=document.createElement("p");empty.textContent="No files attached to this offer.";list.appendChild(empty);}
+ if(!files.length){const empty=document.createElement("p");empty.textContent="No files attached to this offer.";list.appendChild(empty);}
+ const mediaFiles=files.map((file,index)=>({file,index})).filter(({file})=>/^(image|video)\//i.test(String(file.contentType||"")));
+ if(media&&mediaFiles.length){
+  mediaFiles.forEach(({file,index})=>{
+   const item=document.createElement("div");item.className="oxide-delivery-media-item";
+   const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=file.name||"Media";
+   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
+   if(String(file.contentType||"").startsWith("image/")){const preview=document.createElement("img");preview.src=url;preview.alt=file.name||"Preview";preview.loading="lazy";item.append(caption,preview);}
+   else{const preview=document.createElement("video");preview.src=url;preview.controls=true;preview.preload="metadata";item.append(caption,preview);}
+   media.appendChild(item);
+  });
+  media.hidden=false;if(mediaTitle)mediaTitle.hidden=false;
+ }
  modal.hidden=false;
 }
 async function purchasePlatformUnlock(offer){if(!["beta","android","ios"].includes(offer)||platformPurchaseBusy)return;if(platformPaidUnlocks[offer]||platformGoAccess||Number(platformAdProgress[offer]||0)>=ISLAND_REQUIRED)return;platformPurchaseBusy=true;updateIslandDisplay();const message=document.getElementById("islandMessage");try{const response=await fetch("/api/platform-unlock",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({offer})});const data=await response.json().catch(()=>({}));if(!response.ok||!data.success)throw new Error(data.error||"UNLOCK_FAILED");rewardPoints=Number(data.points||0);["pointsBalance","missionsBalance","missionTopBalance"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent=rewardPoints.toLocaleString();});platformPaidUnlocks={...platformPaidUnlocks,[offer]:true};if(message)message.textContent=currentLanguage==="ar"?"تم فتح "+offer.toUpperCase()+" بنجاح مقابل 1000 عملة":currentLanguage==="ru"?"Раздел "+offer.toUpperCase()+" открыт за 1000 монет":offer.toUpperCase()+" unlocked for 1,000 coins";updateIslandDisplay();}catch(error){if(message)message.textContent=error.message==="INSUFFICIENT_POINTS"?(currentLanguage==="ar"?"رصيدك غير كافٍ. تحتاج إلى 1000 عملة.":currentLanguage==="ru"?"Недостаточно монет. Требуется 1000.":"Not enough coins. You need 1,000."):(error.message||"UNLOCK_FAILED");}finally{platformPurchaseBusy=false;updateIslandDisplay();}}
@@ -3508,7 +3522,11 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #platformDeliveryMessage{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8cbe9;line-height:1.7;margin:14px 0}
 .oxide-delivery-file{padding:13px;margin:12px 0;border:1px solid #634887;border-radius:14px;background:#171329;display:flex;flex-direction:column;gap:8px}
 .oxide-delivery-file strong{overflow-wrap:anywhere;color:#fff}.oxide-delivery-file small{color:#b8a8d0}
-.oxide-delivery-file img,.oxide-delivery-file video{display:block;width:100%;max-height:330px;object-fit:contain;background:#05040a;border-radius:10px}
+.oxide-delivery-media-item{padding:12px;margin:12px 0;border:1px solid #634887;border-radius:14px;background:#171329;display:flex;flex-direction:column;gap:9px}
+#platformDeliveryMediaTitle{margin:20px 0 8px;color:#e6caff;font-size:14px;letter-spacing:1.5px}
+.oxide-delivery-media-caption{color:#d8cbe9;font-size:12px;overflow-wrap:anywhere}
+#platformDeliveryMedia img,#platformDeliveryMedia video{display:block;width:100%;max-height:360px;object-fit:contain;background:#05040a;border-radius:10px}
+#platformDeliveryMedia[hidden],#platformDeliveryMediaTitle[hidden]{display:none!important}
 .oxide-delivery-download{display:block;text-align:center;padding:12px;border-radius:10px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:bold}
 #platformDeliveryViewerStatus{color:#ffb7b7;font-size:12px}
 
@@ -3561,6 +3579,8 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   <div class="oxide-delivery-head"><h2 id="platformDeliveryTitle">PLATFORM DELIVERY</h2><button type="button" onclick="closePlatformDeliveryViewer()">✕</button></div>
   <p id="platformDeliveryMessage"></p>
   <div id="platformDeliveryFiles"></div>
+  <h3 id="platformDeliveryMediaTitle" hidden>MEDIA</h3>
+  <div id="platformDeliveryMedia" hidden></div>
   <div id="platformDeliveryViewerStatus"></div>
  </div>
 </div>
