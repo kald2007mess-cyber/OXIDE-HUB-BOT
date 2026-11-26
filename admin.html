@@ -1835,7 +1835,7 @@ start();
  async function setLanguage(lang){
   if(!LANGS[lang]||busy)return;
   busy=true;select.disabled=true;translationFailures=0;
-  status.textContent=lang==="ar"?"تم تطبيق العربية":lang==="ru"?"":"Translating admin panel…";
+  status.textContent=lang==="ar"?"تم تطبيق العربية":lang==="ru"?"Русский":"Applying language…";
   if(observer)observer.disconnect();
   try{
    await processTree(document.body,lang);
