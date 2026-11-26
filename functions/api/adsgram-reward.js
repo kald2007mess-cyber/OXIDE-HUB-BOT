@@ -43,6 +43,7 @@ async function ensureTables(DB) {
       cycle_started_at INTEGER NOT NULL
     )
   `).run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS adsgram_ad_analytics (id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,offer TEXT NOT NULL DEFAULT 'island',event_type TEXT NOT NULL,created_at INTEGER NOT NULL)").run();
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -193,6 +194,8 @@ async function awardVerifiedAd(DB, userUuid, now, offer) {
       Number(results?.[3]?.meta?.changes || 0) !== 1) {
     return { success: false, error: "REWARD_NOT_APPLIED" };
   }
+
+  await DB.prepare("INSERT INTO adsgram_ad_analytics(user_id,offer,event_type,created_at) VALUES(?,?,?,?)").bind(userUuid,isPlatformOffer?offer:"island","completion",now).run();
 
   if (isPlatformOffer) {
     await DB.prepare("DELETE FROM adsgram_pending_offer WHERE user_id=?").bind(userUuid).run();
