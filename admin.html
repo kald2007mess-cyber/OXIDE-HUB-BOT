@@ -966,9 +966,9 @@ function backToMenu(){document.getElementById("platformPage").classList.add("hid
 
 async function resetAllAdsProgress(){
  const button=document.getElementById("resetAdsButton"),status=document.getElementById("resetAdsStatus");
- if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
- if(!confirm("تأكيد: سيتم إرجاع عدّاد الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS. لن تتغير النقاط أو الإحالات. هل تريد المتابعة؟"))return;
- if(prompt("للتأكيد النهائي، اكتب RESET ADS")!=="RESET ADS"){status.textContent="تم إلغاء العملية؛ لم تتغير العدّادات.";return;}
+ if(!tg?.initData){status.textContent="Не удалось проверить сессию Telegram.";return;}
+ if(!confirm("Сбросить счётчики рекламы до 0/10 для всех пользователей BETA, ANDROID и iOS? Баллы и рефералы не изменятся."))return;
+ if(prompt("Для подтверждения введите RESET ADS")!=="RESET ADS"){status.textContent="Операция отменена. Счётчики не изменены.";return;}
  button.disabled=true;status.textContent="Сброс счётчиков рекламы для всех пользователей...";
  try{
   const response=await fetch("/api/admin/reset-ads",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET ALL ADS"})});
@@ -981,9 +981,9 @@ async function resetAllAdsProgress(){
 async function resetOxideData(){
  const button=document.getElementById("resetDataButton");
  const status=document.getElementById("resetDataStatus");
- if(!tg?.initData){status.textContent="تعذر التحقق من جلسة تيليجرام.";return;}
- if(!confirm("تحذير: سيتم تصفير نقاط جميع المستخدمين، المهمات، سجل النقاط وЖурнал входов. الإحالات لن تتغير. هل تريد المتابعة؟"))return;
- if(prompt("للتأكيد النهائي، اكتب RESET")!=="RESET"){status.textContent="تم إلغاء العملية؛ لم تتغير أي بيانات.";return;}
+ if(!tg?.initData){status.textContent="Не удалось проверить сессию Telegram.";return;}
+ if(!confirm("Внимание: баллы всех пользователей, задания, журнал начисления баллов и журнал входов будут сброшены. Реферальные данные не изменятся. Продолжить?"))return;
+ if(prompt("Для окончательного подтверждения введите RESET")!=="RESET"){status.textContent="Операция отменена. Данные не изменены.";return;}
  button.disabled=true;status.textContent="Безопасный сброс данных...";
  try{
   const response=await fetch("/api/admin/reset-data",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,confirmation:"RESET OXIDE DATA"})});
@@ -1269,7 +1269,7 @@ async function showCompletedUsers(missionId){const panel=document.getElementById
 function closeCompletedUsers(){document.getElementById("taskCompletedPanel").classList.add("hidden");}
 
 /* إدارة Безопасность и права доступа - المالك فقط */
-const permissionLabels={users:"Информация о пользователях",tasks:"Управление заданиями",support:"Техническая поддержка",maintenance:"Управление сайтом",stats:"الإحصائيات",platform_files:"نشر وتعديل وحذف ملفات المنصات"};
+const permissionLabels={users:"Информация о пользователях",tasks:"Управление заданиями",support:"Техническая поддержка",maintenance:"Управление сайтом",stats:"Статистика сайта",platform_files:"Публикация, изменение и удаление файлов платформ"};
 let deputies=[],securityBusy=false;
 async function securityRequest(data){const response=await fetch("/api/admin/security",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"SECURITY_API_ERROR");return result;}
 function openSecurity(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("securityPage").classList.remove("hidden");loadDeputies();}
