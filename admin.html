@@ -613,7 +613,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 #betaDeliveryPage .pm-saved-file-info strong{font-size:13px}
 #betaDeliveryPage .pm-file-actions{display:flex;gap:7px;justify-content:flex-end;padding:0;border:0;grid-column:auto}
 #betaDeliveryPage .pm-file-actions button{width:38px;min-width:38px;height:38px;padding:8px;border-radius:10px;font-size:0}
-#betaDeliveryPage .pm-file-actions svg{width:18px;height:18px}
+#betaDeliveryPage .pm-file-actions svg{width:18px;height:18px}#betaDeliveryPage .pm-save-button svg{width:19px;height:19px;vertical-align:middle;margin-inline-end:8px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:760px){#betaDeliveryPage .pm-simple-editor{grid-template-columns:1fr}}
 </style>
 </head>
@@ -714,7 +714,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
     <div class="pm-saved-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4m0 4h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg> Эти файлы получит пользователь после выполнения условий и нажатия GO</div>
    </section>
    <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
-   <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">حفظ</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
+   <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l3 3v13H4V4zM8 4v6h8V4M8 20v-6h8v6"/></svg> حفظ</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
   </section>
  </div>
 </div>
@@ -1701,7 +1701,7 @@ async function removePlatformDeliveryFile(index){
 }
 async function loadBetaDelivery(){
  const status=document.getElementById("betaDeliveryStatus");status.textContent="Загрузка настроек "+currentDeliveryOffer.toUpperCase()+"...";
- try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";document.getElementById("pmMessageCount").textContent=(result.message||"").length+" / 4000";document.getElementById("pmContentTitle").value="";renderPlatformDeliveryFiles(result.files||[]);platformDraftSaved=!result.published;document.getElementById("betaDeliverySaveButton").textContent=platformDraftSaved?"نشر":"حفظ التعديلات";status.textContent="تم تحميل المحتوى المحفوظ لهذه المنصة.";}
+ try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";document.getElementById("pmMessageCount").textContent=(result.message||"").length+" / 4000";const savedParts=String(result.message||"").split("\n\n");document.getElementById("pmContentTitle").value=savedParts.length>1?savedParts.shift():"";document.getElementById("betaDeliveryMessage").value=savedParts.join("\n\n");renderPlatformDeliveryFiles(result.files||[]);platformDraftSaved=!result.published;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon(platformDraftSaved?"M12 5v14m-7-7h14":"M5 12h14M12 5v14")+(platformDraftSaved?"نشر":"حفظ التعديلات");status.textContent="تم تحميل المحتوى المحفوظ لهذه المنصة.";}
  catch(error){status.textContent="Не удалось загрузить материалы: "+error.message;}
 }
 async function platformUploadJson(payload){
@@ -1761,14 +1761,14 @@ async function saveBetaDelivery(){
   label.textContent="اكتمل الرفع، جارٍ حفظ المحتوى...";
   const allFiles=savedPlatformDeliveryFiles.concat(uploaded),allKeys=allFiles.map(file=>file.key).filter(Boolean);
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:allKeys});
-  bar.style.width="100%";percent.textContent="100%";label.textContent="تم الحفظ";pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);platformDraftSaved=true;button.textContent="نشر";status.textContent="تم الحفظ. اضغط «نشر» لإظهار المحتوى للمستخدمين.";
+  bar.style.width="100%";percent.textContent="100%";label.textContent="تم الحفظ";pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);platformDraftSaved=true;button.innerHTML=platformSvgIcon("M12 5v14m-7-7h14")+"نشر";status.textContent="تم الحفظ. اضغط «نشر» لإظهار المحتوى للمستخدمين.";
  }catch(error){label.textContent="توقف الحفظ";status.textContent="تعذر الحفظ: "+(error.message==="RESUME_FILE_MISMATCH"?"اختر نفس الملف الأصلي لاستكمال الرفع.":error.message);alert(status.textContent);}
  finally{button.disabled=false;}
 }
 async function publishPlatformDelivery(){
  const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus");if(!confirm("هل تريد نشر هذا المحتوى للمستخدمين؟"))return;
  button.disabled=true;status.textContent="جارٍ النشر...";
- try{await platformUploadJson({action:"publish",offer:currentDeliveryOffer});platformDraftSaved=false;button.textContent="حفظ التعديلات";status.textContent="تم النشر بنجاح.";document.getElementById("betaDeliveryProgressWrap").classList.add("hidden");}
+ try{await platformUploadJson({action:"publish",offer:currentDeliveryOffer});platformDraftSaved=false;button.innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ التعديلات";status.textContent="تم النشر بنجاح.";document.getElementById("betaDeliveryProgressWrap").classList.add("hidden");}
  catch(error){status.textContent="تعذر النشر: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;}
 }
