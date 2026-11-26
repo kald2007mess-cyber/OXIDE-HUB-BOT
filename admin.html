@@ -1752,23 +1752,25 @@ start();
   try{const saved=localStorage.getItem(key);if(saved)return saved;}catch(_){}
   const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+lang+"&dt=t&q="+encodeURIComponent(value);
   let lastError;
-  for(let attempt=0;attempt<4;attempt++){
+  for(let attempt=0;attempt<2;attempt++){
    try{
     const controller=typeof AbortController!=="undefined"?new AbortController():null;
-    const timeout=controller?setTimeout(()=>controller.abort(),12000):null;
-    let response;
-    try{response=await fetch(url,{cache:"force-cache",signal:controller?.signal});}
-    finally{if(timeout)clearTimeout(timeout);}
-    if(!response.ok)throw new Error("TRANSLATION_HTTP_"+response.status);
-    const data=await response.json();
+    let timeout=null;
+    try{
+     if(controller)timeout=setTimeout(()=>controller.abort(),8000);
+     const response=await fetch(url,{cache:"force-cache",signal:controller?.signal});
+     if(!response.ok)throw new Error("TRANSLATION_HTTP_"+response.status);
+     const data=await response.json();
+     if(timeout)clearTimeout(timeout);
     const result=Array.isArray(data?.[0])?data[0].map(part=>part?.[0]||"").join(""):"";
-    if(!result)throw new Error("TRANSLATION_EMPTY");
-    try{localStorage.setItem(key,result);}catch(_){}
-    return result;
-   }catch(error){
-    lastError=error;
-    if(attempt<3)await new Promise(resolve=>setTimeout(resolve,350*(attempt+1)*(attempt+1)));
-   }
+     if(!result)throw new Error("TRANSLATION_EMPTY");
+     try{localStorage.setItem(key,result);}catch(_){}
+     return result;
+    }catch(error){
+     if(timeout)clearTimeout(timeout);
+     lastError=error;
+     if(attempt<1)await new Promise(resolve=>setTimeout(resolve,250));
+    }
   }
   throw lastError||new Error("TRANSLATION_FAILED");
  }
@@ -1809,11 +1811,12 @@ start();
   while((node=walker.nextNode()))if(!shouldSkip(node))nodes.push(node);
   const elements=root instanceof Element?[root,...root.querySelectorAll("*")]:Array.from(root.querySelectorAll?.("*")||[]);
   // Process more text nodes concurrently; successful translations are cached locally.
-  for(let i=0;i<nodes.length;i+=8){
-   await Promise.all(nodes.slice(i,i+8).map(n=>translateTextNode(n,lang)));
+  for(let i=0;i<nodes.length;i+=24){
+   status.textContent=(lang==="ar"?"جارٍ تطبيق العربية… ":"Translating… ")+Math.min(i+24,nodes.length)+"/"+nodes.length;
+   await Promise.all(nodes.slice(i,i+24).map(n=>translateTextNode(n,lang)));
   }
-  for(let i=0;i<elements.length;i+=8){
-   await Promise.all(elements.slice(i,i+8).map(el=>translateElementAttrs(el,lang)));
+  for(let i=0;i<elements.length;i+=24){
+   await Promise.all(elements.slice(i,i+24).map(el=>translateElementAttrs(el,lang)));
   }
  }
  async function setLanguage(lang){
