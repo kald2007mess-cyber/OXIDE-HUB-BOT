@@ -6,7 +6,7 @@ const PART_SIZE = 16 * 1024 * 1024;
 const MAX_FILES = 3;
 
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
-function safeName(value){return String(value||"file").replace(/[\\/\\\\\u0000-\u001f]/g,"_").slice(0,160)||"file";}
+function safeName(value){const raw=String(value||"file");return [...raw].filter(ch=>ch.charCodeAt(0)>=32&&ch!=="/"&&ch!==String.fromCharCode(92)).join("").slice(0,160)||"file";}
 async function ensure(DB){
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_uploads (upload_id TEXT PRIMARY KEY, r2_key TEXT NOT NULL UNIQUE, offer TEXT NOT NULL, file_name TEXT NOT NULL, file_size INTEGER NOT NULL, content_type TEXT NOT NULL, parts_json TEXT NOT NULL DEFAULT '[]', status TEXT NOT NULL DEFAULT 'uploading', created_at INTEGER NOT NULL, completed_at INTEGER NOT NULL DEFAULT 0)").run();
