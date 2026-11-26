@@ -1050,7 +1050,7 @@ async function loadAdsEarnings(){
   document.getElementById("adsEarningsImpressions").textContent=Number(data.impressions||0).toLocaleString("en-US");
   document.getElementById("adsEarningsClicks").textContent="غير متاح";
   renderAdsEarningsChart(data.daily||[]);
-  status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" • توقيت الجزائر";
+  status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" • время Алжира";
  }catch(error){status.textContent="تعذر تحميل الإحصائيات: "+error.message;}
 }
 
