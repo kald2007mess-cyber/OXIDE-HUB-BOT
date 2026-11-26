@@ -503,6 +503,23 @@ html[dir="ltr"] input,html[dir="ltr"] textarea,html[dir="ltr"] select{direction:
  html[dir="rtl"] .admin-dashboard-head,html[dir="rtl"] .platform-manager-head{align-items:flex-start}
  html[dir="rtl"] .support-admin-layout{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Redesigned multi-file platform content workspace */
+.pm-content-editor,.pm-upload-panel{background:linear-gradient(145deg,#203b31,#192f28);border:1px solid rgba(119,220,176,.14);border-radius:20px;padding:20px;margin:0 0 18px;box-shadow:0 10px 28px rgba(0,0,0,.12)}
+.pm-editor-heading,.pm-upload-panel-head,.pm-saved-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.pm-editor-heading h3,.pm-upload-panel-head h3{margin:0 0 7px;font-size:19px;color:#eff8f2}.pm-editor-heading p,.pm-upload-panel-head p{margin:0;color:#9bb4a7;font-size:12px;line-height:1.7}
+.pm-limit-badge,.pm-saved-count{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(108,220,169,.22);border-radius:30px;padding:7px 11px;background:rgba(37,133,91,.18);color:#8de6b8;font-size:11px;white-space:nowrap}
+.pm-content-editor textarea{width:100%;min-height:130px;resize:vertical;border:1px solid #426355;border-radius:14px;background:#13271f;color:#f1f8f3;padding:14px;font:inherit;line-height:1.7;outline:none}
+.pm-content-editor textarea:focus{border-color:#69d9a4;box-shadow:0 0 0 3px rgba(105,217,164,.1)}
+.pm-editor-footer,.pm-file-count-row{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:#8ea99a;font-size:11px}.pm-editor-footer strong,.pm-file-count-row strong{color:#9be9bd;font-variant-numeric:tabular-nums}
+.pm-multi-picker{min-height:155px;border:2px dashed #527d68;border-radius:17px;background:rgba(10,28,20,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;padding:18px;cursor:pointer;transition:.2s}
+.pm-multi-picker:hover{border-color:#83e6b2;background:rgba(46,133,87,.13)}.pm-upload-cloud{font-size:34px;color:#82e6b2}.pm-multi-picker strong{color:#eef8f1;font-size:14px}.pm-multi-picker small{color:#9bb4a7;font-size:11px;line-height:1.6}
+.pm-pending-files{display:grid;gap:6px;margin-top:12px}.pm-pending-files>span{color:#91a99c;font-size:12px}.pm-pending-file{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:10px;background:rgba(8,20,15,.36);color:#e3f0e7;font-size:12px;overflow-wrap:anywhere}.pm-pending-file small{color:#9ab2a4;white-space:nowrap}
+.pm-saved-card-head{align-items:center}.pm-saved-card-head h3{margin:0 0 6px}.pm-saved-file-info strong{display:block;color:#e7f4eb;font-weight:600;overflow-wrap:anywhere}.pm-delete-inline{width:auto;min-width:64px;flex:0 0 auto;min-height:38px;padding:8px 12px;font-size:12px;border-radius:10px}.pm-empty-files{padding:20px;text-align:center;border:1px dashed #456253;border-radius:13px;color:#9ab2a4;font-size:12px}
+.pm-legacy-inputs{display:none!important}
+html[dir="rtl"] .pm-editor-heading,html[dir="rtl"] .pm-upload-panel-head,html[dir="rtl"] .pm-saved-card-head,html[dir="rtl"] .pm-editor-footer,html[dir="rtl"] .pm-file-count-row{direction:rtl}
+html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
+@media(max-width:520px){.pm-content-editor,.pm-upload-panel{padding:15px 12px}.pm-editor-heading,.pm-upload-panel-head{flex-direction:column}.pm-multi-picker{min-height:140px}}
 </style>
 </head>
 <body>
@@ -577,25 +594,23 @@ html[dir="ltr"] input,html[dir="ltr"] textarea,html[dir="ltr"] select{direction:
   <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option></select>
   <section class="pm-workspace">
    <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span></div>
-   <div class="pm-file-slot">
-    <div class="pm-file-slot-head"><span class="pm-file-icon">▢</span><strong>Файл 1</strong></div>
-    <div class="pm-current-file" id="pmCurrentFile1">Текущий файл: файл не добавлен</div>
-    <div class="pm-upload-row"><button type="button" class="pm-delete" onclick="removePlatformDeliveryFile(0)" aria-label="Удалить файл 1">♜<small>Удалить</small></button><label class="pm-upload-button" for="betaDeliveryFile1"><span>⇧</span><strong>Загрузить / заменить</strong></label></div>
-    <input id="betaDeliveryFile1" class="pm-hidden-file" type="file">
+   <div class="pm-content-editor">
+    <div class="pm-editor-heading"><div><h3>📝 محتوى عرض المنصة</h3><p>اكتب الرسالة التي ستصل للمستخدم مع الملفات بعد إكمال 10/10 والضغط على GO</p></div><span class="pm-limit-badge">حتى 4000 حرف</span></div>
+    <textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="اكتب محتوى الرسالة هنا..."></textarea>
+    <div class="pm-editor-footer"><span>يتم حفظ النص بشكل مستقل لكل منصة</span><strong id="pmMessageCount">0 / 4000</strong></div>
    </div>
-   <div class="pm-file-slot">
-    <div class="pm-file-slot-head"><span class="pm-file-icon">▢</span><strong>Файл 2</strong></div>
-    <div class="pm-current-file" id="pmCurrentFile2">Текущий файл: файл не добавлен</div>
-    <div class="pm-upload-row"><button type="button" class="pm-delete" onclick="removePlatformDeliveryFile(1)" aria-label="Удалить файл 2">♜<small>Удалить</small></button><label class="pm-upload-button" for="betaDeliveryFile2"><span>⇧</span><strong>Загрузить / заменить</strong></label></div>
-    <input id="betaDeliveryFile2" class="pm-hidden-file" type="file">
+   <div class="pm-upload-panel">
+    <div class="pm-upload-panel-head"><div><h3>📦 ملفات المنصة</h3><p>يمكنك رفع عدة ملفات دفعة واحدة</p></div><span class="pm-limit-badge">10 ملفات كحد أقصى</span></div>
+    <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud">⇧</span><strong>اضغط لاختيار الملفات أو اسحبها هنا</strong><small>APK / IPA / ZIP / PDF / صور / فيديو • حتى 50 MB لكل ملف</small></label>
+    <input id="betaDeliveryFiles" class="pm-hidden-file" type="file" multiple>
+    <div id="pmPendingFiles" class="pm-pending-files"><span>لم يتم اختيار ملفات جديدة</span></div>
+    <div class="pm-file-count-row"><span>الملفات المحددة للرفع</span><strong id="pmPendingCount">0 / 10</strong></div>
    </div>
-   <div class="pm-divider"></div>
-   <div class="pm-media-heading"><h3>Изображение или видео</h3></div>
-   <div class="pm-media-tabs"><button type="button" id="pmImageMode" class="active" onclick="setPlatformMediaType('image')">Изображение</button><button type="button" id="pmVideoMode" onclick="setPlatformMediaType('video')">Видео</button></div>
-   <label class="pm-media-picker" for="betaDeliveryMedia"><span class="pm-media-icon">▧＋</span><strong id="pmMediaTitle">Добавить изображение</strong><small>Выберите файл на своём устройстве</small><span id="pmMediaSelected" class="pm-selected-media"></span></label>
-   <input id="betaDeliveryMedia" class="pm-hidden-file" type="file" accept="image/*">
-   <div class="pm-saved-card"><h3>Сохранённые файлы</h3><div class="pm-saved-subtitle">Файлы выбранной платформы</div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">Здесь отображаются загруженные файлы, их названия и размеры, а также действия по просмотру и удалению.</div></div>
-   <textarea id="betaDeliveryMessage" class="hidden" maxlength="4000"></textarea>
+   <div class="pm-legacy-inputs hidden" aria-hidden="true">
+    <input id="betaDeliveryFile1" type="file"><input id="betaDeliveryFile2" type="file"><input id="betaDeliveryMedia" type="file">
+   </div>
+   <div class="pm-saved-card"><div class="pm-saved-card-head"><div><h3>🗂 الملفات المحفوظة</h3><div class="pm-saved-subtitle">الملفات الحالية الخاصة بهذه المنصة</div></div><span id="pmSavedCount" class="pm-saved-count">0 ملفات</span></div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">هذه الملفات هي التي يستلمها المستخدم عند الضغط على GO بعد إكمال 10/10</div></div>
+   
    <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
    <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">Сохранить файлы</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
   </section>
@@ -1511,18 +1526,18 @@ async function switchPlatformDelivery(offer){
  document.getElementById("betaDeliverySaveButton").textContent="Сохранить файлы";
  document.getElementById("platformDeliveryDescription").textContent="Файлы выбранной платформы сохраняются отдельно.";
  document.getElementById("betaDeliveryMessage").value="";
- ["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("betaDeliveryFiles").value="";updatePendingPlatformFiles();
  document.getElementById("pmMediaSelected").textContent="";setPlatformMediaType("image");
  renderPlatformTabs();
  await loadBetaDelivery();
 }
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function renderPlatformDeliveryFiles(files){
- const box=document.getElementById("betaDeliveryCurrentFiles");
- const slots=[document.getElementById("pmCurrentFile1"),document.getElementById("pmCurrentFile2")];
- slots.forEach((node,index)=>{if(node){const f=files[index];node.textContent=f?"Текущий файл: "+(f.name||"file"):"Текущий файл: файл не добавлен";}});
- if(!files.length){box.innerHTML='<p class="note">Сохранённых файлов пока нет.</p>';return;}
- box.innerHTML=files.map((file,index)=>'<div class="pm-saved-file"><div class="pm-saved-file-info">📎 '+escapeHtml(file.name||"file")+'<small>'+(Number(file.size||0)/1024/1024).toFixed(2)+' MB</small></div><div style="display:flex;gap:7px;align-items:center"><span class="pm-preview">Просмотр</span><button class="pm-delete" style="width:48px;flex-basis:48px;min-height:42px" onclick="removePlatformDeliveryFile('+index+')" aria-label="Удалить">♜</button></div></div>').join("");
+ const box=document.getElementById("betaDeliveryCurrentFiles"),count=document.getElementById("pmSavedCount");
+ count.textContent=files.length+" / 10 ملفات";
+ if(!files.length){box.innerHTML='<div class="pm-empty-files">لا توجد ملفات محفوظة لهذه المنصة بعد</div>';return;}
+ box.replaceChildren();
+ files.forEach((file,index)=>{const row=document.createElement("div");row.className="pm-saved-file";const info=document.createElement("div");info.className="pm-saved-file-info";const name=document.createElement("strong");name.textContent=file.name||"file";const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";info.append(name,size);const del=document.createElement("button");del.className="pm-delete pm-delete-inline";del.type="button";del.textContent="حذف";del.setAttribute("aria-label","حذف "+(file.name||"file"));del.onclick=()=>removePlatformDeliveryFile(index);row.append(info,del);box.append(row);});
 }
 function setPlatformMediaType(type){
  const input=document.getElementById("betaDeliveryMedia"),image=type!=="video";
@@ -1532,7 +1547,15 @@ function setPlatformMediaType(type){
  document.getElementById("pmMediaTitle").textContent=image?"Добавить изображение":"Добавить видео";
  input.value="";document.getElementById("pmMediaSelected").textContent="";
 }
-document.addEventListener("change",event=>{if(event.target?.id==="betaDeliveryMedia"){document.getElementById("pmMediaSelected").textContent=event.target.files?.[0]?.name||"";}});
+function updatePendingPlatformFiles(){
+ const input=document.getElementById("betaDeliveryFiles"),files=Array.from(input.files||[]),box=document.getElementById("pmPendingFiles");
+ document.getElementById("pmPendingCount").textContent=files.length+" / 10";
+ box.replaceChildren();
+ if(!files.length){box.innerHTML="<span>لم يتم اختيار ملفات جديدة</span>";return;}
+ files.forEach((file,index)=>{const row=document.createElement("div");row.className="pm-pending-file";const name=document.createElement("span");name.textContent=file.name;const size=document.createElement("small");size.textContent=(file.size/1024/1024).toFixed(2)+" MB";row.append(name,size);box.append(row);});
+}
+document.addEventListener("change",event=>{if(event.target?.id==="betaDeliveryFiles")updatePendingPlatformFiles();if(event.target?.id==="betaDeliveryMessage")document.getElementById("pmMessageCount").textContent=event.target.value.length+" / 4000";});
+
 
 async function removePlatformDeliveryFile(index){
  if(!Number.isInteger(index)||index<0)return;
@@ -1584,66 +1607,41 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
  throw lastError||new Error("PART_UPLOAD_FAILED");
 }
 async function saveBetaDelivery(){
- const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].map(id=>document.getElementById(id).files?.[0]).filter(Boolean),message=document.getElementById("betaDeliveryMessage").value.trim();
+ const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),input=document.getElementById("betaDeliveryFiles"),files=Array.from(input.files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
- if(!files.length){alert("Выберите хотя бы один файл для загрузки.");return;}
- if(files.length>3){alert("Можно добавить два файла и одно изображение или видео.");return;}
- const appFiles=[document.getElementById("betaDeliveryFile1").files?.[0],document.getElementById("betaDeliveryFile2").files?.[0]].filter(Boolean);
- const expectedExt=currentDeliveryOffer==="ios"?".ipa":".apk";
- if(appFiles.some(file=>!file.name.toLowerCase().endsWith(expectedExt))){alert("نوع ملف المنصة يجب أن يكون "+expectedExt);return;}
- const mediaFile=document.getElementById("betaDeliveryMedia").files?.[0];
- if(mediaFile&&!(mediaFile.type.startsWith("image/")||mediaFile.type.startsWith("video/"))){alert("يمكن إضافة صورة أو فيديو فقط في خانة الوسائط.");return;}
- if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("حجم كل ملف يجب ألا يتجاوز 2 جيجابايت.");return;}
- if(!confirm("Текст и файлы будут сохранены только для предложения "+currentDeliveryOffer.toUpperCase()+" . Продолжить?"))return;
- button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="Подготовка загрузки по частям...";
- status.textContent="Загрузка файлов напрямую в R2...";
+ if(!message&&!files.length){alert("أضف نص المحتوى أو اختر ملفاً واحداً على الأقل.");return;}
+ if(files.length>10){alert("الحد الأقصى هو 10 ملفات لكل منصة.");return;}
+ if(files.some(file=>!file.size||file.size>50*1024*1024)){alert("يجب ألا يتجاوز حجم كل ملف 50 ميغابايت.");return;}
+ if(!confirm("سيتم حفظ النص والملفات بشكل مستقل لمنصة "+currentDeliveryOffer.toUpperCase()+". متابعة؟"))return;
+ button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ تجهيز الملفات...";
+ status.textContent="جارٍ رفع الملفات وحفظ المحتوى...";
  const totalBytes=files.reduce((sum,file)=>sum+file.size,0);let completedBytes=0;const uploaded=[];
- const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="Загрузка файлов в R2...";};
+ const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="جارٍ رفع الملفات...";};
  try{
   for(const file of files){
    const resumeKey=platformResumeKey(currentDeliveryOffer,file);
    let saved=platformReadResume(resumeKey),state=null,init;
-   if(saved?.uploadId){
-    try{state=await platformUploadJson({action:"status",offer:currentDeliveryOffer,uploadId:saved.uploadId});}
-    catch(_){platformRemoveResume(resumeKey);saved=null;}
-   }
-   if(state?.status==="completed"){
-    uploaded.push(state.file);completedBytes+=file.size;paint(0);platformRemoveResume(resumeKey);continue;
-   }
-   if(!state){
-    init=await platformUploadJson({action:"init",offer:currentDeliveryOffer,name:file.name,size:file.size,contentType:file.type||"application/octet-stream"});
-    saved={uploadId:init.uploadId,key:init.key,name:file.name,size:file.size,lastModified:file.lastModified,partSize:init.partSize};
-    platformWriteResume(resumeKey,saved);
-    state={parts:[],partSize:init.partSize,totalParts:init.totalParts};
-   }
+   if(saved?.uploadId){try{state=await platformUploadJson({action:"status",offer:currentDeliveryOffer,uploadId:saved.uploadId});}catch(_){platformRemoveResume(resumeKey);saved=null;}}
+   if(state?.status==="completed"){uploaded.push(state.file);completedBytes+=file.size;paint(0);platformRemoveResume(resumeKey);continue;}
+   if(!state){init=await platformUploadJson({action:"init",offer:currentDeliveryOffer,name:file.name,size:file.size,contentType:file.type||"application/octet-stream"});saved={uploadId:init.uploadId,key:init.key,name:file.name,size:file.size,lastModified:file.lastModified,partSize:init.partSize};platformWriteResume(resumeKey,saved);state={parts:[],partSize:init.partSize,totalParts:init.totalParts};}
    if(Number(saved.size)!==file.size||saved.name!==file.name||Number(saved.lastModified)!==file.lastModified)throw new Error("RESUME_FILE_MISMATCH");
-   const partSize=Number(state.partSize||saved.partSize||PLATFORM_UPLOAD_PART_SIZE),totalParts=Math.ceil(file.size/partSize);
-   const knownParts=Array.isArray(state.parts)?state.parts:[];
-   const parts=[];
+   const partSize=Number(state.partSize||saved.partSize||PLATFORM_UPLOAD_PART_SIZE),knownParts=Array.isArray(state.parts)?state.parts:[],parts=[];
    for(let partNumber=1,start=0;start<file.size;partNumber++,start+=partSize){
-    const end=Math.min(file.size,start+partSize),blob=file.slice(start,end);
-    let part=knownParts.find(p=>Number(p.partNumber)===partNumber);
-    if(!part?.etag){
-     const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(saved.uploadId)+"&partNumber="+partNumber;
-     part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);
-    }
+    const end=Math.min(file.size,start+partSize),blob=file.slice(start,end);let part=knownParts.find(p=>Number(p.partNumber)===partNumber);
+    if(!part?.etag){const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(saved.uploadId)+"&partNumber="+partNumber;part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);}
     parts.push(part);completedBytes+=end-start;paint(0);
    }
-   const done=await platformUploadJson({action:"complete",offer:currentDeliveryOffer,uploadId:saved.uploadId,parts});
-   uploaded.push(done.file);platformRemoveResume(resumeKey);
+   const done=await platformUploadJson({action:"complete",offer:currentDeliveryOffer,uploadId:saved.uploadId,parts});uploaded.push(done.file);platformRemoveResume(resumeKey);
   }
-  label.textContent="Загрузка завершена, сохранение настроек предложения...";
+  label.textContent="اكتمل الرفع، جارٍ حفظ إعدادات المنصة...";
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:uploaded.map(file=>file.key)});
-  bar.style.width="100%";percent.textContent="100%";label.textContent="Сохранение успешно завершено";
-  ["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].forEach(id=>document.getElementById(id).value="");renderPlatformDeliveryFiles(savedResult.files||[]);
-  status.textContent="Материалы сохранены: "+currentDeliveryOffer.toUpperCase()+" вместе с "+(savedResult.files||[]).length+" файл(ов). Остальные предложения не изменены.";
+  bar.style.width="100%";percent.textContent="100%";label.textContent="اكتمل الحفظ بنجاح";
+  input.value="";updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);
+  status.textContent="تم حفظ محتوى "+currentDeliveryOffer.toUpperCase()+" بنجاح. عدد الملفات: "+(savedResult.files||[]).length;
  }catch(error){
-  label.textContent="Загрузка остановлена — выберите те же файлы, чтобы продолжить";
-  status.textContent="Не удалось сохранить материалы: "+(error.message==="RESUME_FILE_MISMATCH"?"Выберите тот же исходный файл, чтобы продолжить.":error.message);
-  alert(status.textContent);
- }finally{
-  button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
- }
+  label.textContent="توقف الرفع — أعد اختيار الملفات نفسها للمتابعة";
+  status.textContent="تعذر حفظ المحتوى: "+(error.message==="RESUME_FILE_MISMATCH"?"اختر نفس الملفات الأصلية لاستكمال الرفع.":error.message);alert(status.textContent);
+ }finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 حفظ محتوى "+labels[currentDeliveryOffer];}
 }
 
 function openBroadcastPage(){
