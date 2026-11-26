@@ -14,7 +14,9 @@ async function channelMembership(userId,env){
 }
 async function authorizedUser(request,env,offer){
  const user=await getVisitor(request,env);if(!user)return{error:out({success:false,error:"NO_TELEGRAM_SESSION"},401)};
- const membership=await channelMembership(user,env);
+ const identity=await env.DB.prepare("SELECT telegram_id FROM users WHERE user_uuid=? AND status='active'").bind(user).first();
+ if(!identity?.telegram_id)return{error:out({success:false,error:"TELEGRAM_ID_NOT_FOUND"},403)};
+ const membership=await channelMembership(identity.telegram_id,env);
  if(membership.error)return{error:out({success:false,error:membership.error},503)};
  if(!membership.joined)return{error:out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED"},403)};
  await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
