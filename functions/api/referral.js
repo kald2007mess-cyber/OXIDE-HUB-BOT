@@ -137,6 +137,11 @@ export async function onRequestGet({ request, env }) {
               SELECT 1 FROM telegram_channel_claims tc
               WHERE tc.user_id = r.referred_id
             )
+            OR EXISTS (
+              SELECT 1 FROM point_ledger pl
+              WHERE pl.user_uuid = r.referred_id
+                AND pl.reason = 'mission_approved' AND pl.delta > 0
+            )
           )
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
@@ -158,6 +163,7 @@ export async function onRequestGet({ request, env }) {
               AND (
                 EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
                 OR EXISTS (SELECT 1 FROM telegram_channel_claims WHERE user_id = ?)
+                OR EXISTS (SELECT 1 FROM point_ledger WHERE user_uuid = ? AND reason = 'mission_approved' AND delta > 0)
               )
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
@@ -166,7 +172,7 @@ export async function onRequestGet({ request, env }) {
               AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referred_id)
               AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrer_id LIMIT 1)
                   <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referred_id LIMIT 1)
-          `).bind(referral.id, referral.referred_id, referral.referred_id, referral.referrer_id, referral.referred_id),
+          `).bind(referral.id, referral.referred_id, referral.referred_id, referral.referred_id, referral.referrer_id, referral.referred_id),
           env.DB.prepare(`
             UPDATE users SET points = points + 30, updated_at = ?
             WHERE user_uuid = ? AND status = 'active' AND changes() = 1
@@ -251,6 +257,9 @@ export async function onRequestGet({ request, env }) {
                       WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
               OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
                          WHERE tc.user_id = r.referred_id)
+              OR EXISTS (SELECT 1 FROM point_ledger pl
+                         WHERE pl.user_uuid = r.referred_id
+                           AND pl.reason = 'mission_approved' AND pl.delta > 0)
             )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
@@ -267,6 +276,9 @@ export async function onRequestGet({ request, env }) {
                       WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
               OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
                          WHERE tc.user_id = r.referred_id)
+              OR EXISTS (SELECT 1 FROM point_ledger pl
+                         WHERE pl.user_uuid = r.referred_id
+                           AND pl.reason = 'mission_approved' AND pl.delta > 0)
             )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
@@ -282,6 +294,9 @@ export async function onRequestGet({ request, env }) {
                       WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
               OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
                          WHERE tc.user_id = r.referred_id)
+              OR EXISTS (SELECT 1 FROM point_ledger pl
+                         WHERE pl.user_uuid = r.referred_id
+                           AND pl.reason = 'mission_approved' AND pl.delta > 0)
             )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
