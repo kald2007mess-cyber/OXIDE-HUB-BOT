@@ -320,13 +320,24 @@ button{border-radius:12px}
 #betaDeliveryPage .platform-console-foot{display:flex;justify-content:space-between;gap:8px;padding:9px 4px;color:#8f7ca9;font-size:8px;letter-spacing:1.2px}
 @media(max-width:600px){#betaDeliveryPage .platform-console{margin:4px auto 20px}#betaDeliveryPage .platform-hero{padding:17px 14px 13px;border-radius:18px}#betaDeliveryPage .platform-hero-main{padding:22px 0 19px}#betaDeliveryPage .platform-hero-icon{width:50px;height:50px;flex-basis:50px;font-size:30px}#betaDeliveryPage .platform-console-panel{padding:14px 12px;border-radius:16px}#betaDeliveryPage .platform-console-heading h3{font-size:16px}#betaDeliveryPage .platform-quick-labels{gap:5px}#betaDeliveryPage .platform-current-banner{gap:8px}#betaDeliveryPage .platform-console-foot{font-size:7px}}
 
+
+.admin-language-switch{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:12px auto 4px;padding:10px 13px;max-width:360px;border:1px solid rgba(102,220,255,.28);border-radius:13px;background:rgba(7,15,35,.72)}
+.admin-language-switch label{color:#9fdcff;font-size:12px;font-weight:bold}
+.admin-language-switch select{width:auto;min-width:135px;padding:9px 12px;border:1px solid #4775a4;border-radius:9px;background:#091525;color:#fff;font-weight:bold}
+.admin-language-switch span{width:100%;text-align:center;color:#9fdcff;font-size:10px;min-height:12px}
+html[dir="ltr"] body{text-align:left}
+html[dir="ltr"] .user-profile-info span{text-align:left}
+html[dir="ltr"] .user-details{text-align:left}
+html[dir="ltr"] .user-id{text-align:right}
+html[dir="ltr"] .platform-file-link{text-align:left}
+
 </style>
 </head>
 <body>
 <div class="oxide-admin-stars" aria-hidden="true"></div>
 <div class="oxide-admin-rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <div class="container">
-<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div></header>
+<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Language</label><select id="adminLanguage" aria-label="Admin panel language"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
 <div class="card" id="loading"><div class="status" id="status">جارٍ التحقق من صلاحية المدير...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
@@ -1457,6 +1468,107 @@ start();
  function frame(now){if(document.hidden){raf=requestAnimationFrame(frame);return;}const dt=Math.min(.04,(now-last||16.7)/1000);last=now;ctx.clearRect(0,0,w,h);drawRain(dt);drawGlassDrops(dt,now);raf=requestAnimationFrame(frame);}
  resize();if('ResizeObserver'in window){new ResizeObserver(resize).observe(canvas);}else window.addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{last=performance.now();});raf=requestAnimationFrame(frame);
 })();
+</script>
+<script>
+
+/* Admin panel multilingual layer: Arabic / English / Russian. */
+(function initAdminLanguages(){
+ const select=document.getElementById("adminLanguage"),status=document.getElementById("adminLanguageStatus");
+ if(!select)return;
+ const LANGS={ar:{dir:"rtl",name:"العربية"},en:{dir:"ltr",name:"English"},ru:{dir:"ltr",name:"Русский"}};
+ let current="ar",busy=false,observer=null;
+ const originalText=new WeakMap(),translatedText=new WeakMap(),originalAttrs=new WeakMap(),translatedAttrs=new WeakMap();
+ const cacheKey=(lang,value)=>"oxide-admin-i18n:"+lang+":"+value;
+ const hasLetters=value=>/[\p{L}]/u.test(value||"");
+ const shouldSkip=node=>{
+  const p=node.parentElement;
+  if(!p)return true;
+  if(p.closest("script,style,noscript,svg,canvas,code,pre,[data-no-translate],.admin-language-switch"))return true;
+  if(!hasLetters(node.nodeValue))return true;
+  return false;
+ };
+ async function translate(value,lang){
+  if(lang==="ar")return value;
+  const key=cacheKey(lang,value);
+  try{const saved=localStorage.getItem(key);if(saved)return saved;}catch(_){}
+  const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+lang+"&dt=t&q="+encodeURIComponent(value);
+  const response=await fetch(url,{cache:"force-cache"});
+  if(!response.ok)throw new Error("TRANSLATION_SERVICE_UNAVAILABLE");
+  const data=await response.json();
+  const result=Array.isArray(data?.[0])?data[0].map(part=>part?.[0]||"").join(""):"";
+  if(!result)throw new Error("TRANSLATION_EMPTY");
+  try{localStorage.setItem(key,result);}catch(_){}
+  return result;
+ }
+ async function translateTextNode(node,lang){
+  if(!node||shouldSkip(node))return;
+  let source=originalText.get(node);
+  const shown=node.nodeValue;
+  const prior=translatedText.get(node);
+  if(!source){source=shown;originalText.set(node,source);}
+  else if(prior&&shown!==prior){source=shown;originalText.set(node,source);}
+  if(lang==="ar"){node.nodeValue=source;translatedText.delete(node);return;}
+  if(!hasLetters(source))return;
+  const result=await translate(source,lang);
+  node.nodeValue=result;translatedText.set(node,result);
+ }
+ const ATTRS=["placeholder","title","aria-label"];
+ async function translateElementAttrs(el,lang){
+  if(!(el instanceof Element))return;
+  if(el.closest("script,style,svg,canvas,[data-no-translate],.admin-language-switch"))return;
+  for(const attr of ATTRS){
+   if(!el.hasAttribute(attr))continue;
+   let map=originalAttrs.get(el);if(!map){map={};originalAttrs.set(el,map);}
+   let translated=translatedAttrs.get(el);if(!translated){translated={};translatedAttrs.set(el,translated);}
+   const shown=el.getAttribute(attr);
+   if(!Object.prototype.hasOwnProperty.call(map,attr))map[attr]=shown;
+   else if(translated[attr]&&shown!==translated[attr])map[attr]=shown;
+   if(lang==="ar"){el.setAttribute(attr,map[attr]);delete translated[attr];}
+   else if(hasLetters(map[attr])){const value=await translate(map[attr],lang);el.setAttribute(attr,value);translated[attr]=value;}
+  }
+  if(el instanceof HTMLButtonElement&&el.hasAttribute("value"))return;
+ }
+ async function processTree(root,lang){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[];let node;
+  while((node=walker.nextNode()))if(!shouldSkip(node))nodes.push(node);
+  const elements=root instanceof Element?[root,...root.querySelectorAll("*")]:Array.from(root.querySelectorAll?.("*")||[]);
+  for(let i=0;i<nodes.length;i+=5){
+   await Promise.all(nodes.slice(i,i+5).map(n=>translateTextNode(n,lang)));
+  }
+  for(const el of elements)await translateElementAttrs(el,lang);
+ }
+ async function setLanguage(lang){
+  if(!LANGS[lang]||busy)return;
+  busy=true;select.disabled=true;status.textContent=lang==="ar"?"":lang==="ru"?"Перевод панели…":"Translating admin panel…";
+  if(observer)observer.disconnect();
+  try{
+   await processTree(document.body,lang);
+   current=lang;document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;
+   status.textContent=lang==="ar"?"":lang==="ru"?"Русский":"English";
+   try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
+   observer=new MutationObserver(records=>{
+    if(current==="ar"||busy)return;
+    for(const record of records){
+     if(record.type==="characterData")translateTextNode(record.target,current).catch(()=>{});
+     for(const added of record.addedNodes||[])if(added.nodeType===Node.ELEMENT_NODE||added.nodeType===Node.TEXT_NODE)processTree(added,current).catch(()=>{});
+    }
+   });
+   observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  }catch(error){
+   current="ar";document.documentElement.lang="ar";document.documentElement.dir="rtl";
+   await processTree(document.body,"ar").catch(()=>{});
+   select.value="ar";status.textContent=lang==="ru"?"Ошибка перевода — Arabic restored":"Translation failed — Arabic restored";
+   alert(lang==="ru"?"Не удалось полностью перевести панель. Переключение отменено.":"The full panel could not be translated. Language change was cancelled.");
+  }finally{busy=false;select.disabled=false;}
+ }
+ select.addEventListener("change",()=>setLanguage(select.value));
+ let saved="ar";try{saved=localStorage.getItem("oxide-admin-language")||"ar";}catch(_){}
+ if(!LANGS[saved])saved="ar";
+ select.value=saved;
+ if(saved!=="ar")setLanguage(saved);
+})();
+
 </script>
 </body>
 </html>
