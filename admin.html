@@ -331,6 +331,45 @@ html[dir="ltr"] .user-details{text-align:left}
 html[dir="ltr"] .user-id{text-align:right}
 html[dir="ltr"] .platform-file-link{text-align:left}
 
+ 
+/* OXIDE HUB ADMIN vNext — consistent, touch-first control center */
+.admin-menu-tools{margin:14px 0 16px;padding:15px;border:1px solid rgba(126,177,255,.2);border-radius:18px;background:linear-gradient(145deg,rgba(14,27,57,.78),rgba(6,14,34,.72));box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.admin-menu-search{display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid rgba(119,178,255,.3);border-radius:13px;background:rgba(3,10,26,.78);min-height:50px}
+.admin-menu-search>span{font-size:25px;color:#7ddfff;line-height:1}
+.admin-menu-search input{flex:1;min-width:0;border:0!important;outline:0;background:transparent!important;color:#fff!important;padding:12px 2px;font-size:15px}
+.admin-menu-search input::placeholder{color:#8399b8}
+.admin-menu-search button{width:32px;min-width:32px;height:32px;min-height:32px;padding:0;margin:0;border-radius:9px;background:rgba(112,145,195,.16);font-size:21px;color:#c9d9ef}
+.admin-menu-filters{display:flex;gap:8px;overflow-x:auto;padding:12px 1px 4px;scrollbar-width:thin}
+.admin-menu-filters .admin-filter-chip{width:auto;flex:0 0 auto;min-height:36px;margin:0;padding:8px 12px;border:1px solid rgba(130,166,220,.22);border-radius:30px;background:rgba(25,40,72,.68);color:#b9c9e2;font-size:12px;font-weight:700;white-space:nowrap}
+.admin-menu-filters .admin-filter-chip.active{background:linear-gradient(110deg,rgba(31,125,167,.5),rgba(102,79,171,.48));border-color:#71dfff;color:#fff;box-shadow:0 0 15px rgba(87,197,255,.15)}
+.admin-menu-results{display:flex;justify-content:space-between;gap:10px;margin:9px 2px 0;color:#8399b8;font-size:10px;letter-spacing:.4px}
+.admin-menu-empty{padding:20px 10px;text-align:center;color:#a9bbd5;border:1px dashed rgba(126,177,255,.25);border-radius:13px;margin-top:10px;font-size:13px}
+.menu-tile{min-width:0;min-height:132px;gap:9px;padding:17px 12px}
+.menu-tile small{line-height:1.5;text-align:center}
+.menu-tile:focus-visible,.admin-menu-search:focus-within,.admin-filter-chip:focus-visible{outline:2px solid #76dcff;outline-offset:3px}
+.admin-dashboard,.admin-section-heading,.admin-welcome,.admin-menu-tools{box-shadow:0 15px 38px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.05)}
+#activityPage .card,#usersPage .card,#tasksPage .card,#reviewsPage .card,#supportAdminPage .card,#securityPage .card,#rewardsAdminPage .card,#broadcastPage .card,#redemptionOffersPage .card{border:1px solid rgba(126,177,255,.2);box-shadow:0 14px 35px rgba(0,0,0,.2)}
+.card>h3{line-height:1.45;color:#eef6ff}
+.card>.note{text-align:right;margin:8px 0 15px}
+.field label{font-weight:700}
+.field input:focus,.field textarea:focus,.users-toolbar input:focus,select:focus{border-color:#6bdcff!important;box-shadow:0 0 0 3px rgba(75,190,255,.12)}
+button:not(:disabled):hover{filter:brightness(1.1)}
+button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
+.back,.platform-back{position:sticky;top:8px;z-index:4;box-shadow:0 5px 18px rgba(0,0,0,.24)}
+@media(max-width:600px){
+ .admin-menu-tools{padding:11px;margin:11px 0 13px;border-radius:15px}
+ .admin-menu-search{min-height:47px}
+ .admin-menu-filters{margin-inline:-2px}
+ .menu-tile{min-height:116px;padding:13px 8px}
+ .menu-tile .tile-icon{width:39px;height:39px}
+ .menu-tile span{font-size:13px}
+ .menu-tile small{font-size:10px}
+ .admin-menu-results{font-size:9px}
+ .card>h3{font-size:18px}
+ .back,.platform-back{position:static}
+}
+@media(prefers-reduced-motion:reduce){.menu-tile,.admin-filter-chip,button{transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -357,6 +396,19 @@ html[dir="ltr"] .platform-file-link{text-align:left}
 </section>
 <div class="admin-section-heading"><span class="admin-kicker">MANAGEMENT MODULES</span><h3>أقسام الإدارة</h3><p>اختر القسم لفتح واجهته وأدوات التحكم الخاصة به.</p></div>
 
+<section class="admin-menu-tools" aria-label="البحث في أقسام الإدارة">
+ <div class="admin-menu-search"><span aria-hidden="true">⌕</span><input id="adminMenuSearch" type="search" placeholder="ابحث عن قسم أو وظيفة..." autocomplete="off" oninput="filterAdminMenu()" aria-label="البحث في أقسام الإدارة"><button type="button" id="adminMenuClear" onclick="clearAdminMenuSearch()" aria-label="مسح البحث">×</button></div>
+ <div class="admin-menu-filters" role="group" aria-label="تصفية الأقسام">
+  <button type="button" class="admin-filter-chip active" data-admin-filter="all" onclick="setAdminMenuFilter('all')">الكل</button>
+  <button type="button" class="admin-filter-chip" data-admin-filter="people" onclick="setAdminMenuFilter('people')">المستخدمون والدعم</button>
+  <button type="button" class="admin-filter-chip" data-admin-filter="tasks" onclick="setAdminMenuFilter('tasks')">المهمات والطلبات</button>
+  <button type="button" class="admin-filter-chip" data-admin-filter="content" onclick="setAdminMenuFilter('content')">المحتوى والمنصات</button>
+  <button type="button" class="admin-filter-chip" data-admin-filter="rewards" onclick="setAdminMenuFilter('rewards')">المكافآت</button>
+  <button type="button" class="admin-filter-chip" data-admin-filter="system" onclick="setAdminMenuFilter('system')">النظام والأمان</button>
+ </div>
+ <div class="admin-menu-results"><span id="adminMenuResultCount">الأقسام المتاحة</span><span>OXIDE HUB CONTROL</span></div>
+ <div id="adminMenuEmpty" class="admin-menu-empty hidden">لا توجد أقسام مطابقة. جرّب كلمة بحث أخرى.</div>
+</section>
 <div class="menu-grid">
 <button class="menu-tile silver" data-admin-permission="users" onclick="action('activity')"><div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M5 4 3 6M19 4l2 2"/></svg></div><span>سجل الدخول</span><small>آخر دخول المستخدمين</small></button>
 <button class="menu-tile green" data-admin-permission="platform_files" onclick="openPlatformDeliveryPage('beta')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg></div><span>إدارة ملفات المنصات</span><small>BETA • ANDROID • iOS</small></button>
@@ -449,6 +501,44 @@ const statusBox=document.getElementById("status");
 let maintenanceEnabled=false,maintenanceMessage="",maintenanceReady=false,maintenanceBusy=false;
 let downloads=[],platformTutorials={android:"",ios:"",beta:""},currentPlatform="",platformBusy=false,editingPlatformFileId=null;
 let adminOwner=false,adminPermissions=[];
+
+// Search and category filters for the administration modules.
+let adminMenuFilter="all";
+function adminMenuCategory(tile){
+ const actionText=String(tile.getAttribute("onclick")||"");
+ const label=String(tile.innerText||"").toLowerCase();
+ if(/activity|users|support/.test(actionText)||/مستخدم|دخول|الدعم/.test(label))return "people";
+ if(/tasks|reviews/.test(actionText)||/مهمة|طلبات|مراجعة/.test(label))return "tasks";
+ if(/platform|broadcast/.test(actionText)||/منصات|ملفات|منشور/.test(label))return "content";
+ if(/rewards|redemptionoffers/.test(actionText)||/مكافآت|استبدال|عروض/.test(label))return "rewards";
+ return "system";
+}
+function filterAdminMenu(){
+ const input=document.getElementById("adminMenuSearch");
+ const query=String(input?.value||"").trim().toLocaleLowerCase();
+ const tiles=[...document.querySelectorAll("#mainMenu .menu-grid .menu-tile")].filter(tile=>!tile.classList.contains("hidden"));
+ let shown=0;
+ for(const tile of document.querySelectorAll("#mainMenu .menu-grid .menu-tile")){
+  const category=adminMenuCategory(tile);
+  const haystack=(tile.innerText+" "+tile.getAttribute("onclick")+" "+category).toLocaleLowerCase();
+  const match=(adminMenuFilter==="all"||category===adminMenuFilter)&&(!query||haystack.includes(query));
+  tile.classList.toggle("admin-search-hidden",!match);
+  if(match)shown++;
+ }
+ document.getElementById("adminMenuEmpty")?.classList.toggle("hidden",shown!==0);
+ const count=document.getElementById("adminMenuResultCount");
+ if(count)count.textContent=shown+" / "+document.querySelectorAll("#mainMenu .menu-grid .menu-tile:not(.hidden)").length+" أقسام";
+}
+function setAdminMenuFilter(filter){
+ adminMenuFilter=["all","people","tasks","content","rewards","system"].includes(filter)?filter:"all";
+ document.querySelectorAll("[data-admin-filter]").forEach(button=>button.classList.toggle("active",button.dataset.adminFilter===adminMenuFilter));
+ filterAdminMenu();
+}
+function clearAdminMenuSearch(){
+ const input=document.getElementById("adminMenuSearch");if(input)input.value="";
+ setAdminMenuFilter("all");input?.focus();
+}
+
 function hasAdminPermission(permission){return adminOwner||adminPermissions.includes(permission);}
 function applyAdminPermissions(){
  document.querySelectorAll("[data-admin-permission]").forEach(element=>element.classList.toggle("hidden",!hasAdminPermission(element.dataset.adminPermission)));
@@ -1440,6 +1530,7 @@ async function start(){
   adminOwner=Boolean(result.owner);
   adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];
   applyAdminPermissions();
+  filterAdminMenu();
   document.getElementById("loading").classList.add("hidden");
   document.getElementById("panel").classList.remove("hidden");
   loadAdminDashboard();
