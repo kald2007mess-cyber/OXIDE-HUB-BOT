@@ -1300,11 +1300,11 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     <h2>Earn Coin <img class="oxide-coin-inline" src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/685a823a1bd328ea2a2247813a5b9ed70f853741/file_00000000233481f4bc72d013007183a5.png" alt="" aria-hidden="true"></h2>
     <p class="oxide-task-countline"><strong id="missionsAvailableCount">0</strong> available · <strong id="missionsCompletedCount">0</strong> completed</p>
   </div>
-  <div class="oxide-task-filters" role="group" aria-label="Task categories">
-    <button class="oxide-filter-chip active" type="button" data-task-filter="all" onclick="filterOxideTasks('all',this)">All</button>
-    <button class="oxide-filter-chip" type="button" data-task-filter="tg" onclick="filterOxideTasks('tg',this)">Telegram</button>
-    <button class="oxide-filter-chip" type="button" data-task-filter="others" onclick="filterOxideTasks('others',this)">TikTok / Others</button>
-    <button class="oxide-filter-chip" type="button" data-task-filter="referrals" onclick="filterOxideTasks('referrals',this)">دعوات</button>
+  <div class="oxide-mission-categories" role="group" aria-label="Mission categories">
+    <button class="oxide-mission-category active" type="button" data-task-filter="channels" onclick="filterOxideTasks('channels',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9.5h22M5 16h22M5 22.5h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="23" r="4" fill="currentColor" opacity=".8"/></svg></span><span>القنوات</span></button>
+    <button class="oxide-mission-category" type="button" data-task-filter="bots" onclick="filterOxideTasks('bots',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="9" width="22" height="18" rx="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16 4v5M12 17h.1M20 17h.1M12 22q4 3 8 0M11 4h10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span>البوتات</span></button>
+    <button class="oxide-mission-category" type="button" data-task-filter="tiktok" onclick="filterOxideTasks('tiktok',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 4v16a5 5 0 1 1-4-4.9V10c3 3 5.8 4.3 9 4.5V10c-2.8-.2-4.5-2.1-5-6Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>تيك توك</span></button>
+    <button class="oxide-mission-category" type="button" data-task-filter="referrals" onclick="filterOxideTasks('referrals',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3.5 27v-2a8.5 8.5 0 0 1 17 0v2M22 7a4.5 4.5 0 0 1 0 9M24 20q5 1 5 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span>الدعوات</span></button>
   </div>
   <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><div id="referralMilestoneList" class="mission-list oxide-new-task-list" aria-live="polite"></div><section class="mission-history" id="missionHistoryList" aria-live="polite"></section>
 </div>
@@ -2599,9 +2599,12 @@ function missionPlatformIcon(platform){
 }
 
 function filterOxideTasks(category,button){
-  document.querySelectorAll("[data-task-filter]").forEach(chip=>chip.classList.toggle("active",chip===button));
-  const cards=document.querySelectorAll("#missionList [data-mission-id],#referralMilestoneList [data-task-filter]");
-  cards.forEach(card=>{card.style.display=(category==="all"||card.dataset.taskFilter===category)?"":"none";});
+  document.querySelectorAll(".oxide-mission-category").forEach(chip=>chip.classList.toggle("active",chip===button));
+  const missionList=document.getElementById("missionList");
+  const referralList=document.getElementById("referralMilestoneList");
+  if(missionList)missionList.style.display=category==="referrals"?"none":"grid";
+  if(referralList)referralList.style.display=category==="referrals"?"grid":"none";
+  document.querySelectorAll("#missionList [data-mission-id]").forEach(card=>{card.style.display=card.dataset.taskFilter===category?"":"none";});
 }
 
 function renderMissionCards(){
@@ -2623,13 +2626,15 @@ function renderMissionCards(){
     return;
   }
 
-  missionData.forEach(mission => {
+  [...missionData].sort((a,b)=>(String(a.status||'')==='approved')-(String(b.status||'')==='approved')).forEach(mission => {
     const id = Number(mission.id);
     const status = String(mission.status || "not_submitted");
     const card = document.createElement("article");
     card.className = "mission-item";
     card.dataset.missionId = String(id);
-    card.dataset.taskFilter = String(mission.platform||"").startsWith("telegram") ? "tg" : "others";
+    const platformKey=String(mission.platform||"").toLowerCase();
+    card.dataset.taskFilter=platformKey.includes("tiktok")?"tiktok":(platformKey.includes("bot")?"bots":(platformKey.includes("telegram")||platformKey.includes("channel")?"channels":"bots"));
+    if(status==="approved")card.classList.add("approved");
 
     const main = document.createElement("div");
     main.className = "mission-item-main";
@@ -2660,7 +2665,7 @@ function renderMissionCards(){
     pill.className = "mission-status-pill";
     if(status === "approved"){
       pill.classList.add("approved");
-      pill.textContent = mt("approved");
+      pill.textContent = "✓ " + mt("approved");
     }else if(status === "pending"){
       pill.classList.add("pending");
       pill.textContent = mt("pending");
@@ -3465,6 +3470,27 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 .oxide-delivery-file img,.oxide-delivery-file video{display:block;width:100%;max-height:330px;object-fit:contain;background:#05040a;border-radius:10px}
 .oxide-delivery-download{display:block;text-align:center;padding:12px;border-radius:10px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:bold}
 #platformDeliveryViewerStatus{color:#ffb7b7;font-size:12px}
+
+/* OXIDE FUTURISTIC PURPLE MISSION CENTER */
+.oxide-missions-glass-frame{background:radial-gradient(ellipse at 50% 0%,rgba(130,78,220,.16),transparent 48%),linear-gradient(155deg,rgba(13,10,25,.98),rgba(8,7,17,.98));border:1px solid rgba(167,119,255,.28);box-shadow:0 14px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045)}
+.oxide-missions-heading h2{font-size:11px;letter-spacing:2.4px;color:#b99aff;text-shadow:0 0 16px rgba(167,119,255,.35)}
+.oxide-missions-heading .oxide-task-countline{color:#a99abe}
+.oxide-mission-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:17px 0 16px}
+.oxide-mission-category{position:relative;display:flex;align-items:center;gap:11px;min-height:75px;padding:12px;border:1px solid rgba(153,111,224,.2);border-radius:17px;background:linear-gradient(145deg,rgba(34,25,57,.94),rgba(18,14,32,.98));color:#e9ddff;font-size:13px;font-weight:900;text-align:start;box-shadow:0 8px 20px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.045);transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer}
+.oxide-mission-category:active{transform:scale(.975)}
+.oxide-category-icon{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border:1px solid rgba(180,142,255,.28);border-radius:14px;background:linear-gradient(145deg,rgba(139,92,246,.25),rgba(77,42,130,.16));color:#c9aaff;box-shadow:inset 0 1px rgba(255,255,255,.1),0 0 18px rgba(139,92,246,.1)}
+.oxide-category-icon svg{width:27px;height:27px;filter:drop-shadow(0 0 5px rgba(181,145,255,.42))}
+.oxide-mission-category.active{border-color:#9b6aff;background:radial-gradient(circle at 12% 15%,rgba(166,120,255,.22),transparent 55%),linear-gradient(145deg,rgba(54,35,88,.98),rgba(24,17,43,.98));box-shadow:0 0 0 1px rgba(155,106,255,.2),0 0 23px rgba(139,92,246,.2),inset 0 1px rgba(255,255,255,.1)}
+.oxide-mission-category.active .oxide-category-icon{color:#eadcff;border-color:#a77aff;background:linear-gradient(145deg,rgba(155,106,255,.42),rgba(91,54,151,.3));box-shadow:0 0 18px rgba(155,106,255,.25)}
+.oxide-new-task-list{gap:12px}
+.mission-item{background:linear-gradient(145deg,rgba(34,25,55,.97),rgba(16,13,29,.99));border:1px solid rgba(159,119,222,.28);box-shadow:0 10px 26px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045);border-radius:17px}
+.mission-item-icon{background:linear-gradient(145deg,rgba(128,83,207,.28),rgba(52,33,86,.42));border:1px solid rgba(177,137,255,.5);color:#d7c0ff;box-shadow:inset 0 1px rgba(255,255,255,.14),0 0 17px rgba(139,92,246,.13)}
+.mission-item-icon .mission-platform-svg{filter:drop-shadow(0 0 5px rgba(184,145,255,.45))}
+.mission-item.approved{border:1.5px solid #35d879!important;background:linear-gradient(145deg,rgba(13,48,35,.97),rgba(10,27,23,.99))!important;box-shadow:0 0 0 1px rgba(53,216,121,.13),0 0 22px rgba(34,197,94,.13),inset 0 1px rgba(255,255,255,.06)!important}
+.mission-item.approved .mission-item-icon{border-color:rgba(53,216,121,.48);background:rgba(34,197,94,.13);color:#72f0a0;box-shadow:0 0 15px rgba(34,197,94,.13)}
+.mission-item.approved .mission-status-pill.approved{background:rgba(34,197,94,.15);border-color:rgba(74,222,128,.55);color:#75f0a0}
+.mission-item.approved .mission-reward-row{border-color:rgba(53,216,121,.25);background:rgba(34,197,94,.07)}
+@media(max-width:360px){.oxide-mission-category{gap:8px;padding:10px;font-size:12px}.oxide-category-icon{width:39px;height:39px;flex-basis:39px}}
 </style>
 <div id="platformDeliveryModal" hidden>
  <div class="oxide-delivery-panel">
