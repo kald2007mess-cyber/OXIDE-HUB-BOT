@@ -9,6 +9,7 @@ function out(data,status=200){return new Response(JSON.stringify(data),{status,h
 function safeName(value){const raw=String(value||"file");return [...raw].filter(ch=>ch.charCodeAt(0)>=32&&ch!=="/"&&ch!==String.fromCharCode(92)).join("").slice(0,160)||"file";}
 async function ensure(DB){
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
+ const cols=await DB.prepare("PRAGMA table_info(platform_delivery_config)").all();if(!(cols.results||[]).some(c=>c.name==="published"))await DB.prepare("ALTER TABLE platform_delivery_config ADD COLUMN published INTEGER NOT NULL DEFAULT 1").run();
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_uploads (upload_id TEXT PRIMARY KEY, r2_key TEXT NOT NULL UNIQUE, offer TEXT NOT NULL, file_name TEXT NOT NULL, file_size INTEGER NOT NULL, content_type TEXT NOT NULL, parts_json TEXT NOT NULL DEFAULT '[]', status TEXT NOT NULL DEFAULT 'uploading', created_at INTEGER NOT NULL, completed_at INTEGER NOT NULL DEFAULT 0)").run();
  for(const offer of OFFERS) await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) VALUES(?, '', '[]', 0)").bind(offer).run();
 }
@@ -72,9 +73,13 @@ export async function onRequestPost({request,env}){
    const now=Math.floor(Date.now()/1000);
    const previous=await env.DB.prepare("SELECT files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();
    let oldFiles=[];try{oldFiles=JSON.parse(previous?.files_json||"[]");}catch{}
-   await env.DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,updated_at=? WHERE offer=?").bind(message,JSON.stringify(files),now,offer).run();
+   await env.DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,published=0,updated_at=? WHERE offer=?").bind(message,JSON.stringify(files),now,offer).run();
    if(keys.length){const keep=new Set(keys);for(const oldFile of oldFiles){if(oldFile?.key&&!keep.has(oldFile.key))await env.PLATFORM_MEDIA.delete(oldFile.key).catch(()=>{});}}
    return out({success:true,offer,message,files});
+  }
+  if(body.action==="publish"){
+   await env.DB.prepare("UPDATE platform_delivery_config SET published=1,updated_at=? WHERE offer=?").bind(Math.floor(Date.now()/1000),offer).run();
+   return out({success:true,offer,published:true});
   }
   if(body.action==="abort"){
    const uploadId=String(body.uploadId||"");const row=await env.DB.prepare("SELECT r2_key,status FROM platform_delivery_uploads WHERE upload_id=? AND offer=?").bind(uploadId,offer).first();
