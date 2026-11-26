@@ -1657,20 +1657,22 @@ async function start(){
   tg.ready();
   tg.expand();
   statusBox.textContent="Данные Telegram получены. Подключение к серверу проверки...";
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),12000);
+  let timeoutId;
+  const timeoutPromise=new Promise((_,reject)=>{
+   timeoutId=window.setTimeout(()=>reject(new Error("ADMIN_AUTH_TIMEOUT")),10000);
+  });
+  const requestPromise=fetch("/api/admin/auth",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   credentials:"same-origin",
+   cache:"no-store",
+   body:JSON.stringify({initData:tg.initData})
+  });
   let response;
   try{
-   response=await fetch("/api/admin/auth",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    credentials:"same-origin",
-    cache:"no-store",
-    signal:controller.signal,
-    body:JSON.stringify({initData:tg.initData})
-   });
+   response=await Promise.race([requestPromise,timeoutPromise]);
   }finally{
-   clearTimeout(timeout);
+   window.clearTimeout(timeoutId);
   }
   let result;
   try{result=await response.json();}
@@ -1693,11 +1695,11 @@ async function start(){
   if(hasAdminPermission("maintenance")){loadMaintenance().catch(error=>console.error("Maintenance loading error:",error));}
  }catch(error){
   console.error("Admin authentication error:",error);
-  statusBox.textContent=error?.name==="AbortError"
-   ?"Время ожидания соединения истекло (12 секунд). Проверьте публикацию Cloudflare Pages и адрес API."
+  statusBox.textContent=error?.message==="ADMIN_AUTH_TIMEOUT"
+   ?"Сервер проверки не ответил за 10 секунд. Проверьте Cloudflare Pages → Functions → /api/admin/auth и журналы запросов."
    :error?.message==="INVALID_SERVER_RESPONSE"
-    ?"Сервер вернул некорректный ответ. Проверьте публикацию API."
-    :"Не удалось подключиться к серверу проверки. Повторите попытку позже.";
+    ?"Сервер вернул رداً غير صالح (INVALID_SERVER_RESPONSE). تحقق من سجل Cloudflare."
+    :"Ошибка подключения к серверу проверки: "+String(error?.message||error||"UNKNOWN_ERROR");
  }
 }
 start();
