@@ -393,7 +393,7 @@ button{border-radius:12px}
   <section class="platform-console-panel">
    <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>محرر المحتوى</h3><p>أضف الرسالة والملفات التي ستصل للمستخدم</p></div><span class="platform-heading-icon">✎</span></div>
    <div class="platform-input-block"><label for="betaDeliveryMessage">نص رسالة التسليم</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="اكتب التعليمات أو رسالة التسليم..."></textarea><small>الحد الأقصى 4000 حرف</small></div>
-   <div class="platform-input-block"><label for="betaDeliveryFiles">ملفات المنصة</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>اختر ملفاً أو عدة ملفات</strong><small>حتى 3 ملفات • 50 MB لكل ملف</small></div></div></div>
+   <div class="platform-input-block"><label for="betaDeliveryFiles">ملفات المنصة</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>اختر ملفاً أو عدة ملفات</strong><small>حتى 3 ملفات • 2 GB لكل ملف</small></div></div></div>
    <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> اختيار ملفات جديدة يستبدل الملفات الحالية لهذه المنصة فقط.</div>
    <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> حفظ محتوى المنصة</button>
    <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">جارٍ الحفظ...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
@@ -1227,30 +1227,46 @@ async function loadBetaDelivery(){
  try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";renderPlatformDeliveryFiles(result.files||[]);status.textContent="تم تحميل محتوى "+currentDeliveryOffer.toUpperCase()+". اختيار ملفات جديدة يستبدل ملفات هذا العرض فقط.";}
  catch(error){status.textContent="تعذر تحميل المحتوى: "+error.message;}
 }
+async function platformUploadJson(payload){
+ const response=await fetch("/api/admin/beta-delivery-upload",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...payload,initData:tg.initData})});
+ const data=await response.json().catch(()=>({}));if(!response.ok||!data.success)throw new Error(data.error||"UPLOAD_REQUEST_FAILED");return data;
+}
+function uploadPlatformPart(url,blob,onProgress){
+ return new Promise((resolve,reject)=>{
+  const xhr=new XMLHttpRequest();xhr.open("PUT",url);xhr.withCredentials=true;xhr.setRequestHeader("Content-Type","application/octet-stream");xhr.setRequestHeader("X-Telegram-Init-Data",tg.initData);
+  xhr.onload=()=>{let data={};try{data=JSON.parse(xhr.responseText||"{}");}catch(_){reject(new Error("INVALID_PART_RESPONSE"));return;}if(xhr.status<200||xhr.status>=300||!data.success){reject(new Error(data.error||"PART_UPLOAD_FAILED"));return;}resolve(data.part);};
+  xhr.onerror=()=>reject(new Error("NETWORK_ERROR"));xhr.onabort=()=>reject(new Error("UPLOAD_ABORTED"));xhr.upload.onprogress=e=>{if(e.lengthComputable)onProgress(e.loaded);};xhr.send(blob);
+ });
+}
 async function saveBetaDelivery(){
  const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=Array.from(document.getElementById("betaDeliveryFiles").files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
  if(!message&&!files.length){alert("أدخل نصاً أو اختر ملفاً واحداً على الأقل.");return;}
  if(files.length>3){alert("الحد الأقصى 3 ملفات لكل عرض.");return;}
- if(files.some(file=>file.size>50*1024*1024)){alert("الحد الأقصى لكل ملف 50 ميغابايت.");return;}
+ if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("حجم كل ملف يجب أن يكون أكبر من صفر وألا يتجاوز 2 جيغابايت.");return;}
  if(!confirm("سيتم حفظ النص والملفات لعرض "+currentDeliveryOffer.toUpperCase()+" فقط. هل تريد المتابعة؟"))return;
- button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ رفع الملفات...";
- status.textContent="جارٍ رفع الملفات وحفظ المحتوى...";
+ button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ تجهيز الرفع المجزّأ...";
+ status.textContent="جارٍ رفع الملفات مباشرة إلى مساحة التخزين الآمنة...";
+ const totalBytes=files.reduce((sum,file)=>sum+file.size,0);let completedBytes=0;const uploaded=[];
+ const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="جارٍ رفع الملفات إلى R2...";};
  try{
-  const form=new FormData();form.append("initData",tg.initData);form.append("offer",currentDeliveryOffer);form.append("message",message);files.forEach(file=>form.append("files",file,file.name));
-  const result=await new Promise((resolve,reject)=>{
-   const xhr=new XMLHttpRequest();
-   xhr.open("POST","/api/admin/beta-delivery");xhr.withCredentials=true;
-   xhr.onload=()=>{let data={};try{data=JSON.parse(xhr.responseText||"{}");}catch(_){reject(new Error("INVALID_SERVER_RESPONSE"));return;}if(xhr.status<200||xhr.status>=300||!data.success){reject(new Error(data.error||"SAVE_FAILED"));return;}resolve(data);};
-   xhr.onerror=()=>reject(new Error("NETWORK_ERROR"));
-   xhr.onabort=()=>reject(new Error("UPLOAD_ABORTED"));
-   xhr.upload.onprogress=event=>{if(event.lengthComputable){const value=Math.min(95,Math.floor(event.loaded/event.total*95));bar.style.width=value+"%";percent.textContent=value+"%";if(value>=95)label.textContent="اكتمل الرفع، جارٍ حفظ المحتوى...";}};
-   xhr.send(form);
-  });
+  for(const file of files){
+   const init=await platformUploadJson({action:"init",offer:currentDeliveryOffer,name:file.name,size:file.size,contentType:file.type||"application/octet-stream"});
+   const parts=[];
+   for(let partNumber=1,start=0;start<file.size;partNumber++,start+=init.partSize){
+    const end=Math.min(file.size,start+init.partSize),blob=file.slice(start,end);
+    const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(init.uploadId)+"&partNumber="+partNumber;
+    const part=await uploadPlatformPart(url,blob,loaded=>paint(start+loaded));parts.push(part);completedBytes=end;
+    paint(0);
+   }
+   const done=await platformUploadJson({action:"complete",offer:currentDeliveryOffer,uploadId:init.uploadId,parts});
+   uploaded.push(done.file);
+  }
+  label.textContent="اكتمل الرفع، جارٍ حفظ إعدادات العرض...";
+  const saved=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:uploaded.map(file=>file.key)});
   bar.style.width="100%";percent.textContent="100%";label.textContent="اكتمل الحفظ بنجاح";
-  document.getElementById("betaDeliveryFiles").value="";
-  renderPlatformDeliveryFiles(result.files||[]);
-  status.textContent="تم حفظ محتوى "+currentDeliveryOffer.toUpperCase()+" مع "+(result.files||[]).length+" ملف. بقية العروض لم تتغير.";
+  document.getElementById("betaDeliveryFiles").value="";renderPlatformDeliveryFiles(saved.files||[]);
+  status.textContent="تم حفظ محتوى "+currentDeliveryOffer.toUpperCase()+" مع "+(saved.files||[]).length+" ملف. بقية العروض لم تتغير.";
  }catch(error){label.textContent="فشل الحفظ";status.textContent="تعذر حفظ المحتوى: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 حفظ محتوى "+labels[currentDeliveryOffer];}
 }
