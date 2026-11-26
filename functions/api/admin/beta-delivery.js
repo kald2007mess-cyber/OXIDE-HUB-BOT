@@ -13,7 +13,7 @@ async function ensure(DB){
  for(const offer of OFFERS)await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) VALUES(?, '', '[]', 0)").bind(offer).run();
 }
 function validOffer(v){const x=String(v||"beta").toLowerCase();return OFFERS.has(x)?x:null;}
-function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.file_id==="string"&&typeof f.name==="string").slice(0,MAX_FILES):[];}catch{return [];}}
+function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice(0,MAX_FILES):[];}catch{return [];}}
 async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json)};}
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
 async function storeFile(env,file){if(!file||typeof file.arrayBuffer!=="function"||!file.size)throw new Error("INVALID_FILE");if(file.size>MAX_SIZE)throw new Error("FILE_TOO_LARGE");const form=new FormData();form.append("chat_id",String(env.TELEGRAM_ADMIN_ID));form.append("document",file,file.name||"platform-file");const r=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_FILE_UPLOAD_FAILED");const m=d.result,id=m.document?.file_id;if(!id)throw new Error("TELEGRAM_FILE_ID_MISSING");await tg(env.TELEGRAM_BOT_TOKEN,"deleteMessage",{chat_id:env.TELEGRAM_ADMIN_ID,message_id:m.message_id}).catch(()=>{});return{file_id:id,name:String(file.name||m.document.file_name||"file").slice(0,180),size:Number(file.size||0)};}
@@ -43,8 +43,10 @@ export async function onRequestPost({request,env}){
    if(!Number.isInteger(index)||index<0)return out({success:false,error:"INVALID_FILE_INDEX"},400);
    const current=await config(env.DB,offer);
    if(index>=current.files.length)return out({success:false,error:"FILE_NOT_FOUND"},404);
+   const removed=current.files[index];
    const files=current.files.filter((_,i)=>i!==index);
    await env.DB.prepare("UPDATE platform_delivery_config SET files_json=?,updated_at=? WHERE offer=?").bind(JSON.stringify(files),Math.floor(Date.now()/1000),offer).run();
+   if(removed?.key&&env.PLATFORM_MEDIA)await env.PLATFORM_MEDIA.delete(removed.key).catch(()=>{});
    return out({success:true,offer,...await config(env.DB,offer)});
   }
   const user=await getVisitor(request,env);if(!user)return out({success:false,error:"NO_TELEGRAM_SESSION"},401);
