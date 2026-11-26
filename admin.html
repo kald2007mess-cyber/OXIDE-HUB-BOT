@@ -1748,7 +1748,6 @@ start();
  };
  let translationFailures=0;
  async function translate(value,lang){
-  if(lang==="ar")return value;
   const key=cacheKey(lang,value);
   try{const saved=localStorage.getItem(key);if(saved)return saved;}catch(_){}
   const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+lang+"&dt=t&q="+encodeURIComponent(value);
@@ -1780,7 +1779,7 @@ start();
   const prior=translatedText.get(node);
   if(!source){source=shown;originalText.set(node,source);}
   else if(prior&&shown!==prior){source=shown;originalText.set(node,source);}
-  if(lang==="ar"){node.nodeValue=source;translatedText.delete(node);return;}
+  if(lang==="ru"){node.nodeValue=source;translatedText.delete(node);return;}
   if(!hasLetters(source))return;
   try{const result=await translate(source,lang);node.nodeValue=result;translatedText.set(node,result);}
   catch(error){translationFailures++;console.warn("OXIDE admin translation skipped a text node:",error);}
@@ -1796,7 +1795,7 @@ start();
    const shown=el.getAttribute(attr);
    if(!Object.prototype.hasOwnProperty.call(map,attr))map[attr]=shown;
    else if(translated[attr]&&shown!==translated[attr])map[attr]=shown;
-   if(lang==="ar"){el.setAttribute(attr,map[attr]);delete translated[attr];}
+   if(lang==="ru"){el.setAttribute(attr,map[attr]);delete translated[attr];}
    else if(hasLetters(map[attr])){
     try{const value=await translate(map[attr],lang);el.setAttribute(attr,value);translated[attr]=value;}
     catch(error){translationFailures++;console.warn("OXIDE admin attribute translation skipped:",error);}
@@ -1820,7 +1819,7 @@ start();
  async function setLanguage(lang){
   if(!LANGS[lang]||busy)return;
   busy=true;select.disabled=true;translationFailures=0;
-  status.textContent=lang==="ar"?"":lang==="ru"?"Перевод панели…":"Translating admin panel…";
+  status.textContent=lang==="ru"?"":"جارٍ تطبيق العربية…";
   if(observer)observer.disconnect();
   try{
    await processTree(document.body,lang);
@@ -1835,11 +1834,7 @@ start();
     return {arabicText,arabicAttrs};
    };
    const residue=audit();
-   status.textContent=lang==="ru"
-    ?(translationFailures||residue.arabicText||residue.arabicAttrs
-      ?"Перевод не завершён: пропущено "+translationFailures+", арабский текст: "+residue.arabicText+", атрибуты: "+residue.arabicAttrs
-      :"Русский — проверка пройдена")
-    :(translationFailures?"Translated with "+translationFailures+" skipped item(s)":"English");
+   status.textContent=lang==="ru"?"Русский — готово":(translationFailures?"تعذر ترجمة بعض العناصر: "+translationFailures:"تم تطبيق اللغة العربية");
    observer=new MutationObserver(records=>{
     if(current==="ar"||busy)return;
     for(const record of records){
