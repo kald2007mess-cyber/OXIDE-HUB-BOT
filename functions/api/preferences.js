@@ -7,7 +7,7 @@ async function ensureLanguageColumn(DB) {
   }
 }
 
-const LANGUAGES = ["ar", "en", "ru", "es", "tr", "id"];
+const LANGUAGES = ["ar", "en", "ru"];
 
 export async function onRequestGet({ request, env }) {
   try {
