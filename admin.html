@@ -1587,7 +1587,7 @@ function installAdminFieldAssistants(){
  }
 }
 
-function start(){
+async function start(){
  if(!tg||!tg.initData){
   statusBox.textContent="لم تصل بيانات Telegram. أغلق الصفحة وافتحها من زر لوحة الإدارة داخل البوت.";
   return;
