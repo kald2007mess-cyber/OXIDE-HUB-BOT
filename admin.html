@@ -1856,28 +1856,10 @@ start();
  select.value=saved;
  select.addEventListener("change",()=>applyLanguage(select.value));
  applyLanguage(saved);
- const observer=new MutationObserver(records=>{
-  if(select.value!=="ar")return;
-  for(const record of records){
-   for(const added of record.addedNodes||[]){
-    if(added.nodeType===Node.TEXT_NODE){
-     const parent=added.parentElement;
-     if(parent&&!parent.closest("script,style,noscript,svg,canvas,code,pre,[data-no-translate],.admin-language-switch")){
-      if(!originals.has(added))originals.set(added,added.nodeValue);
-      added.nodeValue=translateValue(originals.get(added));
-     }
-    }else if(added.nodeType===Node.ELEMENT_NODE){
-     const walker=document.createTreeWalker(added,NodeFilter.SHOW_TEXT);let n;
-     while((n=walker.nextNode())){
-      const parent=n.parentElement;
-      if(parent&&!parent.closest("script,style,noscript,svg,canvas,code,pre,[data-no-translate],.admin-language-switch")){
-       if(!originals.has(n))originals.set(n,n.nodeValue);
-       n.nodeValue=translateValue(originals.get(n));
-      }
-     }
-    }
-   }
-  }
+ const observer=new MutationObserver(()=>{
+  // Re-apply the selected offline dictionary to newly rendered sections and fields.
+  // applyLanguage restores original Russian strings from the WeakMap before switching.
+  if(select.value==="ar")applyLanguage("ar");
  });
  observer.observe(document.body,{childList:true,subtree:true});
 })();
