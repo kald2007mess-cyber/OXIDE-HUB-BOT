@@ -1536,7 +1536,6 @@ async function loadAdminDashboard(){
  status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
 }
 
-async 
 const ADMIN_WORKSPACES=[["redemptionOffersPage","redemptionOffersList","loadRedemptionOffers()","العروض","ابحث باسم العرض أو تكلفته"],["betaDeliveryPage","betaDeliveryCurrentFiles","loadBetaDelivery()","ملفات المنصة","ابحث في الملفات المحفوظة"],["broadcastPage","broadcastStatus","refreshBroadcastStatus()","النشر","تابع حالة آخر منشور"],["activityPage","activityList","loadActivity()","سجل الدخول","ابحث في السجلات المعروضة"],["usersPage","usersList","loadUsers()","المستخدمون","ابحث في المستخدمين المعروضين"],["tasksPage","tasksList","loadTasks()","المهمات","ابحث باسم المهمة أو المنصة"],["reviewsPage","reviewsList","loadReviews()","الطلبات","ابحث في الطلبات المعروضة"],["supportAdminPage","supportAdminList","loadSupportAdminConversations()","الدعم","ابحث عن محادثة أو مستخدم"],["securityPage","deputiesList","loadDeputies(true)","النواب والصلاحيات","ابحث عن نائب أو رقم Telegram"],["rewardsAdminPage","redeemCodesHistory","loadRedeemCodes()","رموز الاسترداد","ابحث عن رمز أو حالة استرداد"]];
 const adminWorkspaceObservers=new Map();
 function installAdminWorkspaceTools(){
