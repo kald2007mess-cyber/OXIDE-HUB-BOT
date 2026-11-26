@@ -852,19 +852,19 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
    <div class="oxide-task-stat"><span>Всего заданий</span><strong id="tasksTotal">—</strong><small>Все категории</small></div>
    <div class="oxide-task-stat"><span>Одобрено</span><strong id="tasksCompleted">—</strong><small>Одобренные заявки</small></div>
    <div class="oxide-task-stat"><span>На проверке</span><strong id="tasksPending">—</strong><small>Ожидают решения</small></div>
-   <div class="oxide-task-stat"><span>Отклонено</span><strong id="tasksRejected">—</strong><small>طلبات Отклонено</small></div>
+   <div class="oxide-task-stat"><span>Отклонено</span><strong id="tasksRejected">—</strong><small>Отклонённые заявки</small></div>
   </div>
   <div class="oxide-task-section-head"><div><span class="oxide-task-eyebrow">CREATE NEW TASK</span><h3>Добавить задание</h3></div><span class="oxide-task-step">01 / 02</span></div>
-  <div class="oxide-admin-task-categories oxide-task-tabs" role="tablist" aria-label="فئات المهمات">
+  <div class="oxide-admin-task-categories oxide-task-tabs" role="tablist" aria-label="Категории заданий">
    <button type="button" class="oxide-admin-task-category active" data-task-category="telegram" onclick="selectTaskCategory('telegram',this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 17-7-5 17-4-7-8-3Z"/><path d="m11 14 9-10"/></svg><span>Каналы Telegram</span></button>
    <button type="button" class="oxide-admin-task-category" data-task-category="bots" onclick="selectTaskCategory('bots',this)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 4v4M8 13h.01M16 13h.01M9 17h6"/></svg><span>Боты</span></button>
    <button type="button" class="oxide-admin-task-category" data-task-category="tiktok" onclick="selectTaskCategory('tiktok',this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a4.5 4.5 0 1 1-4-4.47V6c2 2.5 4.2 3.7 7 3.9V6.5C15.5 6.2 14.4 5 14 3Z"/></svg><span>TikTok</span></button>
    <button type="button" class="oxide-admin-task-category" data-task-category="referrals" onclick="selectTaskCategory('referrals',this)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 21v-1.5a6.5 6.5 0 0 1 13 0V21M17 8a3 3 0 0 1 0 6m1 3a4.5 4.5 0 0 1 3.5 4"/></svg><span>Приглашения друзей</span></button>
   </div>
-  <button type="button" id="taskAddButton" class="oxide-admin-task-add oxide-task-add" onclick="toggleTaskForm()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>إظهار نموذج Добавить задание</button>
+  <button type="button" id="taskAddButton" class="oxide-admin-task-add oxide-task-add" onclick="toggleTaskForm()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Открыть форму добавления задания</button>
   <div class="task-form oxide-task-form hidden" id="adminTaskForm">
-   <div class="oxide-task-form-title"><div><span class="oxide-task-eyebrow">TASK DETAILS</span><h3 id="taskFormHeading">Добавить задание جديدة</h3></div><span class="oxide-task-live-dot">LIVE</span></div>
-   <div class="field"><label>Название задания</label><input id="taskTitle" maxlength="120" placeholder="اكتب Название задания هنا" oninput="updateTaskPreview()"><small class="admin-char-counter" id="taskTitleCounter">0 / 120</small></div>
+   <div class="oxide-task-form-title"><div><span class="oxide-task-eyebrow">TASK DETAILS</span><h3 id="taskFormHeading">Добавить новое задание</h3></div><span class="oxide-task-live-dot">LIVE</span></div>
+   <div class="field"><label>Название задания</label><input id="taskTitle" maxlength="120" placeholder="Введите название задания" oninput="updateTaskPreview()"><small class="admin-char-counter" id="taskTitleCounter">0 / 120</small></div>
    <div class="field"><label>Платформа</label><select id="taskPlatform" onchange="updateTaskPreview()"><option value="telegram">Каналы Telegram</option><option value="bots">Боты</option><option value="tiktok">TikTok</option><option value="referrals">Приглашения друзей</option></select></div>
    <div class="field"><label>Описание задания</label><textarea id="taskDescription" maxlength="1000" placeholder="Опишите, что должен сделать пользователь" oninput="updateTaskPreview()"></textarea><small class="admin-char-counter" id="taskDescriptionCounter">0 / 1000</small></div>
    <div class="field"><label>Ссылка на задание (HTTPS)</label><input id="taskUrl" type="url" placeholder="https://..." oninput="updateTaskPreview()"></div>
@@ -884,10 +884,10 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   </div>
   <div class="oxide-task-section-head oxide-task-list-heading"><div><span class="oxide-task-eyebrow">MANAGE TASKS</span><h3>Текущие задания</h3><p>Управление и контроль всех заданий</p></div><span class="oxide-task-count" id="tasksVisibleCount">—</span></div>
   <div class="oxide-task-toolbar">
-   <label class="oxide-task-search"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="tasksSearch" type="search" placeholder="ابحث بНазвание задания أو رقمها..." oninput="renderTasks()"></label>
-   <button type="button" class="oxide-task-refresh" onclick="loadTasks()" aria-label="تحديث المهمات"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></button>
+   <label class="oxide-task-search"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="tasksSearch" type="search" placeholder="Поиск по названию задания или ID..." oninput="renderTasks()"></label>
+   <button type="button" class="oxide-task-refresh" onclick="loadTasks()" aria-label="Обновить задания"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></button>
   </div>
-  <div class="oxide-task-status-filters" role="group" aria-label="تصفية حسب Статус">
+  <div class="oxide-task-status-filters" role="group" aria-label="Фильтр по статусу">
    <button type="button" class="active" data-task-status="all" onclick="setTaskStatusFilter('all',this)">Все</button>
    <button type="button" data-task-status="active" onclick="setTaskStatusFilter('active',this)">Активно</button>
    <button type="button" data-task-status="paused" onclick="setTaskStatusFilter('paused',this)">Отключено</button>
@@ -895,7 +895,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   <div class="platform-status oxide-task-status" id="tasksStatus">Загрузка заданий...</div>
   <div id="tasksList"><div class="task-empty">Загрузка заданий...</div></div>
   <div id="taskCompletedPanel" class="hidden oxide-task-completed"><hr><h3 id="taskCompletedHeading">Пользователи, выполнившие задание</h3><div class="platform-status" id="taskCompletedStatus"></div><div id="taskCompletedUsers"></div><button class="secondary" onclick="closeCompletedUsers()">Закрыть список пользователей</button></div>
-  <p class="note oxide-task-note">عدد الإكمالات يعرض الطلبات التي Одобренные заявки عليها فقط. لا يمكن حذف مهمة لها طلبات محفوظة؛ أوقفها بدلًا من ذلك للحفاظ على السجل.</p>
+  <p class="note oxide-task-note">Количество выполнений учитывает только одобренные заявки. Задание с сохранёнными заявками нельзя удалить; отключите его, чтобы сохранить историю.</p>
  </section>
 </div><div id="reviewsPage" class="hidden"><div class="card"><button class="back" onclick="closeReviews()">⬅ Назад в панель управления</button><h3>📋 Проверка заявок</h3><div class="review-tabs"><button id="reviewMissionsTab" onclick="loadReviews('missions')">📝 Заявки по заданиям (подтверждения)</button><button id="reviewRedemptionsTab" class="secondary" onclick="loadReviews('redemptions')">💎 Обмен баллов (предложения)</button><button id="reviewReferralsTab" class="secondary" onclick="loadReviews(&quot;referrals&quot;)">👥 Рефералы на проверке</button></div><div class="platform-status" id="reviewsStatus">Выберите тип заявок для проверки.</div><div id="reviewsList"><div class="task-empty">Нет заявок для отображения.</div></div></div></div>
 <div id="supportAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeSupportAdmin()">⬅ Назад в панель управления</button><h3>💬 Центр технической поддержки</h3><p class="note">Выберите пользователя в списке чатов, чтобы просмотреть сообщения и ответить ему.</p><div class="support-admin-layout"><aside class="support-admin-sidebar"><div class="support-admin-sidebar-head"><strong>Чаты</strong><small id="supportAdminCount">Загрузка чатов...</small></div><div class="support-admin-list" id="supportAdminList"><div class="support-admin-empty">Загрузка сообщений...</div></div></aside><section class="support-admin-chat"><div class="support-admin-chat-head" id="supportAdminChatHead"><strong>Выберите чат</strong></div><div class="support-admin-thread" id="supportAdminThread"><div class="support-admin-empty">После выбора пользователя переписка появится здесь.</div></div><form class="support-admin-compose" id="supportAdminForm" onsubmit="sendAdminSupportReply(event);return false;"><textarea id="supportAdminInput" maxlength="2000" rows="2" placeholder="Введите ответ..." disabled required></textarea><button id="supportAdminSend" type="submit" disabled>Отправить</button></form><div class="support-admin-status" id="supportAdminStatus"></div></section></div></div></div>
