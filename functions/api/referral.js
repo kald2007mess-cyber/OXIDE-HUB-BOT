@@ -101,6 +101,15 @@ export async function onRequestGet({ request, env }) {
         )
       `).run();
   
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS telegram_channel_claims (
+          user_id TEXT NOT NULL,
+          mission_id INTEGER NOT NULL,
+          claimed_at INTEGER NOT NULL,
+          PRIMARY KEY(user_id, mission_id)
+        )
+      `).run();
+  
       // Recover eligible referrals left pending if an earlier reward batch failed.
       // Only referrals with an approved mission and no high-risk flag are paid.
       await env.DB.prepare(`
@@ -119,9 +128,15 @@ export async function onRequestGet({ request, env }) {
         SELECT r.id, r.referrer_id, r.referred_id
         FROM referrals r
         WHERE r.status = 'pending' AND COALESCE(r.risk_score, 0) < 70
-          AND EXISTS (
-            SELECT 1 FROM mission_submissions s
-            WHERE s.user_id = r.referred_id AND s.status = 'approved'
+          AND (
+            EXISTS (
+              SELECT 1 FROM mission_submissions s
+              WHERE s.user_id = r.referred_id AND s.status = 'approved'
+            )
+            OR EXISTS (
+              SELECT 1 FROM telegram_channel_claims tc
+              WHERE tc.user_id = r.referred_id
+            )
           )
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
           AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
@@ -140,7 +155,10 @@ export async function onRequestGet({ request, env }) {
           env.DB.prepare(`
             UPDATE referrals SET status = 'rewarded', points_awarded = 30
             WHERE id = ? AND status = 'pending' AND COALESCE(risk_score, 0) < 70
-              AND EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
+              AND (
+                EXISTS (SELECT 1 FROM mission_submissions WHERE user_id = ? AND status = 'approved')
+                OR EXISTS (SELECT 1 FROM telegram_channel_claims WHERE user_id = ?)
+              )
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
               AND EXISTS (SELECT 1 FROM users WHERE user_uuid = ? AND status = 'active')
               AND referrer_id <> referred_id
@@ -148,7 +166,7 @@ export async function onRequestGet({ request, env }) {
               AND EXISTS (SELECT 1 FROM telegram_identities WHERE user_uuid = referred_id)
               AND (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referrer_id LIMIT 1)
                   <> (SELECT telegram_user_id FROM telegram_identities WHERE user_uuid = referred_id LIMIT 1)
-          `).bind(referral.id, referral.referred_id, referral.referrer_id, referral.referred_id),
+          `).bind(referral.id, referral.referred_id, referral.referred_id, referral.referrer_id, referral.referred_id),
           env.DB.prepare(`
             UPDATE users SET points = points + 30, updated_at = ?
             WHERE user_uuid = ? AND status = 'active' AND changes() = 1
@@ -229,8 +247,12 @@ export async function onRequestGet({ request, env }) {
           COALESCE(SUM(CASE WHEN
             COALESCE(r.risk_score, 0) < 70
             AND r.referrer_id <> r.referred_id
-            AND EXISTS (SELECT 1 FROM mission_submissions ms
-                        WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+            AND (
+              EXISTS (SELECT 1 FROM mission_submissions ms
+                      WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+              OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
+                         WHERE tc.user_id = r.referred_id)
+            )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
@@ -241,8 +263,12 @@ export async function onRequestGet({ request, env }) {
           COALESCE(SUM(CASE WHEN
             COALESCE(r.risk_score, 0) < 70
             AND r.referrer_id <> r.referred_id
-            AND EXISTS (SELECT 1 FROM mission_submissions ms
-                        WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+            AND (
+              EXISTS (SELECT 1 FROM mission_submissions ms
+                      WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+              OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
+                         WHERE tc.user_id = r.referred_id)
+            )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
@@ -253,8 +279,12 @@ export async function onRequestGet({ request, env }) {
           COUNT(*) - COALESCE(SUM(CASE WHEN
             COALESCE(r.risk_score, 0) < 70
             AND r.referrer_id <> r.referred_id
-            AND EXISTS (SELECT 1 FROM mission_submissions ms
-                        WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+            AND (
+              EXISTS (SELECT 1 FROM mission_submissions ms
+                      WHERE ms.user_id = r.referred_id AND ms.status = 'approved')
+              OR EXISTS (SELECT 1 FROM telegram_channel_claims tc
+                         WHERE tc.user_id = r.referred_id)
+            )
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referrer_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM users u WHERE u.user_uuid = r.referred_id AND u.status = 'active')
             AND EXISTS (SELECT 1 FROM telegram_identities ti WHERE ti.user_uuid = r.referrer_id)
