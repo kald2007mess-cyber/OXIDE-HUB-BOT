@@ -1340,9 +1340,9 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
   <div class="oxide-referral-eligibility">
     <div class="oxide-eligibility-card oxide-eligible-card">
       <div class="oxide-eligibility-icon">✓</div>
-      <div class="oxide-eligibility-label">الإحالات المؤهلة</div>
+      <div class="oxide-eligibility-label" id="referralEligibleLabel">الإحالات المؤهلة</div>
       <div class="oxide-eligibility-value" id="referralEligible">0</div>
-      <div class="oxide-eligibility-note">أكملوا مهمة وتمت الموافقة عليها</div>
+      <div class="oxide-eligibility-note" id="referralEligibleNote">أكملوا مهمة وتمت الموافقة عليها</div>
     </div>
     <div class="oxide-eligibility-card oxide-ineligible-card">
       <div class="oxide-eligibility-icon">…</div>
@@ -1677,6 +1677,9 @@ function applyReferralPageLanguage(language){
  root.querySelectorAll(".oxide-how-step span:last-child").forEach((n,i)=>{if(w.steps[i])n.textContent=w.steps[i]});set(".oxide-how-note",w.note);
  const el=root.querySelectorAll(".oxide-eligibility-label"),notes=root.querySelectorAll(".oxide-eligibility-note");
  if(el[0])el[0].textContent=w.eligible;if(el[1])el[1].textContent=w.ineligible;if(notes[0])notes[0].textContent=w.approved;if(notes[1])notes[1].textContent=w.pending;
+ const eligibleLabel=document.getElementById("referralEligibleLabel"),eligibleNote=document.getElementById("referralEligibleNote");
+ if(eligibleLabel)eligibleLabel.textContent=w.eligible;
+ if(eligibleNote)eligibleNote.textContent=w.approved;
  set("#pointsRankingTitle",w.points);set("#referralRankingTitle",w.ranking);
  root.querySelectorAll("#pointsRanking .ranking-row,#referralRanking .ranking-row").forEach(n=>{if(/جاري التحميل|loading|загрузка/i.test(n.textContent))n.textContent=w.loading});
 }function applyWithdrawPageLanguage(language){
