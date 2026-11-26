@@ -62,7 +62,10 @@ export async function onRequestPost({request,env}){
     try{files=JSON.parse(old?.files_json||"[]");}catch{files=[];}
    }
    const now=Math.floor(Date.now()/1000);
+   const previous=await env.DB.prepare("SELECT files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();
+   let oldFiles=[];try{oldFiles=JSON.parse(previous?.files_json||"[]");}catch{}
    await env.DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,updated_at=? WHERE offer=?").bind(message,JSON.stringify(files),now,offer).run();
+   if(keys.length){const keep=new Set(keys);for(const oldFile of oldFiles){if(oldFile?.key&&!keep.has(oldFile.key))await env.PLATFORM_MEDIA.delete(oldFile.key).catch(()=>{});}}
    return out({success:true,offer,message,files});
   }
   if(body.action==="abort"){
