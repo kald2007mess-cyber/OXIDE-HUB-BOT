@@ -1395,7 +1395,7 @@ let maintenanceActive=false;
 const REQUIRED=3,LOCK_DURATION=15*60*1000,DOWNLOAD_PAGE="download.html",ISLAND_REQUIRED=10,ISLAND_CYCLE_SECONDS=18000;
 const PLATFORM_AVAILABILITY={iphone:false,beta:false};
 const stages=document.getElementById("stages"),statusBox=document.getElementById("status");
-let progress=0,busy=false,lastProgress=null,currentLanguage="ar",activePopup=null,rewardPoints=0,rewardOffers=[{id:1,name:"55 COINS",points:1500},{id:2,name:"145 COINS",points:3500},{id:3,name:"PREMIUM",points:3000},{id:4,name:"25 BP COINS",points:3500}],redeeming=false;
+let progress=0,busy=false,lastProgress=null,currentLanguage="ru",activePopup=null,rewardPoints=0,rewardOffers=[{id:1,name:"55 COINS",points:1500},{id:2,name:"145 COINS",points:3500},{id:3,name:"PREMIUM",points:3000},{id:4,name:"25 BP COINS",points:3500}],redeeming=false;
 let islandAds=[],islandCompleted=0,islandRemaining=0,islandCycleEndsAt=0,islandBusy=false,islandTimerInterval=null,platformAdProgress={beta:0,android:0,ios:0},platformGoAccess=false,platformPaidUnlocks={beta:false,android:false,ios:false},platformPurchaseBusy=false;
 let userDisplayId="",userIdLoaded=false,referralLinkValue="",referralLoaded=false,telegramProfileData=null;
 let oxidePointsRanking=[],oxideReferralsRanking=[],oxideCurrentRanks={points:null,referrals:null},oxideLeaderboardMetric="points";
@@ -1444,7 +1444,7 @@ function supportText(key){
  id:{title:"💬 Dukungan",description:"Kirim pesan dan tim OXIDE HUB akan membalas di sini.",placeholder:"Tulis pesan Anda...",send:"Kirim",you:"Anda",admin:"Dukungan OXIDE HUB",empty:"Belum ada pesan. Kirim pesan untuk memulai.",loading:"Memuat percakapan...",sending:"Mengirim pesan...",sent:"Pesan Anda telah dikirim.",failed:"Pesan gagal dikirim. Coba lagi.",loadFailed:"Percakapan gagal dimuat. Muat ulang halaman.",media:"[Dukungan mengirim lampiran]",mediaNote:"Lampiran ditampilkan sebagai pemberitahuan pesan."},
  de:{title:"💬 Support",description:"Sende eine Nachricht. Das OXIDE-HUB-Team antwortet hier.",placeholder:"Nachricht schreiben...",send:"Senden",you:"Du",admin:"OXIDE HUB Support",empty:"Noch keine Nachrichten. Schreibe eine Nachricht, um zu beginnen.",loading:"Unterhaltung wird geladen...",sending:"Nachricht wird gesendet...",sent:"Deine Nachricht wurde gesendet.",failed:"Nachricht konnte nicht gesendet werden. Bitte erneut versuchen.",loadFailed:"Unterhaltung konnte nicht geladen werden. Seite neu laden.",media:"[Support hat einen Anhang gesendet]",mediaNote:"Anhänge werden in der Unterhaltung angezeigt."}
  };
- return data[currentLanguage]?.[key] || data.ar[key] || data.en[key] || key;
+ return data[currentLanguage]?.[key] || data.en[key] || key;
 }
 function clearActiveSession(){localStorage.removeItem(LOCK_KEY);if(activePopup&&!activePopup.closed){try{activePopup.close()}catch{}}activePopup=null}
 function getActiveSession(){try{if(activePopup&&activePopup.closed){clearActiveSession();return null}const raw=localStorage.getItem(LOCK_KEY);if(!raw)return null;const session=JSON.parse(raw);const startedAt=Number(session.startedAt);if(!session||!Number.isFinite(startedAt)||startedAt>Date.now()||Date.now()-startedAt>=LOCK_DURATION){clearActiveSession();return null}return session}catch{clearActiveSession();return null}}
@@ -3092,10 +3092,14 @@ async function saveLanguagePreference(language){
  try{await fetch("/api/preferences",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({language})})}catch(error){console.warn("Language preference will remain on this device until server sync is available.",error)}
 }
 async function loadSavedLanguage(){
+ const versionKey="oxide_language_default_ru_v1";
  let language=localStorage.getItem("oxide_language");
- try{const response=await fetch("/api/preferences",{method:"GET",credentials:"same-origin",cache:"no-store"});if(!language&&response.ok){const data=await response.json();if(data.success&&["ar","en","ru"].includes(data.language))language=data.language}}catch(error){}
- language=language&&["ar","en","ru"].includes(language)?language:"ar";
- languagePreferenceReady=true;changeLanguage(language,false);
+ let migrated=false;
+ try{migrated=localStorage.getItem(versionKey)!=="1";}catch(error){migrated=true;}
+ if(migrated){language="ru";try{localStorage.setItem(versionKey,"1");}catch(error){}}
+ try{const response=await fetch("/api/preferences",{method:"GET",credentials:"same-origin",cache:"no-store"});if(!migrated&&!language&&response.ok){const data=await response.json();if(data.success&&["ar","en","ru"].includes(data.language))language=data.language}}catch(error){}
+ language=language&&["ar","en","ru"].includes(language)?language:"ru";
+ languagePreferenceReady=true;changeLanguage(language,migrated);
 }
 function renderNewsLanguage(){
  const empty=document.getElementById("newsEmpty");if(empty)empty.textContent=t("newsEmpty");
