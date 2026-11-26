@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="oxide-language-loading">
+<html lang="ru" dir="ltr" class="oxide-language-loading">
 <head>
 <script src="https://telegram.org/js/telegram-web-app.js">
 
 </script>
 <script>
 (function(){
- var code=String(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user&&Telegram.WebApp.initDataUnsafe.user.language_code||"").toLowerCase();
- var language=code.indexOf("ru")===0?"ru":code.indexOf("ar")===0?"ar":"en";
+ var language="ru";
  window.__OXIDE_TELEGRAM_LANGUAGE__=language;
  document.documentElement.lang=language;
  document.documentElement.dir=language==="ar"?"rtl":"ltr";
@@ -3101,7 +3100,17 @@ async function saveLanguagePreference(language){
  try{await fetch("/api/preferences",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({language})})}catch(error){console.warn("Language preference will remain on this device until server sync is available.",error)}
 }
 async function loadSavedLanguage(){
- const language=["ar","en","ru"].includes(window.__OXIDE_TELEGRAM_LANGUAGE__)?window.__OXIDE_TELEGRAM_LANGUAGE__:"en";
+ const versionKey="oxide_language_default_ru_v2";
+ let language="ru",migrated=false;
+ try{migrated=localStorage.getItem(versionKey)!=="1";}catch(error){migrated=true;}
+ if(migrated){
+  try{localStorage.setItem(versionKey,"1");localStorage.setItem("oxide_language","ru");}catch(error){}
+  language="ru";
+  try{await saveLanguagePreference("ru");}catch(error){}
+ }else{
+  try{const saved=localStorage.getItem("oxide_language");if(["ar","en","ru"].includes(saved))language=saved;}catch(error){}
+  try{const response=await fetch("/api/preferences",{method:"GET",credentials:"same-origin",cache:"no-store"});if(response.ok){const data=await response.json();if(data.success&&["ar","en","ru"].includes(data.language))language=data.language;}}catch(error){}
+ }
  languagePreferenceReady=true;
  changeLanguage(language,false);
  document.documentElement.classList.remove("oxide-language-loading");
