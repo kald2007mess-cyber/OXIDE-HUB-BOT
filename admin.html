@@ -370,6 +370,37 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 }
 @media(prefers-reduced-motion:reduce){.menu-tile,.admin-filter-chip,button{transition:none!important}}
 
+
+/* Functional workspaces across every admin module */
+.admin-workspace-tools{position:relative;margin:14px 0 18px;padding:13px 14px;border:1px solid rgba(112,187,255,.22);border-radius:16px;background:linear-gradient(135deg,rgba(12,27,52,.94),rgba(18,19,48,.9));box-shadow:0 10px 25px rgba(0,0,0,.2)}
+.admin-workspace-caption{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.admin-workspace-symbol{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:linear-gradient(145deg,rgba(65,195,255,.2),rgba(155,106,255,.2));color:#8be5ff;font-size:23px}
+.admin-workspace-caption>div{display:grid;gap:2px;flex:1}
+.admin-workspace-caption strong{font-size:13px;color:#f2f7ff}
+.admin-workspace-caption small{font-size:11px;color:#91a9c9}
+.admin-workspace-count{font-size:11px;font-weight:800;color:#8ce8ff;background:rgba(76,183,255,.1);border:1px solid rgba(76,183,255,.2);padding:5px 9px;border-radius:20px;font-variant-numeric:tabular-nums}
+.admin-workspace-controls{display:flex;gap:8px;align-items:stretch}
+.admin-workspace-search{display:flex;align-items:center;gap:7px;flex:1;min-width:0;padding:0 10px;border:1px solid rgba(133,173,226,.23);border-radius:11px;background:rgba(3,11,27,.72)}
+.admin-workspace-search>span{font-size:23px;color:#8bdfff}
+.admin-workspace-search input{min-width:0;width:100%;border:0!important;outline:0;background:transparent!important;color:#fff!important;padding:11px 2px;font-size:13px;box-shadow:none!important}
+.admin-workspace-search input::placeholder{color:#8295b2}
+.admin-workspace-clear{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important;margin:0!important;padding:0!important;border-radius:8px!important;background:rgba(130,155,190,.15)!important;color:#d5e2f4!important;font-size:19px!important}
+.admin-workspace-refresh{display:flex;align-items:center;justify-content:center;gap:5px;width:auto!important;min-width:82px!important;margin:0!important;padding:0 12px!important;border:1px solid rgba(92,202,255,.28)!important;border-radius:11px!important;background:linear-gradient(135deg,rgba(23,121,170,.35),rgba(88,75,159,.38))!important;color:#eaf8ff!important;font-size:12px!important;font-weight:800}
+.admin-workspace-refresh:disabled{opacity:.55}
+.admin-workspace-hint{margin-top:8px;color:#7f94b4;font-size:10px}
+.admin-workspace-filtered{display:none!important}
+#activityList,#usersList,#tasksList,#reviewsList,#redemptionOffersList,#deputiesList,#redeemCodesHistory,#betaDeliveryCurrentFiles{display:grid;gap:10px}
+#activityList>*,#usersList>*,#tasksList>*,#reviewsList>*,#redemptionOffersList>*,#deputiesList>*,#redeemCodesHistory>*,#betaDeliveryCurrentFiles>*{min-width:0}
+#activityPage .users-summary,#usersPage .users-summary,#tasksPage .tasks-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#activityPage .users-stat,#usersPage .users-stat,#tasksPage .task-stat{min-width:0;border:1px solid rgba(112,177,239,.18);border-radius:12px;background:linear-gradient(145deg,rgba(24,42,72,.68),rgba(10,20,39,.8));padding:12px;text-align:center}
+#activityPage .users-stat strong,#usersPage .users-stat strong,#tasksPage .task-stat strong{display:block;margin-top:5px;font-size:20px;color:#8be5ff;font-variant-numeric:tabular-nums}
+#supportAdminPage .admin-workspace-tools{margin-bottom:12px}
+#supportAdminPage .support-admin-layout{align-items:stretch}
+#broadcastPage .admin-broadcast-preview{margin-top:12px;padding:13px;border:1px solid rgba(121,180,255,.22);border-radius:13px;background:rgba(4,13,29,.65)}
+#broadcastPage .admin-broadcast-preview strong{display:block;color:#8bdfff;font-size:12px;margin-bottom:7px}
+#broadcastPage .admin-broadcast-preview p{white-space:pre-wrap;overflow-wrap:anywhere;color:#e4edfa;font-size:13px;margin:0}
+@media(max-width:600px){.admin-workspace-tools{padding:11px;border-radius:13px}.admin-workspace-controls{gap:6px}.admin-workspace-refresh{min-width:42px!important;padding:0 9px!important}.admin-workspace-refresh span{display:none}.admin-workspace-hint{font-size:9px}#activityPage .users-summary,#usersPage .users-summary,#tasksPage .tasks-summary{gap:6px}#activityPage .users-stat,#usersPage .users-stat,#tasksPage .task-stat{padding:9px 5px}}
+
 </style>
 </head>
 <body>
@@ -1494,7 +1525,34 @@ async function loadAdminDashboard(){
  status.textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"});
 }
 
-async function start(){
+async 
+const ADMIN_WORKSPACES=[["redemptionOffersPage","redemptionOffersList","loadRedemptionOffers()","العروض","ابحث باسم العرض أو تكلفته"],["betaDeliveryPage","betaDeliveryCurrentFiles","loadBetaDelivery()","ملفات المنصة","ابحث في الملفات المحفوظة"],["broadcastPage","broadcastStatus","refreshBroadcastStatus()","النشر","تابع حالة آخر منشور"],["activityPage","activityList","loadActivity()","سجل الدخول","ابحث في السجلات المعروضة"],["usersPage","usersList","loadUsers()","المستخدمون","ابحث في المستخدمين المعروضين"],["tasksPage","tasksList","loadTasks()","المهمات","ابحث باسم المهمة أو المنصة"],["reviewsPage","reviewsList","loadReviews()","الطلبات","ابحث في الطلبات المعروضة"],["supportAdminPage","supportAdminList","loadSupportAdminConversations()","الدعم","ابحث عن محادثة أو مستخدم"],["securityPage","deputiesList","loadDeputies(true)","النواب والصلاحيات","ابحث عن نائب أو رقم Telegram"],["rewardsAdminPage","redeemCodesHistory","loadRedeemCodes()","رموز الاسترداد","ابحث عن رمز أو حالة استرداد"]];
+const adminWorkspaceObservers=new Map();
+function installAdminWorkspaceTools(){
+ for(const [pageId,targetId,refresh,label,placeholder] of ADMIN_WORKSPACES){
+  const page=document.getElementById(pageId),target=document.getElementById(targetId);
+  if(!page||!target||page.querySelector(".admin-workspace-tools"))continue;
+  const bar=document.createElement("section");bar.className="admin-workspace-tools";
+  bar.innerHTML='<div class="admin-workspace-caption"><span class="admin-workspace-symbol">⌘</span><div><strong>مساحة العمل</strong><small>'+label+'</small></div><span class="admin-workspace-count" id="workspaceCount-'+pageId+'">—</span></div><div class="admin-workspace-controls"><label class="admin-workspace-search"><span>⌕</span><input type="search" autocomplete="off" placeholder="'+placeholder+'" aria-label="'+placeholder+'"><button type="button" class="admin-workspace-clear" aria-label="مسح البحث">×</button></label><button type="button" class="admin-workspace-refresh" aria-label="تحديث البيانات">⟳ <span>تحديث</span></button></div><div class="admin-workspace-hint">البحث يفلتر النتائج المحمّلة دون تغيير البيانات المحفوظة.</div>';
+  const input=bar.querySelector("input"),clear=bar.querySelector(".admin-workspace-clear"),refresh=bar.querySelector(".admin-workspace-refresh");
+  const apply=()=>{
+   const q=input.value.trim().toLocaleLowerCase();
+   const children=[...target.children];let visible=0;
+   for(const node of children){const match=!q||(node.textContent||"").toLocaleLowerCase().includes(q);node.classList.toggle("admin-workspace-filtered",!match);if(match)visible++;}
+   const count=document.getElementById("workspaceCount-"+pageId);if(count)count.textContent=visible+" / "+children.length;
+  };
+  input.addEventListener("input",apply);clear.addEventListener("click",()=>{input.value="";apply();input.focus();});
+  refresh.addEventListener("click",()=>{refresh.disabled=true;try{const fn=new Function(refresh.to.dataset.action);fn();}finally{setTimeout(()=>refresh.disabled=false,900);}});
+  refresh.dataset.action=refresh;
+  // The action is authored from a fixed local allowlist, never from user input.
+  refresh.onclick=()=>{if(refresh.disabled)return;refresh.disabled=true;try{({"redemptionOffersPage":()=>{loadRedemptionOffers()},"betaDeliveryPage":()=>{loadBetaDelivery()},"broadcastPage":()=>{refreshBroadcastStatus()},"activityPage":()=>{loadActivity()},"usersPage":()=>{loadUsers()},"tasksPage":()=>{loadTasks()},"reviewsPage":()=>{loadReviews()},"supportAdminPage":()=>{loadSupportAdminConversations()},"securityPage":()=>{loadDeputies(true)},"rewardsAdminPage":()=>{loadRedeemCodes()}})[pageId]();}finally{setTimeout(()=>refresh.disabled=false,1000);}};
+  target.parentNode.insertBefore(bar,target);
+  const observer=new MutationObserver(apply);observer.observe(target,{childList:true,subtree:true,characterData:true});adminWorkspaceObservers.set(pageId,observer);
+  apply();
+ }
+}
+
+function start(){
  if(!tg||!tg.initData){
   statusBox.textContent="لم تصل بيانات Telegram. أغلق الصفحة وافتحها من زر لوحة الإدارة داخل البوت.";
   return;
@@ -1531,6 +1589,7 @@ async function start(){
   adminPermissions=Array.isArray(result.permissions)?result.permissions.filter(x=>typeof x==="string"):[];
   applyAdminPermissions();
   filterAdminMenu();
+  installAdminWorkspaceTools();
   document.getElementById("loading").classList.add("hidden");
   document.getElementById("panel").classList.remove("hidden");
   loadAdminDashboard();
