@@ -4,8 +4,9 @@ async function ensureTables(DB){
  await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
-  active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
+  active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER,benefit_type TEXT NOT NULL DEFAULT 'coins'
  )`).run();
+ try{await DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN benefit_type TEXT NOT NULL DEFAULT 'coins'").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
  try{await DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
  await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
   id INTEGER PRIMARY KEY AUTOINCREMENT,code_id INTEGER NOT NULL,user_uuid TEXT NOT NULL,
@@ -17,6 +18,7 @@ async function ensureTables(DB){
   title TEXT NOT NULL,body TEXT NOT NULL DEFAULT '',reward_points INTEGER NOT NULL DEFAULT 0,
   created_at INTEGER NOT NULL,read_at INTEGER,claimed_at INTEGER,claim_token TEXT
  )`).run();
+ await DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)`).run();
  await DB.prepare(`CREATE TABLE IF NOT EXISTS point_ledger(
   id INTEGER PRIMARY KEY AUTOINCREMENT,user_uuid TEXT NOT NULL,delta INTEGER NOT NULL,
   balance_after INTEGER NOT NULL,reason TEXT NOT NULL,reference_type TEXT NOT NULL,
@@ -46,9 +48,10 @@ export async function onRequestPost({request,env}){
    env.DB.prepare(`UPDATE oxide_redeem_codes SET used_count=used_count+1
     WHERE EXISTS(SELECT 1 FROM oxide_redeem_claims WHERE claim_token=?)
    `).bind(token),
+   env.DB.prepare(`INSERT OR IGNORE INTO oxide_go_access(user_uuid,source_code,granted_at) SELECT r.user_uuid,c.code,? FROM oxide_redeem_claims r JOIN oxide_redeem_codes c ON c.id=r.code_id WHERE r.claim_token=? AND c.benefit_type='go_free'`).bind(now,token),
    env.DB.prepare(`INSERT INTO oxide_notifications(user_id,type,title,body,reward_points,created_at)
     SELECT r.user_uuid,'redeem_code','🎁 مكافأة رمز استرداد',
-      'تم استرداد الرمز '||c.code||' بنجاح. اضغط زر استلام لإضافة المكافأة إلى رصيدك.',
+      'تم استرداد الرمز '||c.code||' بنجاح.'||CASE WHEN c.benefit_type='go_free' THEN ' تم فتح GO دون إعلانات.' ELSE ' اضغط زر استلام لإضافة المكافأة إلى رصيدك.' END,
       c.coins,?
     FROM oxide_redeem_claims r JOIN oxide_redeem_codes c ON c.id=r.code_id
     WHERE r.claim_token=?
@@ -66,7 +69,7 @@ export async function onRequestPost({request,env}){
    if(Number(existing.used_count)>=Number(existing.gift_count))return json({success:false,error:"CODE_EXHAUSTED"},409);
    return json({success:false,error:"CODE_NOT_AVAILABLE"},409);
   }
-  const reward=await env.DB.prepare("SELECT coins FROM oxide_redeem_codes WHERE code=?").bind(code).first();
-  return json({success:true,coins:Number(reward?.coins||0),notificationCreated:true});
+  const reward=await env.DB.prepare("SELECT coins,benefit_type FROM oxide_redeem_codes WHERE code=?").bind(code).first();
+  return json({success:true,coins:Number(reward?.coins||0),benefitType:String(reward?.benefit_type||"coins"),goAccess:reward?.benefit_type==="go_free",notificationCreated:true});
  }catch(error){return json({success:false,error:"REDEEM_CODE_FAILED"},500);}
 }
