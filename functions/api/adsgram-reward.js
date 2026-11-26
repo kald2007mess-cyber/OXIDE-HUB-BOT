@@ -265,8 +265,12 @@ export async function onRequestGet({ request, env }) {
       readProgress(env.DB, userId, now),
       readPlatformProgress(env.DB, userId, now)
     ]);
-    const user = await env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userId).first();
-    return json({ success: true, completedAds, platformProgress, points: Number(user?.points || 0) });
+    await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
+    const [user,goPass] = await Promise.all([
+      env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userId).first(),
+      env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(userId).first()
+    ]);
+    return json({ success: true, completedAds, platformProgress, points: Number(user?.points || 0), goAccess: Boolean(goPass) });
   } catch (error) {
     console.error("AdsGram reward endpoint failed:", error);
     return json({ success: false, error: "ADSGRAM_REWARD_FAILED" }, 500);
