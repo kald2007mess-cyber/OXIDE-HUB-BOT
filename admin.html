@@ -1658,10 +1658,9 @@ async function start(){
   tg.expand();
   statusBox.textContent="Данные Telegram получены. Подключение к серверу проверки...";
   const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),12000);
-  let response;
-  try{
-   response=await fetch("/api/admin/auth",{
+  let timeoutId;
+  const authRequest=(async()=>{
+   const response=await fetch("/api/admin/auth",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     credentials:"same-origin",
@@ -1669,12 +1668,24 @@ async function start(){
     signal:controller.signal,
     body:JSON.stringify({initData:tg.initData})
    });
+   let result;
+   try{result=await response.json();}
+   catch{throw new Error("INVALID_SERVER_RESPONSE");}
+   return {response,result};
+  })();
+  const authTimeout=new Promise((_,reject)=>{
+   timeoutId=window.setTimeout(()=>{
+    controller.abort();
+    reject(new Error("ADMIN_AUTH_TIMEOUT"));
+   },12000);
+  });
+  let authData;
+  try{
+   authData=await Promise.race([authRequest,authTimeout]);
   }finally{
-   clearTimeout(timeout);
+   window.clearTimeout(timeoutId);
   }
-  let result;
-  try{result=await response.json();}
-  catch{throw new Error("INVALID_SERVER_RESPONSE");}
+  const {response,result}=authData;
   if(!response.ok||!result.success||!result.admin){
    statusBox.textContent=response.status===403
     ?"Сервер отклонил доступ. Проверьте учётную запись администратора в настройках бота."
@@ -1693,11 +1704,11 @@ async function start(){
   if(hasAdminPermission("maintenance")){loadMaintenance().catch(error=>console.error("Maintenance loading error:",error));}
  }catch(error){
   console.error("Admin authentication error:",error);
-  statusBox.textContent=error?.name==="AbortError"
-   ?"Время ожидания соединения истекло (12 секунд). Проверьте публикацию Cloudflare Pages и адрес API."
+  statusBox.textContent=error?.message==="ADMIN_AUTH_TIMEOUT"||error?.name==="AbortError"
+   ?"Сервер проверки не завершил ответ за 12 секунд. Запрос и чтение ответа остановлены по тайм-ауту."
    :error?.message==="INVALID_SERVER_RESPONSE"
-    ?"Сервер вернул некорректный ответ. Проверьте публикацию API."
-    :"Не удалось подключиться к серверу проверки. Повторите попытку позже.";
+    ?"Сервер вернул некорректный ответ. Проверьте журнал Cloudflare Functions."
+    :"Ошибка подключения к серверу проверки: "+String(error?.message||error||"UNKNOWN_ERROR");
  }
 }
 start();
