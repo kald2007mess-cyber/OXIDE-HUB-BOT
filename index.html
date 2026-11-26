@@ -2298,39 +2298,39 @@ function renderReferralMilestones(){
   const top=document.createElement("div");top.className="oxide-new-task-top";
   const icon=document.createElement("div");icon.className="oxide-new-task-icon";icon.textContent="👥";
   const info=document.createElement("div");info.className="oxide-new-task-info";
-  const title=document.createElement("strong");title.textContent=task.target+" "+(currentLanguage==="ru"?"приглашений с выполненным условием":currentLanguage==="en"?"Eligible Referrals":"دعوات مؤهلة");
-  const sub=document.createElement("small");sub.textContent=count+" / "+task.target+" "+(currentLanguage==="ru"?"подходящих приглашений":currentLanguage==="en"?"eligible referrals":"دعوات مؤهلة");
+  const title=document.createElement("strong");title.textContent=task.target+" دعوات مؤهلة";
+  const sub=document.createElement("small");sub.textContent=count+" / "+task.target+" دعوات مؤهلة";
   info.append(title,sub);
   const reward=document.createElement("span");reward.className="oxide-task-reward";const rewardText=document.createElement("span");rewardText.textContent="+"+task.reward+" ";const rewardCoin=document.createElement("img");rewardCoin.className="oxide-referral-coin";rewardCoin.src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/310dd0f2a34b8406cb9733bcfec4afc2f94dcd4a/file_00000000233481f4bc72d013007183a5.png";rewardCoin.alt="عملة OXIDE";reward.append(rewardText,rewardCoin);
   top.append(icon,info,reward);
   const bar=document.createElement("div");bar.className="oxide-referral-progress";
   const fill=document.createElement("span");fill.style.width=progress+"%";bar.appendChild(fill);
   const bottom=document.createElement("div");bottom.className="oxide-new-task-bottom";
-  const status=document.createElement("span");status.className="oxide-task-category";status.textContent=done?(currentLanguage==="ru"?"Выполнено":currentLanguage==="en"?"Completed":"مكتملة"):ready?(currentLanguage==="ru"?"Доступно":currentLanguage==="en"?"Ready to claim":"جاهزة للاستلام"):(currentLanguage==="ru"?"В процессе":currentLanguage==="en"?"In progress":"قيد التقدم");
-  const button=document.createElement("button");button.type="button";button.className="oxide-referral-claim"+(ready?" is-ready":"");button.textContent=done?(currentLanguage==="ru"?"Получено":currentLanguage==="en"?"Claimed":"تم الاستلام"):ready?(currentLanguage==="ru"?"Получить":currentLanguage==="en"?"Claim":"استلام"):(currentLanguage==="ru"?"Не выполнено":currentLanguage==="en"?"Incomplete":"غير مكتملة");button.disabled=!ready;
+  const status=document.createElement("span");status.className="oxide-task-category";status.textContent=done?"مكتملة":ready?"جاهزة للاستلام":"قيد التقدم";
+  const button=document.createElement("button");button.type="button";button.className="oxide-referral-claim"+(ready?" is-ready":"");button.textContent=done?"تم الاستلام":ready?"استلام":"غير مكتملة";button.disabled=!ready;
   if(ready)button.addEventListener("click",()=>claimReferralMilestone(task.id,button));
   bottom.append(status,button);card.append(top,bar,bottom);host.appendChild(card);
  });
 }
 async function loadReferralMilestones(){
- const host=document.getElementById("referralMilestoneList");if(host&&!host.children.length){const loading=document.createElement("div");loading.className="mission-item";loading.textContent=currentLanguage==="ru"?"Загрузка заданий за приглашения...":currentLanguage==="en"?"Loading referral tasks...":"جارٍ تحميل مهمات الدعوة...";host.appendChild(loading);}
+ const host=document.getElementById("referralMilestoneList");if(host&&!host.children.length){const loading=document.createElement("div");loading.className="mission-item";loading.textContent="جارٍ تحميل مهمات الدعوة...";host.appendChild(loading);}
  try{
   if(!userIdLoaded&&!await loadUserId())throw new Error("NO_TELEGRAM_SESSION");
   const response=await fetch("/api/referral-milestones",{method:"GET",credentials:"same-origin",cache:"no-store"});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"MILESTONES_FAILED");
   oxideReferralMilestoneData={eligible:Number(data.eligible||0),total:Number(data.total||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
- }catch(error){console.error("Referral milestones failed:",error);if(host){host.replaceChildren();const message=document.createElement("div");message.className="mission-item";message.textContent=currentLanguage==="ru"?"Не удалось загрузить задания за приглашения. Обновите страницу.":currentLanguage==="en"?"Could not load referral tasks. Please refresh the page.":"تعذر تحميل مهمات الدعوة. حاول تحديث الصفحة.";host.appendChild(message);}}
+ }catch(error){console.error("Referral milestones failed:",error);if(host){host.replaceChildren();const message=document.createElement("div");message.className="mission-item";message.textContent="تعذر تحميل مهمات الدعوة. حاول تحديث الصفحة.";host.appendChild(message);}}
 }
 async function claimReferralMilestone(id,button){
- if(!button||button.disabled)return;button.disabled=true;button.textContent=currentLanguage==="ru"?"Получение...":currentLanguage==="en"?"Claiming...":"جارٍ الاستلام...";
+ if(!button||button.disabled)return;button.disabled=true;button.textContent="جارٍ الاستلام...";
  try{
   const response=await fetch("/api/referral-milestones",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({milestoneId:id})});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"CLAIM_FAILED");
   oxideReferralMilestoneData={eligible:Number(data.eligible||0),total:Number(data.total||0),claimed:Array.isArray(data.claimed)?data.claimed:[]};renderReferralMilestones();
   if(typeof window.loadOxideWallet==="function")await window.loadOxideWallet();
   const balance=document.getElementById("referralShardBalance");if(balance&&Number.isFinite(Number(data.balance)))balance.textContent=Number(data.balance).toLocaleString();
-  alert(currentLanguage==="ru"?"Успешно получено монет: "+Number(data.reward||0):currentLanguage==="en"?"Successfully claimed "+Number(data.reward||0)+" coins!":"تم استلام "+Number(data.reward||0)+" عملة بنجاح!");
- }catch(error){console.error("Referral milestone claim failed:",error);button.disabled=false;button.textContent=currentLanguage==="ru"?"Повторить":currentLanguage==="en"?"Try again":"إعادة المحاولة";alert(error.message==="MILESTONE_NOT_READY"?"لم تصل بعد إلى عدد الدعوات المؤهلة المطلوب.":"تعذر استلام المكافأة. حاول مرة أخرى.");}
+  alert("تم استلام "+Number(data.reward||0)+" عملة بنجاح!");
+ }catch(error){console.error("Referral milestone claim failed:",error);button.disabled=false;button.textContent="إعادة المحاولة";alert(error.message==="MILESTONE_NOT_READY"?"لم تصل بعد إلى عدد الدعوات المؤهلة المطلوب.":"تعذر استلام المكافأة. حاول مرة أخرى.");}
 }
 async function loadReferral(){const status=document.getElementById("referralStatus");if(status)status.textContent="";try{if(!userIdLoaded&&!await loadUserId())throw new Error("NO_TELEGRAM_SESSION");const response=await fetch("/api/referral",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success||typeof data.referralCode!=="string"||!data.referralCode)throw new Error(data.error||"Referral API must return referralCode");const telegramReferralId=String(data.referralCode).replace(/^OX-/i,"");if(!/^\d{5,20}$/.test(telegramReferralId))throw new Error("Invalid Telegram referral ID");referralLinkValue="https://t.me/OxideHub_bot?start=ref_"+encodeURIComponent(telegramReferralId);document.getElementById("referralLink").value=referralLinkValue;const launchLink=document.getElementById("launchReferralLink");if(launchLink)launchLink.value=referralLinkValue;document.getElementById("referralCount").textContent=Number(data.user?.referrals??data.referrals??0).toLocaleString();document.getElementById("referralEarned").textContent=Number(data.user?.earned??data.earned??0).toLocaleString();document.getElementById("referralEligible").textContent=Number(data.user?.eligible??data.eligible??0).toLocaleString();document.getElementById("referralIneligible").textContent=Number(data.user?.ineligible??data.ineligible??0).toLocaleString();const shardBalance=data.user?.points??data.user?.balance??data.points??null;document.getElementById("referralShardBalance").textContent=shardBalance===null?"—":Number(shardBalance).toLocaleString();oxidePointsRanking=Array.isArray(data.pointsRanking)?data.pointsRanking:[];
 oxideReferralsRanking=Array.isArray(data.referralRanking)?data.referralRanking:[];
@@ -3326,20 +3326,20 @@ initializeOxideHub();
   const rewardText=$("tapRewardText");if(rewardText)rewardText.textContent="+"+reward.toFixed(2);
   const footerReward=document.querySelector(".tap-footer b");if(footerReward)footerReward.textContent="+"+reward.toFixed(2);
   const tapLevel=Math.max(1,Math.min(6,levels.tap)),tapNext=tapLevel<6;
-  if($("tapUpgradeLevel"))$("tapUpgradeLevel").textContent=(currentLanguage==="ru"?"Уровень ":currentLanguage==="en"?"Level ":"المستوى ")+tapLevel+" / 6";
+  if($("tapUpgradeLevel"))$("tapUpgradeLevel").textContent="المستوى "+tapLevel+" / 6";
   if($("tapCurrentValue"))$("tapCurrentValue").textContent="+"+reward.toFixed(2);
   if($("tapNextValue"))$("tapNextValue").textContent=tapNext?"+"+tapRates[tapLevel+1].toFixed(2):"MAX";
   if($("tapUpgradeCost"))$("tapUpgradeCost").textContent=tapNext?tapCosts[tapLevel]+" OXIDE":"MAX";
   if($("tapUpgradeConfirm"))$("tapUpgradeConfirm").disabled=!walletReady||!tapNext||total<tapCosts[tapLevel]||actionBusy;
   const eLevel=Math.max(1,Math.min(5,energyLevel)),eNext=eLevel<5;
-  if($("energyUpgradeLevel"))$("energyUpgradeLevel").textContent=(currentLanguage==="ru"?"Уровень ":currentLanguage==="en"?"Level ":"المستوى ")+eLevel+" / 5";
+  if($("energyUpgradeLevel"))$("energyUpgradeLevel").textContent="المستوى "+eLevel+" / 5";
   if($("energyCurrentCapacity"))$("energyCurrentCapacity").textContent=String(maxEnergy);
   if($("energyNextCapacity"))$("energyNextCapacity").textContent=eNext?String(energyCaps[eLevel+1]):"MAX";
   if($("energyUpgradeCost"))$("energyUpgradeCost").textContent=eNext?energyCosts[eLevel]+" OXIDE":"MAX";
   if($("energyUpgradeConfirm"))$("energyUpgradeConfirm").disabled=!walletReady||!eNext||total<energyCosts[eLevel]||actionBusy;
-  const regenLabel=$("tapEnergyRegen");if(regenLabel)regenLabel.textContent=currentLanguage==="ru"?"+1 энергия каждые "+(regenMs()/1000).toFixed(1)+" сек.":currentLanguage==="en"?"+1 energy every "+(regenMs()/1000).toFixed(1)+" sec":"+1 طاقة كل "+(regenMs()/1000).toFixed(1)+" ثانية;
-  const notice=$("tapNotice");if(notice&&energy<1)notice.textContent=currentLanguage==="ru"?"Энергия закончилась. Дождитесь восстановления или увеличьте её запас.":currentLanguage==="en"?"Energy is depleted. Wait for it to recharge or upgrade its capacity.":"انتهت الطاقة. انتظر حتى تتجدد أو طوّر سعتها.";
-  else if(notice&&(notice.textContent.indexOf("انتهت الطاقة")===0||notice.textContent.indexOf("Энергия закончилась")===0||notice.textContent.indexOf("Energy is depleted")===0))notice.textContent="";
+  const regenLabel=$("tapEnergyRegen");if(regenLabel)regenLabel.textContent="+1 طاقة كل "+(regenMs()/1000).toFixed(1)+" ثانية";
+  const notice=$("tapNotice");if(notice&&energy<1)notice.textContent="انتهت الطاقة. انتظر حتى تتجدد أو طوّر سعتها.";
+  else if(notice&&notice.textContent.indexOf("انتهت الطاقة")===0)notice.textContent="";
  }
  async function walletRequest(payload){
   const response=await fetch("/api/wallet",{method:payload&&payload.action?"POST":"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:payload&&payload.action?JSON.stringify(payload):undefined});
@@ -3540,36 +3540,6 @@ function applyAccountPageLanguage(language){
  const menu=r.querySelector(".oxide-account-menu-item");if(menu){s("b",d[25],menu);s("small",d[26],menu)}const lang=r.querySelector(".oxide-account-language");if(lang){s("b",d[27],lang);s("small",d[28],lang)}const foot=r.querySelectorAll(".oxide-account-footer span");if(foot[0])foot[0].textContent=d[29]+" © 2026";if(foot[1])foot[1].textContent=d[30]+" SKIMI_17";
 }
 
-</script>
-
-<script>
-function applyTapHomeLanguage(language){
- const d={
- ar:{energy:"الطاقة المتبقية",tap:"قيمة الضغطة",energyTitle:"الطاقة",tapHint:"اضغط على العملة",home:"الرئيسية"},
- en:{energy:"Remaining Energy",tap:"Tap Value",energyTitle:"Energy",tapHint:"Tap the coin",home:"HOME"},
- ru:{energy:"Остаток энергии",tap:"Награда за нажатие",energyTitle:"Энергия",tapHint:"Нажмите на монету",home:"ГЛАВНАЯ"}
- }[language];if(!d)return;
- document.querySelectorAll(".tap-stat-caption").forEach((n,i)=>n.textContent=i===0?d.energy:d.tap);
- const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton)energyButton.textContent="⚡ "+d.energyTitle;
- const hint=document.querySelector(".tap-hint");if(hint)hint.textContent=d.tapHint;
- const home=document.getElementById("navHome");if(home)home.textContent=d.home;
-}
-function applyReferralPageLanguage(language){
- const d={
- ar:{eligible:"الإحالات المؤهلة",ineligible:"الإحالات غير المؤهلة",approved:"أكملوا مهمة وتمت الموافقة عليها",pending:"لم يستوفوا شروط الإحالة بعد",title:"دعوات مؤهلة",sub:"دعوات مؤهلة",loading:"جارٍ تحميل مهمات الدعوة...",failed:"تعذر تحميل مهمات الدعوة. حاول تحديث الصفحة."},
- en:{eligible:"Eligible Referrals",ineligible:"Ineligible Referrals",approved:"Completed a mission and received approval",pending:"Referral requirements have not been met yet",title:"Eligible Referrals",sub:"eligible referrals",loading:"Loading referral tasks...",failed:"Could not load referral tasks. Please refresh the page."},
- ru:{eligible:"Подходящие приглашения",ineligible:"Неподходящие приглашения",approved:"Выполнили задание, одобренное администрацией",pending:"Условия приглашения ещё не выполнены",title:"Приглашений с выполненным условием",sub:"подходящих приглашений",loading:"Загрузка заданий за приглашения...",failed:"Не удалось загрузить задания за приглашения. Обновите страницу."}
- }[language];if(!d)return;
- const root=document.getElementById("referralPage");if(!root)return;
- const labels=root.querySelectorAll(".oxide-eligibility-label"),notes=root.querySelectorAll(".oxide-eligibility-note");
- if(labels[0])labels[0].textContent=d.eligible;if(labels[1])labels[1].textContent=d.ineligible;
- if(notes[0])notes[0].textContent=d.approved;if(notes[1])notes[1].textContent=d.pending;
- const old=root.querySelector(".oxide-stat-unit");if(old)old.textContent=language==="ru"?"+30 за приглашение":language==="en"?"+30 per invite":"+30 لكل دعوة";
- const link=root.querySelector(".oxide-link-heading span:last-child");if(link)link.textContent=language==="ru"?"Реферальная ссылка":language==="en"?"Referral Link":"الرابط";
- const heading=root.querySelector(".oxide-how-card h3");if(heading)heading.textContent=language==="ru"?"Как работают приглашения":language==="en"?"How referrals work":"كيف تعمل الإحالة؟";
- const loading=root.querySelector("#referralMilestoneList .mission-item");if(loading&&/جارٍ تحميل|Loading|Загрузка/i.test(loading.textContent))loading.textContent=d.loading;
- if(typeof renderReferralMilestones==="function"&&oxideReferralMilestoneData)renderReferralMilestones();
-}
 </script>
 </body>
 </html>
