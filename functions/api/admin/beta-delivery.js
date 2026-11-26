@@ -24,7 +24,7 @@ export async function onRequestPost({request,env}){
    const form=await request.formData(),offer=validOffer(form.get("offer")),auth=await authorizeAdmin(String(form.get("initData")||""),env,"platform_files");
    if(!auth.ok)return adminAuthResponse(auth);if(!offer)return out({success:false,error:"INVALID_OFFER"},400);
    const message=String(form.get("message")||"").trim();if(message.length>4000)return out({success:false,error:"MESSAGE_TOO_LONG"},400);
-   const incoming=form.getAll("files").filter(f=>f&&typeof f.arrayBuffer==="function"&&f.size>0);if(incoming.length>MAX_FILES)return out({success:false,error:"TOO_MANY_FILES",message:"Maximum 3 files per platform offer"},400);
+   const incoming=form.getAll("files").filter(f=>f&&typeof f.arrayBuffer==="function"&&f.size>0);
    const uploaded=[];for(const f of incoming)uploaded.push(await storeFile(env,f));
    const previous=await config(env.DB,offer),files=uploaded.length?uploaded:previous.files,now=Math.floor(Date.now()/1000);
    await env.DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,updated_at=? WHERE offer=?").bind(message,JSON.stringify(files),now,offer).run();
