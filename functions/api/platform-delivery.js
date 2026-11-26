@@ -4,8 +4,19 @@ const OFFERS={beta:"beta_ads",android:"android_ads",ios:"ios_ads"};
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();}
 function mimeFromName(name){const ext=String(name||"").toLowerCase().split(".").pop();return ({png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",zip:"application/zip"})[ext]||"application/octet-stream";}
+async function channelMembership(userId,env){
+ if(!env.TELEGRAM_BOT_TOKEN)return{error:"TELEGRAM_BOT_TOKEN_MISSING"};
+ const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getChatMember",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:"@OxideHubOfficial",user_id:Number(userId)})});
+ const data=await response.json().catch(()=>null);
+ if(!response.ok||!data?.ok||!data.result)return{error:"CHANNEL_CHECK_UNAVAILABLE"};
+ const member=data.result,status=String(member.status||"");
+ return{joined:["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true)};
+}
 async function authorizedUser(request,env,offer){
  const user=await getVisitor(request,env);if(!user)return{error:out({success:false,error:"NO_TELEGRAM_SESSION"},401)};
+ const membership=await channelMembership(user,env);
+ if(membership.error)return{error:out({success:false,error:membership.error},503)};
+ if(!membership.joined)return{error:out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED"},403)};
  await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
  const pass=await env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(user).first();
  if(pass)return{user,goAccess:true};
