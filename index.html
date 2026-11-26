@@ -1118,6 +1118,23 @@ html,body,body *{-webkit-user-select:none!important;user-select:none!important;-
 input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default}
 #referralLink{-webkit-user-select:none!important;user-select:none!important}
 
+
+/* OXIDE HUB — premium dual-gradient mission states */
+.oxide-mission-status-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:15px 0 13px;direction:rtl}
+.oxide-status-tab{min-width:0;margin:0!important;padding:11px 5px!important;border-radius:12px!important;border:1px solid rgba(135,153,190,.24)!important;background:linear-gradient(135deg,rgba(27,37,61,.96),rgba(16,22,42,.98))!important;color:#aebed5!important;font-size:11px!important;font-weight:900!important;line-height:1.35;box-shadow:inset 0 1px rgba(255,255,255,.05)!important}
+.oxide-status-tab.active[data-status-filter="incomplete"]{color:#fff!important;border-color:#8b5cf6!important;background:linear-gradient(115deg,#7138d6,#3456b9)!important;box-shadow:0 0 17px rgba(117,66,220,.23),inset 0 1px rgba(255,255,255,.18)!important}
+.oxide-status-tab.active[data-status-filter="pending"]{color:#fff!important;border-color:#38a9f5!important;background:linear-gradient(115deg,#1766a9,#263d82)!important;box-shadow:0 0 17px rgba(48,151,232,.2)!important}
+.oxide-status-tab.active[data-status-filter="approved"]{color:#fff!important;border-color:#35c98a!important;background:linear-gradient(115deg,#16845b,#4052a5)!important;box-shadow:0 0 17px rgba(49,190,132,.2)!important}
+.mission-item{transition:border-color .2s,background .2s,box-shadow .2s}
+.mission-item:not(.approved):not(.pending){border:1px solid rgba(150,105,238,.55)!important;background:linear-gradient(145deg,rgba(42,27,75,.97),rgba(20,20,53,.98))!important;box-shadow:0 8px 24px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.06)!important}
+.mission-item.pending{border:1.5px solid #329de8!important;background:linear-gradient(145deg,rgba(15,48,76,.98),rgba(13,27,54,.99))!important;box-shadow:0 0 18px rgba(45,150,225,.12),inset 0 1px rgba(255,255,255,.06)!important}
+.mission-item.approved{border:1.5px solid #39c58a!important;background:linear-gradient(145deg,rgba(13,62,46,.98),rgba(19,35,57,.99))!important;box-shadow:0 0 20px rgba(53,199,137,.13),inset 0 1px rgba(255,255,255,.06)!important}
+.mission-link-button{display:flex!important;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:12px 0 8px!important;border:1px solid rgba(191,151,255,.55)!important;border-radius:13px!important;background:linear-gradient(110deg,#7838dc,#4933b7)!important;color:#fff!important;font-weight:900!important;box-shadow:0 7px 18px rgba(94,52,190,.22),inset 0 1px rgba(255,255,255,.16)!important;text-decoration:none!important}
+.mission-submit-button{display:flex!important;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:10px 0 0!important;border:1px solid rgba(121,163,255,.72)!important;border-radius:13px!important;background:linear-gradient(110deg,#245ca9,#5639a7)!important;color:#fff!important;font-weight:900!important;box-shadow:0 7px 18px rgba(52,86,180,.22),inset 0 1px rgba(255,255,255,.16)!important}
+.mission-item.pending .mission-message{padding:13px 12px;border-radius:12px;background:linear-gradient(110deg,rgba(23,72,112,.95),rgba(30,55,101,.95));color:#c4e4ff;text-align:center;font-weight:800}
+.mission-item.approved .mission-message{padding:13px 12px;border-radius:12px;background:linear-gradient(110deg,rgba(17,91,63,.95),rgba(28,71,72,.95));color:#a6f2c9;text-align:center;font-weight:800}
+.mission-item.approved .mission-reward-row{background:rgba(35,170,112,.1)!important;border-color:rgba(64,210,150,.24)!important}
+@media(max-width:360px){.oxide-status-tab{font-size:10px!important;padding:10px 3px!important}}
 </style>
 </head>
 <body>
@@ -1313,6 +1330,11 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     <button class="oxide-mission-category" type="button" data-task-filter="bots" onclick="filterOxideTasks('bots',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="9" width="22" height="18" rx="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16 4v5M12 17h.1M20 17h.1M12 22q4 3 8 0M11 4h10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span id="missionCatBots">البوتات</span></button>
     <button class="oxide-mission-category" type="button" data-task-filter="tiktok" onclick="filterOxideTasks('tiktok',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 4v16a5 5 0 1 1-4-4.9V10c3 3 5.8 4.3 9 4.5V10c-2.8-.2-4.5-2.1-5-6Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="missionCatTikTok">تيك توك</span></button>
     <button class="oxide-mission-category" type="button" data-task-filter="referrals" onclick="filterOxideTasks('referrals',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3.5 27v-2a8.5 8.5 0 0 1 17 0v2M22 7a4.5 4.5 0 0 1 0 9M24 20q5 1 5 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span id="missionCatReferrals">الدعوات</span></button>
+  </div>
+  <div class="oxide-mission-status-tabs" id="missionStatusTabs" role="tablist" aria-label="حالة المهمات">
+    <button type="button" class="oxide-status-tab active" data-status-filter="incomplete" onclick="filterMissionStatus('incomplete',this)">غير مكتملة</button>
+    <button type="button" class="oxide-status-tab" data-status-filter="approved" onclick="filterMissionStatus('approved',this)">مكتملة</button>
+    <button type="button" class="oxide-status-tab" data-status-filter="pending" onclick="filterMissionStatus('pending',this)">قيد المراجعة</button>
   </div>
   <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><div id="referralMilestoneList" class="mission-list oxide-new-task-list" style="display:none" aria-live="polite"></div><section class="mission-history" id="missionHistoryList" aria-live="polite"></section>
 </div>
@@ -2648,13 +2670,29 @@ function missionPlatformIcon(platform){
   return svg;
 }
 
+let currentMissionCategory="channels";
+let currentMissionStatus="incomplete";
+function applyMissionCardFilters(){
+  document.querySelectorAll("#missionList [data-mission-id]").forEach(card=>{
+    const categoryMatch=currentMissionCategory==="all"||card.dataset.taskFilter===currentMissionCategory;
+    const status=card.dataset.missionStatus||"not_submitted";
+    const statusMatch=currentMissionStatus==="incomplete"?(status!=="pending"&&status!=="approved"):(status===currentMissionStatus);
+    card.style.display=categoryMatch&&statusMatch?"":"none";
+  });
+}
+function filterMissionStatus(status,button){
+  currentMissionStatus=status;
+  document.querySelectorAll(".oxide-status-tab").forEach(tab=>tab.classList.toggle("active",tab===button));
+  applyMissionCardFilters();
+}
 function filterOxideTasks(category,button){
+  currentMissionCategory=category;
   document.querySelectorAll(".oxide-mission-category").forEach(chip=>chip.classList.toggle("active",chip===button));
   const missionList=document.getElementById("missionList");
   const referralList=document.getElementById("referralMilestoneList");
   if(missionList)missionList.style.display="grid";
   if(referralList)referralList.style.display=category==="referrals"?"grid":"none";
-  document.querySelectorAll("#missionList [data-mission-id]").forEach(card=>{card.style.display=card.dataset.taskFilter===category?"":"none";});
+  applyMissionCardFilters();
 }
 
 function renderMissionCards(){
@@ -2682,6 +2720,8 @@ function renderMissionCards(){
     const card = document.createElement("article");
     card.className = "mission-item";
     card.dataset.missionId = String(id);
+    card.dataset.missionStatus = status;
+    if(status==="pending")card.classList.add("pending");
     const platformKey=String(mission.platform||"").toLowerCase();
     card.dataset.taskFilter=platformKey.includes("tiktok")?"tiktok":(platformKey.includes("referral")?"referrals":(platformKey.includes("bot")?"bots":(platformKey.includes("telegram")||platformKey.includes("channel")?"channels":"bots")));
     if(status==="approved")card.classList.add("approved");
@@ -2765,6 +2805,9 @@ function renderMissionCards(){
 
     if(status === "pending"){
       message.textContent = ui.pendingMessage;
+      card.appendChild(message);
+      list.appendChild(card);
+      return;
     }else if(status === "rejected"){
       message.textContent = ui.rejectedMessage;
     }
@@ -2797,7 +2840,7 @@ function renderMissionCards(){
       link.href = targetUrl;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = ui.open;
+      link.textContent = missionLanguage==="ar" ? "تنفيذ المهمة ↗" : ui.open;
       link.addEventListener("click",()=>{
         try{sessionStorage.setItem("oxide_mission_started_"+id,"1")}catch(error){}
         const proofBox=card.querySelector(".mission-proof-box");
@@ -2869,7 +2912,7 @@ function renderMissionCards(){
     const button = document.createElement("button");
     button.className = "mission-submit-button";
     button.type = "submit";
-    button.textContent = status === "pending" ? mt("pending") : ui.submit;
+    button.textContent = missionLanguage==="ar" ? "تحقق من إكمال المهمة" : ui.submit;
     button.disabled = status === "pending" || missionSubmittingId === id;
 
     form.append(label, input, uploadHint, preview, button);
@@ -2880,6 +2923,8 @@ function renderMissionCards(){
   });
   const defaultCategory=document.querySelector('.oxide-mission-category[data-task-filter="channels"]');
   filterOxideTasks("channels",defaultCategory);
+  const defaultStatus=document.querySelector('.oxide-status-tab[data-status-filter="incomplete"]');
+  filterMissionStatus(currentMissionStatus,defaultStatus);
 }
 
 function renderMissionHistory(){
