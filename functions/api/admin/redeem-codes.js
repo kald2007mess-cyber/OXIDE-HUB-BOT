@@ -12,12 +12,13 @@ export async function onRequestPost({request,env}){
   const code=String(body.code||"").trim().toUpperCase();
   const giftCount=Number(body.giftCount);
   const coins=Number(body.coins);
+  const benefitType=String(body.benefitType||"coins")==="go_free"?"go_free":"coins";
   if(!/^[A-Z0-9_-]{4,32}$/.test(code))return json({success:false,error:"INVALID_CODE"},400);
   if(!Number.isSafeInteger(giftCount)||giftCount<1||giftCount>1000000)return json({success:false,error:"INVALID_GIFT_COUNT"},400);
-  if(!Number.isSafeInteger(coins)||coins<1||coins>100000000)return json({success:false,error:"INVALID_COINS"},400);
+  if(benefitType==="coins"&&(!Number.isSafeInteger(coins)||coins<1||coins>100000000))return json({success:false,error:"INVALID_COINS"},400);
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
    id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
-   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
+   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,benefit_type TEXT NOT NULL DEFAULT 'coins',used_count INTEGER NOT NULL DEFAULT 0,
    active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
   )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
@@ -26,12 +27,13 @@ export async function onRequestPost({request,env}){
    UNIQUE(code_id,user_uuid)
   )`).run();
   try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
+  try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN benefit_type TEXT NOT NULL DEFAULT 'coins'").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
   const expiryHours=Number(body.expiryHours);
   if(!Number.isSafeInteger(expiryHours)||expiryHours<1||expiryHours>8760)return json({success:false,error:"INVALID_EXPIRY_HOURS"},400);
   const now=Math.floor(Date.now()/1000),expiresAt=now+expiryHours*3600;
-  await env.DB.prepare("INSERT INTO oxide_redeem_codes(code,gift_count,coins,created_at,expires_at) VALUES(?,?,?,?,?)")
-   .bind(code,giftCount,coins,now,expiresAt).run();
-  return json({success:true,code,giftCount,coins,expiryHours,expiresAt});
+  await env.DB.prepare("INSERT INTO oxide_redeem_codes(code,gift_count,coins,benefit_type,created_at,expires_at) VALUES(?,?,?,?,?,?)")
+   .bind(code,giftCount,benefitType==="go_free"?0:coins,benefitType,now,expiresAt).run();
+  return json({success:true,code,giftCount,coins:benefitType==="go_free"?0:coins,benefitType,expiryHours,expiresAt});
  }catch(error){
   const message=String(error?.message||"");
   if(/UNIQUE constraint failed.*code/i.test(message))return json({success:false,error:"CODE_ALREADY_EXISTS"},409);
@@ -60,7 +62,7 @@ export async function onRequestGet({request,env}){
   try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN expires_at INTEGER").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
   const codeId=Number(url.searchParams.get("codeId")||0);
   if(codeId>0){
-   const code=await env.DB.prepare("SELECT id,code,gift_count AS giftCount,coins,used_count AS usedCount,active,created_at AS createdAt,expires_at AS expiresAt FROM oxide_redeem_codes WHERE id=?").bind(codeId).first();
+   const code=await env.DB.prepare("SELECT id,code,gift_count AS giftCount,coins,benefit_type AS benefitType,used_count AS usedCount,active,created_at AS createdAt,expires_at AS expiresAt FROM oxide_redeem_codes WHERE id=?").bind(codeId).first();
    if(!code)return json({success:false,error:"CODE_NOT_FOUND"},404);
    const users=await env.DB.prepare(`SELECT u.public_id AS id,u.user_uuid AS userUuid,u.points,
      p.first_name AS firstName,p.last_name AS lastName,p.username,p.photo_url AS photoUrl
