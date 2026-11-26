@@ -432,6 +432,34 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 .platform-media-block{margin-top:12px;border-color:rgba(185,140,255,.28)}
 @media(max-width:420px){.platform-tabs{gap:5px}.platform-tabs .platform-tab{font-size:11px;padding:12px 4px}.platform-upload-slots{grid-template-columns:1fr}}
 
+
+/* Screenshot-matched platform file manager */
+#betaDeliveryPage{direction:rtl}
+.platform-manager-redesign{max-width:900px;margin:16px auto 0;padding:24px 20px 20px;border-radius:28px;background:#111d1a;color:#f4f8f5;box-shadow:0 18px 55px #0005}
+.pm-heading{text-align:right;padding:2px 3px 18px}.pm-heading h2{font-size:27px;margin:4px 0 28px;color:#f4f7f5}.pm-heading p{margin:0;color:#84958e;font-size:14px}
+.pm-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 24px}.pm-tab{margin:0;border-radius:40px;background:transparent;color:#a2aaa6;padding:15px 8px;font-size:17px}.pm-tab.active{background:#30302f;color:#fff}
+.pm-workspace{border-radius:22px;background:#1a3029;padding:22px 20px 20px}
+.pm-workspace-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.pm-workspace-head h3{font-size:21px;margin:0;color:#f3f7f4}
+.pm-independent{border-radius:30px;padding:8px 13px;background:#164a36;color:#48c98e;font-size:12px;white-space:nowrap}
+.pm-file-slot{background:#243d34;border-radius:20px;padding:20px;margin:0 0 18px;min-width:0}
+.pm-file-slot-head{display:flex;align-items:center;gap:12px;font-size:19px}.pm-file-icon{color:#70ddb2;font-size:30px;line-height:1}
+.pm-current-file{color:#91a49b;text-align:right;font-size:13px;margin:20px 0 18px;min-height:18px;overflow-wrap:anywhere}
+.pm-upload-row{display:flex;gap:12px;align-items:stretch}
+.pm-delete{width:58px;flex:0 0 58px;margin:0;border-radius:15px;background:#563238;color:#f39aa5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:22px;padding:8px}
+.pm-delete small{font-size:12px;color:#d88d98}
+.pm-upload-button{flex:1;min-width:0;min-height:100px;border-radius:15px;background:#36564a;color:#f3f7f4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;font-size:15px}
+.pm-upload-button span{font-size:28px;line-height:1}.pm-upload-button strong{font-weight:500}
+.pm-hidden-file{display:none!important}
+.pm-divider{height:1px;background:#365046;margin:32px 0 36px}
+.pm-media-heading h3{font-size:21px;margin:0 0 28px}
+.pm-media-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}.pm-media-tabs button{margin:0;border-radius:40px;background:transparent;color:#a5b1aa;padding:14px}.pm-media-tabs button.active{background:#30302f;color:#fff}
+.pm-media-picker{min-height:210px;border:2px dashed #527165;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;cursor:pointer;color:#eff8f2;padding:20px}
+.pm-media-icon{font-size:48px;color:#72ddb2;line-height:1}.pm-media-picker strong{font-size:19px}.pm-media-picker small{color:#8fa49a;font-size:13px}.pm-selected-media{font-size:12px;color:#8fe5bb;overflow-wrap:anywhere}
+.pm-saved-card{background:#243d34;border-radius:20px;padding:22px 20px;margin-top:20px}.pm-saved-card h3{font-size:21px;margin:0 0 18px}.pm-saved-subtitle{font-size:14px;color:#c5d4cc;margin-bottom:12px}.pm-saved-note{font-size:13px;color:#92a69c;line-height:1.7;margin-top:14px}
+.pm-saved-file{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #3a5549}.pm-saved-file-info{min-width:0;overflow-wrap:anywhere;color:#e2eee7;font-size:13px}.pm-saved-file-info small{display:block;color:#93a89d;margin-top:5px}.pm-preview{border:0;border-radius:30px;background:#3c5148;color:#dce9e1;padding:8px 14px;margin:0;width:auto;font-size:12px;white-space:nowrap}
+.pm-save-area{margin-top:20px}.pm-save-button{background:#277c5a;border-radius:14px}.pm-status{color:#a5b8ad;text-align:center;font-size:12px;line-height:1.6;margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:600px){.platform-manager-redesign{padding:20px 12px 16px;margin:8px auto;border-radius:22px}.pm-heading h2{font-size:23px}.pm-workspace{padding:17px 12px}.pm-file-slot{padding:16px 12px}.pm-upload-button{min-height:92px}.pm-saved-card{padding:18px 13px}.pm-independent{font-size:10px;padding:7px 9px}.pm-workspace-head h3{font-size:18px}}
+
 </style>
 </head>
 <body>
@@ -496,42 +524,38 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 
 <div id="redemptionOffersPage" class="hidden"><div class="card"><button class="back" onclick="closeRedemptionOffersPage()">⬅ Назад в панель управления</button><h3>🎁 Управление предложениями обмена</h3><p class="note">Добавляйте предложения вывода, изменяйте их названия, стоимость и изображения или удаляйте их из интерфейса пользователей.</p><div class="task-form"><h3 id="redemptionOfferFormTitle">Добавить предложение</h3><input id="redemptionOfferId" type="hidden"><div class="field"><label>Название предложения</label><input id="redemptionOfferName" maxlength="80" placeholder="Например: 100 COINS"></div><div class="field"><label>Стоимость предложения в баллах</label><input id="redemptionOfferPoints" type="number" min="1" max="100000000" placeholder="1500"></div><div class="field"><label>Ссылка на изображение (необязательно)</label><input id="redemptionOfferImage" type="url" maxlength="1000" placeholder="https://..."></div><div class="field"><label>Порядок отображения</label><input id="redemptionOfferOrder" type="number" min="0" value="1"></div><button id="redemptionOfferSave" onclick="saveRedemptionOffer()">Сохранить предложение</button><button class="secondary" onclick="resetRedemptionOfferForm()">Отменить изменения</button></div><div class="platform-status" id="redemptionOffersStatus">Загрузка предложений...</div><div id="redemptionOffersList"></div></div></div>
 <div id="betaDeliveryPage" class="hidden">
- <div class="platform-console">
-  <button class="platform-back" onclick="closeBetaDeliveryPage()"><span>←</span> Назад в панель управления</button>
-  <section class="platform-hero">
-   <div class="platform-hero-orbit platform-orbit-one"></div><div class="platform-hero-orbit platform-orbit-two"></div>
-   <div class="platform-hero-top"><span class="platform-live-dot"></span><span>OXIDE HUB / DELIVERY CENTER</span><span class="platform-hero-code">CONTROL • 03</span></div>
-   <div class="platform-hero-main"><div><div class="platform-hero-kicker">PLATFORM MANAGEMENT</div><h2>Управление файлами платформ</h2><p>Единый центр управления контентом и файлами платформ</p></div><div class="platform-hero-icon">⬡</div></div>
-   <div class="platform-hero-footer"><span>SECURE CONTENT STORAGE</span><span>● SYSTEM READY</span></div>
-  </section>
-  <section class="platform-console-panel">
-   <div class="platform-console-heading"><div><span class="platform-step">01 / SELECT PLATFORM</span><h3>Выберите платформу</h3><p>Для каждой платформы предусмотрены отдельные материалы и файлы</p></div><span class="platform-heading-icon">▦</span></div>
-   <div class="platform-tabs" role="tablist" aria-label="Выберите платформу">
-    <button type="button" class="platform-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">🤖 Android</button>
-    <button type="button" class="platform-tab" data-platform-tab="ios" onclick="switchPlatformDelivery('ios')">🍎 iOS</button>
-    <button type="button" class="platform-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">🧪 Beta</button>
+ <div class="platform-manager-redesign" dir="rtl">
+  <div class="pm-heading"><h2>Управление файлами платформ</h2><p>Выберите платформу для управления её файлами и содержимым</p></div>
+  <div class="pm-tabs" role="tablist" aria-label="Выберите платформу">
+   <button type="button" class="pm-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">Beta</button>
+   <button type="button" class="pm-tab" data-platform-tab="ios" onclick="switchPlatformDelivery('ios')">iOS</button>
+   <button type="button" class="pm-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">Android</button>
+  </div>
+  <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option></select>
+  <section class="pm-workspace">
+   <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span></div>
+   <div class="pm-file-slot">
+    <div class="pm-file-slot-head"><span class="pm-file-icon">▢</span><strong>Файл 1</strong></div>
+    <div class="pm-current-file" id="pmCurrentFile1">Текущий файл: файл не добавлен</div>
+    <div class="pm-upload-row"><button type="button" class="pm-delete" onclick="removePlatformDeliveryFile(0)" aria-label="Удалить файл 1">♜<small>Удалить</small></button><label class="pm-upload-button" for="betaDeliveryFile1"><span>⇧</span><strong>Загрузить / заменить</strong></label></div>
+    <input id="betaDeliveryFile1" class="pm-hidden-file" type="file">
    </div>
-   <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1">
-    <option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option>
-   </select>
-   <div class="platform-current-banner"><span class="platform-current-icon">◈</span><div><small>ACTIVE WORKSPACE</small><strong id="platformDeliveryHeading">Материалы предложения BETA</strong></div><span class="platform-current-status">Отдельно</span></div>
-   <p class="platform-description" id="platformDeliveryDescription">Этот материал отправляется пользователю в чате бота после просмотра 10 из 10 рекламных объявлений на BETA и нажатия GO. Можно прикрепить до 3 файлов.</p>
-  </section>
-  <section class="platform-console-panel">
-   <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>Редактор контента</h3><p>Добавьте сообщение и файлы, которые получит пользователь</p></div><span class="platform-heading-icon">✎</span></div>
-   <div class="platform-input-block"><label for="betaDeliveryMessage">Текст сообщения при выдаче</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="Введите инструкции или сообщение для выдачи..."></textarea><small>Максимум 4000 символов</small></div>
-   <div class="platform-upload-slots">
-    <div class="platform-input-block platform-upload-slot"><label for="betaDeliveryFile1">📦 Файл 1</label><input id="betaDeliveryFile1" class="platform-file-picker" type="file"><small class="platform-slot-hint">Файл приложения 1 — APK</small></div>
-    <div class="platform-input-block platform-upload-slot"><label for="betaDeliveryFile2">📦 Файл 2</label><input id="betaDeliveryFile2" class="platform-file-picker" type="file"><small class="platform-slot-hint">Файл приложения 2 — APK</small></div>
+   <div class="pm-file-slot">
+    <div class="pm-file-slot-head"><span class="pm-file-icon">▢</span><strong>Файл 2</strong></div>
+    <div class="pm-current-file" id="pmCurrentFile2">Текущий файл: файл не добавлен</div>
+    <div class="pm-upload-row"><button type="button" class="pm-delete" onclick="removePlatformDeliveryFile(1)" aria-label="Удалить файл 2">♜<small>Удалить</small></button><label class="pm-upload-button" for="betaDeliveryFile2"><span>⇧</span><strong>Загрузить / заменить</strong></label></div>
+    <input id="betaDeliveryFile2" class="pm-hidden-file" type="file">
    </div>
-   <div class="platform-input-block platform-media-block"><label for="betaDeliveryMedia">🖼️ Изображение или видео</label><input id="betaDeliveryMedia" class="platform-file-picker" type="file" accept="image/*,video/*"><div class="platform-upload-hint"><span>＋</span><div><strong>Добавить изображение или видео</strong><small>Один медиафайл • до 2 ГБ</small></div></div></div>
-   <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> Выбор новых файлов заменит только текущие файлы этой платформы.</div>
-   <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> Сохранить материалы платформы</button>
-   <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
-   <div class="platform-result-status" id="betaDeliveryStatus">Загрузка настроек...</div>
+   <div class="pm-divider"></div>
+   <div class="pm-media-heading"><h3>Изображение или видео</h3></div>
+   <div class="pm-media-tabs"><button type="button" id="pmImageMode" class="active" onclick="setPlatformMediaType('image')">Изображение</button><button type="button" id="pmVideoMode" onclick="setPlatformMediaType('video')">Видео</button></div>
+   <label class="pm-media-picker" for="betaDeliveryMedia"><span class="pm-media-icon">▧＋</span><strong id="pmMediaTitle">Добавить изображение</strong><small>Выберите файл на своём устройстве</small><span id="pmMediaSelected" class="pm-selected-media"></span></label>
+   <input id="betaDeliveryMedia" class="pm-hidden-file" type="file" accept="image/*">
+   <div class="pm-saved-card"><h3>Сохранённые файлы</h3><div class="pm-saved-subtitle">Файлы выбранной платформы</div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">Здесь отображаются загруженные файлы, их названия и размеры, а также действия по просмотру и удалению.</div></div>
+   <textarea id="betaDeliveryMessage" class="hidden" maxlength="4000"></textarea>
+   <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
+   <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">Сохранить файлы</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
   </section>
-  <section class="platform-console-panel platform-saved-panel"><div class="platform-console-heading"><div><span class="platform-step">03 / STORED ASSETS</span><h3>Сохранённые файлы</h3><p>Управление файлами выбранной платформы</p></div><span class="platform-heading-icon">▤</span></div><div id="betaDeliveryCurrentFiles"></div></section>
-  <div class="platform-console-foot"><span>OXIDE HUB ADMIN</span><span>PLATFORM DELIVERY SYSTEM</span></div>
  </div>
 </div>
 <div id="broadcastPage" class="hidden"><div class="card"><button class="back" onclick="closeBroadcastPage()">⬅ Назад в панель управления</button><h3>📢 Новая рассылка</h3><p class="note">Напишите сообщение и при необходимости прикрепите изображение или видео. После публикации бот отправит рассылку всем зарегистрированным и активным пользователям.</p><div class="field"><label>Текст сообщения</label><textarea id="broadcastMessage" maxlength="4000" rows="6" placeholder="Введите сообщение для пользователей..."></textarea></div><div class="field"><label>Прикрепить изображение или видео (необязательно)</label><input id="broadcastMedia" type="file" accept="image/*,video/*"></div><div class="platform-status" id="broadcastMediaInfo">Можно отправить только текст или прикрепить изображение/видео. Максимальный размер файла — 50 МБ.</div><button id="broadcastPublishButton" onclick="publishBroadcast()">📢 Отправить всем пользователям</button><div class="platform-status" id="broadcastStatus">Отправка начнётся только после вашего подтверждения.</div><button class="secondary" id="broadcastRefreshButton" onclick="refreshBroadcastStatus()" style="margin-top:10px">Обновить статус рассылки</button></div></div>
@@ -1418,6 +1442,7 @@ async function renderPlatformTabs(){
  });
  const ios=currentDeliveryOffer==="ios";
  document.getElementById("betaDeliveryFile1").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
+ document.getElementById("betaDeliveryFile1").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
  document.getElementById("betaDeliveryFile2").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
  document.querySelectorAll(".platform-slot-hint").forEach((node,index)=>node.textContent="Файл приложения "+(index+1)+" — "+(ios?"IPA":"APK"));
 }
@@ -1427,8 +1452,8 @@ async function openPlatformDeliveryPage(offer){
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  renderPlatformTabs();
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryHeading").textContent="📦 Материалы предложения "+label;document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+label;
- document.getElementById("platformDeliveryDescription").textContent="Материалы этой платформы независимы. Пользователь получает их после завершения 10/10 и нажатия GO. Можно добавить два файла и изображение или видео.";
+ document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").textContent="Сохранить файлы";
+ document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
 }
 async function switchPlatformDelivery(offer){
@@ -1436,20 +1461,33 @@ async function switchPlatformDelivery(offer){
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
- document.getElementById("platformDeliveryHeading").textContent="📦 Материалы المنصة "+labels[currentDeliveryOffer];
- document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryDescription").textContent="Контент и файлы сохраняются отдельно для каждой платформы.";
+ document.getElementById("platformDeliveryHeading").textContent="Файлы — "+labels[currentDeliveryOffer];
+ document.getElementById("betaDeliverySaveButton").textContent="Сохранить файлы";
+ document.getElementById("platformDeliveryDescription").textContent="Файлы выбранной платформы сохраняются отдельно.";
  document.getElementById("betaDeliveryMessage").value="";
  ["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("pmMediaSelected").textContent="";setPlatformMediaType("image");
  renderPlatformTabs();
  await loadBetaDelivery();
 }
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function renderPlatformDeliveryFiles(files){
  const box=document.getElementById("betaDeliveryCurrentFiles");
+ const slots=[document.getElementById("pmCurrentFile1"),document.getElementById("pmCurrentFile2")];
+ slots.forEach((node,index)=>{if(node){const f=files[index];node.textContent=f?"Текущий файл: "+(f.name||"file"):"Текущий файл: файл не добавлен";}});
  if(!files.length){box.innerHTML='<p class="note">Сохранённых файлов пока нет.</p>';return;}
- box.innerHTML=files.map((file,index)=>'<div class="platform-status" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>📎 '+(index+1)+'. '+escapeHtml(file.name||"file")+' — '+(Number(file.size||0)/1024/1024).toFixed(2)+' MB</span><button class="danger" style="width:auto;margin:0;padding:8px 12px" onclick="removePlatformDeliveryFile('+index+')">🗑 Удалить</button></div>').join("");
+ box.innerHTML=files.map((file,index)=>'<div class="pm-saved-file"><div class="pm-saved-file-info">📎 '+escapeHtml(file.name||"file")+'<small>'+(Number(file.size||0)/1024/1024).toFixed(2)+' MB</small></div><div style="display:flex;gap:7px;align-items:center"><span class="pm-preview">Просмотр</span><button class="pm-delete" style="width:48px;flex-basis:48px;min-height:42px" onclick="removePlatformDeliveryFile('+index+')" aria-label="Удалить">♜</button></div></div>').join("");
 }
+function setPlatformMediaType(type){
+ const input=document.getElementById("betaDeliveryMedia"),image=type!=="video";
+ input.accept=image?"image/*":"video/*";
+ document.getElementById("pmImageMode").classList.toggle("active",image);
+ document.getElementById("pmVideoMode").classList.toggle("active",!image);
+ document.getElementById("pmMediaTitle").textContent=image?"Добавить изображение":"Добавить видео";
+ input.value="";document.getElementById("pmMediaSelected").textContent="";
+}
+document.addEventListener("change",event=>{if(event.target?.id==="betaDeliveryMedia"){document.getElementById("pmMediaSelected").textContent=event.target.files?.[0]?.name||"";}});
+
 async function removePlatformDeliveryFile(index){
  if(!Number.isInteger(index)||index<0)return;
  if(!confirm("Удалить этот файл из материалов "+currentDeliveryOffer.toUpperCase()+"?"))return;
@@ -1502,8 +1540,8 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
 async function saveBetaDelivery(){
  const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].map(id=>document.getElementById(id).files?.[0]).filter(Boolean),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
- if(!message&&!files.length){alert("Введите текст или выберите хотя бы один файл.");return;}
- if(files.length>3){alert("يمكن إضافة ملفين وصورة أو فيديو واحد فقط.");return;}
+ if(!files.length){alert("Выберите хотя бы один файл для загрузки.");return;}
+ if(files.length>3){alert("Можно добавить два файла и одно изображение или видео.");return;}
  const appFiles=[document.getElementById("betaDeliveryFile1").files?.[0],document.getElementById("betaDeliveryFile2").files?.[0]].filter(Boolean);
  const expectedExt=currentDeliveryOffer==="ios"?".ipa":".apk";
  if(appFiles.some(file=>!file.name.toLowerCase().endsWith(expectedExt))){alert("نوع ملف المنصة يجب أن يكون "+expectedExt);return;}
