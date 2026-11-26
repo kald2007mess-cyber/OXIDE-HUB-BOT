@@ -3544,15 +3544,17 @@ function applyAccountPageLanguage(language){
 
 <script>
 function applyTapHomeLanguage(language){
- const d={
- ar:{energy:"الطاقة المتبقية",tap:"قيمة الضغطة",energyTitle:"الطاقة",tapHint:"اضغط على العملة",home:"الرئيسية"},
- en:{energy:"Remaining Energy",tap:"Tap Value",energyTitle:"Energy",tapHint:"Tap the coin",home:"HOME"},
- ru:{energy:"Остаток энергии",tap:"Награда за нажатие",energyTitle:"Энергия",tapHint:"Нажмите на монету",home:"ГЛАВНАЯ"}
- }[language];if(!d)return;
- document.querySelectorAll(".tap-stat-caption").forEach((n,i)=>n.textContent=i===0?d.energy:d.tap);
- const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton)energyButton.textContent="⚡ "+d.energyTitle;
- const hint=document.querySelector(".tap-hint");if(hint)hint.textContent=d.tapHint;
- const home=document.getElementById("navHome");if(home)home.textContent=d.home;
+ const labels={
+ ar:{title:"اجمع عملات OXIDE",desc:"كل ضغطة تقرّبك من مكافأتك القادمة",balance:"رصيد الضغط",hint:"اضغط على العملة",storage:"سعة التخزين",reward:"مكافأة كل ضغطة",coin:"عملة",missions:"المهمات",energy:"الطاقة المتبقية",tap:"قيمة الضغطة",energyTitle:"الطاقة",home:"الرئيسية"},
+ en:{title:"Collect OXIDE Coins",desc:"Every tap brings you closer to your next reward",balance:"Tap balance",hint:"Tap the coin",storage:"Storage capacity",reward:"Reward per tap",coin:"Coin",missions:"MISSIONS",energy:"Remaining Energy",tap:"Tap Value",energyTitle:"Energy",home:"HOME"},
+ ru:{title:"Собирайте монеты OXIDE",desc:"Каждое нажатие приближает вас к следующей награде",balance:"Баланс нажатий",hint:"Нажмите на монету",storage:"Объём хранилища",reward:"Награда за одно нажатие",coin:"Монета",missions:"ЗАДАНИЯ",energy:"Остаток энергии",tap:"Награда за нажатие",energyTitle:"Энергия",home:"ГЛАВНАЯ"}
+ }[language];if(!labels)return;
+ const set=(q,v)=>{const e=document.querySelector(q);if(e)e.textContent=v};
+ set(".tap-home .tap-heading h1",labels.title);set(".tap-home .tap-heading p",labels.desc);set(".tap-home .tap-balance>span",labels.balance);set(".tap-home .tap-hint",labels.hint);set(".tap-home .tap-meter-top>span",labels.storage);set("#missionsTab .nav-label",labels.missions);
+ const reward=document.querySelector(".tap-home .tap-footer span:nth-child(2)");if(reward){const amount=reward.querySelector("b");reward.textContent=labels.reward+" ";if(amount)reward.appendChild(amount);reward.append(" "+labels.coin);}
+ document.querySelectorAll(".tap-stat-caption").forEach((n,i)=>n.textContent=i===0?labels.energy:labels.tap);
+ const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton)energyButton.textContent="⚡ "+labels.energyTitle;
+ const home=document.getElementById("navHome");if(home)home.textContent=labels.home;
 }
 function applyReferralPageLanguage(language){
  const d={
