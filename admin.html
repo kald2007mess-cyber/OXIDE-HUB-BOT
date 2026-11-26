@@ -1594,7 +1594,7 @@ async function loadRedemptionOffers(){const status=document.getElementById("rede
 async function saveRedemptionOffer(){const id=Number(document.getElementById("redemptionOfferId").value||0),name=document.getElementById("redemptionOfferName").value.trim(),points=Number(document.getElementById("redemptionOfferPoints").value),imageUrl=document.getElementById("redemptionOfferImage").value.trim(),sortOrder=Number(document.getElementById("redemptionOfferOrder").value||0),button=document.getElementById("redemptionOfferSave");if(!name||!Number.isSafeInteger(points)||points<1||!Number.isSafeInteger(sortOrder)||sortOrder<0){alert("Проверьте название предложения, количество баллов и порядок отображения.");return;}if(imageUrl&&!/^https:\/\//i.test(imageUrl)){alert("Ссылка на изображение должна начинаться с https://");return;}button.disabled=true;try{await redemptionOffersRequest({action:"save",id,name,points,imageUrl,sortOrder});resetRedemptionOfferForm();await loadRedemptionOffers();}catch(error){alert("Не удалось сохранить Предложение: "+error.message);}finally{button.disabled=false;}}
 async function deleteRedemptionOffer(id,name){if(!confirm("Удалить предложение «"+name+"»?"))return;try{const result=await redemptionOffersRequest({action:"delete",id});await loadRedemptionOffers();if(result.archived)alert("У этого предложения есть предыдущие заявки, поэтому оно скрыто от пользователей, а история заявок сохранена.");}catch(error){alert("Не удалось удалить Предложение: "+error.message);}}
 
-let currentDeliveryOffer="beta";
+let currentDeliveryOffer="beta",platformDraftSaved=false;
 async function betaDeliveryRequest(data){const response=await fetch("/api/admin/beta-delivery",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,offer:currentDeliveryOffer,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_ERROR");return result;}
 async function openBetaDeliveryPage(){return openPlatformDeliveryPage("beta");}
 async function renderPlatformTabs(){
@@ -1603,11 +1603,7 @@ async function renderPlatformTabs(){
   button.classList.toggle("active",active);
   button.setAttribute("aria-selected",active?"true":"false");
  });
- const ios=currentDeliveryOffer==="ios";
- document.getElementById("betaDeliveryFile1").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
- document.getElementById("betaDeliveryFile1").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
- document.getElementById("betaDeliveryFile2").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
- document.querySelectorAll(".platform-slot-hint").forEach((node,index)=>node.textContent="Файл приложения "+(index+1)+" — "+(ios?"IPA":"APK"));
+ const ios=currentDeliveryOffer==="ios";const fileInput=document.getElementById("betaDeliveryFiles");if(fileInput)fileInput.accept=ios?".ipa,.zip,application/octet-stream":".apk,.apks,.zip,application/octet-stream";
 }
 async function openPlatformDeliveryPage(offer){
  if(!hasAdminPermission("platform_files")){alert("У вас нет прав на управление файлами платформ.");return;}
@@ -1615,7 +1611,7 @@ async function openPlatformDeliveryPage(offer){
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  renderPlatformTabs();
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").textContent="Сохранить содержимое "+labels[currentDeliveryOffer].toUpperCase();
+ document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").textContent="حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
 }
@@ -1625,7 +1621,7 @@ async function switchPlatformDelivery(offer){
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  document.getElementById("platformDeliveryHeading").textContent="Файлы — "+labels[currentDeliveryOffer];
- document.getElementById("betaDeliverySaveButton").textContent="Сохранить содержимое "+labels[currentDeliveryOffer].toUpperCase();
+ document.getElementById("betaDeliverySaveButton").textContent="حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы выбранной платформы сохраняются отдельно.";
  document.getElementById("betaDeliveryMessage").value="";
  document.getElementById("betaDeliveryFiles").value="";updatePendingPlatformFiles();
@@ -1643,20 +1639,16 @@ function platformFileIcon(name){
 function renderPlatformDeliveryFiles(files){
  savedPlatformDeliveryFiles=Array.isArray(files)?files.slice():[];
  const box=document.getElementById("betaDeliveryCurrentFiles"),count=document.getElementById("pmSavedCount");
- count.textContent=savedPlatformDeliveryFiles.length+" ملف";
- box.replaceChildren();
- if(!savedPlatformDeliveryFiles.length){const empty=document.createElement("div");empty.className="pm-empty-files";empty.textContent="لا توجد файлов محفوظة لهذه المنصة بعد";box.append(empty);return;}
+ count.textContent=savedPlatformDeliveryFiles.length;box.replaceChildren();
+ if(!savedPlatformDeliveryFiles.length){const empty=document.createElement("div");empty.className="pm-empty-files";empty.textContent="لا توجد ملفات محفوظة بعد";box.append(empty);return;}
  savedPlatformDeliveryFiles.forEach((file,index)=>{
   const row=document.createElement("article");row.className="pm-saved-file";
-  const icon=document.createElement("div");icon.className="pm-file-type-icon";icon.innerHTML=platformFileIcon(file.name);
   const info=document.createElement("div");info.className="pm-saved-file-info";
-  const name=document.createElement("strong");name.textContent=file.name||"file";
-  const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=(bytes>=1073741824?(bytes/1073741824).toFixed(2)+" GB":bytes>=1048576?(bytes/1048576).toFixed(1)+" MB":(bytes/1024).toFixed(0)+" KB")+" · "+String(file.contentType||"ملف").slice(0,36);
-  info.append(name,size);
+  const name=document.createElement("strong");name.textContent=file.name||"file";info.append(name);
   const actions=document.createElement("div");actions.className="pm-file-actions";
-  const edit=document.createElement("button");edit.type="button";edit.className="pm-edit-file";edit.innerHTML=platformSvgIcon("M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z")+' Изменить имя';edit.onclick=()=>renamePlatformDeliveryFile(index);
-  const del=document.createElement("button");del.type="button";del.className="pm-remove-file";del.innerHTML=platformSvgIcon("M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13")+' Удалить';del.onclick=()=>removePlatformDeliveryFile(index);
-  actions.append(edit,del);row.append(icon,info,actions);box.append(row);
+  const edit=document.createElement("button");edit.type="button";edit.className="pm-edit-file";edit.setAttribute("aria-label","تعديل");edit.innerHTML=platformSvgIcon("M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z");edit.onclick=()=>renamePlatformDeliveryFile(index);
+  const del=document.createElement("button");del.type="button";del.className="pm-remove-file";del.setAttribute("aria-label","حذف");del.innerHTML=platformSvgIcon("M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13");del.onclick=()=>removePlatformDeliveryFile(index);
+  actions.append(edit,del);row.append(info,actions);box.append(row);
  });
 }
 async function renamePlatformDeliveryFile(index){
@@ -1692,26 +1684,10 @@ function updatePendingPlatformFiles(){
   row.append(info,remove);box.append(row);
  });
 }
-document.getElementById("betaDeliveryFiles").addEventListener("change",event=>{
- const file=event.target.files?.[0];event.target.value="";
- if(!file)return;
- if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("Максимальный размер каждого файла — 3 GB.");return;}
- pendingPlatformFiles.push(file);updatePendingPlatformFiles();
-});
+function addPendingPlatformFile(input){const file=input.files?.[0];input.value="";if(!file)return;if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("الحد الأقصى لحجم الملف 3 GB.");return;}pendingPlatformFiles.push(file);updatePendingPlatformFiles();}
+document.getElementById("betaDeliveryFiles").addEventListener("change",event=>addPendingPlatformFile(event.target));
+document.getElementById("betaDeliveryMedia").addEventListener("change",event=>{const file=event.target.files?.[0];if(file&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")){event.target.value="";alert("اختر صورة أو فيديو فقط.");return;}addPendingPlatformFile(event.target);});
 document.getElementById("betaDeliveryMessage").addEventListener("input",event=>{document.getElementById("pmMessageCount").textContent=event.target.value.length+" / 4000";});
-const platformDropZone=document.querySelector(".pm-multi-picker");
-["dragenter","dragover"].forEach(type=>platformDropZone.addEventListener(type,event=>{event.preventDefault();platformDropZone.classList.add("drag-active");}));
-["dragleave","drop"].forEach(type=>platformDropZone.addEventListener(type,event=>{event.preventDefault();platformDropZone.classList.remove("drag-active");}));
-platformDropZone.addEventListener("drop",event=>{
- event.preventDefault();
- Array.from(event.dataTransfer?.files||[]).forEach(file=>{
-  if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("Файл "+file.name+" пропущен: максимальный размер — 3 GB.");return;}
-  pendingPlatformFiles.push(file);
- });
- updatePendingPlatformFiles();
-});
-
-
 
 async function removePlatformDeliveryFile(index){
  if(!Number.isInteger(index)||index<0)return;
@@ -1725,7 +1701,7 @@ async function removePlatformDeliveryFile(index){
 }
 async function loadBetaDelivery(){
  const status=document.getElementById("betaDeliveryStatus");status.textContent="Загрузка настроек "+currentDeliveryOffer.toUpperCase()+"...";
- try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";document.getElementById("pmMessageCount").textContent=(result.message||"").length+" / 4000";renderPlatformDeliveryFiles(result.files||[]);status.textContent="Материалы загружены: "+currentDeliveryOffer.toUpperCase()+". Выбор новых файлов заменит только файлы этого предложения.";}
+ try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";document.getElementById("pmMessageCount").textContent=(result.message||"").length+" / 4000";document.getElementById("pmContentTitle").value="";renderPlatformDeliveryFiles(result.files||[]);platformDraftSaved=!result.published;document.getElementById("betaDeliverySaveButton").textContent=platformDraftSaved?"نشر":"حفظ التعديلات";status.textContent="تم تحميل المحتوى المحفوظ لهذه المنصة.";}
  catch(error){status.textContent="Не удалось загрузить материалы: "+error.message;}
 }
 async function platformUploadJson(payload){
@@ -1763,41 +1739,38 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
  throw lastError||new Error("PART_UPLOAD_FAILED");
 }
 async function saveBetaDelivery(){
- const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=pendingPlatformFiles.slice(),message=document.getElementById("betaDeliveryMessage").value.trim();
+ if(platformDraftSaved){await publishPlatformDelivery();return;}
+ const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=pendingPlatformFiles.slice(),title=document.getElementById("pmContentTitle").value.trim(),description=document.getElementById("betaDeliveryMessage").value.trim(),message=[title,description].filter(Boolean).join("\n\n");
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
- if(!message&&!files.length&&!savedPlatformDeliveryFiles.length){alert("Добавьте сообщение или хотя бы один файл.");return;}
- if(files.some(file=>!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE)){alert("Максимальный размер каждого файла — 3 GB.");return;}
- if(!confirm("Текст и файлы будут сохранены отдельно для платформы "+currentDeliveryOffer.toUpperCase()+". Продолжить?"))return;
- button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="Подготовка файлов...";
- status.textContent="Загрузка файлов и сохранение содержимого...";
+ if(!title){alert("اكتب اسم الملف أولاً.");return;}if(!files.length&&!savedPlatformDeliveryFiles.length){alert("أضف ملفاً أو صورة أو فيديو أولاً.");return;}
+ if(files.some(file=>!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE)){alert("الحد الأقصى لحجم كل ملف هو 3 GB.");return;}
+ button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ تجهيز الملفات...";status.textContent="جارٍ رفع الملفات وحفظ المحتوى...";
  const totalBytes=files.reduce((sum,file)=>sum+file.size,0);let completedBytes=0;const uploaded=[];
- const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="Загрузка файлов...";};
+ const paint=loaded=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="جارٍ رفع الملفات...";};
  try{
   for(const file of files){
-   const resumeKey=platformResumeKey(currentDeliveryOffer,file);
-   let saved=platformReadResume(resumeKey),state=null,init;
+   const resumeKey=platformResumeKey(currentDeliveryOffer,file);let saved=platformReadResume(resumeKey),state=null,init;
    if(saved?.uploadId){try{state=await platformUploadJson({action:"status",offer:currentDeliveryOffer,uploadId:saved.uploadId});}catch(_){platformRemoveResume(resumeKey);saved=null;}}
    if(state?.status==="completed"){uploaded.push(state.file);completedBytes+=file.size;paint(0);platformRemoveResume(resumeKey);continue;}
    if(!state){init=await platformUploadJson({action:"init",offer:currentDeliveryOffer,name:file.name,size:file.size,contentType:file.type||"application/octet-stream"});saved={uploadId:init.uploadId,key:init.key,name:file.name,size:file.size,lastModified:file.lastModified,partSize:init.partSize};platformWriteResume(resumeKey,saved);state={parts:[],partSize:init.partSize,totalParts:init.totalParts};}
    if(Number(saved.size)!==file.size||saved.name!==file.name||Number(saved.lastModified)!==file.lastModified)throw new Error("RESUME_FILE_MISMATCH");
    const partSize=Number(state.partSize||saved.partSize||PLATFORM_UPLOAD_PART_SIZE),knownParts=Array.isArray(state.parts)?state.parts:[],parts=[];
-   for(let partNumber=1,start=0;start<file.size;partNumber++,start+=partSize){
-    const end=Math.min(file.size,start+partSize),blob=file.slice(start,end);let part=knownParts.find(p=>Number(p.partNumber)===partNumber);
-    if(!part?.etag){const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(saved.uploadId)+"&partNumber="+partNumber;part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);}
-    parts.push(part);completedBytes+=end-start;paint(0);
-   }
+   for(let partNumber=1,start=0;start<file.size;partNumber++,start+=partSize){const end=Math.min(file.size,start+partSize),blob=file.slice(start,end);let part=knownParts.find(p=>Number(p.partNumber)===partNumber);if(!part?.etag){const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(saved.uploadId)+"&partNumber="+partNumber;part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);}parts.push(part);completedBytes+=end-start;paint(0);}
    const done=await platformUploadJson({action:"complete",offer:currentDeliveryOffer,uploadId:saved.uploadId,parts});uploaded.push(done.file);platformRemoveResume(resumeKey);
   }
-  label.textContent="Загрузка завершена, сохранение настроек платформы...";
-  const keepKeys=savedPlatformDeliveryFiles.map(file=>file.key).filter(Boolean);const allKeys=keepKeys.concat(uploaded.map(file=>file.key));
+  label.textContent="اكتمل الرفع، جارٍ حفظ المحتوى...";
+  const allFiles=savedPlatformDeliveryFiles.concat(uploaded),allKeys=allFiles.map(file=>file.key).filter(Boolean);
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:allKeys});
-  bar.style.width="100%";percent.textContent="100%";label.textContent="Сохранение успешно завершено";
-  pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);
-  status.textContent="Содержимое "+currentDeliveryOffer.toUpperCase()+" успешно сохранено. Количество файлов: "+(savedResult.files||[]).length;
- }catch(error){
-  label.textContent="Загрузка остановлена — выберите те же файлы, чтобы продолжить";
-  status.textContent="Не удалось сохранить содержимое: "+(error.message==="RESUME_FILE_MISMATCH"?"Выберите те же исходные файлы, чтобы продолжить загрузку.":error.message);alert(status.textContent);
- }finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="Сохранить содержимое "+labels[currentDeliveryOffer];}
+  bar.style.width="100%";percent.textContent="100%";label.textContent="تم الحفظ";pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);platformDraftSaved=true;button.textContent="نشر";status.textContent="تم الحفظ. اضغط «نشر» لإظهار المحتوى للمستخدمين.";
+ }catch(error){label.textContent="توقف الحفظ";status.textContent="تعذر الحفظ: "+(error.message==="RESUME_FILE_MISMATCH"?"اختر نفس الملف الأصلي لاستكمال الرفع.":error.message);alert(status.textContent);}
+ finally{button.disabled=false;}
+}
+async function publishPlatformDelivery(){
+ const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus");if(!confirm("هل تريد نشر هذا المحتوى للمستخدمين؟"))return;
+ button.disabled=true;status.textContent="جارٍ النشر...";
+ try{await platformUploadJson({action:"publish",offer:currentDeliveryOffer});platformDraftSaved=false;button.textContent="حفظ التعديلات";status.textContent="تم النشر بنجاح.";document.getElementById("betaDeliveryProgressWrap").classList.add("hidden");}
+ catch(error){status.textContent="تعذر النشر: "+error.message;alert(status.textContent);}
+ finally{button.disabled=false;}
 }
 
 function openBroadcastPage(){
