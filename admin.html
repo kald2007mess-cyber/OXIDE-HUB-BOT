@@ -401,6 +401,17 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 #broadcastPage .admin-broadcast-preview p{white-space:pre-wrap;overflow-wrap:anywhere;color:#e4edfa;font-size:13px;margin:0}
 @media(max-width:600px){.admin-workspace-tools{padding:11px;border-radius:13px}.admin-workspace-controls{gap:6px}.admin-workspace-refresh{min-width:42px!important;padding:0 9px!important}.admin-workspace-refresh span{display:none}.admin-workspace-hint{font-size:9px}#activityPage .users-summary,#usersPage .users-summary,#tasksPage .tasks-summary{gap:6px}#activityPage .users-stat,#usersPage .users-stat,#tasksPage .task-stat{padding:9px 5px}}
 
+
+.admin-char-counter{display:block;text-align:left;margin:4px 3px 9px;color:#7891b2;font-size:10px;font-variant-numeric:tabular-nums}
+.admin-char-counter.near-limit{color:#ffc56c}
+.admin-task-preview{margin-top:13px;padding:14px;border:1px solid rgba(126,178,255,.24);border-radius:14px;background:linear-gradient(145deg,rgba(19,36,68,.85),rgba(8,16,34,.92))}
+.admin-task-preview-top{display:flex;justify-content:space-between;align-items:center;color:#8da7c9;font-size:11px;margin-bottom:10px}
+.admin-task-preview strong{display:block;color:#f2f7ff;font-size:15px}
+.admin-task-preview p{margin:7px 0;color:#b9cbe3;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.admin-task-preview small{color:#81dfff;font-size:10px;overflow-wrap:anywhere}
+.admin-preview-live{color:#77e6c3;font-weight:900;letter-spacing:1px}
+.admin-broadcast-preview small{display:block;margin-top:8px;color:#88cfff;font-size:10px;overflow-wrap:anywhere}
+
 </style>
 </head>
 <body>
@@ -1542,13 +1553,37 @@ function installAdminWorkspaceTools(){
    const count=document.getElementById("workspaceCount-"+pageId);if(count)count.textContent=visible+" / "+children.length;
   };
   input.addEventListener("input",apply);clear.addEventListener("click",()=>{input.value="";apply();input.focus();});
-  refresh.addEventListener("click",()=>{refresh.disabled=true;try{const fn=new Function(refresh.to.dataset.action);fn();}finally{setTimeout(()=>refresh.disabled=false,900);}});
-  refresh.dataset.action=refresh;
-  // The action is authored from a fixed local allowlist, never from user input.
   refresh.onclick=()=>{if(refresh.disabled)return;refresh.disabled=true;try{({"redemptionOffersPage":()=>{loadRedemptionOffers()},"betaDeliveryPage":()=>{loadBetaDelivery()},"broadcastPage":()=>{refreshBroadcastStatus()},"activityPage":()=>{loadActivity()},"usersPage":()=>{loadUsers()},"tasksPage":()=>{loadTasks()},"reviewsPage":()=>{loadReviews()},"supportAdminPage":()=>{loadSupportAdminConversations()},"securityPage":()=>{loadDeputies(true)},"rewardsAdminPage":()=>{loadRedeemCodes()}})[pageId]();}finally{setTimeout(()=>refresh.disabled=false,1000);}};
   target.parentNode.insertBefore(bar,target);
   const observer=new MutationObserver(apply);observer.observe(target,{childList:true,subtree:true,characterData:true});adminWorkspaceObservers.set(pageId,observer);
   apply();
+ }
+}
+
+
+function installAdminFieldAssistants(){
+ document.querySelectorAll("#panel textarea[maxlength],#panel input[maxlength]").forEach(field=>{
+  if(field.dataset.counterReady==="1")return;field.dataset.counterReady="1";
+  const counter=document.createElement("small");counter.className="admin-char-counter";counter.setAttribute("aria-live","polite");
+  const update=()=>{const max=Number(field.maxLength)||0;counter.textContent=field.value.length+" / "+max;counter.classList.toggle("near-limit",max>0&&field.value.length/max>=.85);};
+  field.insertAdjacentElement("afterend",counter);field.addEventListener("input",update);update();
+ });
+ const message=document.getElementById("broadcastMessage"),media=document.getElementById("broadcastMedia");
+ if(message&&!document.getElementById("adminBroadcastPreview")){
+  const preview=document.createElement("section");preview.id="adminBroadcastPreview";preview.className="admin-broadcast-preview";
+  preview.innerHTML='<strong>معاينة مباشرة للمنشور</strong><p id="adminBroadcastPreviewText">سيظهر نص منشورك هنا قبل الإرسال.</p><small id="adminBroadcastPreviewMedia">لا يوجد مرفق</small>';
+  const status=document.getElementById("broadcastMediaInfo");status?.insertAdjacentElement("afterend",preview);
+  const render=()=>{const text=document.getElementById("adminBroadcastPreviewText");if(text)text.textContent=message.value.trim()||"سيظهر نص منشورك هنا قبل الإرسال.";};
+  message.addEventListener("input",render);render();
+  media?.addEventListener("change",()=>{const out=document.getElementById("adminBroadcastPreviewMedia"),file=media.files?.[0];if(out)out.textContent=file?file.name+" • "+(file.size/1048576).toFixed(2)+" MB":"لا يوجد مرفق";});
+ }
+ const taskTitle=document.getElementById("taskTitle"),taskDescription=document.getElementById("taskDescription"),taskUrl=document.getElementById("taskUrl");
+ if(taskTitle&&!document.getElementById("adminTaskPreview")){
+  const preview=document.createElement("section");preview.id="adminTaskPreview";preview.className="admin-task-preview";
+  preview.innerHTML='<div class="admin-task-preview-top"><span>معاينة المهمة</span><span class="admin-preview-live">LIVE</span></div><strong id="adminTaskPreviewTitle">عنوان المهمة سيظهر هنا</strong><p id="adminTaskPreviewDescription">أضف وصفًا لتظهر معاينته هنا.</p><small id="adminTaskPreviewLink">لم تتم إضافة رابط بعد</small>';
+  const form=document.getElementById("taskFormHeading")?.parentElement;form?.append(preview);
+  const render=()=>{document.getElementById("adminTaskPreviewTitle").textContent=taskTitle.value.trim()||"عنوان المهمة سيظهر هنا";document.getElementById("adminTaskPreviewDescription").textContent=taskDescription.value.trim()||"أضف وصفًا لتظهر معاينته هنا.";document.getElementById("adminTaskPreviewLink").textContent=taskUrl.value.trim()||"لم تتم إضافة رابط بعد";};
+  [taskTitle,taskDescription,taskUrl].forEach(el=>el?.addEventListener("input",render));render();
  }
 }
 
@@ -1590,6 +1625,7 @@ function start(){
   applyAdminPermissions();
   filterAdminMenu();
   installAdminWorkspaceTools();
+  installAdminFieldAssistants();
   document.getElementById("loading").classList.add("hidden");
   document.getElementById("panel").classList.remove("hidden");
   loadAdminDashboard();
