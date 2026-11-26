@@ -4,7 +4,7 @@ function getBotLanguage(languageCode) {
   const code = String(languageCode || "").toLowerCase();
   if (code.startsWith("ru")) return "ru";
   if (code.startsWith("en")) return "en";
-  return "ar";
+  return "ru";
 }
 
 const botTexts = {
@@ -71,7 +71,7 @@ export async function onRequestPost({ request, env }) {
     // so an old /admin menu button cannot replace it later.
     const oxideMenuButton = {
       type: "web_app",
-      text: "Open OXIDE 🚀",
+      text: "Открыть OXIDE 🚀",
       web_app: { url: env.TELEGRAM_WEBAPP_URL }
     };
     await telegramCall(env.TELEGRAM_BOT_TOKEN, "setChatMenuButton", {
@@ -131,7 +131,7 @@ export async function onRequestPost({ request, env }) {
     // Owner-only channel publishing wizard: /post, then send a photo/video with caption.
     if (isOwnerPrivateChat && (/^\/post(?:@\\w+)?$/.test(messageText) || messageText === "ارسل منشور" || messageText === "أرسل منشور")) {
       if (!env.DB) {
-        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", { chat_id: message.chat.id, text: "تعذر بدء النشر: قاعدة البيانات غير متاحة حالياً." });
+        await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", { chat_id: message.chat.id, text: "Не удалось начать публикацию: база данных сейчас недоступна." });
         return json({ ok: true });
       }
       await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_channel_post_drafts (
@@ -142,7 +142,7 @@ export async function onRequestPost({ request, env }) {
         .bind(String(message.from.id), Math.floor(Date.now() / 1000)).run();
       await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
         chat_id: message.chat.id,
-        text: "📢 أرسل الآن صورة أو فيديو مع النص المرافق له (Caption)، وسيُنشر تلقائياً في قناة @OxideHubOfficial.\n\nأرسل /cancel لإلغاء العملية."
+        text: "📢 Отправьте изображение или видео с подписью (Caption). Публикация будет автоматически размещена в канале @OxideHubOfficial.\n\nОтправьте /cancel, чтобы отменить действие."
       });
       return json({ ok: true });
     }
@@ -152,7 +152,7 @@ export async function onRequestPost({ request, env }) {
         .bind(String(message.from.id)).run().catch(() => {});
       await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
         chat_id: message.chat.id,
-        text: "تم إلغاء تجهيز المنشور."
+        text: "Подготовка публикации отменена."
       });
       return json({ ok: true });
     }
@@ -171,7 +171,7 @@ export async function onRequestPost({ request, env }) {
             .bind(String(message.from.id)).run();
           await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
             chat_id: message.chat.id,
-            text: "انتهت مهلة تجهيز المنشور. أرسل /post للبدء من جديد."
+            text: "Время подготовки публикации истекло. Отправьте /post, чтобы начать заново."
           });
           return json({ ok: true });
         }
@@ -187,7 +187,7 @@ export async function onRequestPost({ request, env }) {
             caption: caption || undefined,
             reply_markup: {
               inline_keyboard: [[{
-                text: "🚀 افتح بوت OXIDE HUB",
+                text: "🚀 Открыть бот OXIDE HUB",
                 url: "https://t.me/OxideHub_bot"
               }]]
             }
@@ -196,13 +196,13 @@ export async function onRequestPost({ request, env }) {
             .bind(String(message.from.id)).run();
           await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
             chat_id: message.chat.id,
-            text: "✅ تم نشر المنشور بنجاح في قناة @OxideHubOfficial."
+            text: "✅ Публикация успешно размещена в канале @OxideHubOfficial."
           });
           return json({ ok: true, channelPostPublished: true });
         }
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "أرسل صورة أو فيديو مع كتابة النص في خانة الوصف (Caption). أو أرسل /cancel للإلغاء."
+          text: "Отправьте изображение или видео с подписью (Caption). Или отправьте /cancel для отмены."
         });
         return json({ ok: true });
       }
@@ -251,20 +251,20 @@ export async function onRequestPost({ request, env }) {
           String(message.chat.type) === "private" &&
           String(message.chat.id) === String(env.TELEGRAM_ADMIN_ID)) {
         const postText = [
-          "🌌 كيف تعمل منصة OXIDE HUB؟",
+          "🌌 Как работает платформа OXIDE HUB?",
           "",
-          "منصة OXIDE HUB تمنح المستخدمين فرصة جمع النقاط من خلال أنشطة ومهام متنوعة.",
+          "Платформа OXIDE HUB позволяет пользователям зарабатывать баллы, выполняя задания и участвуя в различных активностях.",
           "",
-          "⭐ داخل المنصة ستجد:",
+          "⭐ На платформе вас ждут:",
           "",
-          "- المهام والأنشطة.",
-          "- نظام الإحالات.",
-          "- محفظة النقاط.",
-          "- مكافآت اختيارية مقابل مشاهدة الإعلانات.",
+          "- Задания и активности.",
+          "- Реферальная программа.",
+          "- Кошелёк баллов.",
+          "- Дополнительные награды за просмотр рекламы.",
           "",
-          "💜 هدفنا تقديم تجربة واضحة وشفافة، مع توضيح شروط المكافآت والسحب للمستخدمين.",
+          "💜 Наша цель — сделать платформу понятной и прозрачной, с чёткими условиями получения наград и вывода средств.",
           "",
-          "📢 تابعوا قناتنا لمعرفة آخر التحديثات.",
+          "📢 Подписывайтесь на наш канал, чтобы не пропустить обновления.",
           "",
           "🔗https://t.me/OxideHubOfficial",
           "",
@@ -275,7 +275,7 @@ export async function onRequestPost({ request, env }) {
           text: postText,
           reply_markup: {
             inline_keyboard: [[{
-              text: "🚀 Open OXIDE HUB",
+              text: "🚀 Открыть OXIDE HUB",
               url: "https://t.me/OxideHub_bot"
             }]]
           },
@@ -283,7 +283,7 @@ export async function onRequestPost({ request, env }) {
         });
         await telegramCall(env.TELEGRAM_BOT_TOKEN, "sendMessage", {
           chat_id: message.chat.id,
-          text: "✅ تم إرسال المنشور إلى قناة @OxideHubOfficial مع زر فتح البوت."
+          text: "✅ Публикация отправлена в канал @OxideHubOfficial вместе с кнопкой открытия бота."
         });
       }
       return json({ ok: true });
