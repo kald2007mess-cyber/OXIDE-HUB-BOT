@@ -51,9 +51,10 @@ export async function onRequestGet({request,env}){
   if(!auth.owner)return json({success:false,error:"OWNER_ONLY"},403);
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_codes(
    id INTEGER PRIMARY KEY AUTOINCREMENT,code TEXT NOT NULL UNIQUE,
-   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,used_count INTEGER NOT NULL DEFAULT 0,
+   gift_count INTEGER NOT NULL,coins INTEGER NOT NULL,benefit_type TEXT NOT NULL DEFAULT 'coins',used_count INTEGER NOT NULL DEFAULT 0,
    active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,expires_at INTEGER
   )`).run();
+  try{await env.DB.prepare("ALTER TABLE oxide_redeem_codes ADD COLUMN benefit_type TEXT NOT NULL DEFAULT 'coins'").run();}catch(error){if(!/duplicate column/i.test(String(error?.message||"")))throw error;}
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS oxide_redeem_claims(
    id INTEGER PRIMARY KEY AUTOINCREMENT,code_id INTEGER NOT NULL,user_uuid TEXT NOT NULL,
    claim_token TEXT NOT NULL UNIQUE,claimed_at INTEGER NOT NULL,
@@ -72,7 +73,7 @@ export async function onRequestGet({request,env}){
      WHERE c.code_id=? ORDER BY c.claimed_at DESC`).bind(codeId).all();
    return json({success:true,code,users:users.results||[]});
   }
-  const rows=await env.DB.prepare(`SELECT id,code,gift_count AS giftCount,coins,
+  const rows=await env.DB.prepare(`SELECT id,code,gift_count AS giftCount,coins,benefit_type AS benefitType,
     used_count AS usedCount,active,created_at AS createdAt,expires_at AS expiresAt
     FROM oxide_redeem_codes ORDER BY created_at DESC,id DESC LIMIT 200`).all();
   return json({success:true,codes:rows.results||[],now:Math.floor(Date.now()/1000)});
