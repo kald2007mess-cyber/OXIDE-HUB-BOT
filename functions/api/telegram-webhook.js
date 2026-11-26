@@ -1,8 +1,10 @@
 import { ensureSupportTables } from "./_lib/support.js";
 
-function getBotLanguage() {
-  // Russian is the bot's fixed first-run language for every Telegram user.
-  return "ru";
+function getBotLanguage(languageCode) {
+  const code = String(languageCode || "").toLowerCase();
+  if (code.startsWith("ru")) return "ru";
+  if (code.startsWith("ar")) return "ar";
+  return "en";
 }
 
 const botTexts = {
