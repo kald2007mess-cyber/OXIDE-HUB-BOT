@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ru" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -426,8 +426,8 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 <div class="oxide-admin-stars" aria-hidden="true"></div>
 <div class="oxide-admin-rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <div class="container">
-<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Language</label><select id="adminLanguage" aria-label="Admin panel language"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
-<div class="card" id="loading"><div class="status" id="status">جارٍ التحقق من صلاحية المدير...</div></div>
+<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ar">Арабский</option><option value="en">Английский</option><option value="ru" selected>Русский</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
+<div class="card" id="loading"><div class="status" id="status">Проверка прав администратора...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
 <section class="admin-welcome">
@@ -1729,7 +1729,7 @@ start();
   if(label)label.textContent=SWITCH_LABELS[lang].label;
   for(const option of select.options)option.textContent=SWITCH_LABELS[lang][option.value];
  }
- let current="ar",busy=false,observer=null;
+ let current="ru",busy=false,observer=null;
  const originalText=new WeakMap(),translatedText=new WeakMap(),originalAttrs=new WeakMap(),translatedAttrs=new WeakMap();
  const cacheKey=(lang,value)=>"oxide-admin-i18n:"+lang+":"+value;
  const hasLetters=value=>/[\p{L}]/u.test(value||"");
@@ -1848,8 +1848,9 @@ start();
   }finally{busy=false;select.disabled=false;}
  }
  select.addEventListener("change",()=>setLanguage(select.value));
- let saved="ar";try{saved=localStorage.getItem("oxide-admin-language")||"ar";}catch(_){}
- if(!LANGS[saved])saved="ar";
+ const defaultVersionKey="oxide-admin-language-default-ru-v1";
+ let saved="ru";try{const migrated=localStorage.getItem(defaultVersionKey)==="1";saved=migrated?(localStorage.getItem("oxide-admin-language")||"ru"):"ru";localStorage.setItem(defaultVersionKey,"1");if(!migrated)localStorage.setItem("oxide-admin-language","ru");}catch(_){}
+ if(!LANGS[saved])saved="ru";
  select.value=saved;updateLanguageSwitcher(saved);
  if(saved!=="ar")setLanguage(saved);
 })();
