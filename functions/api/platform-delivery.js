@@ -6,6 +6,9 @@ async function ensure(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS platform_
 function mimeFromName(name){const ext=String(name||"").toLowerCase().split(".").pop();return ({png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",zip:"application/zip"})[ext]||"application/octet-stream";}
 async function authorizedUser(request,env,offer){
  const user=await getVisitor(request,env);if(!user)return{error:out({success:false,error:"NO_TELEGRAM_SESSION"},401)};
+ await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
+ const pass=await env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(user).first();
+ if(pass)return{user,goAccess:true};
  const progress=await env.DB.prepare("SELECT "+OFFERS[offer]+" AS completed,cycle_started_at FROM platform_ad_progress WHERE user_id=?").bind(user).first();
  const now=Math.floor(Date.now()/1000);
  if(!progress||now-Number(progress.cycle_started_at||now)>=18000||Number(progress.completed||0)<10)return{error:out({success:false,error:"OFFER_NOT_COMPLETE"},403)};
