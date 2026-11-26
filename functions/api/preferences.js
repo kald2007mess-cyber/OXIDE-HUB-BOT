@@ -3,7 +3,7 @@ import { getVisitor, json } from "./_lib/session.js";
 async function ensureLanguageColumn(DB) {
   const columns = await DB.prepare("PRAGMA table_info(visitors)").all();
   if (!(columns.results || []).some(column => column.name === "language")) {
-    await DB.prepare("ALTER TABLE visitors ADD COLUMN language TEXT NOT NULL DEFAULT 'ar'").run();
+    await DB.prepare("ALTER TABLE visitors ADD COLUMN language TEXT NOT NULL DEFAULT 'ru'").run();
   }
 }
 
@@ -32,7 +32,7 @@ export async function onRequestGet({ request, env }) {
 
     const language = LANGUAGES.includes(visitor.language)
       ? visitor.language
-      : "ar";
+      : "ru";
 
     return json({ success: true, language });
 
