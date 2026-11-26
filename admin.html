@@ -467,7 +467,7 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 <div class="oxide-admin-stars" aria-hidden="true"></div>
 <div class="oxide-admin-rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <div class="container">
-<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ar">Арабский</option><option value="en">Английский</option><option value="ru" selected>Русский</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
+<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ru" selected>Русский</option><option value="ar">العربية</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
 <div class="card" id="loading"><div class="status" id="status">Проверка прав администратора...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
@@ -1856,10 +1856,13 @@ start();
  select.value=saved;
  select.addEventListener("change",()=>applyLanguage(select.value));
  applyLanguage(saved);
- const observer=new MutationObserver(()=>{
-  // Re-apply the selected offline dictionary to newly rendered sections and fields.
-  // applyLanguage restores original Russian strings from the WeakMap before switching.
-  if(select.value==="ar")applyLanguage("ar");
+ const observer=new MutationObserver(records=>{
+  // Ignore changes inside the selector: rewriting its options must not retrigger translation.
+  const pageChanged=records.some(record=>{
+   const target=record.target.nodeType===1?record.target:record.target.parentElement;
+   return !target||!target.closest(".admin-language-switch");
+  });
+  if(pageChanged&&select.value==="ar")applyLanguage("ar");
  });
  observer.observe(document.body,{childList:true,subtree:true});
 })();
