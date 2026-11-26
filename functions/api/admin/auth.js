@@ -38,7 +38,8 @@ export async function onRequestPost({ request, env }) {
       }
     });
 
-  } catch {
+  } catch (error) {
+    console.error("[OXIDE_ADMIN_AUTH] Authentication endpoint failed:", error?.stack || error);
     return new Response(JSON.stringify({
       success: false,
       error: "AUTH_FAILED"
