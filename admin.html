@@ -523,6 +523,8 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 
 /* Single-file-at-a-time platform upload, unlimited list, SVG controls. */
 #betaDeliveryPage .pm-upload-panel-head h3{display:flex;align-items:center;gap:8px}#betaDeliveryPage .pm-upload-panel-head h3 svg,#betaDeliveryPage .pm-upload-cloud svg,#betaDeliveryPage .pm-add-file-button svg,#betaDeliveryPage .pm-pending-file button svg,#betaDeliveryPage .pm-saved-file button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}#betaDeliveryPage .pm-upload-cloud svg{width:34px;height:34px}#betaDeliveryPage .pm-add-file-button{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0;background:linear-gradient(110deg,#5633a0,#7549c5);border:1px solid #b98aff;color:#fff}#betaDeliveryPage .pm-pending-file{display:flex;align-items:center;justify-content:space-between;gap:12px}#betaDeliveryPage .pm-pending-file-info{display:flex;flex-direction:column;gap:4px;min-width:0}#betaDeliveryPage .pm-pending-file-info strong{overflow-wrap:anywhere}#betaDeliveryPage .pm-pending-file-info small{color:#a99ac3}#betaDeliveryPage .pm-delete-inline{width:42px;min-width:42px;display:grid;place-items:center;padding:8px;margin:0}#betaDeliveryPage .pm-limit-badge{white-space:nowrap}
+
+#betaDeliveryPage .pm-editor-heading h3 svg,#betaDeliveryPage .pm-saved-card-head h3 svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-inline-end:6px}
 </style>
 </head>
 <body>
@@ -598,19 +600,19 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   <section class="pm-workspace">
    <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span></div>
    <div class="pm-content-editor">
-    <div class="pm-editor-heading"><div><h3>📝 Содержание предложения</h3><p>Сообщение, которое пользователь получит вместе с файлами после выполнения 10/10 и нажатия GO</p></div><span class="pm-limit-badge">До 4000 символов</span></div>
+    <div class="pm-editor-heading"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h10M4 20h7" /></svg> Содержание предложения</h3><p>Сообщение, которое пользователь получит вместе с файлами после выполнения 10/10 и нажатия GO</p></div><span class="pm-limit-badge">До 4000 символов</span></div>
     <textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="Введите текст сообщения..."></textarea>
     <div class="pm-editor-footer"><span>Текст сохраняется отдельно для каждой платформы</span><strong id="pmMessageCount">0 / 4000</strong></div>
    </div>
    <div class="pm-upload-panel">
-    <div class="pm-upload-panel-head"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3" /></svg> Файлы платформы</h3><p>اختر ملفاً واحداً في كل مرة، وأضف ملفات أخرى عند الحاجة</p></div><span class="pm-limit-badge">حتى 3 GB لكل ملف</span></div>
-    <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4" /></svg></span><strong>اضغط لاختيار ملف واحد</strong><small>APK / IPA / ZIP / PDF / صور / فيديو • الحد الأقصى 3 GB للملف</small></label>
+    <div class="pm-upload-panel-head"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3" /></svg> Файлы платформы</h3><p>Выбирайте один файл за раз и добавляйте следующие по необходимости</p></div><span class="pm-limit-badge">حتى 3 GB لكل ملف</span></div>
+    <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4" /></svg></span><strong>Нажмите, чтобы выбрать один файл</strong><small>APK / IPA / ZIP / PDF / изображения / видео • до 3 GB на файл</small></label>
     <input id="betaDeliveryFiles" class="pm-hidden-file" type="file">
-    <button type="button" class="pm-add-file-button" id="pmAddFileButton" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> إضافة ملف جديد</button>
-    <div id="pmPendingFiles" class="pm-pending-files"><span>لم تتم إضافة ملفات بعد</span></div>
-    <div class="pm-file-count-row"><span>عدد الملفات المضافة</span><strong id="pmPendingCount">0</strong></div>
+    <button type="button" class="pm-add-file-button" id="pmAddFileButton" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Добавить ещё один файл</button>
+    <div id="pmPendingFiles" class="pm-pending-files"><span>Файлы ещё не добавлены</span></div>
+    <div class="pm-file-count-row"><span>Добавлено файлов</span><strong id="pmPendingCount">0</strong></div>
    </div>
-   <div class="pm-saved-card"><div class="pm-saved-card-head"><div><h3>🗂 Сохранённые файлы</h3><div class="pm-saved-subtitle">Текущие файлы этой платформы</div></div><span id="pmSavedCount" class="pm-saved-count">0 файлов</span></div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">Эти файлы получит пользователь после выполнения 10/10 и нажатия GO</div></div>
+   <div class="pm-saved-card"><div class="pm-saved-card-head"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v13H3zM3 7l2-4h14l2 4M8 12h8" /></svg> Сохранённые файлы</h3><div class="pm-saved-subtitle">Текущие файлы этой платформы</div></div><span id="pmSavedCount" class="pm-saved-count">0 файлов</span></div><div id="betaDeliveryCurrentFiles"></div><div class="pm-saved-note">Эти файлы получит пользователь после выполнения 10/10 и нажатия GO</div></div>
    
    <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
    <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">Сохранить файлы</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
@@ -1569,7 +1571,7 @@ function updatePendingPlatformFiles(){
 document.getElementById("betaDeliveryFiles").addEventListener("change",event=>{
  const file=event.target.files?.[0];event.target.value="";
  if(!file)return;
- if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("الحد الأقصى لحجم كل ملف هو 3 GB.");return;}
+ if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("Максимальный размер каждого файла — 3 GB.");return;}
  pendingPlatformFiles.push(file);updatePendingPlatformFiles();
 });
 document.getElementById("betaDeliveryMessage").addEventListener("input",event=>{document.getElementById("pmMessageCount").textContent=event.target.value.length+" / 4000";});
@@ -1579,7 +1581,7 @@ const platformDropZone=document.querySelector(".pm-multi-picker");
 platformDropZone.addEventListener("drop",event=>{
  event.preventDefault();
  Array.from(event.dataTransfer?.files||[]).forEach(file=>{
-  if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("تم تجاهل "+file.name+" لأن الحد الأقصى لكل ملف هو 3 GB.");return;}
+  if(!file.size||file.size>PLATFORM_DELIVERY_MAX_FILE_SIZE){alert("Файл "+file.name+" пропущен: максимальный размер — 3 GB.");return;}
   pendingPlatformFiles.push(file);
  });
  updatePendingPlatformFiles();
