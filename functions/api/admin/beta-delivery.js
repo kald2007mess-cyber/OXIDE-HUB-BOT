@@ -2,7 +2,7 @@ import { getVisitor } from "../_lib/session.js";
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
 const OFFERS = new Set(["beta", "android", "ios"]);
-const MAX_SIZE = 50 * 1024 * 1024;
+const MAX_SIZE = 3 * 1024 * 1024 * 1024;
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
