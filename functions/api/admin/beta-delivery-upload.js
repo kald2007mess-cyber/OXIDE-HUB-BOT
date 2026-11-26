@@ -31,6 +31,15 @@ export async function onRequestPost({request,env}){
    await env.DB.prepare("INSERT INTO platform_delivery_uploads(upload_id,r2_key,offer,file_name,file_size,content_type,parts_json,status,created_at) VALUES(?,?,?,?,?,?, '[]','uploading',?)").bind(mpu.uploadId,key,offer,name,size,contentType,now).run();
    return out({success:true,uploadId:mpu.uploadId,key,partSize:PART_SIZE,totalParts:Math.ceil(size/PART_SIZE)});
   }
+  if(body.action==="status"){
+   const uploadId=String(body.uploadId||"");
+   const row=await env.DB.prepare("SELECT * FROM platform_delivery_uploads WHERE upload_id=? AND offer=?").bind(uploadId,offer).first();
+   if(!row)return out({success:false,error:"UPLOAD_NOT_FOUND"},404);
+   const parts=JSON.parse(row.parts_json||"[]");
+   if(row.status==="completed")return out({success:true,status:"completed",file:{key:row.r2_key,name:row.file_name,size:Number(row.file_size),contentType:row.content_type},parts});
+   if(row.status!=="uploading")return out({success:false,error:"UPLOAD_NOT_ACTIVE"},409);
+   return out({success:true,status:"uploading",uploadId:row.upload_id,key:row.r2_key,name:row.file_name,size:Number(row.file_size),contentType:row.content_type,parts,partSize:PART_SIZE,totalParts:Math.ceil(Number(row.file_size)/PART_SIZE)});
+  }
   if(body.action==="complete"){
    const uploadId=String(body.uploadId||"");const row=await env.DB.prepare("SELECT * FROM platform_delivery_uploads WHERE upload_id=? AND offer=?").bind(uploadId,offer).first();
    if(!row)return out({success:false,error:"UPLOAD_NOT_FOUND"},404);
