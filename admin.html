@@ -1803,11 +1803,13 @@ start();
   const nodes=[];let node;
   while((node=walker.nextNode()))if(!shouldSkip(node))nodes.push(node);
   const elements=root instanceof Element?[root,...root.querySelectorAll("*")]:Array.from(root.querySelectorAll?.("*")||[]);
-  // Keep requests deliberately low to avoid rate-limits from the free translation endpoint.
-  for(let i=0;i<nodes.length;i+=2){
-   await Promise.all(nodes.slice(i,i+2).map(n=>translateTextNode(n,lang)));
+  // Process more text nodes concurrently; successful translations are cached locally.
+  for(let i=0;i<nodes.length;i+=8){
+   await Promise.all(nodes.slice(i,i+8).map(n=>translateTextNode(n,lang)));
   }
-  for(const el of elements)await translateElementAttrs(el,lang);
+  for(let i=0;i<elements.length;i+=8){
+   await Promise.all(elements.slice(i,i+8).map(el=>translateElementAttrs(el,lang)));
+  }
  }
  async function setLanguage(lang){
   if(!LANGS[lang]||busy)return;
@@ -1818,9 +1820,20 @@ start();
    await processTree(document.body,lang);
    current=lang;document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;updateLanguageSwitcher(lang);
    try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
-   status.textContent=translationFailures
-    ?(lang==="ru"?"Готово с пропущенными фрагментами: "+translationFailures: "Translated with "+translationFailures+" skipped item(s)")
-    :(lang==="ru"?"Русский":"English");
+   const audit=()=>{
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    let node,arabicText=0;
+    while((node=walker.nextNode()))if(!shouldSkip(node)&&/[\\u0600-\\u06FF]/.test(node.nodeValue||""))arabicText++;
+    let arabicAttrs=0;
+    for(const el of document.body.querySelectorAll("*"))for(const attr of ATTRS)if(el.hasAttribute(attr)&&/[\\u0600-\\u06FF]/.test(el.getAttribute(attr)||""))arabicAttrs++;
+    return {arabicText,arabicAttrs};
+   };
+   const residue=audit();
+   status.textContent=lang==="ru"
+    ?(translationFailures||residue.arabicText||residue.arabicAttrs
+      ?"Перевод не завершён: пропущено "+translationFailures+", арабский текст: "+residue.arabicText+", атрибуты: "+residue.arabicAttrs
+      :"Русский — проверка пройдена")
+    :(translationFailures?"Translated with "+translationFailures+" skipped item(s)":"English");
    observer=new MutationObserver(records=>{
     if(current==="ar"||busy)return;
     for(const record of records){
