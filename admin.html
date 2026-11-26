@@ -420,6 +420,18 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 .earnings-total-card{display:flex;justify-content:space-between;align-items:center;padding:22px;border-radius:20px;background:radial-gradient(circle at 90% 10%,#8b5cf644,transparent 45%),linear-gradient(120deg,#30205b,#17172e);border:1px solid #a78bfa55}.earnings-total-card span,.earnings-period-card span,.earnings-detail span{display:block;color:#c4badc;font-size:12px}.earnings-total-card strong{display:block;font-size:clamp(30px,6vw,42px);font-weight:850;letter-spacing:-1px;margin:8px 0;color:#fff}.earnings-total-card small{color:#a99bc7}.earnings-total-symbol{font-size:44px;color:#c4b5fd;opacity:.9}
 .earnings-period-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}.earnings-period-card{padding:15px 12px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid rgba(196,181,253,.13);min-width:0}.earnings-period-card strong{display:block;font-size:clamp(18px,3.4vw,25px);margin:9px 0 5px;color:#d8ccff;white-space:nowrap}.earnings-period-card small{font-size:10px;color:#9290a9}.earnings-chart-panel{padding:17px 14px 12px;border-radius:19px;background:rgba(8,12,25,.65);border:1px solid rgba(167,139,250,.16)}.earnings-chart-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.earnings-chart-head h3{font-size:16px;margin:0 0 5px}.earnings-chart-legend{font-size:10px;color:#bdb2d9;white-space:nowrap}.earnings-chart-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#a78bfa;margin-inline-end:5px}.earnings-chart-value{font-size:20px;font-weight:800;color:#ddd2ff;margin:14px 0 2px}.earnings-chart{height:190px;overflow:hidden}.earnings-chart svg{width:100%;height:100%;overflow:visible}.earnings-chart-empty{height:100%;display:grid;place-items:center;color:#88849e;font-size:12px}.earnings-chart-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;color:#88849e;font-size:10px;text-align:center}.earnings-details-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:13px 0}.earnings-detail{padding:13px 10px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.earnings-detail strong{display:block;margin-top:8px;font-size:18px;color:#f2edff;overflow-wrap:anywhere}.earnings-refresh{width:100%;border:0;border-radius:13px;padding:13px;margin:10px 0;background:linear-gradient(100deg,#7c3aed,#5b21b6);color:#fff;font-weight:750;box-shadow:0 8px 24px #6d28d933}.earnings-dashboard .note{color:#9792aa;font-size:11px;line-height:1.8;margin-top:12px}
 @media(max-width:520px){.earnings-period-grid{gap:7px}.earnings-period-card{padding:12px 8px}.earnings-details-grid{gap:6px}.earnings-detail{padding:11px 7px}.earnings-chart{height:160px}}
+
+/* Platform content tabs and three independent upload slots */
+.platform-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0 4px}
+.platform-tabs .platform-tab{margin:0;padding:13px 7px;border:1px solid rgba(110,190,255,.24);border-radius:13px;background:rgba(13,27,55,.78);color:#b8c9e8;font-size:13px;font-weight:800;box-shadow:inset 0 1px rgba(255,255,255,.05)}
+.platform-tabs .platform-tab.active{color:#fff;border-color:#5ddcff;background:linear-gradient(135deg,rgba(17,113,151,.55),rgba(54,65,132,.58));box-shadow:0 0 18px rgba(53,215,255,.17),inset 0 0 12px rgba(90,220,255,.09)}
+.platform-upload-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.platform-upload-slot,.platform-media-block{min-width:0;padding:13px;border:1px solid rgba(110,190,255,.18);border-radius:13px;background:rgba(8,20,42,.58)}
+.platform-upload-slot .platform-file-picker,.platform-media-block .platform-file-picker{width:100%;min-width:0;font-size:12px}
+.platform-slot-hint{display:block;margin-top:8px;color:#91a9c2;font-size:11px;line-height:1.5}
+.platform-media-block{margin-top:12px;border-color:rgba(185,140,255,.28)}
+@media(max-width:420px){.platform-tabs{gap:5px}.platform-tabs .platform-tab{font-size:11px;padding:12px 4px}.platform-upload-slots{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -494,20 +506,25 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
   </section>
   <section class="platform-console-panel">
    <div class="platform-console-heading"><div><span class="platform-step">01 / SELECT PLATFORM</span><h3>Выберите платформу</h3><p>Для каждой платформы предусмотрены отдельные материалы и файлы</p></div><span class="platform-heading-icon">▦</span></div>
-   <div class="platform-choice-wrap">
-    <select id="deliveryPlatformSelect" onchange="switchPlatformDelivery(this.value)" aria-label="Выберите платформу">
-     <option value="beta">BETA</option><option value="android">ANDROID</option><option value="ios">iOS</option>
-    </select>
-    <span class="platform-select-arrow">⌄</span>
+   <div class="platform-tabs" role="tablist" aria-label="Выберите платформу">
+    <button type="button" class="platform-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">🤖 Android</button>
+    <button type="button" class="platform-tab" data-platform-tab="ios" onclick="switchPlatformDelivery('ios')">🍎 iOS</button>
+    <button type="button" class="platform-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">🧪 Beta</button>
    </div>
-   <div class="platform-quick-labels"><span>● BETA</span><span>● ANDROID</span><span>● iOS</span></div>
+   <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1">
+    <option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option>
+   </select>
    <div class="platform-current-banner"><span class="platform-current-icon">◈</span><div><small>ACTIVE WORKSPACE</small><strong id="platformDeliveryHeading">Материалы предложения BETA</strong></div><span class="platform-current-status">Отдельно</span></div>
    <p class="platform-description" id="platformDeliveryDescription">Этот материал отправляется пользователю в чате бота после просмотра 10 из 10 рекламных объявлений на BETA и нажатия GO. Можно прикрепить до 3 файлов.</p>
   </section>
   <section class="platform-console-panel">
    <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>Редактор контента</h3><p>Добавьте сообщение и файлы, которые получит пользователь</p></div><span class="platform-heading-icon">✎</span></div>
    <div class="platform-input-block"><label for="betaDeliveryMessage">Текст сообщения при выдаче</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="Введите инструкции или сообщение для выдачи..."></textarea><small>Максимум 4000 символов</small></div>
-   <div class="platform-input-block"><label for="betaDeliveryFiles">Файлы платформы</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>Выберите один или несколько файлов</strong><small>До 3 файлов • 2 ГБ на файл</small></div></div></div>
+   <div class="platform-upload-slots">
+    <div class="platform-input-block platform-upload-slot"><label for="betaDeliveryFile1">📦 Файл 1</label><input id="betaDeliveryFile1" class="platform-file-picker" type="file"><small class="platform-slot-hint">ملف التطبيق الأول — APK</small></div>
+    <div class="platform-input-block platform-upload-slot"><label for="betaDeliveryFile2">📦 Файл 2</label><input id="betaDeliveryFile2" class="platform-file-picker" type="file"><small class="platform-slot-hint">ملف التطبيق الثاني — APK</small></div>
+   </div>
+   <div class="platform-input-block platform-media-block"><label for="betaDeliveryMedia">🖼️ صورة أو فيديو</label><input id="betaDeliveryMedia" class="platform-file-picker" type="file" accept="image/*,video/*"><div class="platform-upload-hint"><span>＋</span><div><strong>إضافة صورة أو فيديو للمنصة</strong><small>صورة أو مقطع فيديو واحد • حتى 2 جيجابايت</small></div></div></div>
    <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> Выбор новых файлов заменит только текущие файлы этой платформы.</div>
    <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> Сохранить материалы платформы</button>
    <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
@@ -1393,23 +1410,38 @@ async function deleteRedemptionOffer(id,name){if(!confirm("Удалить пре
 let currentDeliveryOffer="beta";
 async function betaDeliveryRequest(data){const response=await fetch("/api/admin/beta-delivery",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,offer:currentDeliveryOffer,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_ERROR");return result;}
 async function openBetaDeliveryPage(){return openPlatformDeliveryPage("beta");}
+async function renderPlatformTabs(){
+ document.querySelectorAll("[data-platform-tab]").forEach(button=>{
+  const active=button.dataset.platformTab===currentDeliveryOffer;
+  button.classList.toggle("active",active);
+  button.setAttribute("aria-selected",active?"true":"false");
+ });
+ const ios=currentDeliveryOffer==="ios";
+ document.getElementById("betaDeliveryFile1").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
+ document.getElementById("betaDeliveryFile2").accept=ios?".ipa,.zip,application/octet-stream":".apk,application/vnd.android.package-archive";
+ document.querySelectorAll(".platform-slot-hint").forEach((node,index)=>node.textContent="ملف التطبيق "+(index+1)+" — "+(ios?"IPA":"APK"));
+}
 async function openPlatformDeliveryPage(offer){
  if(!hasAdminPermission("platform_files")){alert("У вас нет прав на управление файлами платформ.");return;}
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
+ renderPlatformTabs();
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
  document.getElementById("platformDeliveryHeading").textContent="📦 Материалы предложения "+label;document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+label;
- document.getElementById("platformDeliveryDescription").textContent="Этот материал отправляется пользователю в чате бота после завершения 10/10 рекламных объявлений на "+label+" и нажатия GO. Настройки этой платформы независимы от двух других. Можно прикрепить до 10 файлов.";
+ document.getElementById("platformDeliveryDescription").textContent="هذه المواد مستقلة لهذه المنصة وتظهر للمستخدم بعد إكمال 10/10 والضغط على GO. يمكنك إضافة ملفين وصورة أو فيديو.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
 }
 async function switchPlatformDelivery(offer){
  if(!hasAdminPermission("platform_files"))return;
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};
- document.getElementById("platformDeliveryHeading").textContent="📦 Материалы предложения "+labels[currentDeliveryOffer];document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryDescription").textContent="Эти материалы предназначены только для платформы "+labels[currentDeliveryOffer]+". Выбор новых файлов заменит только файлы этой платформы.";
+ document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
+ document.getElementById("platformDeliveryHeading").textContent="📦 Материалы المنصة "+labels[currentDeliveryOffer];
+ document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
+ document.getElementById("platformDeliveryDescription").textContent="المحتوى والملفات محفوظة بشكل مستقل لهذه المنصة.";
  document.getElementById("betaDeliveryMessage").value="";
- document.getElementById("betaDeliveryFiles").value="";
+ ["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].forEach(id=>document.getElementById(id).value="");
+ renderPlatformTabs();
  await loadBetaDelivery();
 }
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
@@ -1468,11 +1500,16 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
  throw lastError||new Error("PART_UPLOAD_FAILED");
 }
 async function saveBetaDelivery(){
- const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=Array.from(document.getElementById("betaDeliveryFiles").files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
+ const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].map(id=>document.getElementById(id).files?.[0]).filter(Boolean),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
  if(!message&&!files.length){alert("Введите текст или выберите хотя бы один файл.");return;}
- if(files.length>3){alert("Максимум 3 файла для одного предложения.");return;}
- if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("Размер каждого файла должен быть больше нуля и не превышать 2 ГБ.");return;}
+ if(files.length>3){alert("يمكن إضافة ملفين وصورة أو فيديو واحد فقط.");return;}
+ const appFiles=[document.getElementById("betaDeliveryFile1").files?.[0],document.getElementById("betaDeliveryFile2").files?.[0]].filter(Boolean);
+ const expectedExt=currentDeliveryOffer==="ios"?".ipa":".apk";
+ if(appFiles.some(file=>!file.name.toLowerCase().endsWith(expectedExt))){alert("نوع ملف المنصة يجب أن يكون "+expectedExt);return;}
+ const mediaFile=document.getElementById("betaDeliveryMedia").files?.[0];
+ if(mediaFile&&!(mediaFile.type.startsWith("image/")||mediaFile.type.startsWith("video/"))){alert("يمكن إضافة صورة أو فيديو فقط في خانة الوسائط.");return;}
+ if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("حجم كل ملف يجب ألا يتجاوز 2 جيجابايت.");return;}
  if(!confirm("Текст и файлы будут сохранены только для предложения "+currentDeliveryOffer.toUpperCase()+" . Продолжить?"))return;
  button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="Подготовка загрузки по частям...";
  status.textContent="Загрузка файлов напрямую в R2...";
@@ -1514,7 +1551,7 @@ async function saveBetaDelivery(){
   label.textContent="Загрузка завершена, сохранение настроек предложения...";
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:uploaded.map(file=>file.key)});
   bar.style.width="100%";percent.textContent="100%";label.textContent="Сохранение успешно завершено";
-  document.getElementById("betaDeliveryFiles").value="";renderPlatformDeliveryFiles(savedResult.files||[]);
+  ["betaDeliveryFile1","betaDeliveryFile2","betaDeliveryMedia"].forEach(id=>document.getElementById(id).value="");renderPlatformDeliveryFiles(savedResult.files||[]);
   status.textContent="Материалы сохранены: "+currentDeliveryOffer.toUpperCase()+" вместе с "+(savedResult.files||[]).length+" файл(ов). Остальные предложения не изменены.";
  }catch(error){
   label.textContent="Загрузка остановлена — выберите те же файлы, чтобы продолжить";
