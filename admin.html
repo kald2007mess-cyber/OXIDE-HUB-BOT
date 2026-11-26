@@ -388,12 +388,12 @@ button{border-radius:12px}
    </div>
    <div class="platform-quick-labels"><span>● BETA</span><span>● ANDROID</span><span>● iOS</span></div>
    <div class="platform-current-banner"><span class="platform-current-icon">◈</span><div><small>ACTIVE WORKSPACE</small><strong id="platformDeliveryHeading">محتوى عرض BETA</strong></div><span class="platform-current-status">مستقل</span></div>
-   <p class="platform-description" id="platformDeliveryDescription">هذا المحتوى يُرسل للمستخدم في محادثة البوت عندما يكمل 10/10 إعلانات في BETA ويضغط GO. يمكنك إرفاق حتى 10 ملفات.</p>
+   <p class="platform-description" id="platformDeliveryDescription">هذا المحتوى يُرسل للمستخدم في محادثة البوت عندما يكمل 10/10 إعلانات في BETA ويضغط GO. يمكنك إرفاق حتى 3 ملفات.</p>
   </section>
   <section class="platform-console-panel">
    <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>محرر المحتوى</h3><p>أضف الرسالة والملفات التي ستصل للمستخدم</p></div><span class="platform-heading-icon">✎</span></div>
    <div class="platform-input-block"><label for="betaDeliveryMessage">نص رسالة التسليم</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="اكتب التعليمات أو رسالة التسليم..."></textarea><small>الحد الأقصى 4000 حرف</small></div>
-   <div class="platform-input-block"><label for="betaDeliveryFiles">ملفات المنصة</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>اختر ملفاً أو عدة ملفات</strong><small>حتى 10 ملفات • 50 MB لكل ملف</small></div></div></div>
+   <div class="platform-input-block"><label for="betaDeliveryFiles">ملفات المنصة</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>اختر ملفاً أو عدة ملفات</strong><small>حتى 3 ملفات • 50 MB لكل ملف</small></div></div></div>
    <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> اختيار ملفات جديدة يستبدل الملفات الحالية لهذه المنصة فقط.</div>
    <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> حفظ محتوى المنصة</button>
    <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">جارٍ الحفظ...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
@@ -1231,7 +1231,7 @@ async function saveBetaDelivery(){
  const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=Array.from(document.getElementById("betaDeliveryFiles").files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
  if(!message&&!files.length){alert("أدخل نصاً أو اختر ملفاً واحداً على الأقل.");return;}
- if(files.length>10){alert("الحد الأقصى 10 ملفات.");return;}
+ if(files.length>3){alert("الحد الأقصى 3 ملفات لكل عرض.");return;}
  if(files.some(file=>file.size>50*1024*1024)){alert("الحد الأقصى لكل ملف 50 ميغابايت.");return;}
  if(!confirm("سيتم حفظ النص والملفات لعرض "+currentDeliveryOffer.toUpperCase()+" فقط. هل تريد المتابعة؟"))return;
  button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ رفع الملفات...";
