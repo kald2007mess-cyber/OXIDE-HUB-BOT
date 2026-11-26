@@ -1298,7 +1298,7 @@ async function saveBetaDelivery(){
     let part=knownParts.find(p=>Number(p.partNumber)===partNumber);
     if(!part?.etag){
      const url="/api/admin/beta-delivery-upload?offer="+encodeURIComponent(currentDeliveryOffer)+"&uploadId="+encodeURIComponent(saved.uploadId)+"&partNumber="+partNumber;
-     part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(completedBytes+start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);
+     part=await uploadPlatformPartWithRetry(url,blob,loaded=>paint(start+loaded),currentDeliveryOffer,saved.uploadId,partNumber);
     }
     parts.push(part);completedBytes+=end-start;paint(0);
    }
