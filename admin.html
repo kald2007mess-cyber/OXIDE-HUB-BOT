@@ -1476,6 +1476,12 @@ start();
  const select=document.getElementById("adminLanguage"),status=document.getElementById("adminLanguageStatus");
  if(!select)return;
  const LANGS={ar:{dir:"rtl",name:"العربية"},en:{dir:"ltr",name:"English"},ru:{dir:"ltr",name:"Русский"}};
+ const SWITCH_LABELS={ar:{label:"اللغة",ar:"العربية",en:"الإنجليزية",ru:"الروسية"},en:{label:"Language",ar:"Arabic",en:"English",ru:"Russian"},ru:{label:"Язык",ar:"Арабский",en:"Английский",ru:"Русский"}};
+ function updateLanguageSwitcher(lang){
+  const wrap=document.getElementById("adminLanguageSwitch"),label=wrap?.querySelector("label");
+  if(label)label.textContent=SWITCH_LABELS[lang].label;
+  for(const option of select.options)option.textContent=SWITCH_LABELS[lang][option.value];
+ }
  let current="ar",busy=false,observer=null;
  const originalText=new WeakMap(),translatedText=new WeakMap(),originalAttrs=new WeakMap(),translatedAttrs=new WeakMap();
  const cacheKey=(lang,value)=>"oxide-admin-i18n:"+lang+":"+value;
@@ -1545,7 +1551,7 @@ start();
   if(observer)observer.disconnect();
   try{
    await processTree(document.body,lang);
-   current=lang;document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;
+   current=lang;document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;updateLanguageSwitcher(lang);
    status.textContent=lang==="ar"?"":lang==="ru"?"Русский":"English";
    try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
    observer=new MutationObserver(records=>{
@@ -1557,7 +1563,7 @@ start();
    });
    observer.observe(document.body,{subtree:true,childList:true,characterData:true});
   }catch(error){
-   current="ar";document.documentElement.lang="ar";document.documentElement.dir="rtl";
+   current="ar";document.documentElement.lang="ar";document.documentElement.dir="rtl";updateLanguageSwitcher("ar");
    await processTree(document.body,"ar").catch(()=>{});
    select.value="ar";status.textContent=lang==="ru"?"Ошибка перевода — Arabic restored":"Translation failed — Arabic restored";
    alert(lang==="ru"?"Не удалось полностью перевести панель. Переключение отменено.":"The full panel could not be translated. Language change was cancelled.");
@@ -1566,7 +1572,7 @@ start();
  select.addEventListener("change",()=>setLanguage(select.value));
  let saved="ar";try{saved=localStorage.getItem("oxide-admin-language")||"ar";}catch(_){}
  if(!LANGS[saved])saved="ar";
- select.value=saved;
+ select.value=saved;updateLanguageSwitcher(saved);
  if(saved!=="ar")setLanguage(saved);
 })();
 
