@@ -1,9 +1,9 @@
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
 const OFFERS = new Set(["beta","android","ios"]);
-const MAX_SIZE = 2 * 1024 * 1024 * 1024;
+const MAX_SIZE = 50 * 1024 * 1024;
 const PART_SIZE = 16 * 1024 * 1024;
-const MAX_FILES = 3;
+const MAX_FILES = 10;
 
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 function safeName(value){const raw=String(value||"file");return [...raw].filter(ch=>ch.charCodeAt(0)>=32&&ch!=="/"&&ch!==String.fromCharCode(92)).join("").slice(0,160)||"file";}
