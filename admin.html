@@ -1740,18 +1740,32 @@ start();
   if(!hasLetters(node.nodeValue))return true;
   return false;
  };
+ let translationFailures=0;
  async function translate(value,lang){
   if(lang==="ar")return value;
   const key=cacheKey(lang,value);
   try{const saved=localStorage.getItem(key);if(saved)return saved;}catch(_){}
   const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+lang+"&dt=t&q="+encodeURIComponent(value);
-  const response=await fetch(url,{cache:"force-cache"});
-  if(!response.ok)throw new Error("TRANSLATION_SERVICE_UNAVAILABLE");
-  const data=await response.json();
-  const result=Array.isArray(data?.[0])?data[0].map(part=>part?.[0]||"").join(""):"";
-  if(!result)throw new Error("TRANSLATION_EMPTY");
-  try{localStorage.setItem(key,result);}catch(_){}
-  return result;
+  let lastError;
+  for(let attempt=0;attempt<4;attempt++){
+   try{
+    const controller=typeof AbortController!=="undefined"?new AbortController():null;
+    const timeout=controller?setTimeout(()=>controller.abort(),12000):null;
+    let response;
+    try{response=await fetch(url,{cache:"force-cache",signal:controller?.signal});}
+    finally{if(timeout)clearTimeout(timeout);}
+    if(!response.ok)throw new Error("TRANSLATION_HTTP_"+response.status);
+    const data=await response.json();
+    const result=Array.isArray(data?.[0])?data[0].map(part=>part?.[0]||"").join(""):"";
+    if(!result)throw new Error("TRANSLATION_EMPTY");
+    try{localStorage.setItem(key,result);}catch(_){}
+    return result;
+   }catch(error){
+    lastError=error;
+    if(attempt<3)await new Promise(resolve=>setTimeout(resolve,350*(attempt+1)*(attempt+1)));
+   }
+  }
+  throw lastError||new Error("TRANSLATION_FAILED");
  }
  async function translateTextNode(node,lang){
   if(!node||shouldSkip(node))return;
@@ -1762,8 +1776,8 @@ start();
   else if(prior&&shown!==prior){source=shown;originalText.set(node,source);}
   if(lang==="ar"){node.nodeValue=source;translatedText.delete(node);return;}
   if(!hasLetters(source))return;
-  const result=await translate(source,lang);
-  node.nodeValue=result;translatedText.set(node,result);
+  try{const result=await translate(source,lang);node.nodeValue=result;translatedText.set(node,result);}
+  catch(error){translationFailures++;console.warn("OXIDE admin translation skipped a text node:",error);}
  }
  const ATTRS=["placeholder","title","aria-label"];
  async function translateElementAttrs(el,lang){
@@ -1777,9 +1791,11 @@ start();
    if(!Object.prototype.hasOwnProperty.call(map,attr))map[attr]=shown;
    else if(translated[attr]&&shown!==translated[attr])map[attr]=shown;
    if(lang==="ar"){el.setAttribute(attr,map[attr]);delete translated[attr];}
-   else if(hasLetters(map[attr])){const value=await translate(map[attr],lang);el.setAttribute(attr,value);translated[attr]=value;}
+   else if(hasLetters(map[attr])){
+    try{const value=await translate(map[attr],lang);el.setAttribute(attr,value);translated[attr]=value;}
+    catch(error){translationFailures++;console.warn("OXIDE admin attribute translation skipped:",error);}
+   }
   }
-  if(el instanceof HTMLButtonElement&&el.hasAttribute("value"))return;
  }
  async function processTree(root,lang){
   if(root&&root.nodeType===Node.TEXT_NODE){await translateTextNode(root,lang);return;}
@@ -1787,33 +1803,35 @@ start();
   const nodes=[];let node;
   while((node=walker.nextNode()))if(!shouldSkip(node))nodes.push(node);
   const elements=root instanceof Element?[root,...root.querySelectorAll("*")]:Array.from(root.querySelectorAll?.("*")||[]);
-  for(let i=0;i<nodes.length;i+=5){
-   await Promise.all(nodes.slice(i,i+5).map(n=>translateTextNode(n,lang)));
+  // Keep requests deliberately low to avoid rate-limits from the free translation endpoint.
+  for(let i=0;i<nodes.length;i+=2){
+   await Promise.all(nodes.slice(i,i+2).map(n=>translateTextNode(n,lang)));
   }
   for(const el of elements)await translateElementAttrs(el,lang);
  }
  async function setLanguage(lang){
   if(!LANGS[lang]||busy)return;
-  busy=true;select.disabled=true;status.textContent=lang==="ar"?"":lang==="ru"?"Перевод панели…":"Translating admin panel…";
+  busy=true;select.disabled=true;translationFailures=0;
+  status.textContent=lang==="ar"?"":lang==="ru"?"Перевод панели…":"Translating admin panel…";
   if(observer)observer.disconnect();
   try{
    await processTree(document.body,lang);
    current=lang;document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;updateLanguageSwitcher(lang);
-   status.textContent=lang==="ar"?"":lang==="ru"?"Русский":"English";
    try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
+   status.textContent=translationFailures
+    ?(lang==="ru"?"Готово с пропущенными фрагментами: "+translationFailures: "Translated with "+translationFailures+" skipped item(s)")
+    :(lang==="ru"?"Русский":"English");
    observer=new MutationObserver(records=>{
     if(current==="ar"||busy)return;
     for(const record of records){
-     if(record.type==="characterData")translateTextNode(record.target,current).catch(()=>{});
-     for(const added of record.addedNodes||[])if(added.nodeType===Node.ELEMENT_NODE||added.nodeType===Node.TEXT_NODE)processTree(added,current).catch(()=>{});
+     if(record.type==="characterData")translateTextNode(record.target,current).catch(error=>console.warn(error));
+     for(const added of record.addedNodes||[])if(added.nodeType===Node.ELEMENT_NODE||added.nodeType===Node.TEXT_NODE)processTree(added,current).catch(error=>console.warn(error));
     }
    });
    observer.observe(document.body,{subtree:true,childList:true,characterData:true});
   }catch(error){
-   current="ar";document.documentElement.lang="ar";document.documentElement.dir="rtl";updateLanguageSwitcher("ar");
-   await processTree(document.body,"ar").catch(()=>{});
-   select.value="ar";status.textContent=lang==="ru"?"Ошибка перевода — Arabic restored":"Translation failed — Arabic restored";
-   alert(lang==="ru"?"Не удалось полностью перевести панель. Переключение отменено.":"The full panel could not be translated. Language change was cancelled.");
+   console.error("OXIDE admin language switch failed:",error);
+   status.textContent=lang==="ru"?"Не удалось применить язык":"Could not apply language";
   }finally{busy=false;select.disabled=false;}
  }
  select.addEventListener("change",()=>setLanguage(select.value));
