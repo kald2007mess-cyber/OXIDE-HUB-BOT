@@ -426,7 +426,7 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 <div class="oxide-admin-stars" aria-hidden="true"></div>
 <div class="oxide-admin-rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <div class="container">
-<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ar">العربية</option><option value="en">English</option><option value="ru" selected>Русский</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="id">Bahasa Indonesia</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
+<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ar">Арабский</option><option value="en">Английский</option><option value="ru" selected>Русский</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
 <div class="card" id="loading"><div class="status" id="status">Проверка прав администратора...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
@@ -1722,22 +1722,8 @@ start();
 (function initAdminLanguages(){
  const select=document.getElementById("adminLanguage"),status=document.getElementById("adminLanguageStatus");
  if(!select)return;
- const LANGS={ar:{dir:"rtl",name:"العربية"},en:{dir:"ltr",name:"English"},ru:{dir:"ltr",name:"Русский"},fr:{dir:"ltr",name:"Français"},es:{dir:"ltr",name:"Español"},de:{dir:"ltr",name:"Deutsch"},tr:{dir:"ltr",name:"Türkçe"},id:{dir:"ltr",name:"Bahasa Indonesia"}};
- const SWITCH_LABELS={
-  ar:{label:"اللغة",ar:"العربية",en:"الإنجليزية",ru:"الروسية",fr:"الفرنسية",es:"الإسبانية",de:"الألمانية",tr:"التركية",id:"الإندونيسية"},
-  en:{label:"Language",ar:"Arabic",en:"English",ru:"Russian",fr:"French",es:"Spanish",de:"German",tr:"Turkish",id:"Indonesian"},
-  ru:{label:"Язык",ar:"Арабский",en:"Английский",ru:"Русский",fr:"Французский",es:"Испанский",de:"Немецкий",tr:"Турецкий",id:"Индонезийский"},
-  fr:{label:"Langue",ar:"Arabe",en:"Anglais",ru:"Russe",fr:"Français",es:"Espagnol",de:"Allemand",tr:"Turc",id:"Indonésien"},
-  es:{label:"Idioma",ar:"Árabe",en:"Inglés",ru:"Ruso",fr:"Francés",es:"Español",de:"Alemán",tr:"Turco",id:"Indonesio"},
-  de:{label:"Sprache",ar:"Arabisch",en:"Englisch",ru:"Russisch",fr:"Französisch",es:"Spanisch",de:"Deutsch",tr:"Türkisch",id:"Indonesisch"},
-  tr:{label:"Dil",ar:"Arapça",en:"İngilizce",ru:"Rusça",fr:"Fransızca",es:"İspanyolca",de:"Almanca",tr:"Türkçe",id:"Endonezce"},
-  id:{label:"Bahasa",ar:"Arab",en:"Inggris",ru:"Rusia",fr:"Prancis",es:"Spanyol",de:"Jerman",tr:"Turki",id:"Indonesia"}
- };
- function updateLanguageSwitcher(lang){
-  const wrap=document.getElementById("adminLanguageSwitch"),label=wrap?.querySelector("label");
-  if(label)label.textContent=SWITCH_LABELS[lang].label;
-  for(const option of select.options)option.textContent=SWITCH_LABELS[lang][option.value];
- }
+ const LANGS={ar:{dir:"rtl",name:"العربية"},en:{dir:"ltr",name:"English"},ru:{dir:"ltr",name:"Русский"}};
+ const SWITCH_LABELS={ar:{label:"اللغة",ar:"العربية",en:"الإنجليزية",ru:"الروسية"},en:{label:"Language",ar:"Arabic",en:"English",ru:"Russian"},ru:{label:"Язык",ar:"Арабский",en:"Английский",ru:"Русский"}};
  let current="ru",busy=false,observer=null;
  const originalText=new WeakMap(),translatedText=new WeakMap(),originalAttrs=new WeakMap(),translatedAttrs=new WeakMap();
  const cacheKey=(lang,value)=>"oxide-admin-i18n:"+lang+":"+value;
