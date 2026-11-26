@@ -2131,7 +2131,8 @@ function formatIslandTimer(){const timer=document.getElementById("islandTimer");
 async function loadIsland(){const message=document.getElementById("islandMessage");if(message)message.textContent="";try{const response=await fetch("/api/reward-ptc",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"Island request failed");islandAds=Array.isArray(data.ads)?data.ads.filter(ad=>typeof ad.url==="string"&&ad.url.startsWith("https://")&&Number(ad.duration)>0):[];islandCompleted=Math.max(0,Math.min(ISLAND_REQUIRED,Number(data.completedAds)||0));islandRemaining=Math.max(0,Number(data.remainingAds)||0);islandCycleEndsAt=Date.now()+Math.max(0,Number(data.remainingSeconds)||0)*1000;updateIslandDisplay();if(message)message.textContent="";formatIslandTimer();if(!islandTimerInterval&&document.getElementById("islandTimer"))islandTimerInterval=setInterval(formatIslandTimer,1000)}catch(error){if(message)message.textContent="";const button=document.getElementById("islandWatchButton");if(button)button.disabled=true}}
 let platformDeliveryBusy=false;
 let pendingChannelOffer=null;
-function openChannelSubscribeModal(offer){pendingChannelOffer=offer;const modal=document.getElementById("channelSubscribeModal"),status=document.getElementById("channelSubscribeStatus");if(status)status.textContent="";if(modal)modal.hidden=false;}
+function openChannelSubscribeModal(offer){pendingChannelOffer=offer;const modal=document.getElementById("channelSubscribeModal"),status=document.getElementById("channelSubscribeStatus"),join=document.getElementById("channelSubscribeJoin"),check=document.getElementById("channelSubscribeCheck");if(status)status.textContent="";if(join)join.hidden=false;if(check)check.hidden=true;if(modal)modal.hidden=false;}
+function channelJoinClicked(){const join=document.getElementById("channelSubscribeJoin"),check=document.getElementById("channelSubscribeCheck"),status=document.getElementById("channelSubscribeStatus");if(join)join.hidden=true;if(check)check.hidden=false;if(status)status.textContent="بعد الاشتراك، اضغط تحقّق من الاشتراك.";}
 function closeChannelSubscribeModal(){const modal=document.getElementById("channelSubscribeModal");if(modal)modal.hidden=true;}
 async function verifyOxideChannelSubscription(){if(!pendingChannelOffer)return;const status=document.getElementById("channelSubscribeStatus"),check=document.getElementById("channelSubscribeCheck");if(check){check.disabled=true;check.textContent=currentLanguage==="ru"?"Проверка...":currentLanguage==="en"?"Checking...":"جارٍ التحقق...";}if(status)status.textContent="";try{await claimPlatformDelivery(pendingChannelOffer,true);}finally{if(check){check.disabled=false;check.textContent=currentLanguage==="ru"?"Я подписался":currentLanguage==="en"?"I've subscribed":"تحققت من الاشتراك";}}}
 async function claimPlatformDelivery(offer,subscriptionRetry=false){
@@ -3556,7 +3557,7 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 /* Required channel subscription gate */
 #channelSubscribeModal{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,5,18,.78);backdrop-filter:blur(9px)}
 #channelSubscribeModal[hidden]{display:none!important}
-.channel-subscribe-panel{width:min(100%,360px);padding:24px 20px;border-radius:22px;text-align:center;background:linear-gradient(155deg,#211344,#0b1028);border:1px solid rgba(174,112,255,.65);box-shadow:0 18px 65px rgba(0,0,0,.55),0 0 30px rgba(142,75,255,.22)}
+.channel-subscribe-panel{width:min(100%,340px);max-height:82vh;overflow:auto;padding:22px 19px;border-radius:20px;text-align:center;background:linear-gradient(155deg,#211344,#0b1028);border:1px solid rgba(174,112,255,.65);box-shadow:0 18px 65px rgba(0,0,0,.55),0 0 30px rgba(142,75,255,.22)}
 .channel-subscribe-icon{width:66px;height:66px;margin:0 auto 13px;border-radius:20px;display:grid;place-items:center;font-size:34px;background:linear-gradient(145deg,#269de8,#1760bb);box-shadow:0 8px 24px #168be855}
 .channel-subscribe-panel h2{margin:6px 0 10px;color:#fff;font-size:21px}.channel-subscribe-panel p{margin:0 0 17px;color:#c9c2df;font-size:13px;line-height:1.8}
 .channel-subscribe-panel button,.channel-subscribe-panel a{display:flex;align-items:center;justify-content:center;width:100%;min-height:45px;margin-top:10px;border:0;border-radius:12px;text-decoration:none;font-weight:800;font-size:14px;cursor:pointer}
@@ -3565,11 +3566,11 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 </style>
 <div id="channelSubscribeModal" hidden>
  <div class="channel-subscribe-panel" role="dialog" aria-modal="true" aria-labelledby="channelSubscribeTitle">
-  <div class="channel-subscribe-icon">✈️</div>
+  <div class="channel-subscribe-icon">⚠️</div>
   <h2 id="channelSubscribeTitle">اشترك في القناة أولاً</h2>
   <p id="channelSubscribeText">للوصول إلى ملفات العرض، يرجى الاشتراك في قناة OXIDE HUB ثم العودة للتحقق من اشتراكك.</p>
-  <a class="channel-subscribe-join" href="https://t.me/OxideHubOfficial" target="_blank" rel="noopener noreferrer" id="channelSubscribeJoin">📢 اشترك في القناة</a>
-  <button type="button" class="channel-subscribe-check" id="channelSubscribeCheck" onclick="verifyOxideChannelSubscription()">تحققت من الاشتراك</button>
+  <a class="channel-subscribe-join" href="https://t.me/OxideHubOfficial" target="_blank" rel="noopener noreferrer" id="channelSubscribeJoin" onclick="channelJoinClicked()">📢 اشترك في القناة</a>
+  <button type="button" class="channel-subscribe-check" id="channelSubscribeCheck" onclick="verifyOxideChannelSubscription()" hidden>تحقّق من الاشتراك</button>
   <button type="button" class="channel-subscribe-close" onclick="closeChannelSubscribeModal()">إغلاق</button>
   <div id="channelSubscribeStatus" role="status" aria-live="polite"></div>
  </div>
