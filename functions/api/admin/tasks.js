@@ -74,7 +74,7 @@ export async function onRequestPost({ request, env }) {
       const id = Number(body.id || 0);
       const title = String(body.title || "").trim().slice(0,160);
       const description = String(body.description || "").trim().slice(0,2000);
-      const platform = ["tiktok","telegram","general"].includes(String(body.platform)) ? String(body.platform) : "general";
+      const platform = ["tiktok","telegram","bots","referrals","general","telegram_join"].includes(String(body.platform)) ? String(body.platform) : "general";
       const targetUrl = String(body.target_url || "").trim().slice(0,1000);
       const reward = Number(body.reward_points);
       const sort = Number(body.sort_order);
