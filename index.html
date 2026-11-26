@@ -1306,7 +1306,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     <button class="oxide-mission-category" type="button" data-task-filter="tiktok" onclick="filterOxideTasks('tiktok',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 4v16a5 5 0 1 1-4-4.9V10c3 3 5.8 4.3 9 4.5V10c-2.8-.2-4.5-2.1-5-6Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>تيك توك</span></button>
     <button class="oxide-mission-category" type="button" data-task-filter="referrals" onclick="filterOxideTasks('referrals',this)"><span class="oxide-category-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3.5 27v-2a8.5 8.5 0 0 1 17 0v2M22 7a4.5 4.5 0 0 1 0 9M24 20q5 1 5 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span>الدعوات</span></button>
   </div>
-  <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><div id="referralMilestoneList" class="mission-list oxide-new-task-list" aria-live="polite"></div><section class="mission-history" id="missionHistoryList" aria-live="polite"></section>
+  <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><div id="referralMilestoneList" class="mission-list oxide-new-task-list" style="display:none" aria-live="polite"></div><section class="mission-history" id="missionHistoryList" aria-live="polite"></section>
 </div>
 </section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
@@ -2828,6 +2828,8 @@ function renderMissionCards(){
     card.append(form, message);
     list.appendChild(card);
   });
+  const defaultCategory=document.querySelector('.oxide-mission-category[data-task-filter="channels"]');
+  filterOxideTasks("channels",defaultCategory);
 }
 
 function renderMissionHistory(){
