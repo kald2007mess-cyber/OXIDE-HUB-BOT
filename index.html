@@ -2138,19 +2138,18 @@ async function verifyOxideChannelSubscription(){if(!pendingChannelOffer)return;c
 async function claimPlatformDelivery(offer,subscriptionRetry=false){
  if(platformDeliveryBusy||!["beta","android","ios"].includes(offer))return;
  platformDeliveryBusy=true;const button=Array.from(document.querySelectorAll(".platform-ad-button")).find(x=>x.dataset.offer===offer);
- if(button){button.disabled=true;if(!subscriptionRetry)button.textContent="OPENING...";}
+ if(button)button.disabled=true;
  try{
   const response=await fetch("/api/platform-delivery?offer="+encodeURIComponent(offer),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json().catch(()=>({}));
-  if(result.subscriptionRequired){openChannelSubscribeModal(offer);const status=document.getElementById("channelSubscribeStatus");if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"⚠️ يجب الاشتراك في القناة أولاً.";return;}
+  if(result.subscriptionRequired){openChannelSubscribeModal(offer);const status=document.getElementById("channelSubscribeStatus");if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"❌ يجب الاشتراك في القناة أولاً.";return;}
   if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_FAILED");
   closeChannelSubscribeModal();pendingChannelOffer=null;openPlatformDeliveryViewer(offer,result);
-  if(button)button.textContent="OPEN";
  }catch(error){
-  openChannelSubscribeModal(offer);
+  const message=error.message==="CHANNEL_CHECK_UNAVAILABLE"||error.message==="TELEGRAM_BOT_TOKEN_MISSING"?"تعذّر التحقق من اشتراك القناة حالياً. تأكد أن البوت مشرف في القناة ثم أعد المحاولة.":"تعذّر فتح الملفات: "+(error.message||"DELIVERY_FAILED");
   const status=document.getElementById("channelSubscribeStatus");
-  if(status)status.textContent=(error.message==="CHANNEL_CHECK_UNAVAILABLE"||error.message==="TELEGRAM_BOT_TOKEN_MISSING")?"تعذّر التحقق من اشتراك القناة حالياً. تأكد أن البوت مشرف في القناة ثم أعد المحاولة.":"تعذّر فتح الملفات: "+(error.message||"DELIVERY_FAILED");
-  if(button)button.textContent="GO";
+  if(subscriptionRetry&&document.getElementById("channelSubscribeModal")&&!document.getElementById("channelSubscribeModal").hidden){if(status)status.textContent=message;}
+  else{const pageStatus=document.getElementById("islandMessage")||document.getElementById("status");if(pageStatus)pageStatus.textContent=message;}
  }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
 }
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
@@ -3518,20 +3517,21 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 <style>
 #platformDeliveryModal[hidden]{display:none!important}
 #platformDeliveryModal{position:fixed;inset:0;z-index:99999;background:rgba(4,5,15,.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:14px}
-#platformDeliveryModal .oxide-delivery-panel{width:min(100%,620px);max-height:90vh;overflow:auto;padding:18px;border:1px solid rgba(185,138,255,.45);border-radius:20px;background:linear-gradient(145deg,#241637,#0d1020);color:#fff;box-shadow:0 20px 60px #000b}
+#platformDeliveryModal .oxide-delivery-panel{width:min(100%,780px);height:min(92vh,900px);max-height:94vh;overflow:auto;padding:26px;border:1px solid rgba(185,138,255,.55);border-radius:24px;background:radial-gradient(ellipse at 50% 0%,rgba(151,91,255,.2),transparent 42%),linear-gradient(145deg,#241637,#0d1020);color:#fff;box-shadow:0 24px 80px #000d,0 0 35px rgba(150,95,255,.18)}
 #platformDeliveryModal .oxide-delivery-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#platformDeliveryModal h2{font-size:19px;margin:0;color:#e6caff}
+#platformDeliveryModal h2{font-size:25px;margin:0;color:#e6caff;letter-spacing:.5px}
 #platformDeliveryModal button{width:auto;margin:0;padding:9px 13px;background:#543578;border:1px solid #bd92f5;border-radius:10px;color:#fff}
 #platformDeliveryMessage{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8cbe9;line-height:1.7;margin:14px 0}
-.oxide-delivery-file{padding:13px;margin:12px 0;border:1px solid #634887;border-radius:14px;background:#171329;display:flex;flex-direction:column;gap:8px}
-.oxide-delivery-file strong{overflow-wrap:anywhere;color:#fff}.oxide-delivery-file small{color:#b8a8d0}
+.oxide-delivery-file{padding:20px;margin:15px 0;border:1px solid #7654a5;border-radius:17px;background:linear-gradient(145deg,#211a38,#171329);display:flex;flex-direction:column;gap:11px;box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.oxide-delivery-file strong{overflow-wrap:anywhere;color:#fff;font-size:17px}.oxide-delivery-file small{color:#b8a8d0;font-size:13px}
 .oxide-delivery-media-item{padding:12px;margin:12px 0;border:1px solid #634887;border-radius:14px;background:#171329;display:flex;flex-direction:column;gap:9px}
 #platformDeliveryMediaTitle{margin:20px 0 8px;color:#e6caff;font-size:14px;letter-spacing:1.5px}
 .oxide-delivery-media-caption{color:#d8cbe9;font-size:12px;overflow-wrap:anywhere}
 #platformDeliveryMedia img,#platformDeliveryMedia video{display:block;width:100%;max-height:360px;object-fit:contain;background:#05040a;border-radius:10px}
 #platformDeliveryMedia[hidden],#platformDeliveryMediaTitle[hidden]{display:none!important}
-.oxide-delivery-download{display:block;text-align:center;padding:12px;border-radius:10px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:bold}
+.oxide-delivery-download{display:block;text-align:center;padding:17px;border-radius:13px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:900;font-size:16px;box-shadow:0 7px 22px rgba(120,70,173,.25)}
 #platformDeliveryViewerStatus{color:#ffb7b7;font-size:12px}
+@media(max-width:520px){#platformDeliveryModal{padding:8px}#platformDeliveryModal .oxide-delivery-panel{width:100%;height:94vh;max-height:94vh;padding:18px 14px;border-radius:19px}#platformDeliveryModal h2{font-size:20px}.oxide-delivery-file{padding:16px}.oxide-delivery-download{padding:16px;font-size:15px}}
 
 /* OXIDE FUTURISTIC PURPLE MISSION CENTER */
 .oxide-missions-glass-frame{background:radial-gradient(ellipse at 50% 0%,rgba(130,78,220,.16),transparent 48%),linear-gradient(155deg,rgba(13,10,25,.98),rgba(8,7,17,.98));border:1px solid rgba(167,119,255,.28);box-shadow:0 14px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045)}
