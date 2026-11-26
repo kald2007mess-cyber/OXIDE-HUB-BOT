@@ -2,7 +2,6 @@ import { getVisitor } from "../_lib/session.js";
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
 const OFFERS = new Set(["beta", "android", "ios"]);
-const MAX_FILES = 10;
 const MAX_SIZE = 50 * 1024 * 1024;
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){
@@ -13,7 +12,7 @@ async function ensure(DB){
  for(const offer of OFFERS)await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) VALUES(?, '', '[]', 0)").bind(offer).run();
 }
 function validOffer(v){const x=String(v||"beta").toLowerCase();return OFFERS.has(x)?x:null;}
-function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice(0,MAX_FILES):[];}catch{return [];}}
+function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice():[];}catch{return [];}}
 async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json)};}
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
 async function storeFile(env,file){if(!file||typeof file.arrayBuffer!=="function"||!file.size)throw new Error("INVALID_FILE");if(file.size>MAX_SIZE)throw new Error("FILE_TOO_LARGE");const form=new FormData();form.append("chat_id",String(env.TELEGRAM_ADMIN_ID));form.append("document",file,file.name||"platform-file");const r=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_FILE_UPLOAD_FAILED");const m=d.result,id=m.document?.file_id;if(!id)throw new Error("TELEGRAM_FILE_ID_MISSING");await tg(env.TELEGRAM_BOT_TOKEN,"deleteMessage",{chat_id:env.TELEGRAM_ADMIN_ID,message_id:m.message_id}).catch(()=>{});return{file_id:id,name:String(file.name||m.document.file_name||"file").slice(0,180),size:Number(file.size||0)};}
@@ -35,6 +34,15 @@ export async function onRequestPost({request,env}){
   if(!offer)return out({success:false,error:"INVALID_OFFER"},400);
   if(body.action==="get"){
    const auth=await authorizeAdmin(String(body.initData||""),env,"platform_files");if(!auth.ok)return adminAuthResponse(auth);
+   return out({success:true,offer,...await config(env.DB,offer)});
+  }
+  if(body.action==="rename_file"){
+   const auth=await authorizeAdmin(String(body.initData||""),env,"platform_files");if(!auth.ok)return adminAuthResponse(auth);
+   const index=Number(body.index),name=String(body.name||"").trim();
+   if(!Number.isInteger(index)||index<0||!name||name.length>180)return out({success:false,error:"INVALID_FILE_DETAILS"},400);
+   const current=await config(env.DB,offer);if(index>=current.files.length)return out({success:false,error:"FILE_NOT_FOUND"},404);
+   const files=current.files.map((file,i)=>i===index?{...file,name}:file);
+   await env.DB.prepare("UPDATE platform_delivery_config SET files_json=?,updated_at=? WHERE offer=?").bind(JSON.stringify(files),Math.floor(Date.now()/1000),offer).run();
    return out({success:true,offer,...await config(env.DB,offer)});
   }
   if(body.action==="remove_file"){
