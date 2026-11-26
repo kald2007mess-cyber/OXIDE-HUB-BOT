@@ -6,6 +6,7 @@ const MAX_SIZE = 3 * 1024 * 1024 * 1024;
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
+ const cols=await DB.prepare("PRAGMA table_info(platform_delivery_config)").all();if(!(cols.results||[]).some(c=>c.name==="published"))await DB.prepare("ALTER TABLE platform_delivery_config ADD COLUMN published INTEGER NOT NULL DEFAULT 1").run();
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_claims (user_uuid TEXT NOT NULL, offer TEXT NOT NULL, last_sent_at INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(user_uuid,offer))").run();
  await DB.prepare("CREATE TABLE IF NOT EXISTS beta_delivery_config (id INTEGER PRIMARY KEY CHECK(id=1), message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
  await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) SELECT 'beta',message,files_json,updated_at FROM beta_delivery_config WHERE id=1").run();
@@ -13,7 +14,7 @@ async function ensure(DB){
 }
 function validOffer(v){const x=String(v||"beta").toLowerCase();return OFFERS.has(x)?x:null;}
 function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice():[];}catch{return [];}}
-async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json)};}
+async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json,published FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json),published:Number(row?.published??1)===1};}
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
 async function storeFile(env,file){if(!file||typeof file.arrayBuffer!=="function"||!file.size)throw new Error("INVALID_FILE");if(file.size>MAX_SIZE)throw new Error("FILE_TOO_LARGE");const form=new FormData();form.append("chat_id",String(env.TELEGRAM_ADMIN_ID));form.append("document",file,file.name||"platform-file");const r=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_FILE_UPLOAD_FAILED");const m=d.result,id=m.document?.file_id;if(!id)throw new Error("TELEGRAM_FILE_ID_MISSING");await tg(env.TELEGRAM_BOT_TOKEN,"deleteMessage",{chat_id:env.TELEGRAM_ADMIN_ID,message_id:m.message_id}).catch(()=>{});return{file_id:id,name:String(file.name||m.document.file_name||"file").slice(0,180),size:Number(file.size||0)};}
 export async function onRequestPost({request,env}){
@@ -66,7 +67,7 @@ export async function onRequestPost({request,env}){
   if(!p||now-Number(p.cycle_started_at||now)>=18000||Number(p.completed||0)<10)return out({success:false,error:"OFFER_NOT_COMPLETE"},403);
   const last=await env.DB.prepare("SELECT last_sent_at FROM platform_delivery_claims WHERE user_uuid=? AND offer=?").bind(user,offer).first();
   if(now-Number(last?.last_sent_at||0)<30)return out({success:false,error:"PLEASE_WAIT"},429);
-  const c=await config(env.DB,offer);if(!c.message&&!c.files.length)return out({success:false,error:"OFFER_CONTENT_NOT_CONFIGURED"},404);
+  const c=await config(env.DB,offer);if(!c.published)return out({success:false,error:"CONTENT_NOT_PUBLISHED"},404);if(!c.message&&!c.files.length)return out({success:false,error:"OFFER_CONTENT_NOT_CONFIGURED"},404);
   const chat=String(identity.telegram_user_id);
   if(!c.files.length)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});
   else if(c.files.length===1){if(c.message.length<=1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:c.files[0].file_id,caption:c.message||undefined});else{await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});await tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:c.files[0].file_id});}}
