@@ -1529,6 +1529,7 @@ start();
   if(el instanceof HTMLButtonElement&&el.hasAttribute("value"))return;
  }
  async function processTree(root,lang){
+  if(root&&root.nodeType===Node.TEXT_NODE){await translateTextNode(root,lang);return;}
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
   const nodes=[];let node;
   while((node=walker.nextNode()))if(!shouldSkip(node))nodes.push(node);
