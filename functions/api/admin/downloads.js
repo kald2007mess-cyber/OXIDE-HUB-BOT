@@ -381,11 +381,16 @@ function validateFileExtension(platform, fileName) {
     throw new Error("IPA_ONLY");
   }
 
-  if (
-    (platform === "android" || platform === "beta") &&
-    !name.endsWith(".apk")
-  ) {
+  if (platform === "android" && !name.endsWith(".apk")) {
     throw new Error("APK_ONLY");
+  }
+
+  if (
+    platform === "beta" &&
+    !name.endsWith(".apk") &&
+    !name.endsWith(".apks")
+  ) {
+    throw new Error("APK_OR_APKS_ONLY");
   }
 }
 
