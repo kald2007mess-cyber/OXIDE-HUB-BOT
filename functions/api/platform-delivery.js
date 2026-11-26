@@ -2,7 +2,7 @@ import { getVisitor } from "./_lib/session.js";
 
 const OFFERS={beta:"beta_ads",android:"android_ads",ios:"ios_ads"};
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
-async function ensure(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();}
+async function ensure(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();const cols=await DB.prepare("PRAGMA table_info(platform_delivery_config)").all();if(!(cols.results||[]).some(c=>c.name==="published"))await DB.prepare("ALTER TABLE platform_delivery_config ADD COLUMN published INTEGER NOT NULL DEFAULT 1").run();}
 function mimeFromName(name){const ext=String(name||"").toLowerCase().split(".").pop();return ({png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",zip:"application/zip"})[ext]||"application/octet-stream";}
 async function channelMembership(userId,env){
  if(!env.TELEGRAM_BOT_TOKEN)return{error:"TELEGRAM_BOT_TOKEN_MISSING"};
@@ -36,7 +36,8 @@ export async function onRequestGet({request,env}){
   const url=new URL(request.url),offer=String(url.searchParams.get("offer")||"").toLowerCase();if(!OFFERS[offer])return out({success:false,error:"INVALID_OFFER"},400);
   await ensure(env.DB);
   const auth=await authorizedUser(request,env,offer);if(auth.error)return auth.error;
-  const row=await env.DB.prepare("SELECT message,files_json FROM platform_delivery_config WHERE offer=?").bind(offer).first();
+  const row=await env.DB.prepare("SELECT message,files_json,published FROM platform_delivery_config WHERE offer=?").bind(offer).first();
+  if(!row||Number(row.published??1)!==1)return out({success:false,error:"CONTENT_NOT_PUBLISHED"},404);
   let files=[];try{files=JSON.parse(row?.files_json||"[]");}catch{}
   const fileIndex=url.searchParams.get("file");
   if(fileIndex!==null){
