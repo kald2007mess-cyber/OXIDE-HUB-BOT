@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr" class="oxide-language-loading">
 <head>
 <script src="https://telegram.org/js/telegram-web-app.js">
 
+</script>
+<script>
+(function(){
+ var code=String(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user&&Telegram.WebApp.initDataUnsafe.user.language_code||"").toLowerCase();
+ var language=code.indexOf("ru")===0?"ru":code.indexOf("ar")===0?"ar":"en";
+ window.__OXIDE_TELEGRAM_LANGUAGE__=language;
+ document.documentElement.lang=language;
+ document.documentElement.dir=language==="ar"?"rtl":"ltr";
+})();
 </script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <meta charset="UTF-8">
@@ -10,7 +19,7 @@
 <title>OXIDE HUB</title>
 <style>
 *{box-sizing:border-box}
-html{min-height:100%;background-color:#030816}
+html{min-height:100%;background-color:#030816}html.oxide-language-loading body{visibility:hidden}
 body{margin:0;min-height:100vh;background-color:#030816;font-family:Arial,sans-serif;color:white;text-align:center;background-image:linear-gradient(rgba(3,8,22,.68),rgba(3,8,22,.88)),url("/file_000000001cec820aa9a92a9e8e7598eb.png");background-position:center,45%;background-repeat:no-repeat;background-attachment:scroll,fixed;background-size:auto,105% 126%;padding:25px 12px;animation:backgroundDrift 35s ease-in-out infinite alternate;isolation:isolate}
 @keyframes backgroundDrift{from{background-position:center,43% calc(43% + 50px)}to{background-position:center,47% calc(47% + 50px)}}
 .stars{position:fixed;inset:-100px;z-index:-1;pointer-events:none;opacity:.25;background-image:radial-gradient(2px 2px at 30px 40px,#fff,transparent),radial-gradient(1px 1px at 100px 130px,#fff,transparent),radial-gradient(2px 2px at 190px 80px,#54caff,transparent),radial-gradient(1px 1px at 250px 190px,#fff,transparent),radial-gradient(2px 2px at 320px 40px,#fff,transparent);background-size:350px 250px;animation:starMove 65s linear infinite}
@@ -3092,14 +3101,10 @@ async function saveLanguagePreference(language){
  try{await fetch("/api/preferences",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({language})})}catch(error){console.warn("Language preference will remain on this device until server sync is available.",error)}
 }
 async function loadSavedLanguage(){
- const versionKey="oxide_language_default_ru_v1";
- let language=localStorage.getItem("oxide_language");
- let migrated=false;
- try{migrated=localStorage.getItem(versionKey)!=="1";}catch(error){migrated=true;}
- if(migrated){language="ru";try{localStorage.setItem(versionKey,"1");}catch(error){}}
- try{const response=await fetch("/api/preferences",{method:"GET",credentials:"same-origin",cache:"no-store"});if(!migrated&&!language&&response.ok){const data=await response.json();if(data.success&&["ar","en","ru"].includes(data.language))language=data.language}}catch(error){}
- language=language&&["ar","en","ru"].includes(language)?language:"ru";
- languagePreferenceReady=true;changeLanguage(language,migrated);
+ const language=["ar","en","ru"].includes(window.__OXIDE_TELEGRAM_LANGUAGE__)?window.__OXIDE_TELEGRAM_LANGUAGE__:"en";
+ languagePreferenceReady=true;
+ changeLanguage(language,false);
+ document.documentElement.classList.remove("oxide-language-loading");
 }
 function renderNewsLanguage(){
  const empty=document.getElementById("newsEmpty");if(empty)empty.textContent=t("newsEmpty");
