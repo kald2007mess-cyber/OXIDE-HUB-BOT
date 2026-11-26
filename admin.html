@@ -1611,7 +1611,7 @@ async function openPlatformDeliveryPage(offer){
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  renderPlatformTabs();
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").textContent="حفظ";
+ document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
 }
@@ -1623,8 +1623,8 @@ async function switchPlatformDelivery(offer){
  document.getElementById("platformDeliveryHeading").textContent="Файлы — "+labels[currentDeliveryOffer];
  document.getElementById("betaDeliverySaveButton").textContent="حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы выбранной платформы сохраняются отдельно.";
- document.getElementById("betaDeliveryMessage").value="";
- document.getElementById("betaDeliveryFiles").value="";updatePendingPlatformFiles();
+ document.getElementById("betaDeliveryMessage").value="";document.getElementById("pmContentTitle").value="";
+ document.getElementById("betaDeliveryFiles").value="";document.getElementById("betaDeliveryMedia").value="";pendingPlatformFiles.length=0;updatePendingPlatformFiles();
  
  renderPlatformTabs();
  await loadBetaDelivery();
