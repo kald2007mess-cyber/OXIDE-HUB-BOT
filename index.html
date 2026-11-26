@@ -3114,7 +3114,7 @@ async function saveLanguagePreference(language){
  try{await fetch("/api/preferences",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({language})})}catch(error){console.warn("Language preference will remain on this device until server sync is available.",error)}
 }
 async function loadSavedLanguage(){
- const versionKey="oxide_language_default_ru_v2";
+ const versionKey="oxide_language_default_ru_v3";
  let language="ru",migrated=false;
  try{migrated=localStorage.getItem(versionKey)!=="1";}catch(error){migrated=true;}
  if(migrated){
