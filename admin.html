@@ -718,7 +718,9 @@ async function togglePlatformVisibility(){
  finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];}
 }
 function platformName(platform){return platform==="ios"?"iOS":platform==="beta"?"BETA":"Android";}
-function platformExtension(){return currentPlatform==="ios"?".ipa":".apk";}
+function platformExtension(){return currentPlatform==="ios"?".ipa":currentPlatform==="beta"?".apks":".apk";}
+function platformAccept(){return currentPlatform==="ios"?".ipa,application/octet-stream":currentPlatform==="beta"?".apk,.apks,application/vnd.android.package-archive,application/octet-stream":".apk,application/vnd.android.package-archive";}
+function validPlatformFileName(name){const n=String(name||"").toLowerCase();return currentPlatform==="ios"?n.endsWith(".ipa"):currentPlatform==="beta"?(n.endsWith(".apk")||n.endsWith(".apks")):n.endsWith(".apk");}
 function platformFiles(){return downloads.filter(item=>item.platform===currentPlatform);}
 function closePlatform(){document.getElementById("platformPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function openPlatform(platform){
@@ -730,7 +732,7 @@ function openPlatform(platform){
  document.getElementById("platformMark").textContent=platform==="ios"?"🍎":platform==="beta"?"🧪":"🤖";
  const ios=platform==="ios";
  document.getElementById("platformFileLabel").textContent=ios?"Выберите файл IPA на телефоне":"Выберите файл APK на телефоне";
- document.getElementById("platformFile").accept=ios?".ipa,application/octet-stream":".apk,application/vnd.android.package-archive";
+ document.getElementById("platformFile").accept=platformAccept();
  document.getElementById("platformFileHint").textContent="Максимальный размер — 2,5 ГБ. Также можно добавить внешнюю ссылку для скачивания.";
  document.getElementById("tutorialUrl").value=platformTutorials[platform]||"";
  resetPlatformForm();
@@ -932,7 +934,7 @@ async function uploadPlatform(){
  if(platformBusy)return;
  const file=document.getElementById("platformFile").files[0];
  if(!file){alert("Выберите файл "+platformExtension()+" сначала.");return;}
- if(!file.name.toLowerCase().endsWith(platformExtension())){alert("Выберите файл "+platformExtension()+" только.");return;}
+ if(!validPlatformFileName(file.name)){alert("Выберите подходящий файл для "+platformName(currentPlatform)+": "+(currentPlatform==="beta"?".APK или .APKS":platformExtension())+".");return;}
  const MAX_SIZE=2.5*1024*1024*1024,DEFAULT_PART_SIZE=10*1024*1024;
  if(file.size>MAX_SIZE){alert("Максимальный размер файла — 2,5 ГБ.");return;}
  const metadata={title:document.getElementById("appTitle").value.trim(),version:document.getElementById("appVersion").value.trim(),description:document.getElementById("appDescription").value.trim()};
