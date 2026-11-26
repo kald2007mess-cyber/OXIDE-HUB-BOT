@@ -482,18 +482,18 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 <div class="card" data-owner-only="true" style="margin-top:18px;border:1px solid rgba(255,105,105,.55);background:rgba(55,15,25,.62)!important"><h3 style="color:#ff9b9b">📺 Сброс счётчиков рекламы</h3><p class="note">Счётчик просмотров рекламы будет сброшен до 0/10 для всех пользователей BETA, ANDROID и iOS. Баллы и рефералы не изменятся.</p><button class="danger" id="resetAdsButton" onclick="resetAllAdsProgress()">Сбросить счётчики рекламы до 0/10</button><div class="platform-status" id="resetAdsStatus">Действие доступно только владельцу и требует подтверждения.</div></div><div class="card" id="maintenanceCard" data-admin-permission="maintenance" style="margin-top:18px"><h3>🛠️ Управление техническим обслуживанием сайта</h3><div id="maintenanceState" class="maintenance-state">Загрузка состояния обслуживания сайта...</div><button id="maintenanceButton" onclick="toggleMaintenance()" disabled>Состояние обслуживания</button><button id="messageButton" onclick="editMaintenanceMessage()" disabled>Сообщение об обслуживании</button><p class="note" id="maintenanceInfo">Настройки обслуживания сохраняются для всех посетителей сайта.</p></div>
 </div>
 
-<div id="redemptionOffersPage" class="hidden"><div class="card"><button class="back" onclick="closeRedemptionOffersPage()">⬅ Назад в панель управления</button><h3>🎁 إدارة Предложения обмена</h3><p class="note">أضف عروض السحب أو عدّل اسم العرض وتكلفته وصورته، أو احذف العرض من واجهة المستخدمين.</p><div class="task-form"><h3 id="redemptionOfferFormTitle">إضافة عرض جديد</h3><input id="redemptionOfferId" type="hidden"><div class="field"><label>اسم العرض</label><input id="redemptionOfferName" maxlength="80" placeholder="مثال: 100 COINS"></div><div class="field"><label>تكلفة العرض بالنقاط</label><input id="redemptionOfferPoints" type="number" min="1" max="100000000" placeholder="1500"></div><div class="field"><label>رابط صورة العرض (اختياري)</label><input id="redemptionOfferImage" type="url" maxlength="1000" placeholder="https://..."></div><div class="field"><label>ترتيب العرض</label><input id="redemptionOfferOrder" type="number" min="0" value="1"></div><button id="redemptionOfferSave" onclick="saveRedemptionOffer()">حفظ العرض</button><button class="secondary" onclick="resetRedemptionOfferForm()">إلغاء التعديل</button></div><div class="platform-status" id="redemptionOffersStatus">جارٍ تحميل العروض...</div><div id="redemptionOffersList"></div></div></div>
+<div id="redemptionOffersPage" class="hidden"><div class="card"><button class="back" onclick="closeRedemptionOffersPage()">⬅ Назад в панель управления</button><h3>🎁 Управление предложениями обмена</h3><p class="note">Добавляйте предложения вывода, изменяйте их названия, стоимость и изображения или удаляйте их из интерфейса пользователей.</p><div class="task-form"><h3 id="redemptionOfferFormTitle">Добавить предложение</h3><input id="redemptionOfferId" type="hidden"><div class="field"><label>Название предложения</label><input id="redemptionOfferName" maxlength="80" placeholder="مثال: 100 COINS"></div><div class="field"><label>Стоимость предложения в баллах</label><input id="redemptionOfferPoints" type="number" min="1" max="100000000" placeholder="1500"></div><div class="field"><label>Ссылка на изображение (необязательно)</label><input id="redemptionOfferImage" type="url" maxlength="1000" placeholder="https://..."></div><div class="field"><label>Порядок отображения</label><input id="redemptionOfferOrder" type="number" min="0" value="1"></div><button id="redemptionOfferSave" onclick="saveRedemptionOffer()">Сохранить предложение</button><button class="secondary" onclick="resetRedemptionOfferForm()">Отменить изменения</button></div><div class="platform-status" id="redemptionOffersStatus">Загрузка предложений...</div><div id="redemptionOffersList"></div></div></div>
 <div id="betaDeliveryPage" class="hidden">
  <div class="platform-console">
   <button class="platform-back" onclick="closeBetaDeliveryPage()"><span>←</span> Назад в панель управления</button>
   <section class="platform-hero">
    <div class="platform-hero-orbit platform-orbit-one"></div><div class="platform-hero-orbit platform-orbit-two"></div>
    <div class="platform-hero-top"><span class="platform-live-dot"></span><span>OXIDE HUB / DELIVERY CENTER</span><span class="platform-hero-code">CONTROL • 03</span></div>
-   <div class="platform-hero-main"><div><div class="platform-hero-kicker">PLATFORM MANAGEMENT</div><h2>Управление файлами платформ</h2><p>مركز موحد لإدارة محتوى وتسليم ملفات عروض المنصات</p></div><div class="platform-hero-icon">⬡</div></div>
+   <div class="platform-hero-main"><div><div class="platform-hero-kicker">PLATFORM MANAGEMENT</div><h2>Управление файлами платформ</h2><p>Единый центр управления контентом и файлами платформ</p></div><div class="platform-hero-icon">⬡</div></div>
    <div class="platform-hero-footer"><span>SECURE CONTENT STORAGE</span><span>● SYSTEM READY</span></div>
   </section>
   <section class="platform-console-panel">
-   <div class="platform-console-heading"><div><span class="platform-step">01 / SELECT PLATFORM</span><h3>Выберите платформу</h3><p>كل منصة لها محتوى وملفات مستقلة</p></div><span class="platform-heading-icon">▦</span></div>
+   <div class="platform-console-heading"><div><span class="platform-step">01 / SELECT PLATFORM</span><h3>Выберите платформу</h3><p>Для каждой платформы предусмотрены отдельные материалы и файлы</p></div><span class="platform-heading-icon">▦</span></div>
    <div class="platform-choice-wrap">
     <select id="deliveryPlatformSelect" onchange="switchPlatformDelivery(this.value)" aria-label="Выберите платформу">
      <option value="beta">BETA</option><option value="android">ANDROID</option><option value="ios">iOS</option>
@@ -501,45 +501,45 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
     <span class="platform-select-arrow">⌄</span>
    </div>
    <div class="platform-quick-labels"><span>● BETA</span><span>● ANDROID</span><span>● iOS</span></div>
-   <div class="platform-current-banner"><span class="platform-current-icon">◈</span><div><small>ACTIVE WORKSPACE</small><strong id="platformDeliveryHeading">محتوى عرض BETA</strong></div><span class="platform-current-status">مستقل</span></div>
-   <p class="platform-description" id="platformDeliveryDescription">هذا المحتوى يُرسل للمستخدم في محادثة البوت عندما يكمل 10/10 إعلانات في BETA ويضغط GO. يمكنك إرفاق حتى 3 ملفات.</p>
+   <div class="platform-current-banner"><span class="platform-current-icon">◈</span><div><small>ACTIVE WORKSPACE</small><strong id="platformDeliveryHeading">Материалы предложения BETA</strong></div><span class="platform-current-status">Отдельно</span></div>
+   <p class="platform-description" id="platformDeliveryDescription">Этот материал отправляется пользователю в чате бота после просмотра 10 из 10 рекламных объявлений на BETA и нажатия GO. Можно прикрепить до 3 файлов.</p>
   </section>
   <section class="platform-console-panel">
-   <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>Редактор контента</h3><p>أضف الرسالة والملفات التي ستصل للمستخدم</p></div><span class="platform-heading-icon">✎</span></div>
-   <div class="platform-input-block"><label for="betaDeliveryMessage">نص رسالة التسليم</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="اكتب التعليمات أو رسالة التسليم..."></textarea><small>الحد الأقصى 4000 حرف</small></div>
-   <div class="platform-input-block"><label for="betaDeliveryFiles">ملفات المنصة</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>اختر ملفاً أو عدة ملفات</strong><small>حتى 3 ملفات • 2 GB لكل ملف</small></div></div></div>
-   <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> اختيار ملفات جديدة يستبدل الملفات الحالية لهذه المنصة فقط.</div>
-   <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> حفظ محتوى المنصة</button>
-   <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">جارٍ الحفظ...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
-   <div class="platform-result-status" id="betaDeliveryStatus">جارٍ تحميل الإعدادات...</div>
+   <div class="platform-console-heading"><div><span class="platform-step">02 / CONTENT EDITOR</span><h3>Редактор контента</h3><p>Добавьте сообщение и файлы, которые получит пользователь</p></div><span class="platform-heading-icon">✎</span></div>
+   <div class="platform-input-block"><label for="betaDeliveryMessage">Текст сообщения при выдаче</label><textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="Введите инструкции или сообщение для выдачи..."></textarea><small>Максимум 4000 символов</small></div>
+   <div class="platform-input-block"><label for="betaDeliveryFiles">Файлы платформы</label><input id="betaDeliveryFiles" class="platform-file-picker" type="file" multiple><div class="platform-upload-hint"><span>⇧</span><div><strong>Выберите один или несколько файлов</strong><small>До 3 файлов • 2 ГБ на файл</small></div></div></div>
+   <div class="platform-file-rules" id="betaDeliveryFilesInfo"><span>ⓘ</span> Выбор новых файлов заменит только текущие файлы этой платформы.</div>
+   <button class="platform-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><span>⇧</span> Сохранить материалы платформы</button>
+   <div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div>
+   <div class="platform-result-status" id="betaDeliveryStatus">Загрузка настроек...</div>
   </section>
-  <section class="platform-console-panel platform-saved-panel"><div class="platform-console-heading"><div><span class="platform-step">03 / STORED ASSETS</span><h3>Сохранённые файлы</h3><p>إدارة الملفات الموجودة في المنصة المختارة</p></div><span class="platform-heading-icon">▤</span></div><div id="betaDeliveryCurrentFiles"></div></section>
+  <section class="platform-console-panel platform-saved-panel"><div class="platform-console-heading"><div><span class="platform-step">03 / STORED ASSETS</span><h3>Сохранённые файлы</h3><p>Управление файлами выбранной платформы</p></div><span class="platform-heading-icon">▤</span></div><div id="betaDeliveryCurrentFiles"></div></section>
   <div class="platform-console-foot"><span>OXIDE HUB ADMIN</span><span>PLATFORM DELIVERY SYSTEM</span></div>
  </div>
 </div>
-<div id="broadcastPage" class="hidden"><div class="card"><button class="back" onclick="closeBroadcastPage()">⬅ Назад в панель управления</button><h3>📢 Рассылка جديد</h3><p class="note">اكتب رسالتك، ويمكنك إرفاق صورة أو فيديو. عند النشر سيرسل البوت الРассылка إلى جميع المستخدمين المسجلين والنشطين.</p><div class="field"><label>نص الرسالة</label><textarea id="broadcastMessage" maxlength="4000" rows="6" placeholder="اكتب الرسالة التي تريد إرسالها إلى المستخدمين..."></textarea></div><div class="field"><label>إرفاق صورة أو فيديو (اختياري)</label><input id="broadcastMedia" type="file" accept="image/*,video/*"></div><div class="platform-status" id="broadcastMediaInfo">يمكن نشر رسالة نصية فقط أو إرفاق صورة أو فيديو. الحد الأقصى للملف 50 ميغابايت.</div><button id="broadcastPublishButton" onclick="publishBroadcast()">📢 نشر إلى جميع المستخدمين</button><div class="platform-status" id="broadcastStatus">لن يتم الإرسال قبل تأكيدك.</div><button class="secondary" id="broadcastRefreshButton" onclick="refreshBroadcastStatus()" style="margin-top:10px">تحديث حالة النشر</button></div></div>
+<div id="broadcastPage" class="hidden"><div class="card"><button class="back" onclick="closeBroadcastPage()">⬅ Назад в панель управления</button><h3>📢 Новая рассылка</h3><p class="note">Напишите сообщение и при необходимости прикрепите изображение или видео. После публикации бот отправит рассылку всем зарегистрированным и активным пользователям.</p><div class="field"><label>Текст сообщения</label><textarea id="broadcastMessage" maxlength="4000" rows="6" placeholder="Введите сообщение для пользователей..."></textarea></div><div class="field"><label>Прикрепить изображение или видео (необязательно)</label><input id="broadcastMedia" type="file" accept="image/*,video/*"></div><div class="platform-status" id="broadcastMediaInfo">Можно отправить только текст или прикрепить изображение/видео. Максимальный размер файла — 50 МБ.</div><button id="broadcastPublishButton" onclick="publishBroadcast()">📢 Отправить всем пользователям</button><div class="platform-status" id="broadcastStatus">Отправка начнётся только после вашего подтверждения.</div><button class="secondary" id="broadcastRefreshButton" onclick="refreshBroadcastStatus()" style="margin-top:10px">Обновить статус рассылки</button></div></div>
 <div id="adsEarningsPage" class="hidden"><div class="card earnings-dashboard">
 <button class="back" onclick="closeAdsEarningsPage()">⬅ Назад в панель управления</button>
-<div class="earnings-hero"><div><span class="platform-eyebrow">OXIDE HUB • REVENUE CENTER</span><h2>💲 Доходы и реклама</h2><p>لوحة متابعة أداء الإعلانات والعائد التقديري</p></div><div class="earnings-hero-icon">↗</div></div>
-<div class="earnings-total-card"><div><span>إجمالي الأرباح التقديرية</span><strong id="adsEarningsTotal">—</strong><small>USD₮ • 0.006 لكل إعلان مكتمل</small></div><div class="earnings-total-symbol">＄</div></div>
+<div class="earnings-hero"><div><span class="platform-eyebrow">OXIDE HUB • REVENUE CENTER</span><h2>💲 Доходы и реклама</h2><p>Панель мониторинга эффективности рекламы и расчётного дохода</p></div><div class="earnings-hero-icon">↗</div></div>
+<div class="earnings-total-card"><div><span>Общий расчётный доход</span><strong id="adsEarningsTotal">—</strong><small>USD₮ • 0,006 за каждое завершённое объявление</small></div><div class="earnings-total-symbol">＄</div></div>
 <div class="earnings-period-grid">
-<div class="earnings-period-card"><span>أرباح اليوم</span><strong id="adsEarningsToday">—</strong><small id="adsEarningsTodayCount">0 إعلان</small></div>
-<div class="earnings-period-card"><span>آخر 7 أيام</span><strong id="adsEarningsWeek">—</strong><small id="adsEarningsWeekCount">0 إعلان</small></div>
-<div class="earnings-period-card"><span>هذا الشهر</span><strong id="adsEarningsMonth">—</strong><small id="adsEarningsMonthCount">0 إعلان</small></div>
+<div class="earnings-period-card"><span>Доход за сегодня</span><strong id="adsEarningsToday">—</strong><small id="adsEarningsTodayCount">0 объявлений</small></div>
+<div class="earnings-period-card"><span>Последние 7 дней</span><strong id="adsEarningsWeek">—</strong><small id="adsEarningsWeekCount">0 объявлений</small></div>
+<div class="earnings-period-card"><span>В этом месяце</span><strong id="adsEarningsMonth">—</strong><small id="adsEarningsMonthCount">0 объявлений</small></div>
 </div>
-<div class="earnings-chart-panel"><div class="earnings-chart-head"><div><h3>📈 أداء الأرباح</h3><p>آخر 7 أيام • حسب توقيت الجزائر</p></div><span class="earnings-chart-legend"><i></i> الأرباح (USD₮)</span></div><div class="earnings-chart-value" id="adsEarningsChartTotal">—</div><div id="adsEarningsChart" class="earnings-chart"><div class="earnings-chart-empty">جارٍ تحميل المخطط...</div></div><div class="earnings-chart-labels" id="adsEarningsChartLabels"></div></div>
-<div class="earnings-details-grid"><div class="earnings-detail"><span>الإعلانات المكتملة</span><strong id="adsEarningsCompletions">—</strong></div><div class="earnings-detail"><span>مرات بدء العرض</span><strong id="adsEarningsImpressions">—</strong></div><div class="earnings-detail"><span>نقرات داخل الإعلان</span><strong id="adsEarningsClicks">غير متاح</strong></div></div>
-<div class="platform-status" id="adsEarningsStatus">جارٍ تحميل إحصائيات AdsGram...</div><button class="earnings-refresh" onclick="loadAdsEarnings()">⟳ Обновить الإحصائيات</button>
-<p class="note">الأرباح المعروضة تقديرية وفق السعر الذي حددته (0.006 USD₮ لكل إعلان مكتمل)، وليست رصيد AdsGram الرسمي. تُحتسب الإعلانات المكتملة والمؤكدة فقط. النقرات الداخلية غير متاحة من SDK الحالي.</p>
+<div class="earnings-chart-panel"><div class="earnings-chart-head"><div><h3>📈 Динамика дохода</h3><p>Последние 7 дней • по времени Алжира</p></div><span class="earnings-chart-legend"><i></i> Доход (USD₮)</span></div><div class="earnings-chart-value" id="adsEarningsChartTotal">—</div><div id="adsEarningsChart" class="earnings-chart"><div class="earnings-chart-empty">Загрузка графика...</div></div><div class="earnings-chart-labels" id="adsEarningsChartLabels"></div></div>
+<div class="earnings-details-grid"><div class="earnings-detail"><span>Завершённые объявления</span><strong id="adsEarningsCompletions">—</strong></div><div class="earnings-detail"><span>Количество запусков рекламы</span><strong id="adsEarningsImpressions">—</strong></div><div class="earnings-detail"><span>Клики внутри рекламы</span><strong id="adsEarningsClicks">Недоступно</strong></div></div>
+<div class="platform-status" id="adsEarningsStatus">Загрузка статистики AdsGram...</div><button class="earnings-refresh" onclick="loadAdsEarnings()">⟳ Обновить статистику</button>
+<p class="note">الأرباح المعروضة تقديرية وفق السعر الذي حددته (0.006 USD₮ لكل إعلان مكتمل)، وليست رصيد AdsGram الرسمي. تُحتسب Завершённые объявления والمؤكدة فقط. النقرات الداخلية Недоступноة من SDK الحالي.</p>
 </div></div>
-<div id="activityPage" class="hidden"><div class="card"><button class="back" onclick="closeActivity()">⬅ Назад в панель управления</button><h3>سجل دخول المستخدمين</h3><div class="users-summary"><div class="users-stat">إجمالي السجلات<strong id="activityTotal">—</strong></div><div class="users-stat">الصفحة الحالية<strong id="activityPageNumber">1</strong></div></div><div class="users-toolbar"><input id="activitySearch" type="search" placeholder="ابحث بالـ ID أو الاسم أو اسم المستخدم" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchActivity()">بحث</button></div><div class="platform-status" id="activityStatus">جارٍ تحميل السجل...</div><div id="activityList"></div><div class="users-pagination"><button class="secondary" id="activityPrev" onclick="changeActivityPage(-1)" disabled>السابق</button><button class="secondary" id="activityNext" onclick="changeActivityPage(1)" disabled>التالي</button></div><p class="note">يسجل هذا القسم مرات فتح التطبيق من تيليجرام بعد نشر التحديث. السجلات السابقة غير متاحة بأثر رجعي.</p></div></div>
-<div id="usersPage" class="hidden"><div class="card"><button class="back" onclick="closeUsers()">⬅ Назад в панель управления</button><h3>👥 Информация о пользователях</h3><div class="users-summary"><div class="users-stat">Всего пользователей<strong id="usersTotal">—</strong></div><div class="users-stat">الصفحة الحالية<strong id="usersPageNumber">1</strong></div></div><div class="users-toolbar"><input id="usersSearch" type="search" placeholder="ابحث بـ OX أو اسم المستخدم أو الاسم" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchUsers()">بحث</button></div><div class="platform-status" id="usersStatus">جارٍ تحميل المستخدمين...</div><div id="usersList"></div><div class="users-pagination"><button class="secondary" id="usersPrev" onclick="changeUsersPage(-1)" disabled>السابق</button><button class="secondary" id="usersNext" onclick="changeUsersPage(1)" disabled>التالي</button></div><p class="note">تعرض هذه الصفحة بيانات المستخدمين المسجلة في قاعدة بيانات الموقع.</p></div></div>
-<div id="tasksPage" class="hidden"><div class="card"><button class="back" onclick="closeTasks()">⬅ Назад в панель управления</button><h3>🎯 Управление заданиями</h3><div class="platform-status" id="tasksStatus">جارٍ تحميل المهمات...</div><div class="tasks-summary"><div class="task-stat">إجمالي المهمات<strong id="tasksTotal">—</strong></div><div class="task-stat">Активные задания<strong id="tasksEnabled">—</strong></div><div class="task-stat">إجمالي الإكمالات<strong id="tasksCompleted">—</strong></div></div><div class="task-form"><h3 id="taskFormHeading">إضافة مهمة</h3><div class="field"><label>اسم المهمة</label><input id="taskTitle" maxlength="120" placeholder="مثال: متابعة حساب TikTok"></div><div class="field"><label>المنصة</label><select id="taskPlatform" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="tiktok">TikTok</option><option value="telegram">Telegram</option></select></div><div class="field"><label>وصف المهمة</label><textarea id="taskDescription" maxlength="1000" placeholder="اشرح المطلوب من المستخدم"></textarea></div><div class="field"><label>رابط المهمة (HTTPS)</label><input id="taskUrl" type="url" placeholder="https://..."></div><div class="field"><label>النقاط عند القبول</label><input id="taskReward" type="number" min="0" max="100000" value="50"></div><div class="field"><label>ترتيب المهمة</label><input id="taskOrder" type="number" min="0" value="1"></div><div class="field"><label>الحالة</label><select id="taskEnabled" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">مفعّلة</option><option value="0">متوقفة</option></select></div><button id="taskSaveButton" onclick="saveTask()">💾 حفظ المهمة</button><button id="taskCancelButton" class="secondary hidden" onclick="resetTaskForm()">إلغاء التعديل</button></div><h3>Текущие задания</h3><div id="tasksList"><div class="task-empty">Загрузка...</div></div><div id="taskCompletedPanel" class="hidden"><hr style="border:0;border-top:1px solid #294661;margin:20px 0"><h3 id="taskCompletedHeading">المستخدمون الذين أكملوا المهمة</h3><div class="platform-status" id="taskCompletedStatus"></div><div id="taskCompletedUsers"></div><button class="secondary" onclick="closeCompletedUsers()">إغلاق قائمة المستخدمين</button></div><p class="note">عدد الإكمالات يعرض الطلبات التي تمت الموافقة عليها فقط. لا يمكن حذف مهمة لها طلبات محفوظة؛ أوقفها بدلًا من ذلك للحفاظ على السجل.</p></div></div>
-<div id="reviewsPage" class="hidden"><div class="card"><button class="back" onclick="closeReviews()">⬅ Назад в панель управления</button><h3>📋 Проверка заявок</h3><div class="review-tabs"><button id="reviewMissionsTab" onclick="loadReviews('missions')">📝 Заявки по заданиям (الدليل)</button><button id="reviewRedemptionsTab" class="secondary" onclick="loadReviews('redemptions')">💎 استبدال النقاط (العروض)</button><button id="reviewReferralsTab" class="secondary" onclick="loadReviews(&quot;referrals&quot;)">👥 إحالات للمراجعة</button></div><div class="platform-status" id="reviewsStatus">اختر نوع الطلبات لمراجعتها.</div><div id="reviewsList"><div class="task-empty">لا توجد طلبات معروضة.</div></div></div></div>
-<div id="supportAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeSupportAdmin()">⬅ Назад в панель управления</button><h3>💬 مركز Техническая поддержка</h3><p class="note">اختر مستخدمًا من قائمة المحادثات لعرض رسائله والرد عليه مباشرة.</p><div class="support-admin-layout"><aside class="support-admin-sidebar"><div class="support-admin-sidebar-head"><strong>المحادثات</strong><small id="supportAdminCount">جارٍ تحميل المحادثات...</small></div><div class="support-admin-list" id="supportAdminList"><div class="support-admin-empty">جارٍ تحميل الرسائل...</div></div></aside><section class="support-admin-chat"><div class="support-admin-chat-head" id="supportAdminChatHead"><strong>اختر محادثة</strong></div><div class="support-admin-thread" id="supportAdminThread"><div class="support-admin-empty">ستظهر المحادثة هنا بعد اختيار المستخدم.</div></div><form class="support-admin-compose" id="supportAdminForm" onsubmit="sendAdminSupportReply(event);return false;"><textarea id="supportAdminInput" maxlength="2000" rows="2" placeholder="اكتب ردك هنا..." disabled required></textarea><button id="supportAdminSend" type="submit" disabled>إرسال</button></form><div class="support-admin-status" id="supportAdminStatus"></div></section></div></div></div>
+<div id="activityPage" class="hidden"><div class="card"><button class="back" onclick="closeActivity()">⬅ Назад в панель управления</button><h3>Журнал входов пользователей</h3><div class="users-summary"><div class="users-stat">Всего записей<strong id="activityTotal">—</strong></div><div class="users-stat">Текущая страница<strong id="activityPageNumber">1</strong></div></div><div class="users-toolbar"><input id="activitySearch" type="search" placeholder="Поиск по ID, имени или имени пользователя" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchActivity()">Поиск</button></div><div class="platform-status" id="activityStatus">Загрузка журнала...</div><div id="activityList"></div><div class="users-pagination"><button class="secondary" id="activityPrev" onclick="changeActivityPage(-1)" disabled>Назад</button><button class="secondary" id="activityNext" onclick="changeActivityPage(1)" disabled>Далее</button></div><p class="note">يسجل هذا القسم مرات فتح التطبيق من تيليجرام بعد نشر الОбновить. السجلات Назадة Недоступноة بأثر رجعي.</p></div></div>
+<div id="usersPage" class="hidden"><div class="card"><button class="back" onclick="closeUsers()">⬅ Назад в панель управления</button><h3>👥 Информация о пользователях</h3><div class="users-summary"><div class="users-stat">Всего пользователей<strong id="usersTotal">—</strong></div><div class="users-stat">Текущая страница<strong id="usersPageNumber">1</strong></div></div><div class="users-toolbar"><input id="usersSearch" type="search" placeholder="Поиск по OX, имени или имени пользователя" maxlength="80"><button style="width:auto;min-width:76px;margin:0" onclick="searchUsers()">Поиск</button></div><div class="platform-status" id="usersStatus">Загрузка пользователей...</div><div id="usersList"></div><div class="users-pagination"><button class="secondary" id="usersPrev" onclick="changeUsersPage(-1)" disabled>Назад</button><button class="secondary" id="usersNext" onclick="changeUsersPage(1)" disabled>Далее</button></div><p class="note">На этой странице показаны данные пользователей, сохранённые в базе данных сайта.</p></div></div>
+<div id="tasksPage" class="hidden"><div class="card"><button class="back" onclick="closeTasks()">⬅ Назад в панель управления</button><h3>🎯 Управление заданиями</h3><div class="platform-status" id="tasksStatus">Загрузка заданий...</div><div class="tasks-summary"><div class="task-stat">Всего заданий<strong id="tasksTotal">—</strong></div><div class="task-stat">Активные задания<strong id="tasksEnabled">—</strong></div><div class="task-stat">Всего выполнений<strong id="tasksCompleted">—</strong></div></div><div class="task-form"><h3 id="taskFormHeading">Добавить задание</h3><div class="field"><label>Название задания</label><input id="taskTitle" maxlength="120" placeholder="Например: Подписаться на аккаунт TikTok"></div><div class="field"><label>Платформа</label><select id="taskPlatform" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="tiktok">TikTok</option><option value="telegram">Telegram</option></select></div><div class="field"><label>Описание задания</label><textarea id="taskDescription" maxlength="1000" placeholder="Опишите, что должен сделать пользователь"></textarea></div><div class="field"><label>Ссылка на задание (HTTPS)</label><input id="taskUrl" type="url" placeholder="https://..."></div><div class="field"><label>Баллы после одобрения</label><input id="taskReward" type="number" min="0" max="100000" value="50"></div><div class="field"><label>Порядок задания</label><input id="taskOrder" type="number" min="0" value="1"></div><div class="field"><label>Статус</label><select id="taskEnabled" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="1">Активно</option><option value="0">Отключено</option></select></div><button id="taskSaveButton" onclick="saveTask()">💾 Сохранить задание</button><button id="taskCancelButton" class="secondary hidden" onclick="resetTaskForm()">Отменить изменения</button></div><h3>Текущие задания</h3><div id="tasksList"><div class="task-empty">Загрузка...</div></div><div id="taskCompletedPanel" class="hidden"><hr style="border:0;border-top:1px solid #294661;margin:20px 0"><h3 id="taskCompletedHeading">Пользователи, выполнившие задание</h3><div class="platform-status" id="taskCompletedStatus"></div><div id="taskCompletedUsers"></div><button class="secondary" onclick="closeCompletedUsers()">Закрыть список пользователей</button></div><p class="note">Количество выполнений учитывает только одобренные заявки. Задание с сохранёнными заявками нельзя удалить; отключите его, чтобы сохранить историю.</p></div></div>
+<div id="reviewsPage" class="hidden"><div class="card"><button class="back" onclick="closeReviews()">⬅ Назад в панель управления</button><h3>📋 Проверка заявок</h3><div class="review-tabs"><button id="reviewMissionsTab" onclick="loadReviews('missions')">📝 Заявки по заданиям (подтверждения)</button><button id="reviewRedemptionsTab" class="secondary" onclick="loadReviews('redemptions')">💎 Обмен баллов (предложения)</button><button id="reviewReferralsTab" class="secondary" onclick="loadReviews(&quot;referrals&quot;)">👥 Рефералы на проверке</button></div><div class="platform-status" id="reviewsStatus">Выберите тип заявок для проверки.</div><div id="reviewsList"><div class="task-empty">Нет заявок для отображения.</div></div></div></div>
+<div id="supportAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeSupportAdmin()">⬅ Назад в панель управления</button><h3>💬 Центр технической поддержки</h3><p class="note">Выберите пользователя в списке чатов, чтобы просмотреть сообщения и ответить ему.</p><div class="support-admin-layout"><aside class="support-admin-sidebar"><div class="support-admin-sidebar-head"><strong>Чаты</strong><small id="supportAdminCount">جارٍ تحميل Чаты...</small></div><div class="support-admin-list" id="supportAdminList"><div class="support-admin-empty">Загрузка сообщений...</div></div></aside><section class="support-admin-chat"><div class="support-admin-chat-head" id="supportAdminChatHead"><strong>Выберите чат</strong></div><div class="support-admin-thread" id="supportAdminThread"><div class="support-admin-empty">После выбора пользователя переписка появится здесь.</div></div><form class="support-admin-compose" id="supportAdminForm" onsubmit="sendAdminSupportReply(event);return false;"><textarea id="supportAdminInput" maxlength="2000" rows="2" placeholder="Введите ответ..." disabled required></textarea><button id="supportAdminSend" type="submit" disabled>Отправить</button></form><div class="support-admin-status" id="supportAdminStatus"></div></section></div></div></div>
 
-<div id="securityPage" class="hidden"><div class="card"><button class="back" onclick="closeSecurity()">⬅ Назад в панель управления</button><h3>🛡️ Безопасность и права доступа</h3><p class="note">هذا القسم خاص بالمالك فقط. يمكنك إضافة نائب ومنحه صلاحيات محددة أو سحبها في أي وقت.</p><div class="platform-status" id="securityStatus">جارٍ تحميل النواب...</div><div class="task-form"><h3>إضافة نائب جديد</h3><div class="field"><label>Telegram ID للنائب</label><input id="deputyTelegramId" inputmode="numeric" maxlength="20" placeholder="مثال: 123456789"></div><button id="addDeputyButton" onclick="addDeputy()">➕ إضافة النائب</button></div><h3>النواب الحاليون</h3><div id="deputiesList"><div class="task-empty">Загрузка...</div></div><p class="note">لا يمكن للنائب دخول قسم Безопасность и права доступа. المالك وحده يستطيع إدارة النواب. صلاحيات الأقسام ستُفرض من الخادم عند ربط حماية كل قسم.</p></div></div>
-<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ Назад в панель управления</button><h3>🎁 Награды والإشعارات</h3><p class="note">أرسل إشعار مكافأة إلى مستخدم محدد أو جميع المستخدمين. لا تُضاف النقاط إلا بعد ضغط المستخدم على «استلم المكافأة».</p><div class="field"><label>المستلم</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">جميع المستخدمين</option><option value="user">مستخدم محدد</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>رقم المستخدم (مثال: OX-1234ABCD)</label><input id="rewardUserId" maxlength="23" placeholder="OX-123456789"></div><div class="field"><label>عدد النقاط</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>عنوان الإشعار</label><input id="rewardTitle" maxlength="120" value="🎁 مكافأة جديدة"></div><div class="field"><label>رسالة للمستخدم</label><textarea id="rewardMessage" maxlength="500">لديك مكافأة جديدة جاهزة للاستلام.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 إرسال المكافأة</button><div class="platform-status" id="rewardSendStatus">المكافأة ستُضاف بعد استلام المستخدم لها.</div><div class="task-form" id="redeemCodeAdminForm" style="margin-top:22px"><h3>🎟️ إنشاء رمز استرداد</h3><p class="note">أنشئ رمزًا بعدد استخدامات محدد ومكافأة عملات ثابتة لكل مستخدم.</p><div class="field"><label>الرمز</label><input id="redeemCodeValue" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="مثال: OXIDE2026"></div><div class="field"><label>عدد الهدايا (عدد مرات الاسترداد)</label><input id="redeemCodeGiftCount" type="number" min="1" max="1000000" value="10"></div><div class="field"><label>نوع المكافأة</label><select id="redeemCodeBenefitType" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="coins">عملات</option><option value="go_free">فتح GO دون إعلانات</option></select></div><div class="field" id="redeemCodeCoinsField"><label>عدد العملات لكل هدية</label><input id="redeemCodeCoins" type="number" min="1" max="100000000" value="100"></div><div class="field"><label>مدة صلاحية الرمز (بالساعات)</label><input id="redeemCodeExpiryHours" type="number" min="1" max="8760" value="24"><small class="note">بعد انتهاء المدة يصبح الرمز غير صالح تلقائياً.</small></div><button id="createRedeemCodeButton" type="button" onclick="createRedeemCode()">🎟️ إنشاء الرمز</button><div class="platform-status" id="redeemCodeStatus">كل مستخدم يستطيع استرداد الرمز مرة واحدة فقط.</div><div class="redeem-code-history"><h3>📋 سجل رموز الاسترداد</h3><p class="note">حالة كل رمز وعدد مرات استرداده. اضغط على قلم الرمز لعرض الأشخاص الذين استردوه.</p><div id="redeemCodesHistory"><div class="task-empty">سيظهر سجل الرموز هنا.</div></div></div><div id="redeemCodeUsersModal" class="redeem-users-modal hidden"><div class="redeem-users-panel"><button class="secondary" type="button" onclick="closeRedeemCodeUsers()">✕ إغلاق</button><h3 id="redeemCodeUsersTitle">مستردّو الرمز</h3><div id="redeemCodeUsersList"></div></div></div></div></div>
+<div id="securityPage" class="hidden"><div class="card"><button class="back" onclick="closeSecurity()">⬅ Назад в панель управления</button><h3>🛡️ Безопасность и права доступа</h3><p class="note">Этот раздел доступен только владельцу. Вы можете добавить заместителя, назначить ему определённые права или отозвать их в любое время.</p><div class="platform-status" id="securityStatus">Загрузка заместителей...</div><div class="task-form"><h3>Добавить заместителя</h3><div class="field"><label>Telegram ID заместителя</label><input id="deputyTelegramId" inputmode="numeric" maxlength="20" placeholder="Например: 123456789"></div><button id="addDeputyButton" onclick="addDeputy()">➕ Добавить заместителя</button></div><h3>Текущие заместители</h3><div id="deputiesList"><div class="task-empty">Загрузка...</div></div><p class="note">Заместитель не может открыть раздел безопасности и прав доступа. Управлять заместителями может только владелец. Права доступа к разделам будут контролироваться сервером после подключения защиты каждого раздела.</p></div></div>
+<div id="rewardsAdminPage" class="hidden"><div class="card"><button class="back" onclick="closeAdminRewards()">⬅ Назад в панель управления</button><h3>🎁 Награды и уведомления</h3><p class="note">Отправьте уведомление о награде конкретному пользователю или всем пользователям. Баллы начисляются только после нажатия пользователем кнопки «Получить награду».</p><div class="field"><label>Получатель</label><select id="rewardTarget" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="all">Все пользователи</option><option value="user">Конкретный пользователь</option></select></div><div class="field" id="rewardUserField" style="display:none"><label>ID пользователя (например: OX-1234ABCD)</label><input id="rewardUserId" maxlength="23" placeholder="OX-123456789"></div><div class="field"><label>Количество баллов</label><input id="rewardPoints" type="number" min="1" max="1000000" value="50"></div><div class="field"><label>Заголовок уведомления</label><input id="rewardTitle" maxlength="120" value="🎁 Новая награда"></div><div class="field"><label>Сообщение пользователю</label><textarea id="rewardMessage" maxlength="500">У вас есть новая награда, готовая к получению.</textarea></div><button id="sendRewardButton" onclick="sendAdminReward()">📢 Отправить المكافأة</button><div class="platform-status" id="rewardSendStatus">Награда будет начислена после её получения пользователем.</div><div class="task-form" id="redeemCodeAdminForm" style="margin-top:22px"><h3>🎟️ Создать код погашения</h3><p class="note">Создайте код с ограниченным числом использований и фиксированной наградой для каждого пользователя.</p><div class="field"><label>Код</label><input id="redeemCodeValue" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="Например: OXIDE2026"></div><div class="field"><label>عدد Награды (عدد مرات الاسترداد)</label><input id="redeemCodeGiftCount" type="number" min="1" max="1000000" value="10"></div><div class="field"><label>نوع المكافأة</label><select id="redeemCodeBenefitType" style="width:100%;padding:13px;border-radius:9px;background:#091525;color:white;border:1px solid #294661"><option value="coins">عملات</option><option value="go_free">فتح GO دون إعلانات</option></select></div><div class="field" id="redeemCodeCoinsField"><label>عدد العملات لكل هدية</label><input id="redeemCodeCoins" type="number" min="1" max="100000000" value="100"></div><div class="field"><label>مدة صلاحية Код (بالساعات)</label><input id="redeemCodeExpiryHours" type="number" min="1" max="8760" value="24"><small class="note">بعد انتهاء المدة يصبح Код غير صالح تلقائياً.</small></div><button id="createRedeemCodeButton" type="button" onclick="createRedeemCode()">🎟️ إنشاء Код</button><div class="platform-status" id="redeemCodeStatus">كل Пользователь يستطيع استرداد Код مرة واحدة فقط.</div><div class="redeem-code-history"><h3>📋 سجل رموز الاسترداد</h3><p class="note">حالة كل رمز وعدد مرات استرداده. اضغط على قلم Код لعرض الأشخاص الذين استردوه.</p><div id="redeemCodesHistory"><div class="task-empty">سيظهر سجل الرموز هنا.</div></div></div><div id="redeemCodeUsersModal" class="redeem-users-modal hidden"><div class="redeem-users-panel"><button class="secondary" type="button" onclick="closeRedeemCodeUsers()">✕ Закрыть</button><h3 id="redeemCodeUsersTitle">مستردّو Код</h3><div id="redeemCodeUsersList"></div></div></div></div></div>
 </div>
 </div>
 
@@ -572,7 +572,7 @@ let adminMenuFilter="all";
 function adminMenuCategory(tile){
  const actionText=String(tile.getAttribute("onclick")||"");
  const label=String(tile.innerText||"").toLowerCase();
- if(/activity|users|support/.test(actionText)||/مستخدم|دخول|الدعم/.test(label))return "people";
+ if(/activity|users|support/.test(actionText)||/Пользователь|دخول|الدعم/.test(label))return "people";
  if(/tasks|reviews/.test(actionText)||/مهمة|طلبات|مراجعة/.test(label))return "tasks";
  if(/platform|broadcast/.test(actionText)||/منصات|ملفات|Рассылка/.test(label))return "content";
  if(/rewards|redemptionoffers/.test(actionText)||/مكافآت|استبدال|عروض/.test(label))return "rewards";
@@ -666,40 +666,40 @@ function renderPlatformVisibility(){
 async function togglePlatformVisibility(){
  const button=document.getElementById("platformVisibilityButton");if(!button)return;
  const enabled=platformVisibility[currentPlatform]===false;
- button.disabled=true;button.textContent="جارٍ الحفظ...";
+ button.disabled=true;button.textContent="Сохранение...";
  try{
   const response=await fetch("/api/platform-visibility",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,platform:currentPlatform,enabled})});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"PLATFORM_VISIBILITY_SAVE_FAILED");
   platformVisibility[currentPlatform]=Boolean(result.enabled);renderPlatformVisibility();
-  document.getElementById("platformStatus").textContent=enabled?"تم تشغيل ظهور المنصة.":"تم إيقاف ظهور المنصة وإظهار SOON.";
- }catch(error){alert("تعذر تغيير حالة المنصة: "+error.message);renderPlatformVisibility();}
- finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 حفظ محتوى "+labels[currentDeliveryOffer];}
+  document.getElementById("platformStatus").textContent=enabled?"تم تشغيل ظهور Платформа.":"تم إيقاف ظهور Платформа وإظهار SOON.";
+ }catch(error){alert("تعذر تغيير حالة Платформа: "+error.message);renderPlatformVisibility();}
+ finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];}
 }
 function platformName(platform){return platform==="ios"?"iOS":platform==="beta"?"BETA":"Android";}
 function platformExtension(){return currentPlatform==="ios"?".ipa":".apk";}
 function platformFiles(){return downloads.filter(item=>item.platform===currentPlatform);}
 function closePlatform(){document.getElementById("platformPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function openPlatform(platform){
- if(!hasAdminPermission(platform)){alert("ليس لديك صلاحية إدارة هذه المنصة.");return;}
+ if(!hasAdminPermission(platform)){alert("ليس لديك صلاحية Управление هذه Платформа.");return;}
  currentPlatform=platform;editingPlatformFileId=null;
  document.getElementById("mainMenu").classList.add("hidden");
  document.getElementById("platformPage").classList.remove("hidden");
- document.getElementById("platformHeading").textContent="إدارة "+platformName(platform);
+ document.getElementById("platformHeading").textContent="Управление "+platformName(platform);
  document.getElementById("platformMark").textContent=platform==="ios"?"🍎":platform==="beta"?"🧪":"🤖";
  const ios=platform==="ios";
- document.getElementById("platformFileLabel").textContent=ios?"اختر ملف IPA من هاتفك":"اختر ملف APK من هاتفك";
+ document.getElementById("platformFileLabel").textContent=ios?"Выберите файл IPA на телефоне":"Выберите файл APK на телефоне";
  document.getElementById("platformFile").accept=ios?".ipa,application/octet-stream":".apk,application/vnd.android.package-archive";
- document.getElementById("platformFileHint").textContent="الحد الأقصى 2.5 غيغابايت. يمكنك أيضًا إضافة رابط تنزيل خارجي.";
+ document.getElementById("platformFileHint").textContent="Максимальный размер — 2,5 ГБ. Также можно добавить внешнюю ссылку для скачивания.";
  document.getElementById("tutorialUrl").value=platformTutorials[platform]||"";
  resetPlatformForm();
- document.getElementById("platformStatus").textContent="جارٍ تحميل ملفات "+platformName(platform)+"...";
+ document.getElementById("platformStatus").textContent="Загрузка файлов "+platformName(platform)+"...";
  Promise.all([loadDownloads(),loadPlatformVisibility()]).then(()=>{
   document.getElementById("tutorialUrl").value=platformTutorials[platform]||"";
   renderPlatformFiles();
   renderPlatformVisibility();
-  document.getElementById("platformStatus").textContent="تم تحميل بيانات "+platformName(platform)+".";
+  document.getElementById("platformStatus").textContent="Данные загружены: "+platformName(platform)+".";
  }).catch(error=>{
-  document.getElementById("platformStatus").textContent="تعذر تحميل الملفات: "+error.message;
+  document.getElementById("platformStatus").textContent="Не удалось загрузить файлы: "+error.message;
  });
 }
 function renderPlatformFiles(){
@@ -708,19 +708,19 @@ function renderPlatformFiles(){
  document.getElementById("platformFilesCount").textContent=items.length;
  document.getElementById("platformDownloadsCount").textContent=items.reduce((n,item)=>n+Number(item.downloads_count||0),0).toLocaleString("en-US");
  const state=document.getElementById("platformStateLabel"),panel=state.closest(".platform-state-panel");
- if(platformVisibility[currentPlatform]!==false){state.textContent="🟢 المنصة ON";panel.classList.remove("is-soon");}
- else{state.textContent="🔴 SOON — المنصة OFF";panel.classList.add("is-soon");}
+ if(platformVisibility[currentPlatform]!==false){state.textContent="🟢 Платформа ON";panel.classList.remove("is-soon");}
+ else{state.textContent="🔴 SOON — Платформа OFF";panel.classList.add("is-soon");}
  const cards=[];
  for(let slot=1;slot<=2;slot++){
   const item=items.find(x=>Number(x.slot||1)===slot);
   if(!item){
-   cards.push('<article class="platform-add-slot"><div class="platform-slot-title">📦 '+(slot===1?'الملف الأول':'الملف الثاني')+'</div><div style="font-size:11px;color:#91a9c2;margin-top:6px">لا يوجد ملف في هذه الخانة</div><button onclick="startAddPlatformFile('+slot+')">＋ إضافة '+(slot===1?'الملف الأول':'الملف الثاني')+'</button></article>');
+   cards.push('<article class="platform-add-slot"><div class="platform-slot-title">📦 '+(slot===1?'Первый файл':'Второй файл')+'</div><div style="font-size:11px;color:#91a9c2;margin-top:6px">В этом слоте нет файла</div><button onclick="startAddPlatformFile('+slot+')">＋ إضافة '+(slot===1?'Первый файл':'Второй файл')+'</button></article>');
    continue;
   }
   const id=String(item.id||""),enabled=Number(item.enabled)===1;
   const fileLabel=item.file_name||(item.download_url?"رابط خارجي":"لا يوجد ملف مرفق");
   const link=item.download_url?'<a class="platform-file-link" href="'+escapeHtml(item.download_url)+'" target="_blank" rel="noopener">فتح رابط التنزيل ↗</a>':"";
-  cards.push(`<article class="platform-slot-card ${enabled?'':'is-disabled'}"><div class="platform-slot-top"><span class="platform-slot-title">📦 ${slot===1?'الملف الأول':'الملف الثاني'}</span><span class="platform-slot-state ${enabled?'':'off'}">${enabled?'● مفعّل':'● متوقف'}</span></div><div class="platform-app-name">${escapeHtml(item.title||"ملف بلا اسم")}</div><div class="platform-file-meta"><span>الإصدار: ${escapeHtml(item.version||"—")}</span><span>الحجم: ${formatSize(item.file_size)}</span><span>التنزيلات: ${Number(item.downloads_count||0)}</span></div><div class="platform-file-meta"><span>${escapeHtml(fileLabel)}</span></div>${item.description?`<p class="platform-file-description">${escapeHtml(item.description)}</p>`:''}${link}<div class="platform-card-actions"><button class="secondary" onclick="editPlatformFile('${encodeURIComponent(id)}')">✏️ تعديل</button><button onclick="togglePlatformFile('${encodeURIComponent(id)}',${enabled?0:1})">${enabled?'⏸ إيقاف':'▶️ تفعيل'}</button><button class="danger" onclick="deletePlatformFile('${encodeURIComponent(id)}')">🗑 حذف</button></div></article>`);
+  cards.push(`<article class="platform-slot-card ${enabled?'':'is-disabled'}"><div class="platform-slot-top"><span class="platform-slot-title">📦 ${slot===1?'Первый файл':'Второй файл'}</span><span class="platform-slot-state ${enabled?'':'off'}">${enabled?'● Активно':'● Отключено'}</span></div><div class="platform-app-name">${escapeHtml(item.title||"Файл без названия")}</div><div class="platform-file-meta"><span>Версия: ${escapeHtml(item.version||"—")}</span><span>Размер: ${formatSize(item.file_size)}</span><span>Загрузки: ${Number(item.downloads_count||0)}</span></div><div class="platform-file-meta"><span>${escapeHtml(fileLabel)}</span></div>${item.description?`<p class="platform-file-description">${escapeHtml(item.description)}</p>`:''}${link}<div class="platform-card-actions"><button class="secondary" onclick="editPlatformFile('${encodeURIComponent(id)}')">✏️ Изменить</button><button onclick="togglePlatformFile('${encodeURIComponent(id)}',${enabled?0:1})">${enabled?'⏸ إيقاف':'▶️ تفعيل'}</button><button class="danger" onclick="deletePlatformFile('${encodeURIComponent(id)}')">🗑 Удалить</button></div></article>`);
  }
  list.innerHTML=cards.join("");
 }
@@ -728,7 +728,7 @@ function startAddPlatformFile(slot){
  resetPlatformForm();
  document.getElementById("fileSlot").value=String(slot===2?2:1);
  const details=document.getElementById("fileEditorDetails");details.open=true;
- document.getElementById("platformFormHeading").textContent="➕ إضافة "+(slot===2?'الملف الثاني':'الملف الأول');
+ document.getElementById("platformFormHeading").textContent="➕ إضافة "+(slot===2?'Второй файл':'Первый файл');
  details.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function resetPlatformForm(){
@@ -739,8 +739,8 @@ function resetPlatformForm(){
  document.getElementById("fileSlot").value="1";
  document.getElementById("platformFile").value="";
  document.getElementById("platformFormHeading").textContent="➕ إضافة ملف جديد";
- document.getElementById("currentFile").textContent="لا توجد بيانات ملف محدد.";
- document.getElementById("saveButton").textContent="💾 إضافة بيانات الملف";
+ document.getElementById("currentFile").textContent="Данные файла не выбраны.";
+ document.getElementById("saveButton").textContent="💾 إضافة بيانات Файл";
  document.getElementById("cancelPlatformEdit").classList.add("hidden");
 }
 function editPlatformFile(encodedId){
@@ -755,9 +755,9 @@ function editPlatformFile(encodedId){
  document.getElementById("enabled").value=String(Number(item.enabled)===1?1:0);
  document.getElementById("fileSlot").value=String(Number(item.slot||1)===2?2:1);
  document.getElementById("platformFile").value="";
- document.getElementById("platformFormHeading").textContent="✏️ تعديل الملف: "+(item.title||item.file_name||"");
- document.getElementById("currentFile").textContent=(item.file_name?"📦 الملف: "+item.file_name+"\n":"")+(item.download_url?"🔗 "+item.download_url+"\n":"")+"الحجم: "+formatSize(item.file_size)+"\nالتنزيلات: "+Number(item.downloads_count||0);
- document.getElementById("saveButton").textContent="💾 حفظ التعديلات";
+ document.getElementById("platformFormHeading").textContent="✏️ Изменить Файл: "+(item.title||item.file_name||"");
+ document.getElementById("currentFile").textContent=(item.file_name?"📦 Файл: "+item.file_name+"\n":"")+(item.download_url?"🔗 "+item.download_url+"\n":"")+"Размер: "+formatSize(item.file_size)+"\nЗагрузки: "+Number(item.downloads_count||0);
+ document.getElementById("saveButton").textContent="💾 حفظ الИзменитьات";
  document.getElementById("cancelPlatformEdit").classList.remove("hidden");
  document.getElementById("platformFormHeading").scrollIntoView({behavior:"smooth",block:"center"});
 }
@@ -769,62 +769,62 @@ function platformData(){
 async function savePlatform(){
  if(platformBusy)return;
  const data=platformData();
- if(!data.title){alert("اكتب اسم التطبيق أو الملف.");return;}
+ if(!data.title){alert("اكتب اسم التطبيق أو Файл.");return;}
  if(data.download_url&&!/^https:\/\//i.test(data.download_url)){alert("رابط التنزيل يجب أن يبدأ بـ https://");return;}
- if(currentPlatform==="ios"&&data.enabled&&!data.download_url){alert("في iOS يجب رفع ملف IPA أو إضافة رابط تنزيل قبل تفعيل الملف.");return;}
- platformBusy=true;const button=document.getElementById("saveButton");button.disabled=true;button.textContent="جارٍ الحفظ...";
+ if(currentPlatform==="ios"&&data.enabled&&!data.download_url){alert("في iOS يجب رفع ملف IPA أو إضافة رابط تنزيل قبل تفعيل Файл.");return;}
+ platformBusy=true;const button=document.getElementById("saveButton");button.disabled=true;button.textContent="Сохранение...";
  try{
   await apiDownloads({action:"save",...data});
   await loadDownloads();renderPlatformFiles();resetPlatformForm();
-  document.getElementById("platformStatus").textContent="✅ تم حفظ بيانات الملف بنجاح.";
+  document.getElementById("platformStatus").textContent="✅ تم حفظ بيانات Файл بنجاح.";
  }catch(error){document.getElementById("platformStatus").textContent="تعذر الحفظ: "+error.message;alert("خطأ: "+error.message);}
- finally{platformBusy=false;button.disabled=false;button.textContent=editingPlatformFileId?"💾 حفظ التعديلات":"💾 إضافة بيانات الملف";}
+ finally{platformBusy=false;button.disabled=false;button.textContent=editingPlatformFileId?"💾 حفظ الИзменитьات":"💾 إضافة بيانات Файл";}
 }
 async function togglePlatformFile(encodedId,enabled){
  if(platformBusy)return;
  const id=decodeURIComponent(encodedId),item=platformFiles().find(x=>String(x.id)===id);if(!item)return;
  if(currentPlatform==="ios"&&enabled===1&&!item.download_url){alert("لا يمكن تفعيل ملف iOS دون ملف IPA أو رابط تنزيل.");return;}
- if(!confirm(enabled?"تفعيل هذا الملف؟":"إيقاف هذا الملف؟"))return;
+ if(!confirm(enabled?"تفعيل هذا Файл؟":"إيقاف هذا Файл؟"))return;
  platformBusy=true;
  try{
   await apiDownloads({action:"save",platform:currentPlatform,id:item.id,slot:Number(item.slot||1),title:item.title||"ملف",version:item.version||"",description:item.description||"",download_url:item.download_url||"",enabled:enabled===1});
-  await loadDownloads();renderPlatformFiles();document.getElementById("platformStatus").textContent="تم تحديث حالة الملف.";
- }catch(error){alert("تعذر تغيير الحالة: "+error.message);}
+  await loadDownloads();renderPlatformFiles();document.getElementById("platformStatus").textContent="تم Обновить حالة Файл.";
+ }catch(error){alert("تعذر تغيير Статус: "+error.message);}
  finally{platformBusy=false;}
 }
 async function deletePlatformFile(encodedId){
  if(platformBusy)return;
  const id=decodeURIComponent(encodedId),item=platformFiles().find(x=>String(x.id)===id);if(!item)return;
- if(!confirm("حذف هذا الملف نهائيًا من القائمة والتخزين؟"))return;
+ if(!confirm("Удалить هذا Файл نهائيًا من القائمة والتخزين؟"))return;
  platformBusy=true;
  try{
   await apiDownloads({action:"delete",platform:currentPlatform,id});
-  await loadDownloads();renderPlatformFiles();document.getElementById("platformStatus").textContent="تم حذف الملف.";
- }catch(error){alert("تعذر حذف الملف: "+error.message);}
+  await loadDownloads();renderPlatformFiles();document.getElementById("platformStatus").textContent="تم Удалить Файл.";
+ }catch(error){alert("Не удалось удалить файл: "+error.message);}
  finally{platformBusy=false;}
 }
 async function savePlatformTutorial(){
  if(platformBusy)return;
  const url=document.getElementById("tutorialUrl").value.trim();
- if(url&&!/^https:\/\//i.test(url)){alert("رابط الفيديو يجب أن يبدأ بـ https://");return;}
- platformBusy=true;const button=document.getElementById("saveTutorialButton");button.disabled=true;button.textContent="جارٍ الحفظ...";
+ if(url&&!/^https:\/\//i.test(url)){alert("Ссылка на видео должна начинаться с https://");return;}
+ platformBusy=true;const button=document.getElementById("saveTutorialButton");button.disabled=true;button.textContent="Сохранение...";
  try{
   const result=await apiDownloads({action:"tutorial_save",platform:currentPlatform,video_url:url});
   platformTutorials[currentPlatform]=result.video_url||url;
-  document.getElementById("platformStatus").textContent="تم حفظ رابط فيديو الشرح.";
- }catch(error){alert("تعذر حفظ رابط الشرح: "+error.message);}
+  document.getElementById("platformStatus").textContent="Ссылка на видеоинструкцию сохранена.";
+ }catch(error){alert("Не удалось сохранить ссылку на инструкцию: "+error.message);}
  finally{platformBusy=false;button.disabled=false;button.textContent="💾 حفظ رابط الشرح";}
 }
 
 async function uploadPlatformTutorial(){
   if(platformBusy)return;
   const file=document.getElementById("tutorialFile").files[0];
-  if(!file){alert("اختر فيديو MP4 من هاتفك أولاً.");return;}
+  if(!file){alert("Сначала выберите видео MP4 на телефоне.");return;}
   if(!file.name.toLowerCase().endsWith(".mp4")|| (file.type&&file.type!=="video/mp4")){
-    alert("الرجاء اختيار فيديو MP4 فقط.");return;
+    alert("Выберите видео в формате MP4.");return;
   }
   const MAX_VIDEO_SIZE=50*1024*1024;
-  if(file.size>MAX_VIDEO_SIZE){alert("الحد الأقصى لحجم فيديو الشرح هو 50 ميغابايت.");return;}
+  if(file.size>MAX_VIDEO_SIZE){alert("Максимальный размер видеоинструкции — 50 МБ.");return;}
   if(!confirm("رفع فيديو الشرح إلى "+platformName(currentPlatform)+"؟\\n"+file.name+"\\n"+formatSize(file.size)))return;
 
   platformBusy=true;
@@ -863,7 +863,7 @@ async function uploadPlatformTutorial(){
         resolve(data);
       });
       xhr.addEventListener("error",()=>reject(new Error("تعذر الاتصال بالخادم أثناء رفع الفيديو.")));
-      xhr.addEventListener("abort",()=>reject(new Error("تم إلغاء رفع الفيديو.")));
+      xhr.addEventListener("abort",()=>reject(new Error("تم Отмена رفع الفيديو.")));
       xhr.send(form);
     });
 
@@ -874,9 +874,9 @@ async function uploadPlatformTutorial(){
     document.getElementById("tutorialFile").value="";
     progressFill.style.width="100%";progressText.textContent="100% — اكتمل رفع الفيديو";
     status.textContent="✅ تم رفع فيديو الشرح وحفظه لمنصة "+platformName(currentPlatform)+".";
-    alert("تم رفع فيديو الشرح بنجاح.");
+    alert("Видеоинструкция успешно загружена.");
   }catch(error){
-    status.textContent="❌ تعذر رفع فيديو الشرح: "+error.message;
+    status.textContent="❌ Не удалось загрузить видеоинструкцию: "+error.message;
     alert("تعذر رفع الفيديو: "+error.message);
   }finally{
     platformBusy=false;button.disabled=false;saveButton.disabled=false;
@@ -892,9 +892,9 @@ async function uploadPlatform(){
  if(!file){alert("اختر ملف "+platformExtension()+" أولاً.");return;}
  if(!file.name.toLowerCase().endsWith(platformExtension())){alert("الرجاء اختيار ملف "+platformExtension()+" فقط.");return;}
  const MAX_SIZE=2.5*1024*1024*1024,DEFAULT_PART_SIZE=10*1024*1024;
- if(file.size>MAX_SIZE){alert("الحد الأقصى لحجم الملف هو 2.5GB.");return;}
+ if(file.size>MAX_SIZE){alert("الحد الأقصى لحجم Файл هو 2.5GB.");return;}
  const metadata={title:document.getElementById("appTitle").value.trim(),version:document.getElementById("appVersion").value.trim(),description:document.getElementById("appDescription").value.trim()};
- if(!metadata.title){alert("اكتب اسم التطبيق أو الملف أولاً.");return;}
+ if(!metadata.title){alert("اكتب اسم التطبيق أو Файл أولاً.");return;}
  if(!confirm("رفع ملف "+platformExtension()+" جديد إلى "+platformName(currentPlatform)+"؟\n"+file.name+"\n"+formatSize(file.size)))return;
  platformBusy=true;
  const button=document.getElementById("uploadButton"),saveButton=document.getElementById("saveButton"),status=document.getElementById("platformStatus");
@@ -951,15 +951,15 @@ async function uploadPlatform(){
   progressFill.style.width="100%";progressText.textContent="100% — اكتمل الرفع";
   document.getElementById("platformFile").value="";
   await loadDownloads();renderPlatformFiles();resetPlatformForm();
-  status.textContent="✅ اكتمل رفع الملف بنجاح.";alert("تم رفع الملف وإضافته إلى قائمة الملفات.");
+  status.textContent="✅ اكتمل رفع Файл بنجاح.";alert("تم رفع Файл وإضافته إلى قائمة Файлات.");
  }catch(error){
   if(uploadCreated&&uploadId&&uploadKey){
    try{const abortForm=new FormData();abortForm.append("action","abort");abortForm.append("platform",currentPlatform);abortForm.append("initData",tg.initData);abortForm.append("key",uploadKey);abortForm.append("uploadId",uploadId);await fetch("/api/admin/downloads",{method:"POST",credentials:"same-origin",cache:"no-store",body:abortForm});}
    catch(abortError){console.error("Abort upload error:",abortError);}
   }
-  status.textContent="❌ فشل الرفع: "+error.message;alert("تعذر رفع الملف: "+error.message);
+  status.textContent="❌ فشل الرفع: "+error.message;alert("تعذر رفع Файл: "+error.message);
  }finally{
-  platformBusy=false;button.disabled=false;saveButton.disabled=false;button.textContent="📤 رفع الملف";
+  platformBusy=false;button.disabled=false;saveButton.disabled=false;button.textContent="📤 رفع Файл";
  }
 }
 function backToMenu(){document.getElementById("platformPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
@@ -995,9 +995,9 @@ async function resetOxideData(){
  }catch(error){status.textContent="Не удалось выполнить сброс: "+error.message;}
  finally{button.disabled=false;}
 }
-/* سجل دخول المستخدمين */
+/* Журнал входов пользователей */
 let activityPage=1,activityPages=1,activityQuery="",activityBusy=false;
-function activityDate(value){const n=Number(value||0);return n?new Date(n*1000).toLocaleString("ar-DZ",{dateStyle:"medium",timeStyle:"short"}):"غير متوفر";}
+function activityDate(value){const n=Number(value||0);return n?new Date(n*1000).toLocaleString("ar-DZ",{dateStyle:"medium",timeStyle:"short"}):"Нет данных";}
 async function loadActivity(){
  if(activityBusy)return;activityBusy=true;
  const status=document.getElementById("activityStatus"),list=document.getElementById("activityList");status.textContent="جارٍ تحميل Журнал входов...";list.innerHTML="";
@@ -1007,9 +1007,9 @@ async function loadActivity(){
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"ACTIVITY_LOAD_FAILED");
   activityPages=Number(result.totalPages||1);document.getElementById("activityTotal").textContent=Number(result.total||0).toLocaleString("en-US");document.getElementById("activityPageNumber").textContent=activityPage+" / "+activityPages;
   const rows=Array.isArray(result.records)?result.records:[];
-  if(!rows.length)list.innerHTML='<div class="users-empty">لا توجد سجلات دخول بعد. ستظهر الزيارات الجديدة بعد تسجيل الدخول من تيليجرام.</div>';
+  if(!rows.length)list.innerHTML='<div class="users-empty">Записей о входах пока нет. Новые посещения появятся после входа через Telegram.</div>';
   else list.innerHTML=rows.map(row=>{
-   const name=[row.firstName,row.lastName].filter(Boolean).join(" ")||"مستخدم OXIDE";const username=row.username?"@"+escapeHtml(row.username):"بدون اسم مستخدم";
+   const name=[row.firstName,row.lastName].filter(Boolean).join(" ")||"Пользователь OXIDE";const username=row.username?"@"+escapeHtml(row.username):"Без имени пользователя";
    return '<article class="user-item"><div class="user-top"><strong>'+escapeHtml(name)+'</strong><span class="user-id">'+escapeHtml(row.publicId||("TG-"+row.telegramId))+'</span></div><div class="user-details"><div>اسم تيليجرام<br><b>'+username+'</b></div><div>آخر دخول<br><b>'+activityDate(row.lastSeenAt)+'</b></div><div>أول دخول مسجل<br><b>'+activityDate(row.firstSeenAt)+'</b></div><div>عدد مرات الدخول<br><b>'+Number(row.visitCount||0).toLocaleString("en-US")+'</b></div><div style="grid-column:1/-1">Telegram ID<br><b class="user-id">'+escapeHtml(row.telegramId)+'</b></div></div></article>';
   }).join("");
   document.getElementById("activityPrev").disabled=activityPage<=1;document.getElementById("activityNext").disabled=activityPage>=activityPages;status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
@@ -1034,7 +1034,7 @@ function renderAdsEarningsChart(daily){
  document.getElementById("adsEarningsChartTotal").textContent=formatAdsMoney((daily||[]).reduce((sum,item)=>sum+Number(item.completions||0),0))+" USD₮";
 }
 async function loadAdsEarnings(){
- const status=document.getElementById("adsEarningsStatus");if(!status||!tg?.initData)return;status.textContent="جارٍ تحديث إحصائيات الإعلانات...";
+ const status=document.getElementById("adsEarningsStatus");if(!status||!tg?.initData)return;status.textContent="جارٍ Обновить إحصائيات Реклама...";
  try{
   const response=await fetch("/api/admin/ads-analytics",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData})});
   const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"ADS_ANALYTICS_LOAD_FAILED");
@@ -1048,7 +1048,7 @@ async function loadAdsEarnings(){
   document.getElementById("adsEarningsMonthCount").textContent=month.toLocaleString("en-US")+" إعلان مكتمل";
   document.getElementById("adsEarningsCompletions").textContent=total.toLocaleString("en-US");
   document.getElementById("adsEarningsImpressions").textContent=Number(data.impressions||0).toLocaleString("en-US");
-  document.getElementById("adsEarningsClicks").textContent="غير متاح";
+  document.getElementById("adsEarningsClicks").textContent="Недоступно";
   renderAdsEarningsChart(data.daily||[]);
   status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" • время Алжира";
  }catch(error){status.textContent="تعذر تحميل الإحصائيات: "+error.message;}
@@ -1058,16 +1058,16 @@ function openActivity(){activityPage=1;activityQuery="";document.getElementById(
 function closeActivity(){document.getElementById("activityPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function searchActivity(){activityQuery=document.getElementById("activitySearch").value.trim();activityPage=1;loadActivity();}
 function changeActivityPage(direction){const next=activityPage+direction;if(next<1||next>activityPages)return;activityPage=next;loadActivity();}
-/* المستخدمون */
+/* الПользовательون */
 let usersPage=1,usersTotalPages=1,usersQuery="",usersBusy=false;
 async function loadUsers(){
- if(usersBusy)return;usersBusy=true;const status=document.getElementById("usersStatus"),list=document.getElementById("usersList");status.textContent="جارٍ تحميل بيانات المستخدمين...";list.innerHTML="";document.getElementById("usersPrev").disabled=true;document.getElementById("usersNext").disabled=true;
+ if(usersBusy)return;usersBusy=true;const status=document.getElementById("usersStatus"),list=document.getElementById("usersList");status.textContent="جارٍ تحميل بيانات الПользовательين...";list.innerHTML="";document.getElementById("usersPrev").disabled=true;document.getElementById("usersNext").disabled=true;
  try{const response=await fetch("/api/admin/users",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,page:usersPage,limit:20,query:usersQuery})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"USERS_LOAD_FAILED");
  usersTotalPages=Number(result.totalPages||1);document.getElementById("usersTotal").textContent=Number(result.total||0).toLocaleString("en-US");document.getElementById("usersPageNumber").textContent=usersPage+" / "+usersTotalPages;
- if(!result.users||result.users.length===0)list.innerHTML='<div class="users-empty">لا يوجد مستخدمون مطابقون للبحث.</div>';
- else list.innerHTML=result.users.map(user=>{const date=user.createdAt?new Date(Number(user.createdAt)*1000).toLocaleString("ar-DZ"):"غير متوفر";const name=[user.firstName,user.lastName].filter(Boolean).join(" ")||"اسم غير متوفر";const username=user.username?"@"+user.username:"اسم المستخدم غير متوفر";const photo=String(user.photoUrl||"");const telegram=user.telegramUrl|| (user.username?"https://t.me/"+user.username:"");return`<div class="user-item"><div class="user-profile"><div class="user-profile-photo">${photo?`<img src="${escapeHtml(photo)}" alt="" loading="lazy">`:"👤"}</div><div class="user-profile-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(username)}</span>${telegram?`<a href="${escapeHtml(telegram)}" target="_blank" rel="noopener">فتح حساب Telegram</a>`:""}</div></div><div class="user-top"><span>معرّف OXIDE</span><span class="user-id">${escapeHtml(user.id||"—")}</span></div><div class="user-details"><div>النقاط: <b>${Number(user.points||0).toLocaleString("en-US")}</b></div><div>الإعلانات: <b>${Number(user.progress||0)} / 3</b></div><div style="grid-column:1/-1">تاريخ التسجيل: <b>${escapeHtml(date)}</b></div></div><button class="points-audit-button" type="button" onclick="loadUserPointsAudit(&quot;${escapeHtml(user.userUuid)}&quot;,this)">🔎 عرض سجل النقاط ومصادرها</button><div class="points-audit hidden" id="pointsAudit-${escapeHtml(user.userUuid)}"></div></div>`;}).join("");list.querySelectorAll(".user-profile-photo img").forEach(img=>img.addEventListener("error",()=>{img.remove();img.parentElement.textContent="👤";},{once:true}));
+ if(!result.users||result.users.length===0)list.innerHTML='<div class="users-empty">لا يوجد Пользовательون مطابقون للПоиск.</div>';
+ else list.innerHTML=result.users.map(user=>{const date=user.createdAt?new Date(Number(user.createdAt)*1000).toLocaleString("ar-DZ"):"Нет данных";const name=[user.firstName,user.lastName].filter(Boolean).join(" ")||"Имя не указано";const username=user.username?"@"+user.username:"اسم الПользователь Нет данных";const photo=String(user.photoUrl||"");const telegram=user.telegramUrl|| (user.username?"https://t.me/"+user.username:"");return`<div class="user-item"><div class="user-profile"><div class="user-profile-photo">${photo?`<img src="${escapeHtml(photo)}" alt="" loading="lazy">`:"👤"}</div><div class="user-profile-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(username)}</span>${telegram?`<a href="${escapeHtml(telegram)}" target="_blank" rel="noopener">فتح حساب Telegram</a>`:""}</div></div><div class="user-top"><span>معرّف OXIDE</span><span class="user-id">${escapeHtml(user.id||"—")}</span></div><div class="user-details"><div>Баллы: <b>${Number(user.points||0).toLocaleString("en-US")}</b></div><div>Реклама: <b>${Number(user.progress||0)} / 3</b></div><div style="grid-column:1/-1">تاريخ التسجيل: <b>${escapeHtml(date)}</b></div></div><button class="points-audit-button" type="button" onclick="loadUserPointsAudit(&quot;${escapeHtml(user.userUuid)}&quot;,this)">🔎 عرض سجل Баллы ومصادرها</button><div class="points-audit hidden" id="pointsAudit-${escapeHtml(user.userUuid)}"></div></div>`;}).join("");list.querySelectorAll(".user-profile-photo img").forEach(img=>img.addEventListener("error",()=>{img.remove();img.parentElement.textContent="👤";},{once:true}));
  status.textContent="تم تحميل البيانات بنجاح.";document.getElementById("usersPrev").disabled=usersPage<=1;document.getElementById("usersNext").disabled=usersPage>=usersTotalPages;
- }catch(error){status.textContent="تعذر تحميل المستخدمين: "+error.message;list.innerHTML='<div class="users-empty">تحقق من نشر ملف users.js ثم أعد المحاولة.</div>';}
+ }catch(error){status.textContent="تعذر تحميل الПользовательين: "+error.message;list.innerHTML='<div class="users-empty">تحقق من نشر ملف users.js ثم أعد المحاولة.</div>';}
  finally{usersBusy=false;}
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
@@ -1076,27 +1076,27 @@ function closeUsers(){document.getElementById("usersPage").classList.add("hidden
 function searchUsers(){usersQuery=document.getElementById("usersSearch").value.trim();usersPage=1;loadUsers();}
 function changeUsersPage(direction){const next=usersPage+direction;if(next<1||next>usersTotalPages)return;usersPage=next;loadUsers();}
 function auditNumber(value){return Number(value||0).toLocaleString("en-US",{maximumFractionDigits:3});}
-function auditDate(value){return value?new Date(Number(value)*1000).toLocaleString("ar-DZ"):"غير متوفر";}
-function auditReason(value){const names={mission_approved:"مكافأة مهمة",notification_reward:"هدية من الإدارة",redemption_request:"خصم طلب استبدال",redemption_refund:"استرجاع نقاط الاستبدال",adsgram_ad_reward:"إعلان AdsGram",wallet_tap:"تكبيس",wallet_mining:"التعدين",wallet_upgrade:"ترقية المحفظة",referral_reward:"مكافأة إحالة",referral_invited_bonus:"مكافأة المستخدم المدعو"};return names[value]||String(value||"حركة نقاط");}
+function auditDate(value){return value?new Date(Number(value)*1000).toLocaleString("ar-DZ"):"Нет данных";}
+function auditReason(value){const names={mission_approved:"مكافأة مهمة",notification_reward:"هدية من الإدارة",redemption_request:"خصم طلب استبدال",redemption_refund:"استرجاع نقاط الاستبدال",adsgram_ad_reward:"إعلان AdsGram",wallet_tap:"تكبيس",wallet_mining:"التعدين",wallet_upgrade:"ترقية المحفظة",referral_reward:"مكافأة إحالة",referral_invited_bonus:"مكافأة الПользователь المدعو"};return names[value]||String(value||"حركة نقاط");}
 async function loadUserPointsAudit(userUuid,button){
  const panel=document.getElementById("pointsAudit-"+userUuid);if(!panel)return;
- if(!panel.classList.contains("hidden")){panel.classList.add("hidden");button.textContent="🔎 عرض سجل النقاط ومصادرها";return;}
- panel.classList.remove("hidden");panel.innerHTML='<div class="audit-muted">جارٍ تحميل سجل النقاط...</div>';button.disabled=true;
+ if(!panel.classList.contains("hidden")){panel.classList.add("hidden");button.textContent="🔎 عرض سجل Баллы ومصادرها";return;}
+ panel.classList.remove("hidden");panel.innerHTML='<div class="audit-muted">Загрузка журнала баллов...</div>';button.disabled=true;
  try{
   const response=await fetch("/api/admin/points-audit",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,userUuid})});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"POINTS_AUDIT_FAILED");
   const u=result.user||{},rows=Array.isArray(result.ledger)?result.ledger:[],summary=Array.isArray(result.summary)?result.summary:[];
   const totalIn=rows.filter(x=>Number(x.delta)>0).reduce((a,x)=>a+Number(x.delta),0),totalOut=rows.filter(x=>Number(x.delta)<0).reduce((a,x)=>a+Math.abs(Number(x.delta)),0),money=auditNumber;
-  const summaryHtml=summary.length?summary.map(x=>'<div class="audit-row">'+escapeHtml(auditReason(x.reason))+' <span class="audit-pill">'+Number(x.count||0)+' عملية</span><b class="'+(Number(x.total)>=0?'audit-positive':'audit-negative')+'">'+(Number(x.total)>0?'+':'')+money(x.total)+'</b></div>').join(""):'<div class="audit-muted">لا توجد حركات مسجلة في دفتر النقاط.</div>';
-  const ledgerHtml=rows.length?rows.map(x=>'<div class="audit-row"><b class="'+(Number(x.delta)>=0?'audit-positive':'audit-negative')+'">'+(Number(x.delta)>0?'+':'')+money(x.delta)+'</b> — '+escapeHtml(auditReason(x.reason))+'<br><span class="audit-muted">'+escapeHtml(auditDate(x.createdAt))+' · الرصيد بعد العملية: '+money(x.balance_after)+' · مرجع: '+escapeHtml(x.referenceType||"—")+' #'+escapeHtml(x.referenceId||"—")+'</span></div>').join(""):'<div class="audit-muted">لا توجد حركات نقاط محفوظة حتى الآن.</div>';
-  const missions=(result.missions||[]).map(x=>'<div class="audit-row">'+escapeHtml(x.title||("مهمة #"+x.missionId))+' <span class="audit-pill">'+escapeHtml(x.status)+'</span><br><span class="audit-muted">المكافأة: '+money(x.rewardPoints)+' · الإرسال: '+escapeHtml(auditDate(x.createdAt))+' · المراجعة: '+escapeHtml(auditDate(x.reviewedAt))+'</span></div>').join("")||'<div class="audit-muted">لا توجد طلبات مهمات.</div>';
-  const gifts=(result.gifts||[]).map(x=>'<div class="audit-row">'+escapeHtml(x.title||"هدية")+' <b class="audit-positive">+'+money(x.rewardPoints)+'</b><span class="audit-pill">'+(x.claimedAt?"تم الاستلام":"لم تُستلم")+'</span><br><span class="audit-muted">الإرسال: '+escapeHtml(auditDate(x.createdAt))+' · الاستلام: '+escapeHtml(auditDate(x.claimedAt))+'</span></div>').join("")||'<div class="audit-muted">لا توجد هدايا مسجلة.</div>';
-  const referrals=(result.referrals||[]).map(x=>'<div class="audit-row">'+(x.relation==="referrer"?"أنت دعوت: ":"دعاك: ")+escapeHtml(x.relation==="referrer"?(x.referredPublicId||x.referredId||"—"):(x.referrerPublicId||x.referrerId||"—"))+' <span class="audit-pill">'+escapeHtml(x.status||"—")+'</span><br><span class="audit-muted">المكافأة المسجلة: '+money(x.pointsAwarded)+' · المخاطر: '+Number(x.riskScore||0)+' · '+escapeHtml(auditDate(x.createdAt))+'</span></div>').join("")||'<div class="audit-muted">لا توجد سجلات إحالات.</div>';
-  const ad=result.adCycle?'<div class="audit-row">إعلانات الدورة الحالية: <b>'+money(result.adCycle.completedAds)+'</b> / 10<br><span class="audit-muted">بداية الدورة: '+escapeHtml(auditDate(result.adCycle.cycleStartedAt))+'</span></div>':'<div class="audit-muted">لا توجد بيانات دورة إعلانات حالية.</div>';
-  const wallet=result.wallet?'<div class="audit-row">عداد التكبيس: <b>'+money(result.wallet.taps)+'</b><br><span class="audit-muted">مستوى التكبيس: '+money(result.wallet.tapLevel)+' · التخزين: '+money(result.wallet.storageLevel)+' · التعدين: '+money(result.wallet.miningLevel)+' · آخر تحديث: '+escapeHtml(auditDate(result.wallet.updatedAt))+'</span></div>':'<div class="audit-muted">لا توجد بيانات محفظة.</div>';
-  panel.innerHTML='<div class="audit-summary"><div class="audit-stat">الرصيد الحالي<b>'+money(u.points)+'</b></div><div class="audit-stat">عمليات دفتر النقاط<b>'+rows.length+'</b></div><div class="audit-stat">الإضافات المسجلة<b class="audit-positive">+'+money(totalIn)+'</b></div><div class="audit-stat">الخصومات المسجلة<b class="audit-negative">-'+money(totalOut)+'</b></div></div><div class="audit-warning">تنبيه: السجل التاريخي قبل تفعيل التتبع قد يكون ناقصًا. عداد الإعلانات والتكبيس لا يثبت وحده كل عملية قديمة.</div><h4>ملخص حسب المصدر</h4>'+summaryHtml+'<h4>آخر 200 حركة نقاط مسجلة</h4>'+ledgerHtml+'<h4>المهمات</h4>'+missions+'<h4>الهدايا</h4>'+gifts+'<h4>الإحالات</h4>'+referrals+'<h4>الإعلانات</h4>'+ad+'<h4>التكبيس والمحفظة</h4>'+wallet;
-  button.textContent="إخفاء سجل النقاط";
- }catch(error){panel.innerHTML='<div class="audit-warning">تعذر تحميل سجل المستخدم: '+escapeHtml(error.message)+'</div>';}
+  const summaryHtml=summary.length?summary.map(x=>'<div class="audit-row">'+escapeHtml(auditReason(x.reason))+' <span class="audit-pill">'+Number(x.count||0)+' عملية</span><b class="'+(Number(x.total)>=0?'audit-positive':'audit-negative')+'">'+(Number(x.total)>0?'+':'')+money(x.total)+'</b></div>').join(""):'<div class="audit-muted">В журнале баллов нет операций.</div>';
+  const ledgerHtml=rows.length?rows.map(x=>'<div class="audit-row"><b class="'+(Number(x.delta)>=0?'audit-positive':'audit-negative')+'">'+(Number(x.delta)>0?'+':'')+money(x.delta)+'</b> — '+escapeHtml(auditReason(x.reason))+'<br><span class="audit-muted">'+escapeHtml(auditDate(x.createdAt))+' · الرصيد بعد العملية: '+money(x.balance_after)+' · مرجع: '+escapeHtml(x.referenceType||"—")+' #'+escapeHtml(x.referenceId||"—")+'</span></div>').join(""):'<div class="audit-muted">Операций с баллами пока нет.</div>';
+  const missions=(result.missions||[]).map(x=>'<div class="audit-row">'+escapeHtml(x.title||("مهمة #"+x.missionId))+' <span class="audit-pill">'+escapeHtml(x.status)+'</span><br><span class="audit-muted">المكافأة: '+money(x.rewardPoints)+' · الОтправить: '+escapeHtml(auditDate(x.createdAt))+' · المراجعة: '+escapeHtml(auditDate(x.reviewedAt))+'</span></div>').join("")||'<div class="audit-muted">Заявок по заданиям нет.</div>';
+  const gifts=(result.gifts||[]).map(x=>'<div class="audit-row">'+escapeHtml(x.title||"هدية")+' <b class="audit-positive">+'+money(x.rewardPoints)+'</b><span class="audit-pill">'+(x.claimedAt?"تم الاستلام":"لم تُستلم")+'</span><br><span class="audit-muted">الОтправить: '+escapeHtml(auditDate(x.createdAt))+' · الاستلام: '+escapeHtml(auditDate(x.claimedAt))+'</span></div>').join("")||'<div class="audit-muted">Зарегистрированных наград нет.</div>';
+  const referrals=(result.referrals||[]).map(x=>'<div class="audit-row">'+(x.relation==="referrer"?"أنت دعوت: ":"دعاك: ")+escapeHtml(x.relation==="referrer"?(x.referredPublicId||x.referredId||"—"):(x.referrerPublicId||x.referrerId||"—"))+' <span class="audit-pill">'+escapeHtml(x.status||"—")+'</span><br><span class="audit-muted">Начисленная награда: '+money(x.pointsAwarded)+' · المخاطر: '+Number(x.riskScore||0)+' · '+escapeHtml(auditDate(x.createdAt))+'</span></div>').join("")||'<div class="audit-muted">Записей о рефералах нет.</div>';
+  const ad=result.adCycle?'<div class="audit-row">إعلانات الدورة الحالية: <b>'+money(result.adCycle.completedAds)+'</b> / 10<br><span class="audit-muted">بداية الدورة: '+escapeHtml(auditDate(result.adCycle.cycleStartedAt))+'</span></div>':'<div class="audit-muted">Данные текущего рекламного цикла отсутствуют.</div>';
+  const wallet=result.wallet?'<div class="audit-row">عداد التكبيس: <b>'+money(result.wallet.taps)+'</b><br><span class="audit-muted">مستوى التكبيس: '+money(result.wallet.tapLevel)+' · التخزين: '+money(result.wallet.storageLevel)+' · التعدين: '+money(result.wallet.miningLevel)+' · آخر Обновить: '+escapeHtml(auditDate(result.wallet.updatedAt))+'</span></div>':'<div class="audit-muted">Данные кошелька отсутствуют.</div>';
+  panel.innerHTML='<div class="audit-summary"><div class="audit-stat">Текущий баланс<b>'+money(u.points)+'</b></div><div class="audit-stat">عمليات دفتر Баллы<b>'+rows.length+'</b></div><div class="audit-stat">الإضافات المسجلة<b class="audit-positive">+'+money(totalIn)+'</b></div><div class="audit-stat">الخصومات المسجلة<b class="audit-negative">-'+money(totalOut)+'</b></div></div><div class="audit-warning">تنبيه: السجل التاريخي قبل تفعيل التتبع قد يكون ناقصًا. عداد Реклама والتكبيس لا يثبت وحده كل عملية قديمة.</div><h4>Сводка по источникам</h4>'+summaryHtml+'<h4>Последние 200 операций с баллами</h4>'+ledgerHtml+'<h4>Задания</h4>'+missions+'<h4>Награды</h4>'+gifts+'<h4>Рефералы</h4>'+referrals+'<h4>Реклама</h4>'+ad+'<h4>Тапы и кошелёк</h4>'+wallet;
+  button.textContent="إخفاء سجل Баллы";
+ }catch(error){panel.innerHTML='<div class="audit-warning">Не удалось загрузить журнал пользователя: '+escapeHtml(error.message)+'</div>';}
  finally{button.disabled=false;}
 }
 
@@ -1109,7 +1109,7 @@ async function supportAdminRequest(data){
  const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"SUPPORT_ADMIN_FAILED");return result;
 }
 function openSupportAdmin(){
- if(!hasAdminPermission("support")){alert("ليس لديك صلاحية إدارة Техническая поддержка.");return;}
+ if(!hasAdminPermission("support")){alert("ليس لديك صلاحية Управление Техническая поддержка.");return;}
  document.getElementById("mainMenu").classList.add("hidden");
  document.getElementById("supportAdminPage").classList.remove("hidden");
  loadSupportAdminConversations();
@@ -1126,20 +1126,20 @@ function closeSupportAdmin(){
 async function loadSupportAdminConversations(silent=false){
  if(supportAdminBusy)return;supportAdminBusy=true;
  const list=document.getElementById("supportAdminList"),status=document.getElementById("supportAdminCount");
- if(!silent)list.innerHTML='<div class="support-admin-empty">جارٍ تحميل المحادثات...</div>';
+ if(!silent)list.innerHTML='<div class="support-admin-empty">جارٍ تحميل Чаты...</div>';
  try{
   const result=await supportAdminRequest({action:"list"});
   supportAdminConversations=Array.isArray(result.conversations)?result.conversations:[];
-  status.textContent="عدد المحادثات: "+supportAdminConversations.length;
+  status.textContent="عدد Чаты: "+supportAdminConversations.length;
   renderSupportAdminConversations();
- }catch(error){status.textContent="تعذر تحميل المحادثات";if(!silent)list.innerHTML='<div class="support-admin-empty">تعذر تحميل الرسائل. تحقق من نشر API Техническая поддержка.</div>';}
+ }catch(error){status.textContent="تعذر تحميل Чаты";if(!silent)list.innerHTML='<div class="support-admin-empty">Не удалось загрузить сообщения. Проверьте публикацию API технической поддержки.</div>';}
  finally{supportAdminBusy=false;}
 }
 function renderSupportAdminConversations(){
  const list=document.getElementById("supportAdminList");
- if(!supportAdminConversations.length){list.innerHTML='<div class="support-admin-empty">لا توجد محادثات حتى الآن.</div>';return;}
+ if(!supportAdminConversations.length){list.innerHTML='<div class="support-admin-empty">Чатов пока нет.</div>';return;}
  list.innerHTML=supportAdminConversations.map(item=>{
-  const id=Number(item.conversation_id),name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"مستخدم OXIDE";
+  const id=Number(item.conversation_id),name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"Пользователь OXIDE";
   const unread=Number(item.unread_count||0)>0,photo=String(item.photo_url||"");
   return '<button type="button" class="support-admin-conversation '+(id===supportAdminSelectedId?'active':'')+'" onclick="selectSupportAdminConversation('+id+')"><span class="support-admin-avatar">👤'+(photo?'<img src="'+escapeHtml(photo)+'" alt="">':'')+'</span><span class="support-admin-person"><strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(item.display_id||"—")+'</small></span><i class="support-admin-unread '+(unread?'':'is-hidden')+'" aria-label="رسالة جديدة"></i></button>';
  }).join("");
@@ -1148,7 +1148,7 @@ function renderSupportAdminConversations(){
 async function selectSupportAdminConversation(id){
  const item=supportAdminConversations.find(row=>Number(row.conversation_id)===Number(id));if(!item)return;
  supportAdminSelectedId=Number(id);renderSupportAdminConversations();
- const name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"مستخدم OXIDE";
+ const name=[item.first_name,item.last_name].filter(Boolean).join(" ")||item.username||"Пользователь OXIDE";
  const head=document.getElementById("supportAdminChatHead");
  head.innerHTML='<strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(item.display_id||"—")+'</small>';
  document.getElementById("supportAdminInput").disabled=false;document.getElementById("supportAdminSend").disabled=false;
@@ -1159,31 +1159,31 @@ async function selectSupportAdminConversation(id){
 async function loadSupportAdminThread(silent=false){
  const id=supportAdminSelectedId;if(!id)return;
  const thread=document.getElementById("supportAdminThread");
- if(!silent)thread.innerHTML='<div class="support-admin-empty">جارٍ تحميل المحادثة...</div>';
+ if(!silent)thread.innerHTML='<div class="support-admin-empty">Загрузка переписки...</div>';
  try{
   const result=await supportAdminRequest({action:"messages",conversationId:id});
   if(id!==supportAdminSelectedId)return;
   const messages=Array.isArray(result.messages)?result.messages:[];
-  if(!messages.length){thread.innerHTML='<div class="support-admin-empty">لا توجد رسائل في هذه المحادثة.</div>';return;}
+  if(!messages.length){thread.innerHTML='<div class="support-admin-empty">В этом чате пока нет сообщений.</div>';return;}
   thread.innerHTML=messages.map(message=>{
    const side=message.sender==="admin"||message.sender==="support"?"admin":"user";
    const date=message.created_at?new Date(Number(message.created_at)*1000).toLocaleString("ar-DZ"):"";
-   return '<div class="support-admin-bubble '+side+'">'+escapeHtml(message.message_text||"")+'<span class="support-admin-time">'+(side==="admin"?"فريق الدعم":"المستخدم")+' • '+escapeHtml(date)+'</span></div>';
+   return '<div class="support-admin-bubble '+side+'">'+escapeHtml(message.message_text||"")+'<span class="support-admin-time">'+(side==="admin"?"فريق الدعم":"الПользователь")+' • '+escapeHtml(date)+'</span></div>';
   }).join("");
   thread.scrollTop=thread.scrollHeight;
   await loadSupportAdminConversations(true);
- }catch(error){if(!silent)thread.innerHTML='<div class="support-admin-empty">تعذر تحميل المحادثة: '+escapeHtml(error.message)+'</div>';}
+ }catch(error){if(!silent)thread.innerHTML='<div class="support-admin-empty">Не удалось загрузить переписку: '+escapeHtml(error.message)+'</div>';}
 }
 async function sendAdminSupportReply(event){
  event.preventDefault();const input=document.getElementById("supportAdminInput"),button=document.getElementById("supportAdminSend"),message=input.value.trim(),id=supportAdminSelectedId;
  if(!id||!message||button.disabled)return;
- button.disabled=true;document.getElementById("supportAdminStatus").textContent="جارٍ إرسال الرد...";
- try{await supportAdminRequest({action:"reply",conversationId:id,message});input.value="";document.getElementById("supportAdminStatus").textContent="تم إرسال الرد.";await loadSupportAdminThread();}
- catch(error){document.getElementById("supportAdminStatus").textContent="تعذر إرسال الرد: "+error.message;}
+ button.disabled=true;document.getElementById("supportAdminStatus").textContent="جارٍ Отправить الرد...";
+ try{await supportAdminRequest({action:"reply",conversationId:id,message});input.value="";document.getElementById("supportAdminStatus").textContent="تم Отправить الرد.";await loadSupportAdminThread();}
+ catch(error){document.getElementById("supportAdminStatus").textContent="تعذر Отправить الرد: "+error.message;}
  finally{button.disabled=false;}
 }
 
-/* إدارة الأخبار */
+/* Управление الأخبار */
 let newsPosts=[],newsBusy=false,editingNewsId=null,newsPreviewUrl="";
 function openNews(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("newsPage").classList.remove("hidden");resetNewsForm();loadNews();}
 function closeNews(){document.getElementById("newsPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
@@ -1202,53 +1202,53 @@ async function adminNewsRequest(data){const response=await fetch("/api/admin/new
 async function loadNews(){
  if(newsBusy)return;newsBusy=true;document.getElementById("newsStatus").textContent="جارٍ تحميل الРассылкаات...";document.getElementById("newsPosts").innerHTML='<div class="news-empty">Загрузка...</div>';
  try{const result=await adminNewsRequest({action:"list"});newsPosts=Array.isArray(result.posts)?result.posts:[];renderNewsPosts();document.getElementById("newsStatus").textContent="تم تحميل "+newsPosts.length+" Рассылка.";}
- catch(error){document.getElementById("newsStatus").textContent="تعذر تحميل الأخبار: "+error.message;document.getElementById("newsPosts").innerHTML='<div class="news-empty">تأكد من إنشاء ونشر API إدارة الأخبار في functions/api/admin/news.js.</div>';}
+ catch(error){document.getElementById("newsStatus").textContent="تعذر تحميل الأخبار: "+error.message;document.getElementById("newsPosts").innerHTML='<div class="news-empty">تأكد من إنشاء ونشر API Управление الأخبار في functions/api/admin/news.js.</div>';}
  finally{newsBusy=false;}
 }
 function renderNewsPosts(){
  const box=document.getElementById("newsPosts");if(!newsPosts.length){box.innerHTML='<div class="news-empty">لا توجد Рассылкаات حتى الآن.</div>';return;}
  box.innerHTML=newsPosts.map(post=>{
-  const id=Number(post.id),date=post.created_at?new Date(Number(post.created_at)*1000).toLocaleString("ar-DZ"):"غير متوفر";
+  const id=Number(post.id),date=post.created_at?new Date(Number(post.created_at)*1000).toLocaleString("ar-DZ"):"Нет данных";
   const media=post.media_type?`<${post.media_type==="video"?"video":"img"} class="news-post-media" ${post.media_type==="video"?"controls":""} src="/api/news/media?id=${id}" ${post.media_type==="photo"?'alt="صورة الРассылка"':""}></${post.media_type==="video"?"video":"img"}>`:"";
   const reactions=Number(post.heart_count||0)+Number(post.angry_count||0)+Number(post.sad_count||0)+Number(post.like_count||0)+Number(post.dislike_count||0);
-  return `<article class="news-post"><h4>${escapeHtml(post.title||"Рассылка بلا عنوان")}</h4><p>${escapeHtml(post.content||"")}</p>${media}<div class="news-meta"><span>📅 ${escapeHtml(date)}</span><span>🟢 Рассылка</span><span>🆔 #${id}</span></div><div class="news-stats"><div class="news-stat">👁️ المشاهدات<b>${Number(post.views||0).toLocaleString("en-US")}</b></div><div class="news-stat">💬 التعليقات<b>${Number(post.comments_count||0).toLocaleString("en-US")}</b></div><div class="news-stat">❤️ التفاعلات<b>${reactions.toLocaleString("en-US")}</b></div></div><div class="news-actions"><button class="secondary" onclick="editNews(${id})">✏️ تعديل</button><button class="danger" onclick="deleteNews(${id})">🗑️ حذف</button></div></article>`;
+  return `<article class="news-post"><h4>${escapeHtml(post.title||"Рассылка بلا عنوان")}</h4><p>${escapeHtml(post.content||"")}</p>${media}<div class="news-meta"><span>📅 ${escapeHtml(date)}</span><span>🟢 Рассылка</span><span>🆔 #${id}</span></div><div class="news-stats"><div class="news-stat">👁️ المشاهدات<b>${Number(post.views||0).toLocaleString("en-US")}</b></div><div class="news-stat">💬 التعليقات<b>${Number(post.comments_count||0).toLocaleString("en-US")}</b></div><div class="news-stat">❤️ التفاعلات<b>${reactions.toLocaleString("en-US")}</b></div></div><div class="news-actions"><button class="secondary" onclick="editNews(${id})">✏️ Изменить</button><button class="danger" onclick="deleteNews(${id})">🗑️ Удалить</button></div></article>`;
  }).join("");
 }
-function editNews(id){const post=newsPosts.find(item=>Number(item.id)===Number(id));if(!post)return;editingNewsId=Number(id);document.getElementById("newsTitle").value=post.title||"";document.getElementById("newsContent").value=post.content||"";document.getElementById("newsMedia").value="";document.getElementById("newsFormHeading").textContent="تعديل الРассылка #"+id;document.getElementById("publishNewsButton").textContent="💾 حفظ التعديلات";document.getElementById("cancelNewsEditButton").classList.remove("hidden");clearNewsPreview();document.getElementById("newsPreview").textContent="الوسائط الحالية محفوظة. اختر ملفًا جديدًا فقط إذا أردت استبدالها.";window.scrollTo({top:0,behavior:"smooth"});}
+function editNews(id){const post=newsPosts.find(item=>Number(item.id)===Number(id));if(!post)return;editingNewsId=Number(id);document.getElementById("newsTitle").value=post.title||"";document.getElementById("newsContent").value=post.content||"";document.getElementById("newsMedia").value="";document.getElementById("newsFormHeading").textContent="Изменить الРассылка #"+id;document.getElementById("publishNewsButton").textContent="💾 حفظ الИзменитьات";document.getElementById("cancelNewsEditButton").classList.remove("hidden");clearNewsPreview();document.getElementById("newsPreview").textContent="الوسائط الحالية محفوظة. اختر ملفًا جديدًا فقط إذا أردت استبدالها.";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveNews(){
  if(newsBusy)return;const title=document.getElementById("newsTitle").value.trim(),content=document.getElementById("newsContent").value.trim(),file=document.getElementById("newsMedia").files[0];
  if(!title){alert("اكتب عنوان الРассылка.");return;}if(!content){alert("اكتب نص الРассылка.");return;}if(!editingNewsId&&!file){alert("اختر صورة أو فيديو للРассылка.");return;}
  if(file){const video=file.type==="video/mp4"||file.name.toLowerCase().endsWith(".mp4");if(video&&file.size>50*1024*1024){alert("الحد الأقصى للفيديو 50 ميغابايت.");return;}if(!video&&file.size>10*1024*1024){alert("الحد الأقصى للصورة 10 ميغابايت.");return;}}
- if(!confirm(editingNewsId?"هل تريد حفظ تعديلات هذا الРассылка؟":"هل تريد نشر هذا الРассылка الآن؟"))return;
+ if(!confirm(editingNewsId?"هل تريد حفظ Изменитьات هذا الРассылка؟":"هل تريد نشر هذا الРассылка الآن؟"))return;
  newsBusy=true;const button=document.getElementById("publishNewsButton");button.disabled=true;button.textContent="جارٍ الحفظ والرفع...";document.getElementById("newsStatus").textContent="يتم حفظ الРассылка والوسائط. لا تغلق الصفحة.";
- try{const form=new FormData();form.append("action",editingNewsId?"update":"create");form.append("initData",tg.initData);form.append("title",title);form.append("content",content);if(editingNewsId)form.append("postId",String(editingNewsId));if(file)form.append("media",file);const response=await fetch("/api/admin/news",{method:"POST",credentials:"same-origin",cache:"no-store",body:form});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"NEWS_SAVE_FAILED");document.getElementById("newsStatus").textContent=editingNewsId?"تم تحديث الРассылка.":"تم نشر الРассылка.";resetNewsForm();await loadNews();alert(editingNewsId?"تم تحديث الРассылка بنجاح.":"تم نشر الРассылка بنجاح.");}
+ try{const form=new FormData();form.append("action",editingNewsId?"update":"create");form.append("initData",tg.initData);form.append("title",title);form.append("content",content);if(editingNewsId)form.append("postId",String(editingNewsId));if(file)form.append("media",file);const response=await fetch("/api/admin/news",{method:"POST",credentials:"same-origin",cache:"no-store",body:form});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"NEWS_SAVE_FAILED");document.getElementById("newsStatus").textContent=editingNewsId?"تم Обновить الРассылка.":"تم نشر الРассылка.";resetNewsForm();await loadNews();alert(editingNewsId?"تم Обновить الРассылка بنجاح.":"تم نشر الРассылка بنجاح.");}
  catch(error){document.getElementById("newsStatus").textContent="تعذر حفظ الРассылка: "+error.message;alert("تعذر حفظ الРассылка: "+error.message);}
- finally{newsBusy=false;button.disabled=false;button.textContent=editingNewsId?"💾 حفظ التعديلات":"📢 نشر الРассылка";}
+ finally{newsBusy=false;button.disabled=false;button.textContent=editingNewsId?"💾 حفظ الИзменитьات":"📢 نشر الРассылка";}
 }
-async function deleteNews(id){if(newsBusy)return;if(!confirm("هل أنت متأكد من حذف الРассылка رقم "+id+"؟\nسيتم حذف الРассылка وتعليقاته وتفاعلاته المرتبطة به."))return;newsBusy=true;document.getElementById("newsStatus").textContent="جارٍ حذف الРассылка...";try{await adminNewsRequest({action:"delete",postId:id});newsPosts=newsPosts.filter(post=>Number(post.id)!==Number(id));renderNewsPosts();document.getElementById("newsStatus").textContent="تم حذف الРассылка.";if(editingNewsId===Number(id))resetNewsForm();alert("تم حذف الРассылка.");}catch(error){document.getElementById("newsStatus").textContent="تعذر حذف الРассылка: "+error.message;alert("تعذر حذف الРассылка: "+error.message);}finally{newsBusy=false;}}
+async function deleteNews(id){if(newsBusy)return;if(!confirm("هل أنت متأكد من Удалить الРассылка رقم "+id+"؟\nسيتم Удалить الРассылка وتعليقاته وتفاعلاته المرتبطة به."))return;newsBusy=true;document.getElementById("newsStatus").textContent="جارٍ Удалить الРассылка...";try{await adminNewsRequest({action:"delete",postId:id});newsPosts=newsPosts.filter(post=>Number(post.id)!==Number(id));renderNewsPosts();document.getElementById("newsStatus").textContent="تم Удалить الРассылка.";if(editingNewsId===Number(id))resetNewsForm();alert("تم Удалить الРассылка.");}catch(error){document.getElementById("newsStatus").textContent="تعذر Удалить الРассылка: "+error.message;alert("تعذر Удалить الРассылка: "+error.message);}finally{newsBusy=false;}}
 
-/* مراجعة طلبات المستخدمين من لوحة التحكم */
+/* مراجعة طلبات الПользовательين من لوحة التحكم */
 let currentReviewType="missions",reviewsBusy=false,reviewProofUrls=[];
 async function reviewsRequest(data){const response=await fetch("/api/admin/reviews",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});if(data.action==="proof"){if(!response.ok)throw new Error("PROOF_LOAD_FAILED");return await response.blob();}const result=await response.json();if(!response.ok||!result.success)throw new Error([result.error||"REVIEWS_API_ERROR",result.details||""].filter(Boolean).join(": "));return result;}
 function openReviews(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("reviewsPage").classList.remove("hidden");loadReviews("missions");}
 function closeReviews(){document.getElementById("reviewsPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");clearReviewProofs();}
 function clearReviewProofs(){reviewProofUrls.forEach(url=>URL.revokeObjectURL(url));reviewProofUrls=[];}
-async function loadReviews(type=currentReviewType){if(reviewsBusy)return;reviewsBusy=true;currentReviewType=type;clearReviewProofs();const status=document.getElementById("reviewsStatus"),list=document.getElementById("reviewsList");document.getElementById("reviewMissionsTab").classList.toggle("secondary",type!=="missions");document.getElementById("reviewRedemptionsTab").classList.toggle("secondary",type!=="redemptions");document.getElementById("reviewReferralsTab").classList.toggle("secondary",type!=="referrals");status.textContent="جارٍ تحميل الطلبات...";list.innerHTML='<div class="review-empty">Загрузка...</div>';try{const result=await reviewsRequest({action:"list",type});const items=Array.isArray(result.items)?result.items:[];if(!items.length){list.innerHTML='<div class="review-empty">لا توجد طلبات معلّقة حاليًا.</div>';status.textContent="لا توجد طلبات معلّقة.";return;}list.innerHTML=items.map(item=>renderReviewItem(item,type)).join("");status.textContent="عدد الطلبات المعلّقة: "+items.length+(result.more?" — تُعرض أول 50 طلبًا":"");if(type==="missions")loadReviewProofs(items);}catch(error){status.textContent="تعذر تحميل الطلبات: "+error.message;list.innerHTML='<div class="review-empty">تعذر تحميل البيانات. تحقق من نشر API المراجعة.</div>';}finally{reviewsBusy=false;}}
+async function loadReviews(type=currentReviewType){if(reviewsBusy)return;reviewsBusy=true;currentReviewType=type;clearReviewProofs();const status=document.getElementById("reviewsStatus"),list=document.getElementById("reviewsList");document.getElementById("reviewMissionsTab").classList.toggle("secondary",type!=="missions");document.getElementById("reviewRedemptionsTab").classList.toggle("secondary",type!=="redemptions");document.getElementById("reviewReferralsTab").classList.toggle("secondary",type!=="referrals");status.textContent="جارٍ تحميل الطلبات...";list.innerHTML='<div class="review-empty">Загрузка...</div>';try{const result=await reviewsRequest({action:"list",type});const items=Array.isArray(result.items)?result.items:[];if(!items.length){list.innerHTML='<div class="review-empty">Сейчас нет заявок, ожидающих проверки.</div>';status.textContent="لا توجد طلبات معلّقة.";return;}list.innerHTML=items.map(item=>renderReviewItem(item,type)).join("");status.textContent="عدد الطلبات المعلّقة: "+items.length+(result.more?" — تُعرض أول 50 طلبًا":"");if(type==="missions")loadReviewProofs(items);}catch(error){status.textContent="تعذر تحميل الطلبات: "+error.message;list.innerHTML='<div class="review-empty">Не удалось загрузить данные. Проверьте публикацию API проверки заявок.</div>';}finally{reviewsBusy=false;}}
 function renderReviewItem(item,type){
   const id=Number(item.id);
-  const date=item.created_at?new Date(Number(item.created_at)*1000).toLocaleString("ar-DZ"):"غير متوفر";
+  const date=item.created_at?new Date(Number(item.created_at)*1000).toLocaleString("ar-DZ"):"Нет данных";
   const user=String(item.display_id||("OX-"+String(item.user_id||"").replace(/-/g,"").slice(0,8).toUpperCase()));
   let details="";
   if(type==="missions"){
-   details=`<div>المهمة: <b>${escapeHtml(item.mission_title||"غير معروفة")}</b></div><div>المكافأة: <b>${Number(item.reward_points||0).toLocaleString()} نقطة</b></div>`;
+   details=`<div>المهمة: <b>${escapeHtml(item.mission_title||"غير معروفة")}</b></div><div>المكافأة: <b>${Number(item.reward_points||0).toLocaleString()} баллов</b></div>`;
   }else if(type==="referrals"){
-   details=`<div>المستخدم المدعو: <b>${escapeHtml(item.invited_display_id||item.referred_id||"—")}</b></div><div>مكافأة صاحب رابط الدعوة: <b>30 نقطة</b> · مكافأة الصديق المدعو: <b>50 نقطة</b></div><div>المهمات المعتمدة: <b>${Number(item.approved_missions||0)}</b> · بانتظار المراجعة: <b>${Number(item.pending_missions||0)}</b></div><div>درجة الاشتباه: <b>${Number(item.risk_score||0)}</b></div><div>سبب المراجعة: <b>${escapeHtml(item.risk_reason||"غير محدد")}</b></div>`;
+   details=`<div>Приглашённый пользователь: <b>${escapeHtml(item.invited_display_id||item.referred_id||"—")}</b></div><div>Награда пригласившему: <b>30 баллов</b> · Награда приглашённому другу: <b>50 баллов</b></div><div>Одобренные задания: <b>${Number(item.approved_missions||0)}</b> · Ожидают проверки: <b>${Number(item.pending_missions||0)}</b></div><div>Уровень подозрительности: <b>${Number(item.risk_score||0)}</b></div><div>Причина проверки: <b>${escapeHtml(item.risk_reason||"غير محدد")}</b></div>`;
   }else{
-   details=`<div>العرض: <b>${escapeHtml(item.offer_name||"غير معروف")}</b></div><div>النقاط المطلوبة: <b>${Number(item.points_cost||0).toLocaleString()}</b></div><div>UUID المدخل: <b>${escapeHtml(item.user_uuid_input||"غير متوفر")}</b></div><div>المهمات المكتملة: <b>${Number(item.completed_missions||0)}</b></div><div>الأصدقاء المدعوون: <b>${Number(item.invited_friends||0)}</b></div>`;
+   details=`<div>العرض: <b>${escapeHtml(item.offer_name||"غير معروف")}</b></div><div>Баллы المطلوبة: <b>${Number(item.points_cost||0).toLocaleString()}</b></div><div>UUID المدخل: <b>${escapeHtml(item.user_uuid_input||"Нет данных")}</b></div><div>Выполненные задания: <b>${Number(item.completed_missions||0)}</b></div><div>Приглашённые друзья: <b>${Number(item.invited_friends||0)}</b></div>`;
   }
   const heading=type==="missions"?"📝 طلب مهمة #":type==="referrals"?"👥 إحالة للمراجعة #":"💎 طلب استبدال #";
   const proof=type==="missions"?`<img class="review-proof hidden" id="reviewProof-${id}" alt="دليل المهمة">`:"";
-  return `<article class="review-item" data-review-id="${id}"><h4>${heading}${id}</h4><div class="review-meta"><div>المستخدم: <b>${escapeHtml(user)}</b></div><div>الرصيد الحالي: <b>${Number(item.points||0).toLocaleString()} نقطة</b></div>${details}<div>UUID: <b>${escapeHtml(item.user_id||"")}</b></div><div>تاريخ الطلب: <b>${escapeHtml(date)}</b></div><div>تاريخ التسجيل: <b>${escapeHtml(item.user_created_at?new Date(Number(item.user_created_at)*1000).toLocaleDateString("ar-DZ"):"غير متوفر")}</b></div></div>${proof}<div class="review-actions"><button class="approve" onclick="decideReview('${type}',${id},'approve')">قبول ✅</button><button class="reject" onclick="decideReview('${type}',${id},'reject')">رفض ❌</button></div></article>`;
+  return `<article class="review-item" data-review-id="${id}"><h4>${heading}${id}</h4><div class="review-meta"><div>Пользователь: <b>${escapeHtml(user)}</b></div><div>Текущий баланс: <b>${Number(item.points||0).toLocaleString()} баллов</b></div>${details}<div>UUID: <b>${escapeHtml(item.user_id||"")}</b></div><div>تاريخ الطلب: <b>${escapeHtml(date)}</b></div><div>تاريخ التسجيل: <b>${escapeHtml(item.user_created_at?new Date(Number(item.user_created_at)*1000).toLocaleDateString("ar-DZ"):"Нет данных")}</b></div></div>${proof}<div class="review-actions"><button class="approve" onclick="decideReview('${type}',${id},'approve')">قبول ✅</button><button class="reject" onclick="decideReview('${type}',${id},'reject')">رفض ❌</button></div></article>`;
 }
 async function loadReviewProofs(items){for(const item of items){if(!item.proof_available)continue;try{const blob=await reviewsRequest({action:"proof",submissionId:item.id});const url=URL.createObjectURL(blob);reviewProofUrls.push(url);const img=document.getElementById("reviewProof-"+Number(item.id));if(img){img.src=url;img.classList.remove("hidden");}}catch(error){const img=document.getElementById("reviewProof-"+Number(item.id));if(img){img.alt="تعذر تحميل صورة الدليل";}}}}
 async function decideReview(type,id,decision){if(!confirm(decision==="approve"?"هل تريد قبول هذا الطلب؟":"هل تريد رفض هذا الطلب؟"))return;try{const result=await reviewsRequest({action:"review",type,id,decision});alert(result.message||"تمت مراجعة الطلب.");await loadReviews(type);}catch(error){alert("تعذر مراجعة الطلب: "+error.message);}}
@@ -1258,33 +1258,33 @@ let adminTasks=[],editingTaskId=null,tasksBusy=false,completedPage=1;
 async function tasksRequest(data){const response=await fetch("/api/admin/tasks",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"TASKS_API_ERROR");return result;}
 function openTasks(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("tasksPage").classList.remove("hidden");document.getElementById("taskCompletedPanel").classList.add("hidden");resetTaskForm();loadTasks();}
 function closeTasks(){document.getElementById("tasksPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
-function resetTaskForm(){editingTaskId=null;document.getElementById("taskTitle").value="";document.getElementById("taskPlatform").value="tiktok";document.getElementById("taskDescription").value="";document.getElementById("taskUrl").value="";document.getElementById("taskReward").value="50";document.getElementById("taskOrder").value=String(adminTasks.length+1);document.getElementById("taskEnabled").value="1";document.getElementById("taskFormHeading").textContent="إضافة مهمة";document.getElementById("taskSaveButton").textContent="💾 حفظ المهمة";document.getElementById("taskCancelButton").classList.add("hidden");}
-async function loadTasks(){if(tasksBusy)return;tasksBusy=true;const status=document.getElementById("tasksStatus"),list=document.getElementById("tasksList");status.textContent="جارٍ تحميل المهمات...";list.innerHTML='<div class="task-empty">Загрузка...</div>';try{const result=await tasksRequest({action:"list"});adminTasks=Array.isArray(result.tasks)?result.tasks:[];renderTasks();status.textContent="تم تحميل "+adminTasks.length+" مهمة.";}catch(error){status.textContent="تعذر تحميل المهمات: "+error.message;list.innerHTML='<div class="task-empty">تحقق من نشر functions/api/admin/tasks.js وأن جدول المهمات موجود.</div>';}finally{tasksBusy=false;}}
-function renderTasks(){const list=document.getElementById("tasksList");let enabled=0,completed=0;adminTasks.forEach(t=>{if(Number(t.enabled)===1)enabled++;completed+=Number(t.completed_count||0);});document.getElementById("tasksTotal").textContent=adminTasks.length;document.getElementById("tasksEnabled").textContent=enabled;document.getElementById("tasksCompleted").textContent=completed;if(!adminTasks.length){list.innerHTML='<div class="task-empty">لا توجد مهمات مسجلة.</div>';return;}list.innerHTML=adminTasks.map(task=>{const id=Number(task.id),isOn=Number(task.enabled)===1;return `<article class="task-item"><h4>${escapeHtml(task.title||"مهمة بلا اسم")} · #${id}</h4><div class="task-meta"><span>المنصة: ${task.platform==="telegram"?"Telegram":"TikTok"}</span><span>المكافأة: ${Number(task.reward_points||0)} نقطة</span><span>الترتيب: ${Number(task.sort_order||0)}</span><span>${isOn?"🟢 مفعّلة":"🔴 متوقفة"}</span></div><p style="color:#c7d5e3;line-height:1.6">${escapeHtml(task.description||"")}</p>${task.target_url?`<p style="direction:ltr;text-align:left;overflow-wrap:anywhere"><a href="${escapeHtml(task.target_url)}" target="_blank" rel="noopener" style="color:#8be2ff">${escapeHtml(task.target_url)}</a></p>`:""}<div class="task-count" onclick="showCompletedUsers(${id})">✅ المكتملون: ${Number(task.completed_count||0)} · بانتظار المراجعة: ${Number(task.pending_count||0)} · مرفوض: ${Number(task.rejected_count||0)}<br><small>اضغط لعرض المستخدمين الذين تمت الموافقة عليهم</small></div><div class="task-actions"><button class="secondary" onclick="editTask(${id})">✏️ تعديل</button><button onclick="toggleTask(${id},${isOn?0:1})">${isOn?"⏸ إيقاف":"▶️ تفعيل"}</button><button class="danger" onclick="deleteTask(${id})">🗑️ حذف</button><button class="secondary" onclick="showCompletedUsers(${id})">👥 المكتملون</button></div></article>`;}).join("");}
-function editTask(id){const t=adminTasks.find(x=>Number(x.id)===Number(id));if(!t)return;editingTaskId=Number(id);document.getElementById("taskTitle").value=t.title||"";document.getElementById("taskPlatform").value=t.platform||"tiktok";document.getElementById("taskDescription").value=t.description||"";document.getElementById("taskUrl").value=t.target_url||"";document.getElementById("taskReward").value=Number(t.reward_points||0);document.getElementById("taskOrder").value=Number(t.sort_order||0);document.getElementById("taskEnabled").value=String(Number(t.enabled)||0);document.getElementById("taskFormHeading").textContent="تعديل المهمة #"+id;document.getElementById("taskSaveButton").textContent="💾 حفظ التعديلات";document.getElementById("taskCancelButton").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});}
-async function saveTask(){if(tasksBusy)return;const title=document.getElementById("taskTitle").value.trim(),url=document.getElementById("taskUrl").value.trim(),reward=Number(document.getElementById("taskReward").value),order=Number(document.getElementById("taskOrder").value);if(!title){alert("اكتب اسم المهمة.");return;}if(url&&!/^https:\/\//i.test(url)){alert("رابط المهمة يجب أن يبدأ بـ https://");return;}if(!Number.isInteger(reward)||reward<0||reward>100000){alert("قيمة النقاط غير صحيحة.");return;}if(!Number.isInteger(order)||order<0){alert("ترتيب المهمة غير صحيح.");return;}tasksBusy=true;const button=document.getElementById("taskSaveButton");button.disabled=true;button.textContent="جارٍ الحفظ...";try{await tasksRequest({action:"save",id:editingTaskId||0,title,platform:document.getElementById("taskPlatform").value,description:document.getElementById("taskDescription").value.trim(),target_url:url,reward_points:reward,sort_order:order,enabled:Number(document.getElementById("taskEnabled").value)});document.getElementById("tasksStatus").textContent=editingTaskId?"تم تحديث المهمة.":"تمت إضافة المهمة.";resetTaskForm();tasksBusy=false;await loadTasks();}catch(error){alert("تعذر حفظ المهمة: "+error.message);document.getElementById("tasksStatus").textContent="خطأ: "+error.message;}finally{tasksBusy=false;button.disabled=false;button.textContent=editingTaskId?"💾 حفظ التعديلات":"💾 حفظ المهمة";}}
+function resetTaskForm(){editingTaskId=null;document.getElementById("taskTitle").value="";document.getElementById("taskPlatform").value="tiktok";document.getElementById("taskDescription").value="";document.getElementById("taskUrl").value="";document.getElementById("taskReward").value="50";document.getElementById("taskOrder").value=String(adminTasks.length+1);document.getElementById("taskEnabled").value="1";document.getElementById("taskFormHeading").textContent="Добавить задание";document.getElementById("taskSaveButton").textContent="💾 Сохранить задание";document.getElementById("taskCancelButton").classList.add("hidden");}
+async function loadTasks(){if(tasksBusy)return;tasksBusy=true;const status=document.getElementById("tasksStatus"),list=document.getElementById("tasksList");status.textContent="Загрузка заданий...";list.innerHTML='<div class="task-empty">Загрузка...</div>';try{const result=await tasksRequest({action:"list"});adminTasks=Array.isArray(result.tasks)?result.tasks:[];renderTasks();status.textContent="تم تحميل "+adminTasks.length+" مهمة.";}catch(error){status.textContent="تعذر تحميل Задания: "+error.message;list.innerHTML='<div class="task-empty">تحقق من نشر functions/api/admin/tasks.js وأن جدول Задания موجود.</div>';}finally{tasksBusy=false;}}
+function renderTasks(){const list=document.getElementById("tasksList");let enabled=0,completed=0;adminTasks.forEach(t=>{if(Number(t.enabled)===1)enabled++;completed+=Number(t.completed_count||0);});document.getElementById("tasksTotal").textContent=adminTasks.length;document.getElementById("tasksEnabled").textContent=enabled;document.getElementById("tasksCompleted").textContent=completed;if(!adminTasks.length){list.innerHTML='<div class="task-empty">Задания пока не добавлены.</div>';return;}list.innerHTML=adminTasks.map(task=>{const id=Number(task.id),isOn=Number(task.enabled)===1;return `<article class="task-item"><h4>${escapeHtml(task.title||"مهمة بلا اسم")} · #${id}</h4><div class="task-meta"><span>Платформа: ${task.platform==="telegram"?"Telegram":"TikTok"}</span><span>المكافأة: ${Number(task.reward_points||0)} баллов</span><span>الترتيب: ${Number(task.sort_order||0)}</span><span>${isOn?"🟢 Активно":"🔴 Отключено"}</span></div><p style="color:#c7d5e3;line-height:1.6">${escapeHtml(task.description||"")}</p>${task.target_url?`<p style="direction:ltr;text-align:left;overflow-wrap:anywhere"><a href="${escapeHtml(task.target_url)}" target="_blank" rel="noopener" style="color:#8be2ff">${escapeHtml(task.target_url)}</a></p>`:""}<div class="task-count" onclick="showCompletedUsers(${id})">✅ المكتملون: ${Number(task.completed_count||0)} · Ожидают проверки: ${Number(task.pending_count||0)} · مرفوض: ${Number(task.rejected_count||0)}<br><small>اضغط لعرض الПользовательين الذين تمت الموافقة عليهم</small></div><div class="task-actions"><button class="secondary" onclick="editTask(${id})">✏️ Изменить</button><button onclick="toggleTask(${id},${isOn?0:1})">${isOn?"⏸ إيقاف":"▶️ تفعيل"}</button><button class="danger" onclick="deleteTask(${id})">🗑️ Удалить</button><button class="secondary" onclick="showCompletedUsers(${id})">👥 المكتملون</button></div></article>`;}).join("");}
+function editTask(id){const t=adminTasks.find(x=>Number(x.id)===Number(id));if(!t)return;editingTaskId=Number(id);document.getElementById("taskTitle").value=t.title||"";document.getElementById("taskPlatform").value=t.platform||"tiktok";document.getElementById("taskDescription").value=t.description||"";document.getElementById("taskUrl").value=t.target_url||"";document.getElementById("taskReward").value=Number(t.reward_points||0);document.getElementById("taskOrder").value=Number(t.sort_order||0);document.getElementById("taskEnabled").value=String(Number(t.enabled)||0);document.getElementById("taskFormHeading").textContent="Изменить المهمة #"+id;document.getElementById("taskSaveButton").textContent="💾 حفظ الИзменитьات";document.getElementById("taskCancelButton").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});}
+async function saveTask(){if(tasksBusy)return;const title=document.getElementById("taskTitle").value.trim(),url=document.getElementById("taskUrl").value.trim(),reward=Number(document.getElementById("taskReward").value),order=Number(document.getElementById("taskOrder").value);if(!title){alert("اكتب Название задания.");return;}if(url&&!/^https:\/\//i.test(url)){alert("رابط المهمة يجب أن يبدأ بـ https://");return;}if(!Number.isInteger(reward)||reward<0||reward>100000){alert("قيمة Баллы غير صحيحة.");return;}if(!Number.isInteger(order)||order<0){alert("Порядок задания غير صحيح.");return;}tasksBusy=true;const button=document.getElementById("taskSaveButton");button.disabled=true;button.textContent="Сохранение...";try{await tasksRequest({action:"save",id:editingTaskId||0,title,platform:document.getElementById("taskPlatform").value,description:document.getElementById("taskDescription").value.trim(),target_url:url,reward_points:reward,sort_order:order,enabled:Number(document.getElementById("taskEnabled").value)});document.getElementById("tasksStatus").textContent=editingTaskId?"تم Обновить المهمة.":"تمت إضافة المهمة.";resetTaskForm();tasksBusy=false;await loadTasks();}catch(error){alert("تعذر حفظ المهمة: "+error.message);document.getElementById("tasksStatus").textContent="خطأ: "+error.message;}finally{tasksBusy=false;button.disabled=false;button.textContent=editingTaskId?"💾 حفظ الИзменитьات":"💾 Сохранить задание";}}
 async function toggleTask(id,enabled){if(tasksBusy)return;if(!confirm(enabled?"هل تريد تفعيل هذه المهمة؟":"هل تريد إيقاف هذه المهمة؟"))return;tasksBusy=true;try{await tasksRequest({action:"toggle",id,enabled});tasksBusy=false;await loadTasks();}catch(error){alert("تعذر تغيير حالة المهمة: "+error.message);}finally{tasksBusy=false;}}
-async function deleteTask(id){if(tasksBusy)return;if(!confirm("هل تريد حذف المهمة رقم "+id+"؟ إذا كانت لها طلبات محفوظة فلن يسمح النظام بحذفها، ويمكن إيقافها بدلًا من ذلك."))return;tasksBusy=true;try{await tasksRequest({action:"delete",id});tasksBusy=false;await loadTasks();alert("تم حذف المهمة.");}catch(error){alert("تعذر حذف المهمة: "+error.message);}finally{tasksBusy=false;}}
-async function showCompletedUsers(missionId){const panel=document.getElementById("taskCompletedPanel");panel.classList.remove("hidden");document.getElementById("taskCompletedHeading").textContent="المستخدمون الذين أكملوا المهمة #"+missionId;document.getElementById("taskCompletedStatus").textContent="جارٍ تحميل القائمة...";document.getElementById("taskCompletedUsers").innerHTML="";try{const result=await tasksRequest({action:"completed",missionId,page:1});document.getElementById("taskCompletedStatus").textContent="عدد المستخدمين المقبولين: "+Number(result.total||0);const users=result.users||[];document.getElementById("taskCompletedUsers").innerHTML=users.length?users.map(u=>`<div class="task-user"><span>معرف المستخدم: <b>${escapeHtml(u.user_id||"—")}</b></span><span>النقاط الحالية: <b>${Number(u.points||0)}</b></span></div>`).join(""):'<div class="task-empty">لا يوجد مستخدمون أكملوا هذه المهمة بعد.</div>';}catch(error){document.getElementById("taskCompletedStatus").textContent="تعذر تحميل المستخدمين: "+error.message;}panel.scrollIntoView({behavior:"smooth",block:"start"});}
+async function deleteTask(id){if(tasksBusy)return;if(!confirm("هل تريد Удалить المهمة رقم "+id+"؟ إذا كانت لها طلبات محفوظة فلن يسمح النظام بУдалитьها، ويمكن إيقافها بدلًا من ذلك."))return;tasksBusy=true;try{await tasksRequest({action:"delete",id});tasksBusy=false;await loadTasks();alert("تم Удалить المهمة.");}catch(error){alert("تعذر Удалить المهمة: "+error.message);}finally{tasksBusy=false;}}
+async function showCompletedUsers(missionId){const panel=document.getElementById("taskCompletedPanel");panel.classList.remove("hidden");document.getElementById("taskCompletedHeading").textContent="Пользователи, выполнившие задание #"+missionId;document.getElementById("taskCompletedStatus").textContent="جارٍ تحميل القائمة...";document.getElementById("taskCompletedUsers").innerHTML="";try{const result=await tasksRequest({action:"completed",missionId,page:1});document.getElementById("taskCompletedStatus").textContent="عدد الПользовательين المقبولين: "+Number(result.total||0);const users=result.users||[];document.getElementById("taskCompletedUsers").innerHTML=users.length?users.map(u=>`<div class="task-user"><span>معرف Пользователь: <b>${escapeHtml(u.user_id||"—")}</b></span><span>Баллы الحالية: <b>${Number(u.points||0)}</b></span></div>`).join(""):'<div class="task-empty">Пока нет пользователей, выполнивших это задание.</div>';}catch(error){document.getElementById("taskCompletedStatus").textContent="تعذر تحميل الПользовательين: "+error.message;}panel.scrollIntoView({behavior:"smooth",block:"start"});}
 function closeCompletedUsers(){document.getElementById("taskCompletedPanel").classList.add("hidden");}
 
-/* إدارة Безопасность и права доступа - المالك فقط */
+/* Управление Безопасность и права доступа - المالك فقط */
 const permissionLabels={users:"Информация о пользователях",tasks:"Управление заданиями",support:"Техническая поддержка",maintenance:"Управление сайтом",stats:"Статистика сайта",platform_files:"Публикация, изменение и удаление файлов платформ"};
 let deputies=[],securityBusy=false;
 async function securityRequest(data){const response=await fetch("/api/admin/security",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"SECURITY_API_ERROR");return result;}
 function openSecurity(){document.getElementById("mainMenu").classList.add("hidden");document.getElementById("securityPage").classList.remove("hidden");loadDeputies();}
 function closeSecurity(){document.getElementById("securityPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
-async function loadDeputies(force=false){if(securityBusy&&!force)return;const wasBusy=securityBusy;securityBusy=true;const status=document.getElementById("securityStatus"),list=document.getElementById("deputiesList");status.textContent="جارٍ تحميل النواب...";list.innerHTML='<div class="task-empty">Загрузка...</div>';try{const result=await securityRequest({action:"list"});deputies=Array.isArray(result.deputies)?result.deputies:[];renderDeputies();status.textContent="عدد النواب: "+deputies.length;}catch(error){status.textContent="تعذر تحميل النواب: "+error.message;list.innerHTML='<div class="task-empty">تحقق من نشر ملف functions/api/admin/security.js.</div>';}finally{securityBusy=wasBusy;}}
-function renderDeputies(){const list=document.getElementById("deputiesList");if(!deputies.length){list.innerHTML='<div class="task-empty">لا يوجد نواب حتى الآن.</div>';return;}list.innerHTML=deputies.map(d=>{const id=String(d.telegram_id||"");const checks=Object.entries(permissionLabels).map(([key,label])=>`<label style="display:flex;align-items:center;gap:8px;background:#102238;border:1px solid #294661;border-radius:8px;padding:9px;color:#d9e7f5"><input type="checkbox" data-permission="${key}" ${Array.isArray(d.permissions)&&d.permissions.includes(key)?"checked":""} style="width:18px;height:18px;accent-color:#35d7ff">${label}</label>`).join("");return `<article class="task-item"><h4>النائب · <span style="direction:ltr;display:inline-block">${id}</span></h4><div class="task-meta"><span>${Number(d.active)===1?"🟢 نشط":"🔴 موقوف"}</span><span>تاريخ الإضافة: ${d.created_at?new Date(Number(d.created_at)*1000).toLocaleDateString("ar-DZ"):"—"}</span></div><h4 style="font-size:14px;color:#8be2ff">الصلاحيات الممنوحة</h4><div class="deputy-permissions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px" data-deputy="${id}">${checks}</div><div class="task-actions"><button onclick="saveDeputyPermissions('${id}')">💾 حفظ الصلاحيات</button><button class="secondary" onclick="toggleDeputy('${id}',${Number(d.active)===1?0:1})">${Number(d.active)===1?"⏸ إيقاف النائب":"▶️ تفعيل النائب"}</button><button class="danger" style="grid-column:1/-1" onclick="deleteDeputy('${id}')">🗑️ حذف النائب</button></div></article>`;}).join("");}
-async function addDeputy(){if(securityBusy)return;const input=document.getElementById("deputyTelegramId"),telegram_id=input.value.trim();if(!/^\d{5,20}$/.test(telegram_id)){alert("أدخل Telegram ID صحيحًا مكوّنًا من أرقام.");return;}securityBusy=true;const button=document.getElementById("addDeputyButton");button.disabled=true;button.textContent="جارٍ الإضافة...";try{await securityRequest({action:"add",telegram_id});input.value="";document.getElementById("securityStatus").textContent="تمت إضافة النائب. اختر صلاحياته ثم احفظها.";await loadDeputies(true);}catch(error){alert("تعذرت إضافة النائب: "+error.message);}finally{securityBusy=false;button.disabled=false;button.textContent="➕ إضافة النائب";}}
+async function loadDeputies(force=false){if(securityBusy&&!force)return;const wasBusy=securityBusy;securityBusy=true;const status=document.getElementById("securityStatus"),list=document.getElementById("deputiesList");status.textContent="Загрузка заместителей...";list.innerHTML='<div class="task-empty">Загрузка...</div>';try{const result=await securityRequest({action:"list"});deputies=Array.isArray(result.deputies)?result.deputies:[];renderDeputies();status.textContent="عدد النواب: "+deputies.length;}catch(error){status.textContent="تعذر تحميل النواب: "+error.message;list.innerHTML='<div class="task-empty">تحقق من نشر ملف functions/api/admin/security.js.</div>';}finally{securityBusy=wasBusy;}}
+function renderDeputies(){const list=document.getElementById("deputiesList");if(!deputies.length){list.innerHTML='<div class="task-empty">لا يوجد نواب حتى الآن.</div>';return;}list.innerHTML=deputies.map(d=>{const id=String(d.telegram_id||"");const checks=Object.entries(permissionLabels).map(([key,label])=>`<label style="display:flex;align-items:center;gap:8px;background:#102238;border:1px solid #294661;border-radius:8px;padding:9px;color:#d9e7f5"><input type="checkbox" data-permission="${key}" ${Array.isArray(d.permissions)&&d.permissions.includes(key)?"checked":""} style="width:18px;height:18px;accent-color:#35d7ff">${label}</label>`).join("");return `<article class="task-item"><h4>النائب · <span style="direction:ltr;display:inline-block">${id}</span></h4><div class="task-meta"><span>${Number(d.active)===1?"🟢 نشط":"🔴 موقوف"}</span><span>تاريخ الإضافة: ${d.created_at?new Date(Number(d.created_at)*1000).toLocaleDateString("ar-DZ"):"—"}</span></div><h4 style="font-size:14px;color:#8be2ff">الصلاحيات الممنوحة</h4><div class="deputy-permissions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px" data-deputy="${id}">${checks}</div><div class="task-actions"><button onclick="saveDeputyPermissions('${id}')">💾 حفظ الصلاحيات</button><button class="secondary" onclick="toggleDeputy('${id}',${Number(d.active)===1?0:1})">${Number(d.active)===1?"⏸ إيقاف النائب":"▶️ تفعيل النائب"}</button><button class="danger" style="grid-column:1/-1" onclick="deleteDeputy('${id}')">🗑️ Удалить النائب</button></div></article>`;}).join("");}
+async function addDeputy(){if(securityBusy)return;const input=document.getElementById("deputyTelegramId"),telegram_id=input.value.trim();if(!/^\d{5,20}$/.test(telegram_id)){alert("أدخل Telegram ID صحيحًا مكوّنًا من أرقام.");return;}securityBusy=true;const button=document.getElementById("addDeputyButton");button.disabled=true;button.textContent="جارٍ الإضافة...";try{await securityRequest({action:"add",telegram_id});input.value="";document.getElementById("securityStatus").textContent="تمت إضافة النائب. اختر صلاحياته ثم احفظها.";await loadDeputies(true);}catch(error){alert("تعذرت إضافة النائب: "+error.message);}finally{securityBusy=false;button.disabled=false;button.textContent="➕ Добавить заместителя";}}
 async function saveDeputyPermissions(telegramId){if(securityBusy)return;const box=document.querySelector(`.deputy-permissions[data-deputy="${telegramId}"]`);if(!box)return;const permissions=[...box.querySelectorAll("input[data-permission]:checked")].map(x=>x.dataset.permission);if(!confirm("حفظ الصلاحيات المحددة لهذا النائب؟"))return;securityBusy=true;try{await securityRequest({action:"permissions",telegram_id:telegramId,permissions});document.getElementById("securityStatus").textContent="تم حفظ صلاحيات النائب.";await loadDeputies(true);}catch(error){alert("تعذر حفظ الصلاحيات: "+error.message);}finally{securityBusy=false;}}
 async function toggleDeputy(telegramId,active){if(securityBusy)return;if(!confirm(active?"هل تريد إعادة تفعيل هذا النائب؟":"هل تريد إيقاف هذا النائب ومنعه من استخدام صلاحياته؟"))return;securityBusy=true;try{await securityRequest({action:"toggle",telegram_id:telegramId,active});await loadDeputies(true);}catch(error){alert("تعذر تغيير حالة النائب: "+error.message);}finally{securityBusy=false;}}
-async function deleteDeputy(telegramId){if(securityBusy)return;if(!confirm("حذف هذا النائب نهائيًا مع جميع صلاحياته؟"))return;securityBusy=true;try{await securityRequest({action:"delete",telegram_id:telegramId});await loadDeputies(true);}catch(error){alert("تعذر حذف النائب: "+error.message);}finally{securityBusy=false;}}
+async function deleteDeputy(telegramId){if(securityBusy)return;if(!confirm("Удалить هذا النائب نهائيًا مع جميع صلاحياته؟"))return;securityBusy=true;try{await securityRequest({action:"delete",telegram_id:telegramId});await loadDeputies(true);}catch(error){alert("تعذر Удалить النائب: "+error.message);}finally{securityBusy=false;}}
 
 
-/* إرسال Награды للمستخدمين */
+/* Отправить Награды للПользовательين */
 document.getElementById("rewardTarget")?.addEventListener("change",function(){document.getElementById("rewardUserField").style.display=this.value==="user"?"block":"none";});
-function openAdminRewards(){if(!adminOwner){alert("إرسال Награды متاح للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("rewardsAdminPage").classList.remove("hidden");document.getElementById("rewardSendStatus").textContent="المكافأة ستُضاف بعد استلام المستخدم لها.";loadRedeemCodes();}
+function openAdminRewards(){if(!adminOwner){alert("Отправить Награды متاح للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("rewardsAdminPage").classList.remove("hidden");document.getElementById("rewardSendStatus").textContent="Награда будет начислена после её получения пользователем.";loadRedeemCodes();}
 function closeAdminRewards(){document.getElementById("rewardsAdminPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 async function sendAdminReward(){
  if(!adminOwner)return;
@@ -1292,15 +1292,15 @@ async function sendAdminReward(){
  const targetMode=document.getElementById("rewardTarget").value;
  const target=targetMode==="all"?"all":document.getElementById("rewardUserId").value.trim();
  const points=Number(document.getElementById("rewardPoints").value);
- if(targetMode==="user"&&!/^OX-(?:[0-9]{5,20}|[A-F0-9]{8})$/i.test(target)){alert("أدخل User ID كما يظهر في قائمة المستخدمين، مثل OX-123456789.");return;}
+ if(targetMode==="user"&&!/^OX-(?:[0-9]{5,20}|[A-F0-9]{8})$/i.test(target)){alert("أدخل User ID كما يظهر في قائمة الПользовательين، مثل OX-123456789.");return;}
  if(!Number.isInteger(points)||points<1||points>1000000){alert("أدخل عدد نقاط من 1 إلى 1,000,000.");return;}
- if(!confirm(targetMode==="all"?"إرسال هذه المكافأة إلى جميع المستخدمين؟":"إرسال هذه المكافأة إلى المستخدم المحدد؟"))return;
- button.disabled=true;status.textContent="جارٍ إرسال إشعارات المكافأة...";
+ if(!confirm(targetMode==="all"?"Отправить هذه المكافأة إلى Все пользователи؟":"Отправить هذه المكافأة إلى الПользователь المحدد؟"))return;
+ button.disabled=true;status.textContent="جارٍ Отправить إشعارات المكافأة...";
  try{
   const response=await fetch("/api/admin/rewards",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,target,points,title:document.getElementById("rewardTitle").value,message:document.getElementById("rewardMessage").value})});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"REWARD_SEND_FAILED");
-  status.textContent="تم إرسال المكافأة بنجاح إلى "+Number(result.sent||0)+" مستخدم.";alert(status.textContent);
- }catch(error){status.textContent="تعذر إرسال المكافأة: "+error.message;alert(status.textContent);}
+  status.textContent="تم Отправить المكافأة بنجاح إلى "+Number(result.sent||0)+" Пользователь.";alert(status.textContent);
+ }catch(error){status.textContent="تعذر Отправить المكافأة: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;}
 }
 
@@ -1320,36 +1320,36 @@ function renderRedeemCodes(codes,now){
   const row=document.createElement("div");row.className="redeem-code-row";
   const main=document.createElement("div");main.className="redeem-code-main";
   const name=document.createElement("strong");name.textContent=code.code;
-  const meta=document.createElement("small");meta.textContent="المسترد: "+Number(code.usedCount||0)+" / "+Number(code.giftCount||0)+" • المكافأة: "+(code.benefitType==="go_free"?"فتح GO دون إعلانات":Number(code.coins||0).toLocaleString("en-US")+" نقطة");
+  const meta=document.createElement("small");meta.textContent="المسترد: "+Number(code.usedCount||0)+" / "+Number(code.giftCount||0)+" • المكافأة: "+(code.benefitType==="go_free"?"فتح GO دون إعلانات":Number(code.coins||0).toLocaleString("en-US")+" баллов");
   const expiry=document.createElement("small");expiry.textContent=code.expiresAt?"ينتهي: "+new Date(Number(code.expiresAt)*1000).toLocaleString("ar-DZ"):"بدون تاريخ انتهاء";
   main.append(name,meta,expiry);
   const state=document.createElement("span");state.className="redeem-code-state "+(expired?"expired":"live");state.textContent=expired?"انتهت صلاحيته":"ما زال يعمل";
-  const edit=document.createElement("button");edit.type="button";edit.className="redeem-code-edit";edit.title="عرض مستردّي الرمز";edit.setAttribute("aria-label","عرض مستردّي الرمز "+code.code);edit.textContent="✎";edit.onclick=()=>openRedeemCodeUsers(code.id,code.code);
+  const edit=document.createElement("button");edit.type="button";edit.className="redeem-code-edit";edit.title="عرض مستردّي Код";edit.setAttribute("aria-label","عرض مستردّي Код "+code.code);edit.textContent="✎";edit.onclick=()=>openRedeemCodeUsers(code.id,code.code);
   row.append(main,state,edit);list.append(row);
  }
 }
 async function loadRedeemCodes(){
  const list=document.getElementById("redeemCodesHistory");if(!list)return;
- list.textContent="جارٍ تحميل سجل الرموز...";
+ list.textContent="Загрузка истории кодов...";
  try{const data=await redeemCodesRequest();renderRedeemCodes(data.codes||[],Number(data.now||Math.floor(Date.now()/1000)));}
- catch(error){list.textContent="تعذر تحميل سجل الرموز: "+error.message;}
+ catch(error){list.textContent="Не удалось загрузить историю кодов: "+error.message;}
 }
 async function openRedeemCodeUsers(codeId,code){
  const modal=document.getElementById("redeemCodeUsersModal"),list=document.getElementById("redeemCodeUsersList");
- document.getElementById("redeemCodeUsersTitle").textContent="الأشخاص الذين استردوا: "+code;
- modal.classList.remove("hidden");list.textContent="جارٍ تحميل الأشخاص...";
+ document.getElementById("redeemCodeUsersTitle").textContent="Пользователи, активировавшие код: "+code;
+ modal.classList.remove("hidden");list.textContent="Загрузка пользователей...";
  try{
   const data=await redeemCodesRequest(codeId);list.replaceChildren();
-  if(!data.users?.length){list.innerHTML='<div class="task-empty">لم يسترد أي مستخدم هذا الرمز حتى الآن.</div>';return;}
+  if(!data.users?.length){list.innerHTML='<div class="task-empty">لم يسترد أي Пользователь هذا Код حتى الآن.</div>';return;}
   for(const user of data.users){
    const row=document.createElement("div");row.className="redeem-user-row";
    const avatar=document.createElement("div");avatar.className="redeem-user-avatar";
    if(user.photoUrl){const img=document.createElement("img");img.src=user.photoUrl;img.alt="";img.onerror=()=>{avatar.textContent="👤";};avatar.append(img);}else avatar.textContent="👤";
    const info=document.createElement("div");info.className="redeem-user-info";
-   const name=document.createElement("strong");name.textContent=[user.firstName,user.lastName].filter(Boolean).join(" ")||"مستخدم OXIDE";
-   const username=document.createElement("small");username.textContent=user.username?"@"+user.username:"بدون اسم مستخدم";
+   const name=document.createElement("strong");name.textContent=[user.firstName,user.lastName].filter(Boolean).join(" ")||"Пользователь OXIDE";
+   const username=document.createElement("small");username.textContent=user.username?"@"+user.username:"Без имени пользователя";
    const id=document.createElement("small");id.textContent=user.id||user.userUuid||"";
-   const points=document.createElement("span");points.className="redeem-user-points";points.textContent=Number(user.points||0).toLocaleString("en-US")+" نقطة";
+   const points=document.createElement("span");points.className="redeem-user-points";points.textContent=Number(user.points||0).toLocaleString("en-US")+" баллов";
    info.append(name,username,id);row.append(avatar,info,points);list.append(row);
   }
  }catch(error){list.textContent="تعذر تحميل المستردّين: "+error.message;}
@@ -1358,37 +1358,37 @@ function closeRedeemCodeUsers(){document.getElementById("redeemCodeUsersModal").
 
 document.getElementById("redeemCodeBenefitType")?.addEventListener("change",function(){const field=document.getElementById("redeemCodeCoinsField");if(field)field.style.display=this.value==="coins"?"block":"none";});
 async function createRedeemCode(){
- if(!adminOwner){alert("إنشاء الرموز متاح للمالك فقط.");return;}
+ if(!adminOwner){alert("Создавать коды может только владелец.");return;}
  const button=document.getElementById("createRedeemCodeButton"),status=document.getElementById("redeemCodeStatus");
  const code=document.getElementById("redeemCodeValue").value.trim().toUpperCase();
  const giftCount=Number(document.getElementById("redeemCodeGiftCount").value);
  const benefitType=document.getElementById("redeemCodeBenefitType").value;
  const coins=benefitType==="coins"?Number(document.getElementById("redeemCodeCoins").value):0;
  const expiryHours=Number(document.getElementById("redeemCodeExpiryHours").value);
- if(!/^[A-Z0-9_-]{4,32}$/.test(code)){alert("اكتب رمزًا من 4 إلى 32 حرفًا أو رقمًا.");return;}
- if(!Number.isSafeInteger(giftCount)||giftCount<1||giftCount>1000000){alert("عدد الهدايا غير صالح.");return;}
- if(benefitType==="coins"&&(!Number.isSafeInteger(coins)||coins<1||coins>100000000)){alert("عدد العملات غير صالح.");return;}
- if(!Number.isSafeInteger(expiryHours)||expiryHours<1||expiryHours>8760){alert("مدة الصلاحية يجب أن تكون بين ساعة و8760 ساعة.");return;}
- const benefitLabel=benefitType==="go_free"?"فتح GO دون مشاهدة إعلانات":"منح "+coins+" عملة لكل مستخدم";
- if(!confirm("إنشاء الرمز "+code+" بعدد "+giftCount+" استخدامات، ومكافأة: "+benefitLabel+"، وصلاحية "+expiryHours+" ساعة؟"))return;
- button.disabled=true;status.textContent="جارٍ إنشاء الرمز...";
+ if(!/^[A-Z0-9_-]{4,32}$/.test(code)){alert("Введите код длиной от 4 до 32 символов: буквы или цифры.");return;}
+ if(!Number.isSafeInteger(giftCount)||giftCount<1||giftCount>1000000){alert("Некорректное количество наград.");return;}
+ if(benefitType==="coins"&&(!Number.isSafeInteger(coins)||coins<1||coins>100000000)){alert("Некорректное количество монет.");return;}
+ if(!Number.isSafeInteger(expiryHours)||expiryHours<1||expiryHours>8760){alert("Срок действия должен составлять от 1 до 8760 часов.");return;}
+ const benefitLabel=benefitType==="go_free"?"Открыть GO без просмотра рекламы":"Начислить "+coins+" монет каждому пользователю";
+ if(!confirm("إنشاء Код "+code+" بعدد "+giftCount+" استخدامات، ومكافأة: "+benefitLabel+"، وصلاحية "+expiryHours+" ساعة؟"))return;
+ button.disabled=true;status.textContent="جارٍ إنشاء Код...";
  try{
   const response=await fetch("/api/admin/redeem-codes",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,code,giftCount,coins,benefitType,expiryHours})});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"CREATE_REDEEM_CODE_FAILED");
-  status.textContent="تم إنشاء الرمز "+result.code+" بنجاح. عدد الاستخدامات: "+result.giftCount+" — المكافأة: "+benefitLabel+" — الصلاحية: "+result.expiryHours+" ساعة.";
+  status.textContent="تم إنشاء Код "+result.code+" بنجاح. عدد الاستخدامات: "+result.giftCount+" — المكافأة: "+benefitLabel+" — الصلاحية: "+result.expiryHours+" ساعة.";
   document.getElementById("redeemCodeValue").value="";await loadRedeemCodes();alert(status.textContent);
- }catch(error){status.textContent="تعذر إنشاء الرمز: "+error.message;alert(status.textContent);}
+ }catch(error){status.textContent="تعذر إنشاء Код: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;}
 }
 
 
 async function redemptionOffersRequest(payload=null){const url="/api/admin/redemption-offers"+(payload?"":"?initData="+encodeURIComponent(tg?.initData||""));const response=await fetch(url,{method:payload?"POST":"GET",headers:payload?{"Content-Type":"application/json"}:undefined,credentials:"same-origin",cache:"no-store",body:payload?JSON.stringify({...payload,initData:tg.initData}):undefined});const data=await response.json().catch(()=>({}));if(!response.ok||!data.success)throw new Error(data.error||"REDEMPTION_OFFERS_ERROR");return data;}
-async function openRedemptionOffersPage(){if(!adminOwner){alert("إدارة Предложения обмена متاحة للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("redemptionOffersPage").classList.remove("hidden");resetRedemptionOfferForm();await loadRedemptionOffers();}
+async function openRedemptionOffersPage(){if(!adminOwner){alert("Управление предложениями обмена متاحة للمالك فقط.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("redemptionOffersPage").classList.remove("hidden");resetRedemptionOfferForm();await loadRedemptionOffers();}
 function closeRedemptionOffersPage(){document.getElementById("redemptionOffersPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
-function resetRedemptionOfferForm(){document.getElementById("redemptionOfferId").value="";document.getElementById("redemptionOfferName").value="";document.getElementById("redemptionOfferPoints").value="";document.getElementById("redemptionOfferImage").value="";document.getElementById("redemptionOfferOrder").value="1";document.getElementById("redemptionOfferFormTitle").textContent="إضافة عرض جديد";}
-async function loadRedemptionOffers(){const status=document.getElementById("redemptionOffersStatus"),list=document.getElementById("redemptionOffersList");status.textContent="جارٍ تحميل العروض...";try{const data=await redemptionOffersRequest();list.replaceChildren();if(!data.offers.length){list.textContent="لا توجد عروض حالياً.";return;}for(const offer of data.offers){const item=document.createElement("div");item.className="task-item";const title=document.createElement("h4");title.textContent=offer.name;const meta=document.createElement("div");meta.className="task-meta";meta.textContent=Number(offer.points).toLocaleString()+" نقطة • "+(Number(offer.active)?"مفعّل":"متوقف");const actions=document.createElement("div");actions.className="task-actions";const edit=document.createElement("button");edit.textContent="تعديل";edit.onclick=()=>{document.getElementById("redemptionOfferId").value=offer.id;document.getElementById("redemptionOfferName").value=offer.name;document.getElementById("redemptionOfferPoints").value=offer.points;document.getElementById("redemptionOfferImage").value=offer.image_url||"";document.getElementById("redemptionOfferOrder").value=offer.sort_order||0;document.getElementById("redemptionOfferFormTitle").textContent="تعديل العرض #"+offer.id;document.getElementById("redemptionOfferFormTitle").scrollIntoView({behavior:"smooth",block:"center"});};const del=document.createElement("button");del.className="danger";del.textContent="حذف";del.onclick=()=>deleteRedemptionOffer(offer.id,offer.name);actions.append(edit,del);item.append(title,meta,actions);list.append(item);}status.textContent="عدد العروض: "+data.offers.length;}catch(error){status.textContent="تعذر تحميل العروض: "+error.message;}}
-async function saveRedemptionOffer(){const id=Number(document.getElementById("redemptionOfferId").value||0),name=document.getElementById("redemptionOfferName").value.trim(),points=Number(document.getElementById("redemptionOfferPoints").value),imageUrl=document.getElementById("redemptionOfferImage").value.trim(),sortOrder=Number(document.getElementById("redemptionOfferOrder").value||0),button=document.getElementById("redemptionOfferSave");if(!name||!Number.isSafeInteger(points)||points<1||!Number.isSafeInteger(sortOrder)||sortOrder<0){alert("تحقق من اسم العرض وعدد النقاط والترتيب.");return;}if(imageUrl&&!/^https:\/\//i.test(imageUrl)){alert("رابط الصورة يجب أن يبدأ بـ https://");return;}button.disabled=true;try{await redemptionOffersRequest({action:"save",id,name,points,imageUrl,sortOrder});resetRedemptionOfferForm();await loadRedemptionOffers();}catch(error){alert("تعذر حفظ العرض: "+error.message);}finally{button.disabled=false;}}
-async function deleteRedemptionOffer(id,name){if(!confirm("هل تريد حذف العرض «"+name+"»؟"))return;try{const result=await redemptionOffersRequest({action:"delete",id});await loadRedemptionOffers();if(result.archived)alert("للعرض طلبات سابقة، لذلك تم إخفاؤه عن المستخدمين مع الحفاظ على سجل الطلبات.");}catch(error){alert("تعذر حذف العرض: "+error.message);}}
+function resetRedemptionOfferForm(){document.getElementById("redemptionOfferId").value="";document.getElementById("redemptionOfferName").value="";document.getElementById("redemptionOfferPoints").value="";document.getElementById("redemptionOfferImage").value="";document.getElementById("redemptionOfferOrder").value="1";document.getElementById("redemptionOfferFormTitle").textContent="Добавить предложение";}
+async function loadRedemptionOffers(){const status=document.getElementById("redemptionOffersStatus"),list=document.getElementById("redemptionOffersList");status.textContent="Загрузка предложений...";try{const data=await redemptionOffersRequest();list.replaceChildren();if(!data.offers.length){list.textContent="لا توجد عروض حالياً.";return;}for(const offer of data.offers){const item=document.createElement("div");item.className="task-item";const title=document.createElement("h4");title.textContent=offer.name;const meta=document.createElement("div");meta.className="task-meta";meta.textContent=Number(offer.points).toLocaleString()+" баллов • "+(Number(offer.active)?"Активно":"Отключено");const actions=document.createElement("div");actions.className="task-actions";const edit=document.createElement("button");edit.textContent="Изменить";edit.onclick=()=>{document.getElementById("redemptionOfferId").value=offer.id;document.getElementById("redemptionOfferName").value=offer.name;document.getElementById("redemptionOfferPoints").value=offer.points;document.getElementById("redemptionOfferImage").value=offer.image_url||"";document.getElementById("redemptionOfferOrder").value=offer.sort_order||0;document.getElementById("redemptionOfferFormTitle").textContent="Изменить العرض #"+offer.id;document.getElementById("redemptionOfferFormTitle").scrollIntoView({behavior:"smooth",block:"center"});};const del=document.createElement("button");del.className="danger";del.textContent="Удалить";del.onclick=()=>deleteRedemptionOffer(offer.id,offer.name);actions.append(edit,del);item.append(title,meta,actions);list.append(item);}status.textContent="عدد العروض: "+data.offers.length;}catch(error){status.textContent="تعذر تحميل العروض: "+error.message;}}
+async function saveRedemptionOffer(){const id=Number(document.getElementById("redemptionOfferId").value||0),name=document.getElementById("redemptionOfferName").value.trim(),points=Number(document.getElementById("redemptionOfferPoints").value),imageUrl=document.getElementById("redemptionOfferImage").value.trim(),sortOrder=Number(document.getElementById("redemptionOfferOrder").value||0),button=document.getElementById("redemptionOfferSave");if(!name||!Number.isSafeInteger(points)||points<1||!Number.isSafeInteger(sortOrder)||sortOrder<0){alert("تحقق من Название предложения وКоличество баллов والترتيب.");return;}if(imageUrl&&!/^https:\/\//i.test(imageUrl)){alert("رابط الصورة يجب أن يبدأ بـ https://");return;}button.disabled=true;try{await redemptionOffersRequest({action:"save",id,name,points,imageUrl,sortOrder});resetRedemptionOfferForm();await loadRedemptionOffers();}catch(error){alert("تعذر Сохранить предложение: "+error.message);}finally{button.disabled=false;}}
+async function deleteRedemptionOffer(id,name){if(!confirm("هل تريد Удалить العرض «"+name+"»؟"))return;try{const result=await redemptionOffersRequest({action:"delete",id});await loadRedemptionOffers();if(result.archived)alert("للعرض طلبات سابقة، لذلك تم إخفاؤه عن الПользовательين مع الحفاظ على سجل الطلبات.");}catch(error){alert("تعذر Удалить العرض: "+error.message);}}
 
 let currentDeliveryOffer="beta";
 async function betaDeliveryRequest(data){const response=await fetch("/api/admin/beta-delivery",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...data,offer:currentDeliveryOffer,initData:tg.initData})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_ERROR");return result;}
@@ -1398,16 +1398,16 @@ async function openPlatformDeliveryPage(offer){
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryHeading").textContent="📦 محتوى عرض "+label;document.getElementById("betaDeliverySaveButton").textContent="💾 حفظ محتوى "+label;
- document.getElementById("platformDeliveryDescription").textContent="هذا المحتوى يُرسل للمستخدم في محادثة البوت عندما يكمل 10/10 إعلانات في "+label+" ويضغط GO. إعدادات هذه المنصة مستقلة عن المنصتين الأخريين. يمكنك إرفاق حتى 10 ملفات.";
+ document.getElementById("platformDeliveryHeading").textContent="📦 Материалы предложения "+label;document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+label;
+ document.getElementById("platformDeliveryDescription").textContent="هذا المحتوى يُرسل للПользователь في محادثة البوت عندما يكمل 10/10 объявленийات في "+label+" ويضغط GO. إعدادات هذه Платформа Отдельноة عن المنصتين الأخريين. يمكنك إرفاق حتى 10 ملفات.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
 }
 async function switchPlatformDelivery(offer){
  if(!hasAdminPermission("platform_files"))return;
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};
- document.getElementById("platformDeliveryHeading").textContent="📦 محتوى عرض "+labels[currentDeliveryOffer];document.getElementById("betaDeliverySaveButton").textContent="💾 حفظ محتوى "+labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryDescription").textContent="هذا المحتوى مستقل لمنصة "+labels[currentDeliveryOffer]+". اختيار ملفات جديدة يستبدل ملفات هذه المنصة فقط.";
+ document.getElementById("platformDeliveryHeading").textContent="📦 Материалы предложения "+labels[currentDeliveryOffer];document.getElementById("betaDeliverySaveButton").textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
+ document.getElementById("platformDeliveryDescription").textContent="هذا المحتوى Отдельно لمنصة "+labels[currentDeliveryOffer]+". اختيار ملفات جديدة يستبدل ملفات هذه Платформа فقط.";
  document.getElementById("betaDeliveryMessage").value="";
  document.getElementById("betaDeliveryFiles").value="";
  await loadBetaDelivery();
@@ -1415,23 +1415,23 @@ async function switchPlatformDelivery(offer){
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 function renderPlatformDeliveryFiles(files){
  const box=document.getElementById("betaDeliveryCurrentFiles");
- if(!files.length){box.innerHTML='<p class="note">لا توجد ملفات محفوظة حالياً.</p>';return;}
- box.innerHTML=files.map((file,index)=>'<div class="platform-status" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>📎 '+(index+1)+'. '+escapeHtml(file.name||"file")+' — '+(Number(file.size||0)/1024/1024).toFixed(2)+' MB</span><button class="danger" style="width:auto;margin:0;padding:8px 12px" onclick="removePlatformDeliveryFile('+index+')">🗑 حذف</button></div>').join("");
+ if(!files.length){box.innerHTML='<p class="note">Сохранённых файлов пока нет.</p>';return;}
+ box.innerHTML=files.map((file,index)=>'<div class="platform-status" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>📎 '+(index+1)+'. '+escapeHtml(file.name||"file")+' — '+(Number(file.size||0)/1024/1024).toFixed(2)+' MB</span><button class="danger" style="width:auto;margin:0;padding:8px 12px" onclick="removePlatformDeliveryFile('+index+')">🗑 Удалить</button></div>').join("");
 }
 async function removePlatformDeliveryFile(index){
  if(!Number.isInteger(index)||index<0)return;
- if(!confirm("هل تريد حذف هذا الملف من محتوى "+currentDeliveryOffer.toUpperCase()+"؟"))return;
+ if(!confirm("Удалить этот файл из материалов "+currentDeliveryOffer.toUpperCase()+"؟"))return;
  const status=document.getElementById("betaDeliveryStatus");
  try{
   const result=await betaDeliveryRequest({action:"remove_file",index});
   renderPlatformDeliveryFiles(result.files||[]);
-  status.textContent="تم حذف الملف من محتوى "+currentDeliveryOffer.toUpperCase()+".";
- }catch(error){status.textContent="تعذر حذف الملف: "+error.message;alert(status.textContent);}
+  status.textContent="Файл удалён из материалов "+currentDeliveryOffer.toUpperCase()+".";
+ }catch(error){status.textContent="Не удалось удалить файл: "+error.message;alert(status.textContent);}
 }
 async function loadBetaDelivery(){
- const status=document.getElementById("betaDeliveryStatus");status.textContent="جارٍ تحميل إعدادات "+currentDeliveryOffer.toUpperCase()+"...";
- try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";renderPlatformDeliveryFiles(result.files||[]);status.textContent="تم تحميل محتوى "+currentDeliveryOffer.toUpperCase()+". اختيار ملفات جديدة يستبدل ملفات هذا العرض فقط.";}
- catch(error){status.textContent="تعذر تحميل المحتوى: "+error.message;}
+ const status=document.getElementById("betaDeliveryStatus");status.textContent="Загрузка настроек "+currentDeliveryOffer.toUpperCase()+"...";
+ try{const result=await betaDeliveryRequest({action:"get"});document.getElementById("betaDeliveryMessage").value=result.message||"";renderPlatformDeliveryFiles(result.files||[]);status.textContent="Материалы загружены: "+currentDeliveryOffer.toUpperCase()+". اختيار ملفات جديدة يستبدل ملفات هذا العرض فقط.";}
+ catch(error){status.textContent="Не удалось загрузить материалы: "+error.message;}
 }
 async function platformUploadJson(payload){
  const response=await fetch("/api/admin/beta-delivery-upload",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...payload,initData:tg.initData})});
@@ -1470,14 +1470,14 @@ async function uploadPlatformPartWithRetry(url,blob,onProgress,offer,uploadId,pa
 async function saveBetaDelivery(){
  const button=document.getElementById("betaDeliverySaveButton"),status=document.getElementById("betaDeliveryStatus"),files=Array.from(document.getElementById("betaDeliveryFiles").files||[]),message=document.getElementById("betaDeliveryMessage").value.trim();
  const wrap=document.getElementById("betaDeliveryProgressWrap"),bar=document.getElementById("betaDeliveryProgressBar"),percent=document.getElementById("betaDeliveryProgressText"),label=document.getElementById("betaDeliveryProgressLabel");
- if(!message&&!files.length){alert("أدخل نصاً أو اختر ملفاً واحداً على الأقل.");return;}
- if(files.length>3){alert("الحد الأقصى 3 ملفات لكل عرض.");return;}
- if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("حجم كل ملف يجب أن يكون أكبر من صفر وألا يتجاوز 2 جيغابايت.");return;}
- if(!confirm("سيتم حفظ النص والملفات لعرض "+currentDeliveryOffer.toUpperCase()+" فقط. هل تريد المتابعة؟"))return;
- button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="جارٍ تجهيز الرفع المجزّأ...";
- status.textContent="جارٍ رفع الملفات مباشرة إلى R2...";
+ if(!message&&!files.length){alert("Введите текст или выберите хотя бы один файл.");return;}
+ if(files.length>3){alert("Максимум 3 файла для одного предложения.");return;}
+ if(files.some(file=>!file.size||file.size>2*1024*1024*1024)){alert("Размер каждого файла должен быть больше нуля и не превышать 2 ГБ.");return;}
+ if(!confirm("Текст и файлы будут сохранены только для предложения "+currentDeliveryOffer.toUpperCase()+" . Продолжить?"))return;
+ button.disabled=true;wrap.classList.remove("hidden");bar.style.width="0%";percent.textContent="0%";label.textContent="Подготовка загрузки по частям...";
+ status.textContent="Загрузка файлов напрямую в R2...";
  const totalBytes=files.reduce((sum,file)=>sum+file.size,0);let completedBytes=0;const uploaded=[];
- const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="جارٍ رفع الملفات إلى R2...";};
+ const paint=(loaded)=>{const value=totalBytes?Math.min(95,Math.floor((completedBytes+loaded)/totalBytes*95)):95;bar.style.width=value+"%";percent.textContent=value+"%";label.textContent="Загрузка файлов в R2...";};
  try{
   for(const file of files){
    const resumeKey=platformResumeKey(currentDeliveryOffer,file);
@@ -1511,25 +1511,25 @@ async function saveBetaDelivery(){
    const done=await platformUploadJson({action:"complete",offer:currentDeliveryOffer,uploadId:saved.uploadId,parts});
    uploaded.push(done.file);platformRemoveResume(resumeKey);
   }
-  label.textContent="اكتمل الرفع، جارٍ حفظ إعدادات العرض...";
+  label.textContent="Загрузка завершена, сохранение настроек предложения...";
   const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:uploaded.map(file=>file.key)});
-  bar.style.width="100%";percent.textContent="100%";label.textContent="اكتمل الحفظ بنجاح";
+  bar.style.width="100%";percent.textContent="100%";label.textContent="Сохранение успешно завершено";
   document.getElementById("betaDeliveryFiles").value="";renderPlatformDeliveryFiles(savedResult.files||[]);
-  status.textContent="تم حفظ محتوى "+currentDeliveryOffer.toUpperCase()+" مع "+(savedResult.files||[]).length+" ملف. بقية العروض لم تتغير.";
+  status.textContent="تم Сохранить материалы "+currentDeliveryOffer.toUpperCase()+" مع "+(savedResult.files||[]).length+" файл(ов). Остальные предложения не изменены.";
  }catch(error){
-  label.textContent="توقف الرفع — يمكنك إعادة اختيار نفس الملفات للاستكمال";
-  status.textContent="تعذر حفظ المحتوى: "+(error.message==="RESUME_FILE_MISMATCH"?"اختر نفس الملف الأصلي للاستكمال.":error.message);
+  label.textContent="Загрузка остановлена — выберите те же файлы, чтобы продолжить";
+  status.textContent="Не удалось сохранить материалы: "+(error.message==="RESUME_FILE_MISMATCH"?"Выберите тот же исходный файл, чтобы продолжить.":error.message);
   alert(status.textContent);
  }finally{
-  button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 حفظ محتوى "+labels[currentDeliveryOffer];
+  button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];
  }
 }
 
 function openBroadcastPage(){
- if(!adminOwner){alert("نشر الرسائل متاح للمالك فقط.");return;}
+ if(!adminOwner){alert("Публиковать сообщения может только владелец.");return;}
  document.getElementById("mainMenu").classList.add("hidden");
  document.getElementById("broadcastPage").classList.remove("hidden");
- document.getElementById("broadcastStatus").textContent="لن يتم الإرسال قبل تأكيدك.";
+ document.getElementById("broadcastStatus").textContent="Отправка начнётся только после вашего подтверждения.";
 }
 function closeBroadcastPage(){
  document.getElementById("broadcastPage").classList.add("hidden");
@@ -1540,19 +1540,19 @@ async function publishBroadcast(){
  const button=document.getElementById("broadcastPublishButton"),status=document.getElementById("broadcastStatus");
  const message=document.getElementById("broadcastMessage").value.trim();
  const input=document.getElementById("broadcastMedia"),file=input.files?.[0]||null;
- if(!message&&!file){alert("اكتب رسالة أو اختر صورة أو فيديو.");return;}
- if(file&&file.size>50*1024*1024){alert("حجم الملف يجب ألا يتجاوز 50 ميغابايت.");return;}
- if(file&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")){alert("يمكن إرفاق صورة أو فيديو فقط.");return;}
- if(!confirm("سيتم إرسال هذا الРассылка إلى جميع المستخدمين النشطين عبر البوت. هل تريد المتابعة؟"))return;
- button.disabled=true;status.textContent="جارٍ تجهيز الРассылка وإرساله إلى البوت...";
+ if(!message&&!file){alert("Введите сообщение или выберите изображение либо видео.");return;}
+ if(file&&file.size>50*1024*1024){alert("Размер файла не должен превышать 50 МБ.");return;}
+ if(file&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")){alert("Можно прикрепить только изображение или видео.");return;}
+ if(!confirm("سيتم Отправить هذا الРассылка إلى Все пользователи النشطين عبر البوت. هل تريد المتابعة؟"))return;
+ button.disabled=true;status.textContent="جارٍ تجهيز الРассылка وОтправитьه إلى البوت...";
  try{
   const form=new FormData();form.append("initData",tg.initData);form.append("message",message);if(file)form.append("media",file,file.name);
   const response=await fetch("/api/admin/broadcast",{method:"POST",body:form,credentials:"same-origin",cache:"no-store"});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.detail||result.error||"BROADCAST_FAILED");
-  status.textContent="تم قبول الРассылка للإرسال. عدد المستخدمين المستهدفين: "+Number(result.total||0)+". جارٍ الإرسال في الخلفية.";
+  status.textContent="تم قبول الРассылка للОтправить. عدد الПользовательين المستهدفين: "+Number(result.total||0)+". جارٍ الОтправить في الخلفية.";
   document.getElementById("broadcastMessage").value="";input.value="";
   await refreshBroadcastStatus();
- }catch(error){status.textContent="تعذر نشر الرسالة: "+error.message;alert(status.textContent);}
+ }catch(error){status.textContent="Не удалось опубликовать сообщение: "+error.message;alert(status.textContent);}
  finally{button.disabled=false;}
 }
 async function refreshBroadcastStatus(){
@@ -1560,11 +1560,11 @@ async function refreshBroadcastStatus(){
  try{
   const response=await fetch("/api/admin/broadcast?initData="+encodeURIComponent(tg.initData),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"STATUS_FAILED");
-  if(!result.job){status.textContent="لا توجد Рассылкаات سابقة.";return;}
+  if(!result.job){status.textContent="Предыдущих рассылок нет.";return;}
   const job=result.job;
-  const labels={queued:"في قائمة الانتظار",sending:"جارٍ الإرسال",completed:"اكتمل الإرسال",failed:"توقف الإرسال بسبب خطأ"};
-  status.textContent="حالة آخر Рассылка: "+(labels[job.status]||job.status)+" — تم الإرسال: "+Number(job.sent||0)+" — فشل: "+Number(job.failed||0)+" — إجمالي المستهدفين: "+Number(job.total||0);
- }catch(error){status.textContent="تعذر تحديث حالة النشر: "+error.message;}
+  const labels={queued:"В очереди",sending:"جارٍ الОтправить",completed:"اكتمل الОтправить",failed:"توقف الОтправить بسبب خطأ"};
+  status.textContent="Статус последней рассылки: "+(labels[job.status]||job.status)+" — تم الОтправить: "+Number(job.sent||0)+" — ошибок: "+Number(job.failed||0)+" — всего получателей: "+Number(job.total||0);
+ }catch(error){status.textContent="تعذر Обновить статус рассылки: "+error.message;}
 }
 /* بقية Разделы управления */
 function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("قسم Безопасность и права доступа خاص بالمالك.");return;}openSecurity();return;}if(["users","news","tasks","reviews","support"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("ليس لديك صلاحية لهذا القسم.");return;}if(name==="activity"){openActivity();return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}if(name==="support"){openSupportAdmin();return;}const messages={stats:"إحصائيات الموقع"};alert((messages[name]||"هذا القسم")+"\\nهذه الوظيفة لم يتم ربطها بعد.");}
@@ -1573,7 +1573,7 @@ function action(name){if(name==="rewards"){openAdminRewards();return;}if(name===
 async function loadAdminDashboard(){
  const status=document.getElementById("dashboardStatus");
  if(!status||!tg?.initData)return;
- status.textContent="جارٍ تحديث الإحصائيات...";
+ status.textContent="جارٍ Обновить الإحصائيات...";
  const read=async(url,payload)=>{
   const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...payload,initData:tg.initData})});
   const data=await response.json();
@@ -1598,14 +1598,14 @@ async function loadAdminDashboard(){
  status.textContent="Последнее обновление: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
 }
 
-const ADMIN_WORKSPACES=[["redemptionOffersPage","redemptionOffersList","loadRedemptionOffers()","العروض","ابحث باسم العرض أو تكلفته"],["betaDeliveryPage","betaDeliveryCurrentFiles","loadBetaDelivery()","ملفات المنصة","ابحث في Сохранённые файлы"],["broadcastPage","broadcastStatus","refreshBroadcastStatus()","النشر","تابع حالة آخر Рассылка"],["activityPage","activityList","loadActivity()","Журнал входов","ابحث في السجلات المعروضة"],["usersPage","usersList","loadUsers()","المستخدمون","ابحث في المستخدمين المعروضين"],["tasksPage","tasksList","loadTasks()","المهمات","ابحث باسم المهمة أو المنصة"],["reviewsPage","reviewsList","loadReviews()","الطلبات","ابحث في الطلبات المعروضة"],["supportAdminPage","supportAdminList","loadSupportAdminConversations()","الدعم","ابحث عن محادثة أو مستخدم"],["securityPage","deputiesList","loadDeputies(true)","النواب والصلاحيات","ابحث عن نائب أو رقم Telegram"],["rewardsAdminPage","redeemCodesHistory","loadRedeemCodes()","رموز الاسترداد","ابحث عن رمز أو حالة استرداد"]];
+const ADMIN_WORKSPACES=[["redemptionOffersPage","redemptionOffersList","loadRedemptionOffers()","العروض","اПоиск بНазвание предложения أو تكلفته"],["betaDeliveryPage","betaDeliveryCurrentFiles","loadBetaDelivery()","Файлы платформы","اПоиск في Сохранённые файлы"],["broadcastPage","broadcastStatus","refreshBroadcastStatus()","النشر","تابع حالة آخر Рассылка"],["activityPage","activityList","loadActivity()","Журнал входов","اПоиск في السجلات المعروضة"],["usersPage","usersList","loadUsers()","الПользовательون","اПоиск في الПользовательين المعروضين"],["tasksPage","tasksList","loadTasks()","Задания","اПоиск بНазвание задания أو Платформа"],["reviewsPage","reviewsList","loadReviews()","الطلبات","اПоиск في الطلبات المعروضة"],["supportAdminPage","supportAdminList","loadSupportAdminConversations()","الدعم","اПоиск عن محادثة أو Пользователь"],["securityPage","deputiesList","loadDeputies(true)","النواب والصلاحيات","اПоиск عن نائب أو رقم Telegram"],["rewardsAdminPage","redeemCodesHistory","loadRedeemCodes()","رموز الاسترداد","اПоиск عن رمز أو حالة استرداد"]];
 const adminWorkspaceObservers=new Map();
 function installAdminWorkspaceTools(){
  for(const [pageId,targetId,refresh,label,placeholder] of ADMIN_WORKSPACES){
   const page=document.getElementById(pageId),target=document.getElementById(targetId);
   if(!page||!target||page.querySelector(".admin-workspace-tools"))continue;
   const bar=document.createElement("section");bar.className="admin-workspace-tools";
-  bar.innerHTML='<div class="admin-workspace-caption"><span class="admin-workspace-symbol">⌘</span><div><strong>مساحة العمل</strong><small>'+label+'</small></div><span class="admin-workspace-count" id="workspaceCount-'+pageId+'">—</span></div><div class="admin-workspace-controls"><label class="admin-workspace-search"><span>⌕</span><input type="search" autocomplete="off" placeholder="'+placeholder+'" aria-label="'+placeholder+'"><button type="button" class="admin-workspace-clear" aria-label="Очистить поиск">×</button></label><button type="button" class="admin-workspace-refresh" aria-label="تحديث البيانات">⟳ <span>تحديث</span></button></div><div class="admin-workspace-hint">البحث يفلتر النتائج المحمّلة دون تغيير البيانات المحفوظة.</div>';
+  bar.innerHTML='<div class="admin-workspace-caption"><span class="admin-workspace-symbol">⌘</span><div><strong>Рабочая область</strong><small>'+label+'</small></div><span class="admin-workspace-count" id="workspaceCount-'+pageId+'">—</span></div><div class="admin-workspace-controls"><label class="admin-workspace-search"><span>⌕</span><input type="search" autocomplete="off" placeholder="'+placeholder+'" aria-label="'+placeholder+'"><button type="button" class="admin-workspace-clear" aria-label="Очистить поиск">×</button></label><button type="button" class="admin-workspace-refresh" aria-label="Обновить данные">⟳ <span>Обновить</span></button></div><div class="admin-workspace-hint">الПоиск يفلتر النتائج المحمّلة دون تغيير البيانات المحفوظة.</div>';
   const input=bar.querySelector("input"),clear=bar.querySelector(".admin-workspace-clear"),refresh=bar.querySelector(".admin-workspace-refresh");
   const apply=()=>{
    const q=input.value.trim().toLocaleLowerCase();
@@ -1632,31 +1632,31 @@ function installAdminFieldAssistants(){
  const message=document.getElementById("broadcastMessage"),media=document.getElementById("broadcastMedia");
  if(message&&!document.getElementById("adminBroadcastPreview")){
   const preview=document.createElement("section");preview.id="adminBroadcastPreview";preview.className="admin-broadcast-preview";
-  preview.innerHTML='<strong>معاينة مباشرة للРассылка</strong><p id="adminBroadcastPreviewText">سيظهر نص Рассылкаك هنا قبل الإرسال.</p><small id="adminBroadcastPreviewMedia">لا يوجد مرفق</small>';
+  preview.innerHTML='<strong>Предварительный просмотр рассылки</strong><p id="adminBroadcastPreviewText">سيظهر نص Рассылкаك هنا قبل الОтправить.</p><small id="adminBroadcastPreviewMedia">Нет вложения</small>';
   const status=document.getElementById("broadcastMediaInfo");status?.insertAdjacentElement("afterend",preview);
-  const render=()=>{const text=document.getElementById("adminBroadcastPreviewText");if(text)text.textContent=message.value.trim()||"سيظهر نص Рассылкаك هنا قبل الإرسال.";};
+  const render=()=>{const text=document.getElementById("adminBroadcastPreviewText");if(text)text.textContent=message.value.trim()||"سيظهر نص Рассылкаك هنا قبل الОтправить.";};
   message.addEventListener("input",render);render();
-  media?.addEventListener("change",()=>{const out=document.getElementById("adminBroadcastPreviewMedia"),file=media.files?.[0];if(out)out.textContent=file?file.name+" • "+(file.size/1048576).toFixed(2)+" MB":"لا يوجد مرفق";});
+  media?.addEventListener("change",()=>{const out=document.getElementById("adminBroadcastPreviewMedia"),file=media.files?.[0];if(out)out.textContent=file?file.name+" • "+(file.size/1048576).toFixed(2)+" MB":"Нет вложения";});
  }
  const taskTitle=document.getElementById("taskTitle"),taskDescription=document.getElementById("taskDescription"),taskUrl=document.getElementById("taskUrl");
  if(taskTitle&&!document.getElementById("adminTaskPreview")){
   const preview=document.createElement("section");preview.id="adminTaskPreview";preview.className="admin-task-preview";
-  preview.innerHTML='<div class="admin-task-preview-top"><span>معاينة المهمة</span><span class="admin-preview-live">LIVE</span></div><strong id="adminTaskPreviewTitle">عنوان المهمة سيظهر هنا</strong><p id="adminTaskPreviewDescription">أضف وصفًا لتظهر معاينته هنا.</p><small id="adminTaskPreviewLink">لم تتم إضافة رابط بعد</small>';
+  preview.innerHTML='<div class="admin-task-preview-top"><span>Предварительный просмотр задания</span><span class="admin-preview-live">LIVE</span></div><strong id="adminTaskPreviewTitle">Здесь появится название задания</strong><p id="adminTaskPreviewDescription">Добавьте описание, чтобы увидеть его здесь.</p><small id="adminTaskPreviewLink">Ссылка ещё не добавлена</small>';
   const form=document.getElementById("taskFormHeading")?.parentElement;form?.append(preview);
-  const render=()=>{document.getElementById("adminTaskPreviewTitle").textContent=taskTitle.value.trim()||"عنوان المهمة سيظهر هنا";document.getElementById("adminTaskPreviewDescription").textContent=taskDescription.value.trim()||"أضف وصفًا لتظهر معاينته هنا.";document.getElementById("adminTaskPreviewLink").textContent=taskUrl.value.trim()||"لم تتم إضافة رابط بعد";};
+  const render=()=>{document.getElementById("adminTaskPreviewTitle").textContent=taskTitle.value.trim()||"Здесь появится название задания";document.getElementById("adminTaskPreviewDescription").textContent=taskDescription.value.trim()||"Добавьте описание, чтобы увидеть его здесь.";document.getElementById("adminTaskPreviewLink").textContent=taskUrl.value.trim()||"Ссылка ещё не добавлена";};
   [taskTitle,taskDescription,taskUrl].forEach(el=>el?.addEventListener("input",render));render();
  }
 }
 
 async function start(){
  if(!tg||!tg.initData){
-  statusBox.textContent="لم تصل بيانات Telegram. أغلق الصفحة وافتحها من زر لوحة الإدارة داخل البوت.";
+  statusBox.textContent="لم تصل بيانات Telegram. أغلق الصفحة وافتحها من زر لوحة الУправление داخل البوت.";
   return;
  }
  try{
   tg.ready();
   tg.expand();
-  statusBox.textContent="تم استلام بيانات Telegram. جارٍ الاتصال بخادم التحقق...";
+  statusBox.textContent="Данные Telegram получены. Подключение к серверу проверки...";
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),12000);
   let response;
@@ -1677,8 +1677,8 @@ async function start(){
   catch{throw new Error("INVALID_SERVER_RESPONSE");}
   if(!response.ok||!result.success||!result.admin){
    statusBox.textContent=response.status===403
-    ?"رفض الخادم صلاحية الدخول. تحقق من حساب المدير في إعدادات البوت."
-    :"تعذر التحقق من صلاحية المدير (HTTP "+response.status+").";
+    ?"Сервер отклонил доступ. Проверьте учётную запись администратора в настройках бота."
+    :"Не удалось проверить права администратора (HTTP "+response.status+").";
    return;
   }
   adminOwner=Boolean(result.owner);
@@ -1694,10 +1694,10 @@ async function start(){
  }catch(error){
   console.error("Admin authentication error:",error);
   statusBox.textContent=error?.name==="AbortError"
-   ?"انتهت مهلة الاتصال (12 ثانية). تحقق من نشر Cloudflare Pages وعنوان API."
+   ?"Время ожидания соединения истекло (12 секунд). Проверьте публикацию Cloudflare Pages и адрес API."
    :error?.message==="INVALID_SERVER_RESPONSE"
-    ?"الخادم أرسل استجابة غير مفهومة. تحقق من نشر API."
-    :"تعذر الاتصال بخادم التحقق. أعد المحاولة بعد قليل.";
+    ?"Сервер вернул некорректный ответ. Проверьте публикацию API."
+    :"Не удалось подключиться к серверу проверки. Повторите попытку позже.";
  }
 }
 start();
