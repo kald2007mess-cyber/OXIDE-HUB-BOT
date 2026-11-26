@@ -588,6 +588,33 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 #betaDeliveryPage .platform-progress-fill{background:linear-gradient(90deg,#6949dd,#3289e6)}
 @media(max-width:760px){#betaDeliveryPage .pm-editor-grid{grid-template-columns:1fr}#betaDeliveryPage .pm-content-editor textarea{min-height:125px}}
 @media(max-width:520px){#betaDeliveryPage .pm-library-grid{grid-template-columns:1fr}#betaDeliveryPage .pm-panel,#betaDeliveryPage .pm-library-panel{padding:15px 12px}#betaDeliveryPage .pm-saved-card-head{align-items:flex-start;flex-direction:column}}
+
+/* Compact SVG-only platform content manager */
+#betaDeliveryPage .pm-simple-editor{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#betaDeliveryPage .pm-attach-panel,#betaDeliveryPage .pm-details-panel{background:linear-gradient(145deg,#1a2749,#14213d);border:1px solid rgba(142,155,255,.2);border-radius:18px;padding:18px}
+#betaDeliveryPage .pm-add-row{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid rgba(143,159,220,.13)}
+#betaDeliveryPage .pm-add-row-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:rgba(127,91,231,.18);color:#b9a5ff}
+#betaDeliveryPage .pm-add-row-icon.media{background:rgba(50,133,220,.17);color:#83c4ff}
+#betaDeliveryPage .pm-add-row-icon svg,#betaDeliveryPage .pm-field-label svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#betaDeliveryPage .pm-add-row-copy{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+#betaDeliveryPage .pm-add-row-copy strong{font-size:15px;color:#f1f2ff}
+#betaDeliveryPage .pm-add-row-copy small{font-size:11px;color:#9ba9d0}
+#betaDeliveryPage .pm-add-file-button{width:auto;min-width:94px;min-height:40px;margin:0;padding:8px 13px;border-radius:11px;background:linear-gradient(110deg,#6848d8,#287edb);display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px}
+#betaDeliveryPage .pm-add-file-button.media{background:linear-gradient(110deg,#3569c8,#2589d8)}
+#betaDeliveryPage .pm-add-file-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#betaDeliveryPage .pm-field-label{display:flex;align-items:center;gap:8px;margin:4px 0 10px;color:#cbd4ff;font-size:14px;font-weight:750}
+#betaDeliveryPage .pm-title-input,#betaDeliveryPage .pm-description-input{display:block;width:100%;box-sizing:border-box;background:#0d1730;border:1px solid #394c7b;border-radius:12px;color:#f3f4ff;padding:13px 14px;font:inherit;outline:none}
+#betaDeliveryPage .pm-title-input{min-height:58px;font-size:18px;font-weight:650;margin-bottom:21px}
+#betaDeliveryPage .pm-description-input{min-height:74px;resize:vertical;font-size:13px;line-height:1.6}
+#betaDeliveryPage .pm-library-list{display:grid;gap:9px}
+#betaDeliveryPage .pm-saved-file{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid rgba(135,153,237,.17);border-radius:13px;background:rgba(8,17,39,.55)}
+#betaDeliveryPage .pm-file-type-icon,#betaDeliveryPage .pm-saved-file-info small{display:none!important}
+#betaDeliveryPage .pm-saved-file-info{flex:1;min-width:0;grid-column:auto;grid-row:auto}
+#betaDeliveryPage .pm-saved-file-info strong{font-size:13px}
+#betaDeliveryPage .pm-file-actions{display:flex;gap:7px;justify-content:flex-end;padding:0;border:0;grid-column:auto}
+#betaDeliveryPage .pm-file-actions button{width:38px;min-width:38px;height:38px;padding:8px;border-radius:10px;font-size:0}
+#betaDeliveryPage .pm-file-actions svg{width:18px;height:18px}
+@media(max-width:760px){#betaDeliveryPage .pm-simple-editor{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -662,30 +689,32 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option></select>
   <section class="pm-workspace">
    <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span></div>
-   <div class="pm-editor-grid">
-    <section class="pm-content-editor pm-panel">
-     <div class="pm-panel-kicker">01 / CONTENT</div>
-     <div class="pm-editor-heading"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg> Сообщение для пользователя</h3><p>Текст, который пользователь получит вместе с файлами после нажатия GO</p></div><span class="pm-limit-badge">До 4000 символов</span></div>
-     <textarea id="betaDeliveryMessage" maxlength="4000" rows="5" placeholder="Введите сообщение для пользователя..."></textarea>
-     <div class="pm-editor-footer"><span>Отдельные настройки для каждой платформы</span><strong id="pmMessageCount">0 / 4000</strong></div>
-    </section>
-    <section class="pm-upload-panel pm-panel">
-     <div class="pm-panel-kicker">02 / UPLOAD</div>
-     <div class="pm-upload-panel-head"><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg> Добавление файлов</h3><p>Добавляйте по одному файлу за раз. Количество файлов не ограничено.</p></div><span class="pm-limit-badge">3 GB на файл</span></div>
-     <label class="pm-multi-picker" for="betaDeliveryFiles"><span class="pm-upload-cloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4"/></svg></span><strong>Перетащите файл сюда или нажмите для выбора</strong><small>APK · IPA · ZIP · PDF · изображения · видео · другие файлы</small></label>
+   <div class="pm-simple-editor">
+    <section class="pm-panel pm-attach-panel">
+     <div class="pm-panel-kicker">01 / ATTACHMENTS</div>
+     <div class="pm-add-row"><div class="pm-add-row-icon"><svg viewBox="0 0 24 24"><path d="M4 4h10l6 6v10H4zM14 4v6h6M8 15h8M8 18h5"/></svg></div><div class="pm-add-row-copy"><strong>ملفات</strong><small>APK · IPA · ZIP · PDF وغيرها</small></div><button type="button" class="pm-add-file-button" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> إضافة</button></div>
      <input id="betaDeliveryFiles" class="pm-hidden-file" type="file">
-     <button type="button" class="pm-add-file-button" id="pmAddFileButton" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Добавить ещё один файл</button>
-     <div class="pm-queue-head"><span>Очередь загрузки</span><strong><span id="pmPendingCount">0</span> файлов</strong></div>
-     <div id="pmPendingFiles" class="pm-pending-files"><div class="pm-empty-queue">لم تتم Добавление файлов بعد</div></div>
+     <div class="pm-add-row"><div class="pm-add-row-icon media"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></div><div class="pm-add-row-copy"><strong>صورة / فيديو</strong><small>إرفاق صورة أو مقطع فيديو</small></div><button type="button" class="pm-add-file-button media" onclick="document.getElementById('betaDeliveryMedia').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> إضافة</button></div>
+     <input id="betaDeliveryMedia" class="pm-hidden-file" type="file" accept="image/*,video/*">
+     <div class="pm-queue-head"><span>الملفات المضافة</span><strong><span id="pmPendingCount">0</span></strong></div>
+     <div id="pmPendingFiles" class="pm-pending-files"><div class="pm-empty-queue">لم تتم إضافة أي ملفات بعد</div></div>
+    </section>
+    <section class="pm-panel pm-details-panel">
+     <div class="pm-panel-kicker">02 / DETAILS</div>
+     <label class="pm-field-label" for="pmContentTitle"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg> اسم الملف</label>
+     <input id="pmContentTitle" class="pm-title-input" maxlength="180" placeholder="اكتب اسم الملف هنا...">
+     <label class="pm-field-label" for="betaDeliveryMessage"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 10h12M4 15h16M4 20h9"/></svg> وصف</label>
+     <textarea id="betaDeliveryMessage" class="pm-description-input" maxlength="4000" rows="2" placeholder="اكتب وصفاً مختصراً..."></textarea>
+     <div class="pm-editor-footer"><span>محتوى مستقل لكل منصة</span><strong id="pmMessageCount">0 / 4000</strong></div>
     </section>
    </div>
    <section class="pm-saved-card pm-library-panel">
-    <div class="pm-saved-card-head"><div><div class="pm-panel-kicker">03 / LIBRARY</div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v13H3zM3 7l2-4h14l2 4M8 12h8"/></svg> مكتبة файлов المنصة</h3><div class="pm-saved-subtitle">Управление сохранёнными файлами: переименование и удаление</div></div><span id="pmSavedCount" class="pm-saved-count">0 ملف</span></div>
-    <div id="betaDeliveryCurrentFiles" class="pm-library-grid"><div class="pm-empty-files">لا توجد файлов محفوظة لهذه المنصة بعد</div></div>
+    <div class="pm-saved-card-head"><div><div class="pm-panel-kicker">03 / HISTORY</div><h3><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 9h8M8 13h8M8 17h5"/></svg> سجل الملفات</h3></div><span id="pmSavedCount" class="pm-saved-count">0 ملف</span></div>
+    <div id="betaDeliveryCurrentFiles" class="pm-library-list"><div class="pm-empty-files">لا توجد файлов محفوظة لهذه المنصة بعد</div></div>
     <div class="pm-saved-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4m0 4h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg> Эти файлы получит пользователь после выполнения условий и нажатия GO</div>
    </section>
    <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
-   <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">Сохранить файлы</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
+   <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()">حفظ</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
   </section>
  </div>
 </div>
