@@ -1472,6 +1472,14 @@ body:has(#missionsPage[style*="display: block"]) .top-bar .oxide-wheel-top-butto
 .oxide-wheel-pointer{position:absolute;z-index:2;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #fff;filter:drop-shadow(0 0 7px #a98bff)}
 .oxide-wheel-spin,.oxide-wheel-collect{width:100%;min-height:49px;border:1px solid rgba(175,161,255,.7);border-radius:15px;background:linear-gradient(100deg,#087FEA,#4b50df 52%,#9638E8);color:#fff;font-size:15px;font-weight:950;box-shadow:0 0 17px rgba(95,83,255,.42);margin:0 0 14px}
 .oxide-wheel-spin:disabled,.oxide-wheel-collect:disabled{opacity:.58;filter:saturate(.75);cursor:not-allowed}
+.oxide-wheel-spin{display:flex;align-items:center;justify-content:center;gap:10px;transition:box-shadow .25s,filter .25s,opacity .25s}
+.oxide-wheel-spin svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 23px}
+.oxide-wheel-spin:not(:disabled){animation:oxideWheelGlow 1.8s ease-in-out infinite alternate}
+.oxide-wheel-spin:disabled{animation:none;box-shadow:none!important;filter:grayscale(.55);opacity:.62}
+@keyframes oxideWheelGlow{from{box-shadow:0 0 8px rgba(8,127,234,.28)}to{box-shadow:0 0 22px rgba(150,56,232,.72),0 0 34px rgba(8,127,234,.35)}}
+.oxide-wheel-countdown{margin:-5px 0 14px;text-align:center;color:#b9caff;font-size:19px;font-weight:900;letter-spacing:2px;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(87,144,255,.35)}
+.oxide-wheel-art.oxide-wheel-spinning{animation:oxideWheelSpin 4s cubic-bezier(.12,.72,.16,1) both}
+@keyframes oxideWheelSpin{to{transform:rotate(1800deg)}}
 .oxide-wheel-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 13px}
 .oxide-wheel-info{display:flex;flex-direction:column;gap:7px;padding:12px 8px;border:1px solid rgba(126,151,230,.28);border-radius:14px;background:rgba(10,22,52,.62)}
 .oxide-wheel-info span{font-size:11px;color:#aebfe5}.oxide-wheel-info strong{font-size:20px;color:#fff;text-shadow:0 0 12px rgba(140,130,255,.35)}
@@ -1748,8 +1756,8 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 </g><g fill="#fff" font-size="24" font-weight="900" text-anchor="middle" dominant-baseline="middle">
 <text x="205" y="53">5</text><text x="267" y="115">10</text><text x="267" y="205">20</text><text x="205" y="267">30</text><text x="115" y="267">50</text><text x="53" y="205">100</text><text x="53" y="115">0</text><text x="115" y="53">20</text></g>
 <circle cx="160" cy="160" r="28" fill="#101a35" stroke="#d7c8ff" stroke-width="4"/><circle cx="160" cy="160" r="9" fill="#bca3ff"/></svg></div>
-<button class="oxide-wheel-spin" type="button" disabled>🎯 أدر العجلة</button>
-<div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">0</strong></div></div>
+<button class="oxide-wheel-spin" id="oxideWheelSpinButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4z"/></svg><span>قم بتدوير (هذه مجانية)</span></button><div class="oxide-wheel-countdown" id="oxideWheelCountdown" hidden>23:59:59</div>
+<div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">1</strong></div></div>
 <button class="oxide-wheel-collect" type="button" disabled>＋ اجمع محاولات</button></div></section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
@@ -5007,6 +5015,48 @@ function applyAccountPageLanguage(language){
  r.querySelectorAll(".oxide-account-stat-label").forEach((n,i)=>{const v=[d[11],d[12],d[13],d[14]][i];if(v)n.textContent=v});r.querySelectorAll(".oxide-achievement").forEach((n,i)=>{const b=n.querySelector("b"),sm=n.querySelector("small");if(b)b.textContent=[d[19],d[20],d[21]][i]||"";if(sm)sm.textContent=d[22]});
  const menu=r.querySelector(".oxide-account-menu-item");if(menu){s("b",d[25],menu);s("small",d[26],menu)}const lang=r.querySelector(".oxide-account-language");if(lang){s("b",d[27],lang);s("small",d[28],lang)}const foot=r.querySelectorAll(".oxide-account-footer span");if(foot[0])foot[0].textContent=d[29]+" © 2026";if(foot[1])foot[1].textContent=d[30]+" SKIMI_17";
 }
+
+
+/* OXIDE wheel free-attempt visual state (client-side preview only) */
+(function(){
+ const button=document.getElementById("oxideWheelSpinButton");
+ const attempts=document.getElementById("oxideWheelAttempts");
+ const countdown=document.getElementById("oxideWheelCountdown");
+ const wheel=document.querySelector("#oxideWheelPage .oxide-wheel-art");
+ if(!button||!attempts||!countdown||button.dataset.bound==="1")return;
+ button.dataset.bound="1";
+ const key="oxide_wheel_free_until_v1";
+ let timer=null;
+ function render(){
+  let until=0;
+  try{until=Number(localStorage.getItem(key)||0)}catch(e){}
+  const left=Math.max(0,until-Date.now());
+  if(left>0){
+   const sec=Math.ceil(left/1000);
+   const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
+   countdown.textContent=[h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
+   countdown.hidden=false;button.disabled=true;attempts.textContent="0";
+  }else{
+   countdown.hidden=true;button.disabled=false;attempts.textContent="1";
+   try{localStorage.removeItem(key)}catch(e){}
+  }
+ }
+ button.addEventListener("click",function(){
+  if(button.disabled)return;
+  const until=Date.now()+24*60*60*1000;
+  try{localStorage.setItem(key,String(until))}catch(e){}
+  attempts.textContent="0";
+  button.disabled=true;
+  countdown.textContent="23:59:59";
+  countdown.hidden=false;
+  if(wheel){wheel.classList.remove("oxide-wheel-spinning");void wheel.offsetWidth;wheel.classList.add("oxide-wheel-spinning");}
+  if(timer)clearInterval(timer);
+  render();
+  timer=setInterval(function(){render();if(button.disabled===false){clearInterval(timer);timer=null}},1000);
+ });
+ render();
+ if(button.disabled)timer=setInterval(function(){render();if(button.disabled===false){clearInterval(timer);timer=null}},1000);
+})();
 
 </script>
 </body>
