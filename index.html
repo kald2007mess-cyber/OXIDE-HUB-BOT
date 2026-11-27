@@ -2169,8 +2169,11 @@ async function downloadPlatformDeliveryFile(button,url,fileName){
   const blob=new Blob(chunks,{type:response.headers.get("Content-Type")||"application/octet-stream"});
   if(!blob.size)throw new Error("EMPTY_DOWNLOAD");
   if(fill)fill.style.width="100%";if(percent)percent.textContent="100%";
-  const objectUrl=URL.createObjectURL(blob),link=document.createElement("a");link.href=objectUrl;link.download=fileName;link.style.display="none";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
-  button.classList.add("is-downloaded");button.textContent="✓ تم تجهيز الملف للتنزيل";
+  // Mobile Telegram WebViews may block synthetic clicks on blob: URLs after an async fetch.
+  // Hand the download to the browser through the authenticated endpoint's Content-Disposition response.
+  button.classList.add("is-downloaded");button.textContent="✓ اكتمل التجهيز — بدء تنزيل الملف…";
+  const directLink=document.createElement("a");directLink.href=url;directLink.download=fileName;directLink.rel="noopener";directLink.style.position="fixed";directLink.style.left="-9999px";document.body.appendChild(directLink);directLink.click();directLink.remove();
+  setTimeout(()=>{button.textContent="✓ تم إرسال الملف إلى التنزيلات";},1200);
  }catch(error){button.textContent="تعذّر التنزيل — أعد المحاولة";button.disabled=false;if(percent)percent.textContent="خطأ";const status=document.getElementById("platformDeliveryViewerStatus");if(status)status.textContent="تعذّر تنزيل الملف: "+(error.message||"DOWNLOAD_FAILED");return;
  }
  button.disabled=false;
@@ -2187,7 +2190,7 @@ function openPlatformDeliveryViewer(offer,data){
  files.forEach((file,index)=>{
   const card=document.createElement("article");card.className="oxide-delivery-file";
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
-  const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";
+  const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
   const download=document.createElement("button");download.type="button";download.textContent="⬇ Download file";download.className="oxide-delivery-download";download.onclick=()=>downloadPlatformDeliveryFile(download,url,file.name||("file-"+(index+1)));
   const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
