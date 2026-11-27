@@ -3823,6 +3823,25 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #rewardsGrid .platform-soon-button,
 #rewardsGrid .platform-soon-button:disabled{background:#344253!important;border:1px solid rgba(117,145,171,.25)!important;box-shadow:none!important;animation:none!important}
 @media(prefers-reduced-motion:reduce){#rewardsGrid .reward-button,#rewardsGrid .platform-purchase-button,#rewardsGrid .platform-ad-button,.island-watch-button{animation:none!important}}
+
+/* Harmonized VIP/reward gradient: 70% violet, 30% blue */
+@keyframes oxidePurpleBlue70Glow{
+  0%,100%{background-position:0% 50%;box-shadow:0 0 9px rgba(150,56,232,.58),0 0 19px rgba(105,75,239,.35),0 0 12px rgba(8,127,234,.22),inset 0 1px 1px rgba(255,255,255,.26)}
+  50%{background-position:100% 50%;box-shadow:0 0 14px rgba(150,56,232,.78),0 0 28px rgba(105,75,239,.55),0 0 20px rgba(8,127,234,.42),inset 0 1px 1px rgba(255,255,255,.34)}
+}
+.oxide-vip-top-button,
+#rewardsGrid .reward-button:not(.platform-soon-button),
+#rewardsGrid .platform-purchase-button,
+#rewardsGrid .platform-ad-button,
+#rewardsGrid .reward-card>.reward-button,
+.island-watch-button{
+  background:linear-gradient(110deg,#9638E8 0%,#8840EB 34%,#7050ED 70%,#087FEA 100%)!important;
+  background-size:220% 220%!important;
+  animation:oxidePurpleBlue70Glow 2.6s ease-in-out infinite!important;
+  border-color:rgba(173,126,255,.72)!important;
+  color:#fff!important;
+}
+@media(prefers-reduced-motion:reduce){.oxide-vip-top-button,#rewardsGrid .reward-button,#rewardsGrid .platform-purchase-button,#rewardsGrid .platform-ad-button,.island-watch-button{animation:none!important}}
 </style>
 
 <div id="oxideVipModal" hidden>
