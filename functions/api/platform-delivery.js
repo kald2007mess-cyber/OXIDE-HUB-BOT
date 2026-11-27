@@ -2,7 +2,19 @@ import { getVisitor } from "./_lib/session.js";
 
 const OFFERS={beta:"beta_ads",android:"android_ads",ios:"ios_ads"};
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
-async function ensure(DB){await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();const cols=await DB.prepare("PRAGMA table_info(platform_delivery_config)").all();if(!(cols.results||[]).some(c=>c.name==="published"))await DB.prepare("ALTER TABLE platform_delivery_config ADD COLUMN published INTEGER NOT NULL DEFAULT 1").run();}
+async function ensure(DB){
+ await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
+ const cols=await DB.prepare("PRAGMA table_info(platform_delivery_config)").all();
+ if(!(cols.results||[]).some(c=>c.name==="published"))await DB.prepare("ALTER TABLE platform_delivery_config ADD COLUMN published INTEGER NOT NULL DEFAULT 1").run();
+ await DB.prepare("CREATE TABLE IF NOT EXISTS beta_delivery_config (id INTEGER PRIMARY KEY CHECK(id=1), message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
+ await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) SELECT 'beta',message,files_json,updated_at FROM beta_delivery_config WHERE id=1").run();
+ const legacy=await DB.prepare("SELECT message,files_json,updated_at FROM beta_delivery_config WHERE id=1").first();
+ const current=await DB.prepare("SELECT message,files_json FROM platform_delivery_config WHERE offer='beta'").first();
+ if(legacy&&current&&(!String(current.message||'').trim()||String(current.files_json||'[]')==='[]')&&(String(legacy.message||'').trim()||String(legacy.files_json||'[]')!=='[]')){
+  await DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,published=1,updated_at=? WHERE offer='beta'").bind(legacy.message||'',legacy.files_json||'[]',Number(legacy.updated_at||Math.floor(Date.now()/1000))).run();
+ }
+ for(const offer of ['beta','android','ios'])await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) VALUES(?, '', '[]', 0)").bind(offer).run();
+}
 function mimeFromName(name){const ext=String(name||"").toLowerCase().split(".").pop();return ({png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",zip:"application/zip"})[ext]||"application/octet-stream";}
 async function channelMembership(userId,env){
  if(!env.TELEGRAM_BOT_TOKEN)return{error:"TELEGRAM_BOT_TOKEN_MISSING"};
