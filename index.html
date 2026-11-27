@@ -2147,7 +2147,7 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
   const response=await fetch("/api/platform-delivery?offer="+encodeURIComponent(offer),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json().catch(()=>({}));
   if(result.subscriptionRequired){
-   openChannelSubscribeModal(offer,result.channels||[]);
+   const requiredChannels=Array.isArray(result.channels)&&result.channels.length?result.channels:(Array.isArray(result.missingChannels)?result.missingChannels:[]);openChannelSubscribeModal(offer,requiredChannels);
    const status=document.getElementById("channelSubscribeStatus");
    if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"❌ يجب الاشتراك في القناة أولاً.";
    if(pageStatus)pageStatus.textContent="";
