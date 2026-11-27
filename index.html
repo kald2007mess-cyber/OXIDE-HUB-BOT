@@ -2220,7 +2220,7 @@ function openPlatformDeliveryViewer(offer,data){
    const file=entry.file||entry;const originalIndex=Number(entry.index);
    const item=document.createElement("div");item.className="oxide-delivery-media-item";
    const isVideo=String(file.contentType||"").startsWith("video/");
-   const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=isVideo?(currentLanguage==="ar"?"▶ طريقة الاستعمال":currentLanguage==="ru"?"▶ Как пользоваться":"▶ How to use"):(currentLanguage==="ar"?"✦ ما هو جديد":currentLanguage==="ru"?"✦ Что нового":"✦ What's new");
+   const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=currentLanguage==="ar"?"✦ ماهو جديد":currentLanguage==="ru"?"✦ Что нового":"✦ What's new";
    const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+originalIndex;
    if(!isVideo){const preview=document.createElement("img");preview.src=url;preview.alt=caption.textContent;preview.loading="lazy";item.append(caption,preview);}
    else{const preview=document.createElement("video");preview.src=url;preview.controls=true;preview.preload="metadata";item.append(caption,preview);}
