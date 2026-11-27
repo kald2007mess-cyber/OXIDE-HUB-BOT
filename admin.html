@@ -430,14 +430,14 @@ button:focus-visible{outline:2px solid #83e4ff;outline-offset:2px}
 .platform-upload-slot .platform-file-picker,.platform-media-block .platform-file-picker{width:100%;min-width:0;font-size:12px}
 .platform-slot-hint{display:block;margin-top:8px;color:#91a9c2;font-size:11px;line-height:1.5}
 .platform-media-block{margin-top:12px;border-color:rgba(185,140,255,.28)}
-@media(max-width:420px){.platform-tabs{gap:5px}.platform-tabs .platform-tab{font-size:11px;padding:12px 4px}.platform-upload-slots{grid-template-columns:1fr}}
+@media(max-width:420px){.platform-tabs{gap:5px}.platform-tabs .platform-tab{font-size:11px;padding:12px 4px}.platform-upload-slots{.pm-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.pm-tab{padding:12px 3px;font-size:13px;min-width:0;white-space:nowrap}}}
 
 
 /* Screenshot-matched platform file manager */
 #betaDeliveryPage{direction:inherit}
 .platform-manager-redesign{max-width:900px;margin:16px auto 0;padding:24px 20px 20px;border-radius:28px;background:#111d1a;color:#f4f8f5;box-shadow:0 18px 55px #0005}
 .pm-heading{text-align:right;padding:2px 3px 18px}.pm-heading h2{font-size:27px;margin:4px 0 28px;color:#f4f7f5}.pm-heading p{margin:0;color:#84958e;font-size:14px}
-.pm-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 24px}.pm-tab{margin:0;border-radius:40px;background:transparent;color:#a2aaa6;padding:15px 8px;font-size:17px}.pm-tab.active{background:#30302f;color:#fff}
+.pm-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 24px}.pm-tab{margin:0;border-radius:40px;background:transparent;color:#a2aaa6;padding:15px 8px;font-size:17px}.pm-tab.active{background:#30302f;color:#fff}
 .pm-workspace{border-radius:22px;background:#1a3029;padding:22px 20px 20px}
 .pm-workspace-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.pm-workspace-head h3{font-size:21px;margin:0;color:#f3f7f4}
 .pm-independent{border-radius:30px;padding:8px 13px;background:#164a36;color:#48c98e;font-size:12px;white-space:nowrap}
@@ -792,12 +792,12 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
  <div class="platform-manager-redesign">
   <div class="pm-heading"><h2>Управление файлами платформ</h2><p>Выберите платформу для управления её файлами и содержимым</p></div>
   <div class="pm-tabs" role="tablist" aria-label="Выберите платформу">
-   <button type="button" class="pm-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">Beta</button>
-   <button type="button" class="pm-tab" data-platform-tab="beta_pc" onclick="switchPlatformDelivery('beta_pc')">BETA (PC)</button>
+   <button type="button" class="pm-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">ANDROID</button>
    <button type="button" class="pm-tab" data-platform-tab="ios" onclick="switchPlatformDelivery('ios')">iOS</button>
-   <button type="button" class="pm-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">Android</button>
+   <button type="button" class="pm-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">BETA</button>
+   <button type="button" class="pm-tab" data-platform-tab="beta_pc" onclick="switchPlatformDelivery('beta_pc')">BETA PC</button>
   </div>
-  <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option></select>
+  <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option><option value="beta_pc">BETA PC</option></select>
   <section class="pm-workspace">
    <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span><button type="button" id="deliverySoonToggle" class="pm-soon-toggle" onclick="toggleDeliverySoon()">SOON: OFF</button></div>
    <div class="pm-simple-editor">
@@ -1818,8 +1818,8 @@ async function openPlatformDeliveryPage(offer){
 }
 async function switchPlatformDelivery(offer){
  if(!hasAdminPermission("platform_files"))return;
- currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
- const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};
+ currentDeliveryOffer=["beta","android","ios","beta_pc"].includes(offer)?offer:"beta";
+ const labels={beta:"BETA",android:"ANDROID",ios:"iOS",beta_pc:"BETA (PC)"};
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  document.getElementById("platformDeliveryHeading").textContent="Файлы — "+labels[currentDeliveryOffer];
  document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ";
