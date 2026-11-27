@@ -793,6 +793,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   <div class="pm-heading"><h2>Управление файлами платформ</h2><p>Выберите платформу для управления её файлами и содержимым</p></div>
   <div class="pm-tabs" role="tablist" aria-label="Выберите платформу">
    <button type="button" class="pm-tab" data-platform-tab="beta" onclick="switchPlatformDelivery('beta')">Beta</button>
+   <button type="button" class="pm-tab" data-platform-tab="beta_pc" onclick="switchPlatformDelivery('beta_pc')">BETA (PC)</button>
    <button type="button" class="pm-tab" data-platform-tab="ios" onclick="switchPlatformDelivery('ios')">iOS</button>
    <button type="button" class="pm-tab" data-platform-tab="android" onclick="switchPlatformDelivery('android')">Android</button>
   </div>
@@ -1039,7 +1040,7 @@ async function togglePlatformVisibility(){
   platformVisibility[currentPlatform]=Boolean(result.enabled);renderPlatformVisibility();
   document.getElementById("platformStatus").textContent=enabled?"Отображение платформы включено.":"Отображение платформы отключено, показан статус SOON.";
  }catch(error){alert("Не удалось изменить статус платформы: "+error.message);renderPlatformVisibility();}
- finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];}
+ finally{button.disabled=false;const labels={beta:"BETA",android:"ANDROID",ios:"iOS",beta_pc:"BETA (PC)"};button.textContent="💾 Сохранить материалы "+labels[currentDeliveryOffer];}
 }
 function platformName(platform){return platform==="ios"?"iOS":platform==="beta"?"BETA":"Android";}
 function platformExtension(){return currentPlatform==="ios"?".ipa":currentPlatform==="beta"?".apks":".apk";}
@@ -1807,10 +1808,10 @@ async function toggleDeliverySoon(){
 }
 async function openPlatformDeliveryPage(offer){
  if(!hasAdminPermission("platform_files")){alert("У вас нет прав на управление файлами платформ.");return;}
- currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
+ currentDeliveryOffer=["beta","android","ios","beta_pc"].includes(offer)?offer:"beta";
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  renderPlatformTabs();
- const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
+ const labels={beta:"BETA",android:"ANDROID",ios:"iOS",beta_pc:"BETA (PC)"},label=labels[currentDeliveryOffer];
  document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await Promise.all([loadBetaDelivery(),loadDeliverySoonSettings()]);
