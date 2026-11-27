@@ -1472,6 +1472,10 @@ body:has(#missionsPage[style*="display: block"]) .top-bar .oxide-wheel-top-butto
 .oxide-wheel-pointer{position:absolute;z-index:2;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #fff;filter:drop-shadow(0 0 7px #a98bff)}
 .oxide-wheel-spin,.oxide-wheel-collect{width:100%;min-height:49px;border:1px solid rgba(175,161,255,.7);border-radius:15px;background:linear-gradient(100deg,#087FEA,#4b50df 52%,#9638E8);color:#fff;font-size:15px;font-weight:950;box-shadow:0 0 17px rgba(95,83,255,.42);margin:0 0 14px}
 .oxide-wheel-spin:disabled,.oxide-wheel-collect:disabled{opacity:.58;filter:saturate(.75);cursor:not-allowed}
+.oxide-wheel-collect{display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer}
+.oxide-wheel-collect svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.oxide-wheel-collect strong{font-size:12px;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.15)}
+.oxide-wheel-ad-message{min-height:18px;margin-top:8px;text-align:center;font-size:12px;color:#b9c8ff}
 .oxide-wheel-spin{display:flex;align-items:center;justify-content:center;gap:10px;transition:box-shadow .25s,filter .25s,opacity .25s}
 .oxide-wheel-spin svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 23px}
 .oxide-wheel-spin:not(:disabled){animation:oxideWheelGlow 1.8s ease-in-out infinite alternate}
@@ -1758,7 +1762,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <circle cx="160" cy="160" r="28" fill="#101a35" stroke="#d7c8ff" stroke-width="4"/><circle cx="160" cy="160" r="9" fill="#bca3ff"/></svg></div>
 <button class="oxide-wheel-spin" id="oxideWheelSpinButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4z"/></svg><span>قم بتدوير (هذه مجانية)</span></button><div class="oxide-wheel-countdown" id="oxideWheelCountdown" hidden>23:59:59</div>
 <div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">1</strong></div></div>
-<button class="oxide-wheel-collect" type="button" disabled>＋ اجمع محاولات</button></div></section>
+<button class="oxide-wheel-collect" id="oxideWheelAdButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M5 5l14 14M19 5 5 19"/></svg><span>اربح محاولة</span><strong id="oxideWheelAdCount">0/10</strong></button><div id="oxideWheelAdMessage" class="oxide-wheel-ad-message" aria-live="polite"></div></div></section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
     <div class="oxide-shards-caption">YOUR SHARDS</div>
@@ -5017,45 +5021,113 @@ function applyAccountPageLanguage(language){
 }
 
 
-/* OXIDE wheel free-attempt visual state (client-side preview only) */
+/* OXIDE wheel attempts + Adsgram verified ad progress */
 (function(){
- const button=document.getElementById("oxideWheelSpinButton");
+ const spin=document.getElementById("oxideWheelSpinButton");
+ const adButton=document.getElementById("oxideWheelAdButton");
  const attempts=document.getElementById("oxideWheelAttempts");
  const countdown=document.getElementById("oxideWheelCountdown");
+ const adCount=document.getElementById("oxideWheelAdCount");
+ const adMessage=document.getElementById("oxideWheelAdMessage");
+ const prize=document.getElementById("oxideWheelLastPrize");
  const wheel=document.querySelector("#oxideWheelPage .oxide-wheel-art");
- if(!button||!attempts||!countdown||button.dataset.bound==="1")return;
- button.dataset.bound="1";
- const key="oxide_wheel_free_until_v1";
- let timer=null;
- function render(){
-  let until=0;
-  try{until=Number(localStorage.getItem(key)||0)}catch(e){}
-  const left=Math.max(0,until-Date.now());
-  if(left>0){
-   const sec=Math.ceil(left/1000);
-   const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
-   countdown.textContent=[h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
-   countdown.hidden=false;button.disabled=true;attempts.textContent="0";
-  }else{
-   countdown.hidden=true;button.disabled=false;attempts.textContent="1";
-   try{localStorage.removeItem(key)}catch(e){}
-  }
+ if(!spin||!adButton||!attempts||!countdown||!wheel||spin.dataset.bound==="1")return;
+ spin.dataset.bound="1";
+ const FREE_KEY="oxide_wheel_free_remaining_v2";
+ const FREE_UNTIL_KEY="oxide_wheel_free_until_v2";
+ const USED_KEY="oxide_wheel_ad_spins_used_v1";
+ const prizes=[5,10,20,30,50,100,0,20];
+ let freeRemaining=5,adEarned=0,adUsed=0,busy=false,timer=null;
+ const read=(key,fallback)=>{try{const v=localStorage.getItem(key);return v===null?fallback:Number(v)}catch(_){return fallback}};
+ const write=(key,value)=>{try{localStorage.setItem(key,String(value))}catch(_){}};
+ function update(){
+  const now=Date.now();
+  let until=read(FREE_UNTIL_KEY,0);
+  if(until&&now>=until){freeRemaining=5;until=0;write(FREE_KEY,5);write(FREE_UNTIL_KEY,0)}
+  const total=Math.max(0,freeRemaining)+Math.max(0,adEarned-adUsed);
+  attempts.textContent=String(total);
+  adCount.textContent=adEarned>=10?"MAX":adEarned+"/10";
+  adButton.disabled=busy||adEarned>=10;
+  spin.disabled=busy||total<=0;
+  if(until>now){
+   const sec=Math.ceil((until-now)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),ss=sec%60;
+   countdown.textContent=[h,m,ss].map(v=>String(v).padStart(2,"0")).join(":");
+   countdown.hidden=false;
+  }else countdown.hidden=true;
  }
- button.addEventListener("click",function(){
-  if(button.disabled)return;
-  const until=Date.now()+(24*60*60*1000)-1000;
-  try{localStorage.setItem(key,String(until))}catch(e){}
-  attempts.textContent="0";
-  button.disabled=true;
-  countdown.textContent="23:59:59";
-  countdown.hidden=false;
-  if(wheel){const sectorIndex=Math.floor(Math.random()*8);const finalAngle=1800-22.5-(sectorIndex*45);wheel.classList.remove("oxide-wheel-spinning");wheel.style.transition="none";wheel.style.transform="rotate(0deg)";void wheel.offsetWidth;wheel.style.transition="transform 4s cubic-bezier(.12,.72,.16,1)";wheel.style.transform="rotate("+finalAngle+"deg)";}
+ async function refreshAds(){
+  try{
+   const response=await fetch("/api/adsgram-reward",{method:"GET",cache:"no-store",credentials:"same-origin"});
+   const data=await response.json();
+   if(!response.ok||!data.success)throw new Error(data.error||"تعذر تحميل المحاولات");
+   adEarned=Math.min(10,Math.max(0,Number(data.wheelAds)||0));
+   adUsed=Math.min(adEarned,Math.max(0,read(USED_KEY,0)));
+   update();
+  }catch(error){if(adMessage)adMessage.textContent="تعذر تحميل تقدم الإعلانات. افتح حسابك ثم أعد المحاولة."}
+ }
+ spin.addEventListener("click",function(){
+  if(busy)return;
+  const until=read(FREE_UNTIL_KEY,0);
+  if(freeRemaining<=0&&adEarned<=adUsed){update();return}
+  if(freeRemaining>0){
+   freeRemaining--;write(FREE_KEY,freeRemaining);
+   if(freeRemaining===0)write(FREE_UNTIL_KEY,Date.now()+86400000);
+  }else{
+   adUsed++;write(USED_KEY,adUsed);
+  }
+  const sector=Math.floor(Math.random()*8);
+  const angle=1800+((337.5-sector*45+360)%360);
+  const selected=prizes[sector];
+  busy=true;update();
+  wheel.style.animation="none";
+  wheel.style.transition="none";
+  wheel.style.transform="rotate(0deg)";
+  void wheel.getBoundingClientRect();
+  wheel.style.transition="transform 5s cubic-bezier(.12,.72,.16,1)";
+  wheel.style.transform="rotate("+angle+"deg)";
+  window.setTimeout(function(){
+   if(prize)prize.textContent=selected+"";
+   busy=false;update();
+  },5100);
   if(timer)clearInterval(timer);
-  render();
-  timer=setInterval(function(){render();if(button.disabled===false){clearInterval(timer);timer=null}},1000);
+  timer=setInterval(update,1000);
  });
- render();
- if(button.disabled)timer=setInterval(function(){render();if(button.disabled===false){clearInterval(timer);timer=null}},1000);
+ adButton.addEventListener("click",async function(){
+  if(busy||adEarned>=10)return;
+  if(!window.Adsgram||typeof window.Adsgram.init!=="function"){
+   if(adMessage)adMessage.textContent="نظام الإعلانات غير متاح حالياً.";
+   return;
+  }
+  busy=true;adButton.disabled=true;
+  if(adMessage)adMessage.textContent="جارٍ تحضير الإعلان...";
+  update();
+  try{
+   const start=await fetch("/api/adsgram-reward",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({offer:"wheel"})});
+   const started=await start.json().catch(()=>({}));
+   if(!start.ok||!started.success)throw new Error(started.error||"تعذر بدء الإعلان");
+   const before=adEarned;
+   if(!window.oxideAdsgramController)window.oxideAdsgramController=window.Adsgram.init({blockId:"61386"});
+   const result=await window.oxideAdsgramController.show();
+   if(!result||result.done!==true)throw new Error("لم يكتمل الإعلان.");
+   if(adMessage)adMessage.textContent="تمت مشاهدة الإعلان، جارٍ تأكيد المحاولة...";
+   let confirmed=false;
+   for(let i=0;i<20;i++){
+    await new Promise(resolve=>setTimeout(resolve,1000));
+    const response=await fetch("/api/adsgram-reward",{method:"GET",cache:"no-store",credentials:"same-origin"});
+    const data=await response.json().catch(()=>({}));
+    const count=Math.min(10,Number(data.wheelAds)||0);
+    if(response.ok&&data.success&&count>before){adEarned=count;confirmed=true;break}
+   }
+   if(!confirmed)throw new Error("لم يصل تأكيد الإعلان من الخادم. لم تُضف محاولة.");
+   if(adMessage)adMessage.textContent="تمت إضافة محاولة بنجاح ✓";
+  }catch(error){if(adMessage)adMessage.textContent=error.message||"تعذر إكمال الإعلان."}
+  finally{busy=false;update()}
+ });
+ freeRemaining=Math.max(0,Math.min(5,read(FREE_KEY,5)));
+ adUsed=Math.max(0,read(USED_KEY,0));
+ update();refreshAds();
+ if(timer)clearInterval(timer);
+ timer=setInterval(update,1000);
 })();
 
 </script>
