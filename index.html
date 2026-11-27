@@ -4048,6 +4048,81 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #accountPage .oxide-account-footer{color:#bdb1d5}
 #accountPage .oxide-account-footer strong{color:#c9b5ff}
 
+
+/* OXIDE ACCOUNT — alternating purple/blue neon frames to match EARN */
+#accountPage.oxide-account-page{
+ --acc-purple:#873cff;--acc-purple-soft:rgba(119,55,224,.22);
+ --acc-purple-line:rgba(174,119,255,.62);
+ --acc-blue:#168fe8;--acc-blue-soft:rgba(15,111,190,.22);
+ --acc-blue-line:rgba(76,177,255,.62);
+}
+#accountPage .oxide-profile-card{
+ background:linear-gradient(145deg,rgba(75,38,139,.92),rgba(17,20,53,.97))!important;
+ border:1px solid var(--acc-purple-line)!important;
+ box-shadow:0 0 0 1px rgba(135,60,255,.12),0 0 22px rgba(125,55,235,.22),inset 0 1px rgba(255,255,255,.08)!important;
+}
+#accountPage .oxide-profile-id{
+ background:linear-gradient(120deg,rgba(12,75,132,.34),rgba(16,18,48,.86))!important;
+ border:1px solid var(--acc-blue-line)!important;
+ box-shadow:0 0 14px rgba(22,143,232,.13),inset 0 1px rgba(255,255,255,.05)!important;
+}
+#accountPage .oxide-account-wallet-grid>.oxide-account-stat-card,
+#accountPage .oxide-account-stats-grid>.oxide-account-stat-card{
+ background:linear-gradient(145deg,rgba(24,75,132,.58),rgba(15,19,49,.97))!important;
+ border:1px solid var(--acc-blue-line)!important;
+ box-shadow:0 0 17px rgba(22,143,232,.16),inset 0 1px rgba(255,255,255,.06)!important;
+}
+#accountPage .oxide-account-wallet-grid>.oxide-account-stat-card:nth-child(even),
+#accountPage .oxide-account-stats-grid>.oxide-account-stat-card:nth-child(even){
+ background:linear-gradient(145deg,rgba(79,39,143,.68),rgba(20,17,53,.98))!important;
+ border-color:var(--acc-purple-line)!important;
+ box-shadow:0 0 17px rgba(135,60,255,.18),inset 0 1px rgba(255,255,255,.06)!important;
+}
+#accountPage .oxide-account-stat-icon{
+ background:linear-gradient(145deg,rgba(20,132,220,.3),rgba(40,54,125,.36))!important;
+ border:1px solid rgba(93,184,255,.42)!important;color:#9bd8ff!important;
+}
+#accountPage .oxide-account-wallet-grid>.oxide-account-stat-card:nth-child(even) .oxide-account-stat-icon,
+#accountPage .oxide-account-stats-grid>.oxide-account-stat-card:nth-child(even) .oxide-account-stat-icon{
+ background:linear-gradient(145deg,rgba(133,62,235,.34),rgba(65,36,130,.42))!important;
+ border-color:rgba(190,145,255,.48)!important;color:#d6b5ff!important;
+}
+#accountPage .oxide-wallet-main{
+ background:linear-gradient(145deg,rgba(82,42,153,.82),rgba(19,18,54,.98))!important;
+ border:1px solid var(--acc-purple-line)!important;
+ box-shadow:0 0 20px rgba(135,60,255,.2),inset 0 1px rgba(255,255,255,.07)!important;
+}
+#accountPage .oxide-achievement{
+ background:linear-gradient(145deg,rgba(18,91,151,.48),rgba(14,22,52,.98))!important;
+ border:1px solid var(--acc-blue-line)!important;
+ box-shadow:0 0 13px rgba(22,143,232,.12)!important;
+}
+#accountPage .oxide-account-achievements>.oxide-achievement:nth-child(even){
+ background:linear-gradient(145deg,rgba(76,39,139,.62),rgba(20,17,52,.98))!important;
+ border-color:var(--acc-purple-line)!important;
+ box-shadow:0 0 13px rgba(135,60,255,.14)!important;
+}
+#accountPage .oxide-account-menu{
+ background:linear-gradient(145deg,rgba(17,68,121,.55),rgba(14,18,49,.98))!important;
+ border:1px solid var(--acc-blue-line)!important;
+ box-shadow:0 0 19px rgba(22,143,232,.16),inset 0 1px rgba(255,255,255,.06)!important;
+}
+#accountPage .oxide-account-menu-item,
+#accountPage .oxide-account-language{border-bottom:1px solid rgba(76,177,255,.25)!important}
+#accountPage .oxide-menu-icon{
+ background:linear-gradient(145deg,rgba(20,132,220,.32),rgba(34,55,125,.45))!important;
+ border:1px solid rgba(93,184,255,.4)!important;color:#a6dcff!important;
+}
+#accountPage .oxide-copy-id{
+ background:linear-gradient(135deg,#168fe8,#0754ad)!important;
+ border:1px solid rgba(130,207,255,.6)!important;
+ box-shadow:0 0 16px rgba(22,143,232,.28)!important;
+}
+#accountPage .oxide-level-track{border:1px solid rgba(93,184,255,.32)!important;background:rgba(7,35,73,.72)!important}
+#accountPage .oxide-level-track span{background:linear-gradient(90deg,#168fe8,#873cff)!important;box-shadow:0 0 13px rgba(64,151,255,.55)!important}
+#accountPage .oxide-account-language select{background:linear-gradient(135deg,#173d78,#30145f)!important;border:1px solid rgba(120,174,255,.55)!important}
+#accountPage .oxide-account-footer strong{color:#a9d9ff!important;text-shadow:0 0 12px rgba(22,143,232,.35)}
+
 </style>
 
 <div id="oxideVipModal" hidden>
