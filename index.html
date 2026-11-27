@@ -2166,7 +2166,7 @@ function applyEarnAccountLanguage(language){
  }:{coins:"رصيدك من العملات",ads:"إعلانات مكتملة:",watch:"▶ مشاهدة إعلان",history:"سجل طلبات السحب",accountEyebrow:"OXIDE HUB • حسابك",profile:"ملفي الشخصي",profileDesc:"مساحتك الشخصية داخل عالم OXIDE",member:"عضو في OXIDE HUB",active:"حساب نشط",id:"رقم حسابك",copy:"نسخ",level:"مستوى الحساب",levelOne:"المستوى 1",xp:"نظام الخبرة قادم قريبًا",wallet:"محفظتي",walletDesc:"أرصدتك داخل المنصة",balance:"رصيدك الحالي",oxidePoints:"نقطة OXIDE",refPoints:"نقاط الإحالات",refDesc:"النقاط المكتسبة من الدعوات",stats:"إحصائياتي",statsDesc:"نشاطك في OXIDE HUB",adsDone:"الإعلانات المكتملة",friends:"الأصدقاء المدعوون",achievements:"إنجازاتي",badges:"شارات رحلتك",start:"البداية",activity:"النشاط",legend:"الأسطورة",soon:"قريبًا",settings:"إعدادات الحساب",manage:"إدارة تجربتك",support:"الدعم الفني",supportDesc:"تواصل مع فريق المساعدة",appLanguage:"لغة التطبيق",chooseLanguage:"اختر اللغة المناسبة لك",rights:"جميع الحقوق محفوظة",credit:"تصميم وتطوير"};
  const set=(selector,value,root=document)=>{const el=root.querySelector(selector);if(el)el.textContent=value};
  const missions=document.getElementById("missionsPage");
- if(missions){set(".oxide-shards-caption",words.coins,missions);const progressNode=missions.querySelector("#islandProgressText");if(progressNode){const count=(progressNode.textContent.match(/\d+\s*\/\s*\d+/)||["0 / 10"])[0];progressNode.textContent=words.ads+" "+count;}set("#islandWatchButton",t("islandComingSoon"),missions);}
+ if(missions){set(".oxide-shards-caption",words.coins,missions);const progressNode=missions.querySelector("#islandProgressText");if(progressNode){const count=(progressNode.textContent.match(/\d+\s*\/\s*\d+/)||["0 / 10"])[0];progressNode.textContent=words.ads+" "+count;}set("#islandWatchButton",words.watch,missions);}
  set(".reward-orders-title",words.history,document.getElementById("rewardsPage")||document);
  const account=document.getElementById("accountPage");
  if(account){
@@ -3971,7 +3971,7 @@ initializeOxideHub();
  $("energyUpgradeConfirm")?.addEventListener("click",async()=>{const ok=await performAction({action:"upgrade",kind:"energy"});if(ok&&$("energyUpgradeFeedback"))$("energyUpgradeFeedback").textContent="تمت زيادة سعة الطاقة بنجاح ⚡"});
  document.querySelectorAll("[data-close-upgrade]").forEach(button=>button.addEventListener("click",()=>closeOverlay(button.dataset.closeUpgrade==="tap"?"tapUpgradeOverlay":"energyUpgradeOverlay")));
  ["tapUpgradeOverlay","energyUpgradeOverlay"].forEach(id=>$(id)?.addEventListener("click",event=>{if(event.target.id===id)closeOverlay(id)}));
- $("islandWatchButton")?.addEventListener("click",watchIslandAd);
+ $("islandWatchButton")?.addEventListener("click",()=>watchIslandAd("island"));
  async function flushTapQueue(){
   if(tapPending||actionBusy||!walletReady)return;
   tapPending=true;
