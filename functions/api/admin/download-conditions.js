@@ -55,8 +55,13 @@ export async function onRequestPost({ request, env }) {
       const chatId = String(body.chat_id || "").trim().slice(0,100);
       const joinUrl = String(body.join_url || "").trim().slice(0,300);
       const enabled = Number(body.enabled) === 0 ? 0 : 1;
-      if (!title || !/^(@[A-Za-z0-9_]{5,}|-100\\d{5,})$/.test(chatId) ||
-          !/^https:\\/\\/t\\.me\\/[A-Za-z0-9_+/?=-]+$/i.test(joinUrl)) {
+      let validJoinUrl = false;
+      try {
+        const parsed = new URL(joinUrl);
+        validJoinUrl = parsed.protocol === "https:" && parsed.hostname === "t.me" &&
+          /^\\/[A-Za-z0-9_+/?=-]+$/.test(parsed.pathname + parsed.search);
+      } catch {}
+      if (!title || !/^(@[A-Za-z0-9_]{5,}|-100\\d{5,})$/.test(chatId) || !validJoinUrl) {
         return json({ success:false,error:"INVALID_CHANNEL_DATA" },400);
       }
       const now = Math.floor(Date.now()/1000);
