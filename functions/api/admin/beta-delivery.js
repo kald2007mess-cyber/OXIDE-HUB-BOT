@@ -68,7 +68,9 @@ export async function onRequestPost({request,env}){
    const index=Number(body.index),name=String(body.name||"").trim();
    if(!Number.isInteger(index)||index<0||!name||name.length>180)return out({success:false,error:"INVALID_FILE_DETAILS"},400);
    const current=await config(env.DB,offer);if(index>=current.files.length)return out({success:false,error:"FILE_NOT_FOUND"},404);
-   const files=current.files.map((file,i)=>i===index?{...file,name}:file);
+   const original=String(current.files[index].name||"file"),extension=(original.match(/(\\.[^.]+)$/)||[])[1]||"";
+   const finalName=/\\.[^.]+$/.test(name)?name:name+extension;
+   const files=current.files.map((file,i)=>i===index?{...file,name:finalName}:file);
    await env.DB.prepare("UPDATE platform_delivery_config SET files_json=?,updated_at=? WHERE offer=?").bind(JSON.stringify(files),Math.floor(Date.now()/1000),offer).run();
    return out({success:true,offer,...await config(env.DB,offer)});
   }
