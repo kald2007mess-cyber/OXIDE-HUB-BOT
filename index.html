@@ -5075,13 +5075,14 @@ function applyAccountPageLanguage(language){
   if(busy)return;
   const until=read(FREE_UNTIL_KEY,0);
   if(freeRemaining<=0&&adEarned<=adUsed){update();return}
+  const usedFreeAttempt=freeRemaining>0;
   if(freeRemaining>0){
    freeRemaining--;write(FREE_KEY,freeRemaining);
    if(freeRemaining===0)write(FREE_UNTIL_KEY,Date.now()+86400000);
   }else{
    adUsed++;write(USED_KEY,adUsed);
   }
-  const isFreeSpin=freeRemaining>=0 && read(FREE_KEY,5)===freeRemaining+1;
+  const isFreeSpin=usedFreeAttempt;
   const selected=isFreeSpin
    ?weightedPrize([{value:0,weight:25},{value:10,weight:50},{value:20,weight:25}])
    :weightedPrize([{value:0,weight:20},{value:10,weight:45},{value:20,weight:25},{value:30,weight:8},{value:50,weight:2}]);
