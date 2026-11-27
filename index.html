@@ -3752,6 +3752,20 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 .oxide-download-fill.oxide-download-indeterminate{width:35%!important;animation:oxideDownloadIndeterminate 1.15s ease-in-out infinite alternate}
 @keyframes oxideDownloadIndeterminate{from{transform:translateX(-35%)}to{transform:translateX(185%)}}
 .oxide-download-percent{min-width:38px;text-align:end;color:#cfc4ff;font-weight:900;font-variant-numeric:tabular-nums}
+
+/* OXIDE HUB unified blue-violet animated glow theme */
+:root{--oxide-blue:#078cf0;--oxide-violet:#9638e8;--oxide-glow-blue:rgba(7,140,240,.34);--oxide-glow-violet:rgba(150,56,232,.32);--oxide-gradient:linear-gradient(110deg,#087feA 0%,#4b55ec 48%,#9638e8 100%)}
+@keyframes oxideGlobalGlow{0%,100%{box-shadow:0 0 7px var(--oxide-glow-blue),0 0 15px var(--oxide-glow-violet),inset 0 0 0 1px rgba(255,255,255,.025)}50%{box-shadow:0 0 12px rgba(7,140,240,.52),0 0 25px rgba(150,56,232,.46),inset 0 0 0 1px rgba(255,255,255,.07)}}
+@keyframes oxideBorderGlow{0%,100%{border-color:rgba(35,137,230,.52)}50%{border-color:rgba(157,91,245,.78)}}
+@keyframes oxideTextGlow{0%,100%{text-shadow:0 0 5px rgba(7,140,240,.22)}50%{text-shadow:0 0 9px rgba(150,56,232,.4)}}
+button:not(:disabled),[role="button"],.tab-button,.nav-button,.nav-item,.menu-item,.action-button,.primary-button,.secondary-button,.admin-tab,.tab-btn{transition:box-shadow .22s ease,filter .22s ease,border-color .22s ease,transform .18s ease;animation:oxideGlobalGlow 3.2s ease-in-out infinite;border-color:rgba(74,112,205,.65)!important}
+button:not(:disabled):hover,[role="button"]:hover,.tab-button:hover,.nav-button:hover,.nav-item:hover,.menu-item:hover,.action-button:hover,.primary-button:hover,.secondary-button:hover,.admin-tab:hover,.tab-btn:hover{filter:brightness(1.13) saturate(1.16);box-shadow:0 0 13px rgba(7,140,240,.58),0 0 28px rgba(150,56,232,.5)!important}
+button:disabled{animation:none;filter:saturate(.55);box-shadow:none}
+.card,.panel,.section-card,.admin-card,.stat-card,.task-card,.mission-card,.offer-card,.withdrawal-card,.user-card,.settings-card,.balance-card,.energy-card,.referral-card,.wallet-card,.account-card,.content-card,.modal-content,.popup-content{animation:oxideBorderGlow 4.2s ease-in-out infinite;box-shadow:0 0 9px rgba(7,140,240,.11),0 0 17px rgba(150,56,232,.09)}
+input:not([type="checkbox"]):not([type="radio"]):focus,select:focus,textarea:focus{outline:none;border-color:#8a66ef!important;box-shadow:0 0 0 2px rgba(95,104,239,.2),0 0 15px rgba(7,140,240,.25),0 0 20px rgba(150,56,232,.2)!important}
+a:not(.plain-link){transition:text-shadow .2s ease}
+a:not(.plain-link):hover{ text-shadow:0 0 8px rgba(7,140,240,.55),0 0 12px rgba(150,56,232,.42)}
+@media(prefers-reduced-motion:reduce){button:not(:disabled),[role="button"],.tab-button,.nav-button,.nav-item,.menu-item,.action-button,.primary-button,.secondary-button,.admin-tab,.tab-btn,.card,.panel,.section-card,.admin-card,.stat-card,.task-card,.mission-card,.offer-card,.withdrawal-card,.user-card,.settings-card,.balance-card,.energy-card,.referral-card,.wallet-card,.account-card,.content-card,.modal-content,.popup-content{animation:none!important}}
 </style>
 
 <div id="oxideVipModal" hidden>
