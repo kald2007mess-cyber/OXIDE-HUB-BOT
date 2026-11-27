@@ -261,6 +261,9 @@ export async function onRequestGet({ request, env }) {
       const wheelPending = await env.DB.prepare(
         "SELECT created_at,consumed_at FROM oxide_wheel_ad_pending WHERE user_id=?"
       ).bind(identity.user_uuid).first();
+      if (wheelPending && (wheelPending.consumed_at || now - Number(wheelPending.created_at || 0) > 600)) {
+        return json({ success: false, error: "WHEEL_AD_ALREADY_USED_OR_EXPIRED" }, 409);
+      }
       if (wheelPending && !wheelPending.consumed_at && now - Number(wheelPending.created_at || 0) <= 600) {
         const results = await env.DB.batch([
           env.DB.prepare("UPDATE oxide_wheel_ad_pending SET consumed_at=? WHERE user_id=? AND consumed_at IS NULL AND created_at>=?").bind(now, identity.user_uuid, now - 600),
