@@ -1929,7 +1929,7 @@ async function saveBetaDelivery(){
   }
   label.textContent="اكتمل الرفع، جارٍ حفظ المحتوى...";
   const allFiles=savedPlatformDeliveryFiles.concat(uploaded),allKeys=allFiles.map(file=>file.key).filter(Boolean);
-  const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileKeys:allKeys});
+  const savedResult=await platformUploadJson({action:"save",offer:currentDeliveryOffer,message,fileName:title,fileKeys:allKeys});
   await platformUploadJson({action:"publish",offer:currentDeliveryOffer});bar.style.width="100%";percent.textContent="100%";label.textContent="تم الحفظ والنشر";pendingPlatformFiles.length=0;updatePendingPlatformFiles();renderPlatformDeliveryFiles(savedResult.files||[]);platformDraftSaved=false;button.innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ التعديلات";status.textContent="تم حفظ المحتوى ونشره للمستخدمين بنجاح.";
  }catch(error){label.textContent="توقف الحفظ";status.textContent="تعذر الحفظ: "+(error.message==="RESUME_FILE_MISMATCH"?"اختر نفس الملف الأصلي لاستكمال الرفع.":error.message);alert(status.textContent);}
  finally{button.disabled=false;}
