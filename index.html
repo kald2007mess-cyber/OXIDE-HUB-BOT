@@ -4595,54 +4595,55 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   animation:oxideVipNeonPulse 2.4s ease-in-out infinite!important;
 }
 
-/* OXIDE notifications: full-screen blue-violet interface with SVG icon language */
+/* OXIDE notifications: restore the original framed panel and cards */
 #notificationsPanel.notifications-panel{
-  position:fixed!important;inset:0!important;z-index:10050!important;
-  width:100vw!important;height:100dvh!important;max-height:100dvh!important;
-  margin:0!important;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom))!important;
-  overflow-y:auto!important;overscroll-behavior:contain!important;
-  border:0!important;border-radius:0!important;
-  background:radial-gradient(ellipse at 50% -12%,rgba(82,91,230,.28),transparent 48%),linear-gradient(155deg,#090d25 0%,#08091a 58%,#100923 100%)!important;
-  box-shadow:none!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;
+  position:relative!important;inset:auto!important;z-index:10050!important;
+  width:auto!important;height:auto!important;max-height: min(78vh,720px)!important;
+  margin:12px 0 18px!important;padding:14px!important;overflow-y:auto!important;
+  border:1px solid rgba(105,190,255,.24)!important;border-radius:16px!important;
+  background:rgba(7,18,37,.94)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.32)!important;
+  backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;
 }
 #notificationsPanel .notifications-heading{
-  position:sticky;top:0;z-index:2;max-width:720px;margin:0 auto 18px;padding:12px 0 16px;
-  border-bottom:1px solid rgba(153,133,255,.2);
-  background:linear-gradient(180deg,rgba(9,13,37,.98),rgba(9,13,37,.88));
-  color:#f4f1ff;font-size:19px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:12px;padding:0 0 10px;border-bottom:1px solid rgba(105,190,255,.18);
+  background:transparent;color:#e9f6ff;font-size:16px;
 }
 #notificationsPanel .notifications-title{display:flex;align-items:center;gap:10px}
 #notificationsPanel .notifications-title svg{
-  width:27px;height:27px;fill:none;stroke:url(#oxideMissionIconGradient);stroke:#9b80ff;
-  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px rgba(100,130,255,.55));
+  width:24px;height:24px;fill:none;stroke:#9b80ff;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(100,130,255,.4));
 }
-#notificationsPanel #notificationsList{width:100%;max-width:720px;margin:0 auto;padding-bottom:25px}
+#notificationsPanel #notificationsList{width:100%;max-width:none;margin:0;padding-bottom:8px}
 #notificationsPanel .notification-item{
-  margin:11px 0;padding:16px;border:1px solid rgba(130,123,255,.28);border-radius:17px;
-  background:linear-gradient(145deg,rgba(24,43,91,.68),rgba(39,22,78,.68));
-  box-shadow:0 8px 22px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.06);
+  margin:8px 0;padding:12px;border:1px solid rgba(125,180,220,.2);border-radius:12px;
+  background:rgba(24,43,67,.72);box-shadow:0 5px 14px rgba(0,0,0,.18);
 }
-#notificationsPanel .notification-item.unread{border-color:rgba(74,155,255,.72);box-shadow:0 0 18px rgba(66,111,255,.12),inset 0 1px rgba(255,255,255,.08)}
-#notificationsPanel .notification-title{color:#f4efff;font-size:15px}
-#notificationsPanel .notification-body{color:#c8d5f5}
-#notificationsPanel .notification-meta{color:#9c9bc7}
+#notificationsPanel .notification-item.unread{border-color:rgba(56,189,248,.58);box-shadow:0 0 12px rgba(56,189,248,.1)}
+#notificationsPanel .notification-title{color:#f0f7ff;font-size:15px}
+#notificationsPanel .notification-body{color:#c6d5e8}
+#notificationsPanel .notification-meta{color:#91a8c1}
 #notificationsPanel .notification-icon-button{
-  width:42px;height:42px;border-radius:13px;border:1px solid rgba(151,126,255,.48);
-  background:linear-gradient(135deg,rgba(12,111,205,.28),rgba(123,52,205,.32));color:#d9d5ff;
+  width:38px;height:36px;border-radius:10px;border:1px solid rgba(105,160,205,.35);
+  background:rgba(20,39,62,.9);color:#dcecff;
 }
-#notificationsPanel .notification-icon-button svg{width:21px;height:21px;stroke:currentColor}
-#notificationsPanel .notification-delete-read{border-color:rgba(255,65,85,.78)!important;background:linear-gradient(145deg,rgba(139,20,43,.48),rgba(67,12,29,.58))!important;color:#ff4058!important;box-shadow:0 0 12px rgba(255,48,77,.16),inset 0 1px 2px rgba(255,190,200,.12)}
+#notificationsPanel .notification-icon-button svg{width:20px;height:20px;stroke:currentColor}
+#notificationsPanel .notification-delete-read{
+  border-color:rgba(255,65,85,.78)!important;
+  background:linear-gradient(145deg,rgba(139,20,43,.48),rgba(67,12,29,.58))!important;
+  color:#ff4058!important;box-shadow:0 0 12px rgba(255,48,77,.16),inset 0 1px 2px rgba(255,190,200,.12)
+}
 #notificationsPanel .notification-delete-read svg{width:22px;height:22px;stroke:#ff304f!important;stroke-width:2.2;filter:drop-shadow(0 0 5px rgba(255,48,77,.55))}
 #notificationsPanel .notification-delete-read:not(:disabled):active{transform:scale(.94)}
 #notificationsPanel .notification-delete-read:disabled{opacity:.3}
 #notificationsPanel .notification-claim{
-  border:1px solid rgba(163,135,255,.55);border-radius:13px;
-  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);
-  color:#fff;box-shadow:0 6px 17px rgba(79,83,220,.22);
+  border:1px solid rgba(45,168,121,.65);border-radius:9px;
+  background:linear-gradient(135deg,#176d50,#124b3d);color:#eafff5;
 }
 #notificationsPanel .notification-empty{
-  margin:22px auto;padding:35px 15px;max-width:520px;border:1px solid rgba(145,123,255,.25);
-  border-radius:18px;background:linear-gradient(145deg,rgba(23,49,94,.48),rgba(47,25,83,.48));color:#c9c8ec;
+  margin:10px 0;padding:18px;border:1px solid rgba(125,180,220,.2);
+  border-radius:12px;background:rgba(24,43,67,.55);color:#91a8c1;
 }
 #messagesTopButton svg{fill:none;stroke:url(#oxideMissionIconGradient);stroke:#a98aff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(104,130,255,.55))}
 </style>
