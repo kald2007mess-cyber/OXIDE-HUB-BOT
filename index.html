@@ -1488,6 +1488,17 @@ body:has(#missionsPage[style*="display: block"]) .top-bar .oxide-wheel-top-butto
 .oxide-wheel-info{display:flex;flex-direction:column;gap:7px;padding:12px 8px;border:1px solid rgba(126,151,230,.28);border-radius:14px;background:rgba(10,22,52,.62)}
 .oxide-wheel-info span{font-size:11px;color:#aebfe5}.oxide-wheel-info strong{font-size:20px;color:#fff;text-shadow:0 0 12px rgba(140,130,255,.35)}
 .oxide-wheel-collect{margin:0;background:linear-gradient(100deg,#6539b8,#315fca);box-shadow:0 0 14px rgba(102,83,225,.28)}
+.oxide-wheel-wallet{margin:15px 0;padding:14px;border:1px solid rgba(126,151,230,.32);border-radius:16px;background:rgba(7,17,43,.72);text-align:center}
+.oxide-wheel-wallet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#c6d6ff;font-size:13px}
+.oxide-wheel-wallet-head strong{color:#fff;font-size:22px;text-shadow:0 0 12px rgba(140,130,255,.4)}
+.oxide-wheel-wallet-min{margin:8px 0 11px;color:#aebfe5;font-size:11px}
+.oxide-wheel-wallet-min b{color:#fff}
+#oxideWheelWithdrawAmount{width:100%;min-height:43px;padding:9px 12px;border:1px solid rgba(126,151,230,.4);border-radius:11px;background:rgba(255,255,255,.07);color:#fff;text-align:center;font-size:15px;outline:none}
+#oxideWheelWithdrawAmount::placeholder{color:#9eafd5}
+.oxide-wheel-wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.oxide-wheel-wallet-actions button{min-height:42px;border:1px solid rgba(175,161,255,.55);border-radius:11px;background:linear-gradient(100deg,#087FEA,#6539b8);color:#fff;font-size:12px;font-weight:900}
+.oxide-wheel-wallet-actions button:disabled{opacity:.45;filter:grayscale(.6)}
+#oxideWheelWithdrawMessage{min-height:17px;margin-top:8px;color:#b9c8ff;font-size:11px}
 /* Referral-only leaderboard button beside VIP, with a contained rain effect */
 .oxide-leaderboard-top-button{display:none;position:absolute;left:126px;top:0;width:48px;height:58px;min-width:48px;overflow:hidden;border-radius:18px;z-index:6;background:linear-gradient(135deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);border:1px solid rgba(177,164,255,.85);color:#fff;box-shadow:0 0 12px rgba(8,127,234,.55),0 0 25px rgba(150,56,232,.48),inset 0 1px 2px rgba(255,255,255,.35)}
 .oxide-leaderboard-top-button::before{content:"";position:absolute;inset:-45% -20%;z-index:0;pointer-events:none;background:repeating-linear-gradient(105deg,transparent 0 8px,rgba(132,190,255,.38) 9px,transparent 10px 17px),repeating-linear-gradient(105deg,transparent 0 15px,rgba(194,143,255,.3) 16px,transparent 17px 27px);background-size:100% 150%;animation:oxideTrophyRain 1.05s linear infinite;opacity:.8}
@@ -1768,6 +1779,16 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 </svg></div>
 <button class="oxide-wheel-spin" id="oxideWheelSpinButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4z"/></svg><span>قم بتدوير (هذه مجانية)</span></button><div class="oxide-wheel-countdown" id="oxideWheelCountdown" hidden>23:59:59</div>
 <div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">1</strong><span class="oxide-wheel-ticket-icon" aria-hidden="true">🎟️</span></div></div>
+<div class="oxide-wheel-wallet">
+  <div class="oxide-wheel-wallet-head"><span>أرباح العجلة</span><strong><span id="oxideWheelBalance">0</span> 🪙</strong></div>
+  <div class="oxide-wheel-wallet-min">الحد الأدنى للسحب: <b>500 🪙</b></div>
+  <input id="oxideWheelWithdrawAmount" type="number" min="500" step="1" inputmode="numeric" placeholder="أدخل مبلغ السحب">
+  <div class="oxide-wheel-wallet-actions">
+    <button id="oxideWheelWithdrawButton" type="button">سحب</button>
+    <button id="oxideWheelWithdrawMaxButton" type="button">سحب الحد الأقصى</button>
+  </div>
+  <div id="oxideWheelWithdrawMessage" aria-live="polite"></div>
+</div>
 <button class="oxide-wheel-collect" id="oxideWheelAdButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M5 5l14 14M19 5 5 19"/></svg><span>اربح محاولة</span><strong id="oxideWheelAdCount">0/10</strong></button><div id="oxideWheelAdMessage" class="oxide-wheel-ad-message" aria-live="polite"></div></div></section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
@@ -5027,7 +5048,7 @@ function applyAccountPageLanguage(language){
 }
 
 
-/* OXIDE wheel: server-authoritative free/ad spins and wallet rewards */
+/* OXIDE wheel: daily free spins, ad tickets and separate withdrawable rewards */
 (function(){
  const spin=document.getElementById("oxideWheelSpinButton");
  const adButton=document.getElementById("oxideWheelAdButton");
@@ -5037,30 +5058,44 @@ function applyAccountPageLanguage(language){
  const adMessage=document.getElementById("oxideWheelAdMessage");
  const prize=document.getElementById("oxideWheelLastPrize");
  const wheel=document.querySelector("#oxideWheelPage .oxide-wheel-art");
+ const balanceEl=document.getElementById("oxideWheelBalance");
+ const amountInput=document.getElementById("oxideWheelWithdrawAmount");
+ const withdrawButton=document.getElementById("oxideWheelWithdrawButton");
+ const withdrawMaxButton=document.getElementById("oxideWheelWithdrawMaxButton");
+ const withdrawMessage=document.getElementById("oxideWheelWithdrawMessage");
  if(!spin||!adButton||!attempts||!countdown||!wheel||spin.dataset.bound==="1")return;
  spin.dataset.bound="1";
  const spinLabel=spin.querySelector("span");
- if(spinLabel)spinLabel.textContent="قم بتدوير (مجانية كل 24 ساعة)";
- let wheelAds=0,adSpinsAvailable=0,freeAvailable=false,freeNextAt=0,serverNow=Math.floor(Date.now()/1000),syncAt=Date.now(),busy=false,timer=null;
+ let wheelAds=0,adSpinsAvailable=0,freeAvailable=false,freeNextAt=0,wheelBalance=0,serverNow=Math.floor(Date.now()/1000),syncAt=Date.now(),busy=false,timer=null;
  function applyState(data){
   wheelAds=Math.min(10,Math.max(0,Number(data.wheelAds)||0));
   adSpinsAvailable=Math.max(0,Number(data.adSpinsAvailable)||0);
-  freeAvailable=data.freeAvailable===true;
   freeNextAt=Math.max(0,Number(data.freeNextAt)||0);
+  freeAvailable=data.freeAvailable===true;
+  wheelBalance=Math.max(0,Number(data.wheelBalance)||0);
   serverNow=Math.max(0,Number(data.serverTime)||Math.floor(Date.now()/1000));
   syncAt=Date.now();
   update();
  }
  function update(){
   const now=serverNow+Math.floor((Date.now()-syncAt)/1000);
+  const remaining=Math.max(0,freeNextAt-now);
+  freeAvailable=remaining===0;
   attempts.textContent=String((freeAvailable?1:0)+adSpinsAvailable);
   adCount.textContent=wheelAds>=10?"MAX":wheelAds+"/10";
+  if(balanceEl)balanceEl.textContent=wheelBalance.toLocaleString("en-US");
   adButton.disabled=busy||wheelAds>=10;
   spin.disabled=busy||(!freeAvailable&&adSpinsAvailable<=0);
-  if(!freeAvailable&&adSpinsAvailable===0){
-   countdown.textContent="استُخدمت المحاولة المجانية";
+  if(spinLabel)spinLabel.textContent=freeAvailable?"قم بالتدوير مجاناً":"استخدم 🎟️ للتدوير";
+  if(remaining>0){
+   const h=String(Math.floor(remaining/3600)).padStart(2,"0");
+   const m=String(Math.floor((remaining%3600)/60)).padStart(2,"0");
+   const sec=String(remaining%60).padStart(2,"0");
+   countdown.textContent="المحاولة المجانية بعد "+h+":"+m+":"+sec;
    countdown.hidden=false;
   }else countdown.hidden=true;
+  if(withdrawButton)withdrawButton.disabled=busy||wheelBalance<500;
+  if(withdrawMaxButton)withdrawMaxButton.disabled=busy||wheelBalance<500;
  }
  async function refreshWheel(){
   try{
@@ -5081,21 +5116,15 @@ function applyAccountPageLanguage(language){
    if(!response.ok||!data.success)throw new Error(data.error==="NO_SPINS_AVAILABLE"?"لا توجد محاولات متاحة. شاهد إعلاناً للحصول على 🎟️.":data.error||"تعذر تدوير العجلة.");
    applyState(data);
    const angle=1800+((342-Number(data.sector||0)*36+360)%360);
-   wheel.style.animation="none";
-   wheel.style.transition="none";
-   wheel.style.transform="rotate(0deg)";
+   wheel.style.animation="none";wheel.style.transition="none";wheel.style.transform="rotate(0deg)";
    void wheel.getBoundingClientRect();
    wheel.style.transition="transform 5s cubic-bezier(.12,.72,.16,1)";
    wheel.style.transform="rotate("+angle+"deg)";
-   if(adMessage)adMessage.textContent=data.mode==="free"?"استعملت المحاولة المجانية لهذا اليوم.":"تم استعمال 🎟️ واحدة.";
+   if(adMessage)adMessage.textContent=data.mode==="free"?"استعملت المحاولة المجانية. تتجدد بعد 24 ساعة.":"تم استعمال 🎟️ واحدة.";
    window.setTimeout(function(){
     if(prize)prize.textContent=String(data.prize);
-    busy=false;update();
-    if(typeof window.loadOxideWallet==="function")window.loadOxideWallet();
-    refreshWheel();
+    busy=false;update();refreshWheel();
    },5100);
-   if(timer)clearInterval(timer);
-   timer=setInterval(update,1000);
   }catch(error){
    busy=false;update();
    if(adMessage)adMessage.textContent=error.message||"تعذر تدوير العجلة.";
@@ -5124,10 +5153,7 @@ function applyAccountPageLanguage(language){
     await new Promise(resolve=>setTimeout(resolve,1000));
     const response=await fetch("/api/wheel",{method:"GET",cache:"no-store",credentials:"same-origin"});
     const data=await response.json().catch(()=>({}));
-    if(response.ok&&data.success){
-     applyState(data);
-     if(wheelAds>before){confirmed=true;break}
-    }
+    if(response.ok&&data.success){applyState(data);if(wheelAds>before){confirmed=true;break}}
    }
    if(!confirmed)throw new Error("لم يصل تأكيد الإعلان من الخادم. لم تُضف 🎟️.");
    if(adMessage)adMessage.textContent="تمت إضافة 🎟️ بنجاح ✓";
@@ -5135,6 +5161,31 @@ function applyAccountPageLanguage(language){
    if(adMessage)adMessage.textContent=error.message||"تعذر إكمال الإعلان.";
   }finally{busy=false;update();refreshWheel()}
  });
+ async function withdraw(maximum){
+  if(busy)return;
+  const amount=Math.floor(Number(amountInput?.value)||0);
+  if(!maximum&&amount<500){if(withdrawMessage)withdrawMessage.textContent="الحد الأدنى للسحب هو 500 🪙.";return}
+  if(maximum&&wheelBalance<500){if(withdrawMessage)withdrawMessage.textContent="تحتاج إلى 500 🪙 على الأقل للسحب.";return}
+  busy=true;update();
+  if(withdrawMessage)withdrawMessage.textContent="جارٍ تحويل الأرباح إلى رصيد حسابك...";
+  try{
+   const response=await fetch("/api/wheel",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify(maximum?{action:"withdraw",max:true}:{action:"withdraw",amount})});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.success){
+    const msg=data.error==="MINIMUM_WITHDRAWAL"?"الحد الأدنى للسحب هو 500 🪙.":data.error==="INSUFFICIENT_WHEEL_BALANCE"?"رصيد العجلة غير كافٍ.":"تعذر تنفيذ السحب. حاول مجدداً.";
+    throw new Error(msg);
+   }
+   applyState(data);
+   if(amountInput)amountInput.value="";
+   if(withdrawMessage)withdrawMessage.textContent="تم تحويل "+Number(data.withdrawn||0).toLocaleString("en-US")+" 🪙 إلى رصيد حسابك ✓";
+   if(typeof window.loadOxideWallet==="function")window.loadOxideWallet();
+  }catch(error){
+   if(withdrawMessage)withdrawMessage.textContent=error.message||"تعذر تنفيذ السحب.";
+   refreshWheel();
+  }finally{busy=false;update()}
+ }
+ withdrawButton?.addEventListener("click",()=>withdraw(false));
+ withdrawMaxButton?.addEventListener("click",()=>withdraw(true));
  update();refreshWheel();
  if(timer)clearInterval(timer);
  timer=setInterval(update,1000);
