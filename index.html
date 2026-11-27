@@ -2137,20 +2137,36 @@ function closeChannelSubscribeModal(){const modal=document.getElementById("chann
 async function verifyOxideChannelSubscription(){if(!pendingChannelOffer)return;const status=document.getElementById("channelSubscribeStatus"),check=document.getElementById("channelSubscribeCheck");if(check){check.disabled=true;check.textContent=currentLanguage==="ru"?"Проверка...":currentLanguage==="en"?"Checking...":"جارٍ التحقق...";}if(status)status.textContent="";try{await claimPlatformDelivery(pendingChannelOffer,true);}finally{if(check){check.disabled=false;check.textContent=currentLanguage==="ru"?"Я подписался":currentLanguage==="en"?"I've subscribed":"تحققت من الاشتراك";}}}
 async function claimPlatformDelivery(offer,subscriptionRetry=false){
  if(platformDeliveryBusy||!["beta","android","ios"].includes(offer))return;
- platformDeliveryBusy=true;const button=Array.from(document.querySelectorAll(".platform-ad-button")).find(x=>x.dataset.offer===offer);
- if(button)button.disabled=true;
+ platformDeliveryBusy=true;
+ const button=Array.from(document.querySelectorAll(".platform-ad-button")).find(x=>x.dataset.offer===offer);
+ const pageStatus=document.getElementById("rewardMessage");
+ if(button){button.disabled=true;button.textContent="⏳ جارٍ فتح الملفات...";}
+ if(pageStatus)pageStatus.textContent="جارٍ فتح ملفات "+offer.toUpperCase()+"...";
  try{
   const response=await fetch("/api/platform-delivery?offer="+encodeURIComponent(offer),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json().catch(()=>({}));
-  if(result.subscriptionRequired){openChannelSubscribeModal(offer);const status=document.getElementById("channelSubscribeStatus");if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"❌ يجب الاشتراك في القناة أولاً.";return;}
+  if(result.subscriptionRequired){
+   openChannelSubscribeModal(offer);
+   const status=document.getElementById("channelSubscribeStatus");
+   if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"❌ يجب الاشتراك في القناة أولاً.";
+   if(pageStatus)pageStatus.textContent="";
+   return;
+  }
   if(!response.ok||!result.success)throw new Error(result.error||"DELIVERY_FAILED");
-  closeChannelSubscribeModal();pendingChannelOffer=null;openPlatformDeliveryViewer(offer,result);
+  closeChannelSubscribeModal();pendingChannelOffer=null;
+  if(!document.getElementById("platformDeliveryModal"))throw new Error("DELIVERY_VIEWER_NOT_FOUND");
+  openPlatformDeliveryViewer(offer,result);
+  if(pageStatus)pageStatus.textContent="";
  }catch(error){
   const message=error.message==="CHANNEL_CHECK_UNAVAILABLE"||error.message==="TELEGRAM_BOT_TOKEN_MISSING"?"تعذّر التحقق من اشتراك القناة حالياً. تأكد أن البوت مشرف في القناة ثم أعد المحاولة.":"تعذّر فتح الملفات: "+(error.message||"DELIVERY_FAILED");
   const status=document.getElementById("channelSubscribeStatus");
   if(subscriptionRetry&&document.getElementById("channelSubscribeModal")&&!document.getElementById("channelSubscribeModal").hidden){if(status)status.textContent=message;}
-  else{const pageStatus=document.getElementById("islandMessage")||document.getElementById("status");if(pageStatus)pageStatus.textContent=message;}
- }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
+  else if(pageStatus)pageStatus.textContent=message;
+ }finally{
+  platformDeliveryBusy=false;
+  if(button)button.disabled=false;
+  updateIslandDisplay();
+ }
 }
 
 async function trackPlatformDeliveryProgress(button,offer){
