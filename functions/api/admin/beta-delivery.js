@@ -20,11 +20,14 @@ async function getRequiredDownloadChannels(DB) {
   id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,chat_id TEXT NOT NULL,join_url TEXT NOT NULL,
   enabled INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL
  )`).run();
- await DB.prepare(`
-  INSERT INTO platform_download_channels(title,chat_id,join_url,enabled,created_at,updated_at)
-  SELECT 'OXIDE HUB','@OxideHubOfficial','https://t.me/OxideHubOfficial',1,?,?
-  WHERE NOT EXISTS (SELECT 1 FROM platform_download_channels)
- `).bind(Math.floor(Date.now()/1000),Math.floor(Date.now()/1000)).run();
+ await DB.prepare("CREATE TABLE IF NOT EXISTS platform_download_channel_state (id INTEGER PRIMARY KEY CHECK(id=1), initialized INTEGER NOT NULL DEFAULT 1)").run();
+ const state=await DB.prepare("SELECT initialized FROM platform_download_channel_state WHERE id=1").first();
+ if(!state){
+  const count=await DB.prepare("SELECT COUNT(*) AS total FROM platform_download_channels").first();
+  const now=Math.floor(Date.now()/1000);
+  if(Number(count?.total||0)===0)await DB.prepare("INSERT INTO platform_download_channels(title,chat_id,join_url,enabled,created_at,updated_at) VALUES('OXIDE HUB','@OxideHubOfficial','https://t.me/OxideHubOfficial',1,?,?)").bind(now,now).run();
+  await DB.prepare("INSERT OR IGNORE INTO platform_download_channel_state(id,initialized) VALUES(1,1)").run();
+ }
  const result=await DB.prepare("SELECT id,title,chat_id,join_url FROM platform_download_channels WHERE enabled=1 ORDER BY id ASC").all();
  return result.results||[];
 }
