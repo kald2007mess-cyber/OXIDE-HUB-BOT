@@ -1241,6 +1241,93 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
   border:1px solid rgba(127,112,255,.55)!important;box-shadow:0 0 12px rgba(8,127,234,.14),0 0 15px rgba(150,56,232,.13)!important
 }
 
+
+
+/* HOME VIP THEME — matching Account and Referral blue/indigo/purple gradient */
+#homePage.tap-home{
+ --home-vip:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);
+ --home-vip-soft:linear-gradient(125deg,rgba(8,127,234,.23) 0%,rgba(64,92,235,.25) 48%,rgba(150,56,232,.27) 100%);
+ --home-vip-border:rgba(126,137,255,.62);
+ --home-vip-glow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.13),inset 0 1px rgba(255,255,255,.10);
+}
+#homePage .tap-heading h1,
+#homePage .tap-balance strong,
+#homePage .tap-footer b,
+#homePage .tap-session-copy strong,
+#homePage .tap-quick-name,
+#homePage .tap-energy-panel strong{
+ color:#fff!important;
+ text-shadow:0 0 12px rgba(135,142,255,.3)!important;
+}
+#homePage .tap-eyebrow,
+#homePage .tap-heading p,
+#homePage .tap-balance span,
+#homePage .tap-balance small,
+#homePage .tap-hint,
+#homePage .tap-footer,
+#homePage .tap-notice,
+#homePage .tap-home-footer,
+#homePage .tap-stat-caption,
+#homePage .tap-energy-regen,
+#homePage .tap-quick-card small{
+ color:#d2d4f2!important;
+}
+#homePage .tap-balance,
+#homePage .tap-session-card,
+#homePage .tap-quick-card,
+#homePage .tap-energy-panel,
+#homePage .tap-energy-section,
+#homePage .tap-meter,
+#homePage .tap-upgrade-dialog{
+ background:var(--home-vip-soft)!important;
+ border:1px solid var(--home-vip-border)!important;
+ box-shadow:var(--home-vip-glow)!important;
+}
+#homePage .tap-session-icon,
+#homePage .tap-quick-icon,
+#homePage .tap-value-upgrade,
+#homePage .tap-energy-bottom button{
+ background:var(--home-vip)!important;
+ border:1px solid rgba(173,167,255,.55)!important;
+ color:#fff!important;
+ box-shadow:0 0 12px rgba(76,91,255,.2),inset 0 1px rgba(255,255,255,.18)!important;
+}
+#homePage .tap-session-tag{
+ color:#d9e7ff!important;
+ border-color:rgba(126,170,255,.65)!important;
+ background:rgba(8,127,234,.16)!important;
+}
+#homePage .tap-energy-track{
+ background:rgba(12,28,75,.78)!important;
+ border:1px solid rgba(126,137,255,.5)!important;
+}
+#homePage .tap-energy-track span{
+ background:var(--home-vip)!important;
+ box-shadow:0 0 14px rgba(76,119,255,.5)!important;
+}
+#homePage .tap-quick-card>b,
+#homePage .tap-home-footer strong{
+ color:#c9caff!important;
+}
+#homePage .tap-upgrade-head,
+#homePage .tap-upgrade-level,
+#homePage .tap-upgrade-values,
+#homePage .tap-upgrade-cost{
+ color:#f4f2ff!important;
+}
+#homePage .tap-upgrade-confirm{
+ background:var(--home-vip)!important;
+ border:1px solid rgba(151,126,255,.65)!important;
+ color:#fff!important;
+ box-shadow:0 0 18px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#homePage .tap-upgrade-dialog input,
+#homePage .tap-upgrade-dialog select{
+ background:var(--home-vip-soft)!important;
+ border:1px solid var(--home-vip-border)!important;
+ color:#fff!important;
+}
+
 </style>
 </head>
 <body>
