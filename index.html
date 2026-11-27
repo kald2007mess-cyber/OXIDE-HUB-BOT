@@ -2166,7 +2166,7 @@ async function trackPlatformDeliveryProgress(button,offer){
   if(fill){fill.classList.remove("oxide-download-indeterminate");fill.style.width="100%";}
   if(percent)percent.textContent="تم الإرسال";
   button.classList.add("is-downloaded");button.textContent="✓ تم إرسال الملف إلى محادثة البوت";
-  if(status)status.textContent="✅ تم إرسال الملف. جارٍ فتح محادثة OXIDE HUB…";setTimeout(()=>{window.location.href="https://t.me/OxideHub_bot";},900);
+  if(status)status.textContent="✅ تم إرسال الملف. جارٍ فتح محادثة OXIDE HUB…";setTimeout(()=>{const url="https://t.me/OxideHub_bot";const tg=window.Telegram&&window.Telegram.WebApp;try{if(tg&&typeof tg.openTelegramLink==="function"){tg.openTelegramLink(url);return;}}catch(e){}try{window.open(url,"_blank");}catch(e){}window.location.href=url;},500);
  }catch(error){
   button.textContent="↻ إعادة إرسال الملف";button.disabled=false;
   if(fill)fill.classList.remove("oxide-download-indeterminate");
