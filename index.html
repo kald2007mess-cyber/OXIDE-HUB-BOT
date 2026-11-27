@@ -4394,7 +4394,12 @@ function applyAccountPageLanguage(language){
 </script>
 
 <style>
+<style>
 <!-- Account-only blue purple pink frame finish -->
+@keyframes oxideAccountFrameRGB{
+  0%,100%{border-color:#159cff;box-shadow:0 0 0 1px rgba(21,156,255,.65),0 0 13px rgba(21,156,255,.62),0 0 25px rgba(21,156,255,.28),inset 0 0 12px rgba(21,156,255,.08)!important}
+  50%{border-color:#ff55c8;box-shadow:0 0 0 1px rgba(255,85,200,.7),0 0 15px rgba(255,85,200,.68),0 0 28px rgba(255,85,200,.32),inset 0 0 13px rgba(255,85,200,.09)!important}
+}
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
 #accountPage .oxide-account-menu,
@@ -4405,20 +4410,25 @@ function applyAccountPageLanguage(language){
 #accountPage .oxide-menu-icon,
 #accountPage .oxide-account-language select,
 #accountPage .oxide-copy-id{
-  border-color:rgba(145,112,255,.72)!important;
-  box-shadow:0 0 0 1px rgba(0,174,255,.18),0 0 13px rgba(0,145,255,.16),0 0 19px rgba(174,65,255,.19),0 0 25px rgba(255,83,190,.12),inset 0 1px 0 rgba(255,255,255,.07)!important;
+  border:1.5px solid #159cff!important;
+  animation:oxideAccountFrameRGB 3.8s ease-in-out infinite alternate!important;
 }
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
 #accountPage .oxide-account-menu,
 #accountPage .oxide-achievement{
-  background-image:linear-gradient(145deg,rgba(39,25,61,.96),rgba(15,14,36,.97))!important;
+  background:linear-gradient(145deg,rgba(20,34,75,.98),rgba(34,15,57,.98) 55%,rgba(65,17,57,.96))!important;
 }
 #accountPage .oxide-profile-avatar,
 #accountPage .oxide-account-stat-icon,
-#accountPage .oxide-menu-icon{
-  background-image:linear-gradient(135deg,rgba(0,145,255,.22),rgba(130,65,255,.24) 52%,rgba(255,75,185,.2))!important;
+#accountPage .oxide-menu-icon,
+#accountPage .oxide-account-language select,
+#accountPage .oxide-copy-id{
+  background:linear-gradient(135deg,rgba(0,145,255,.34),rgba(130,65,255,.38) 52%,rgba(255,75,185,.34))!important;
 }
+#accountPage .oxide-profile-id{background:linear-gradient(110deg,rgba(0,145,255,.12),rgba(130,65,255,.14),rgba(255,75,185,.12))!important}
+#accountPage .oxide-account-section-title>span,
+#accountPage .oxide-profile-mark{color:#d9a5ff!important;text-shadow:0 0 12px rgba(190,92,255,.7)}
 </style>
 
 </body>
