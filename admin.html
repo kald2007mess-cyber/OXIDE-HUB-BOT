@@ -615,6 +615,10 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 #betaDeliveryPage .pm-file-actions button{width:38px;min-width:38px;height:38px;padding:8px;border-radius:10px;font-size:0}
 #betaDeliveryPage .pm-file-actions svg{width:18px;height:18px}#betaDeliveryPage .pm-save-button svg{width:19px;height:19px;vertical-align:middle;margin-inline-end:8px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:760px){#betaDeliveryPage .pm-simple-editor{grid-template-columns:1fr}}
+#betaDeliveryPage .pm-soon-toggle{width:auto;min-width:112px;margin:0;padding:10px 13px;border-radius:11px;border:1px solid #6f789e;background:#263047;color:#dce4f5;font-size:11px;font-weight:850;box-shadow:none}
+#betaDeliveryPage .pm-soon-toggle.is-soon{background:#273044;border-color:#69758d;color:#c0cadb;box-shadow:none}
+#betaDeliveryPage .pm-workspace-head{flex-wrap:wrap}
+
 
 /* Premium blue-violet mission manager */
 .tasks-summary.oxide-admin-task-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
@@ -794,7 +798,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
   </div>
   <select id="deliveryPlatformSelect" class="hidden" aria-hidden="true" tabindex="-1"><option value="android">ANDROID</option><option value="ios">iOS</option><option value="beta">BETA</option></select>
   <section class="pm-workspace">
-   <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span></div>
+   <div class="pm-workspace-head"><h3 id="platformDeliveryHeading">Файлы — Beta</h3><span class="pm-independent">Независимое управление</span><button type="button" id="deliverySoonToggle" class="pm-soon-toggle" onclick="toggleDeliverySoon()">SOON: OFF</button></div>
    <div class="pm-simple-editor">
     <section class="pm-panel pm-attach-panel">
      <div class="pm-panel-kicker">01 / ATTACHMENTS</div>
@@ -1774,6 +1778,33 @@ async function renderPlatformTabs(){
  });
  const ios=currentDeliveryOffer==="ios";const fileInput=document.getElementById("betaDeliveryFiles");if(fileInput)fileInput.accept=ios?".ipa,.zip,application/octet-stream":".apk,.apks,.zip,application/octet-stream";
 }
+async function loadDeliverySoonSettings(){
+ const button=document.getElementById("deliverySoonToggle");if(!button)return;
+ try{
+  const response=await fetch("/api/platform-visibility",{method:"GET",cache:"no-store",credentials:"same-origin"});
+  const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"PLATFORM_VISIBILITY_ERROR");
+  platformVisibility={...platformVisibility,...(result.visibility||{})};
+  renderDeliverySoonToggle();
+ }catch(error){button.textContent="SOON: ?";button.disabled=true;document.getElementById("betaDeliveryStatus").textContent="تعذر تحميل إعداد SOON: "+error.message;}
+}
+function renderDeliverySoonToggle(){
+ const button=document.getElementById("deliverySoonToggle");if(!button)return;
+ const soon=platformVisibility[currentDeliveryOffer]===false;
+ button.textContent=soon?"● SOON: ON":"○ SOON: OFF";
+ button.classList.toggle("is-soon",soon);button.disabled=false;
+ button.title=soon?"إظهار زر SOON للمستخدمين":"إظهار أزرار GO والإعلانات للمستخدمين";
+}
+async function toggleDeliverySoon(){
+ const button=document.getElementById("deliverySoonToggle");if(!button||button.disabled)return;
+ const enabled=platformVisibility[currentDeliveryOffer]===false;
+ button.disabled=true;button.textContent="جارٍ الحفظ...";
+ try{
+  const response=await fetch("/api/platform-visibility",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({initData:tg.initData,platform:currentDeliveryOffer,enabled})});
+  const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"PLATFORM_VISIBILITY_SAVE_FAILED");
+  platformVisibility[currentDeliveryOffer]=Boolean(result.enabled);renderDeliverySoonToggle();
+  document.getElementById("betaDeliveryStatus").textContent=enabled?"تم إيقاف SOON وإعادة أزرار GO والإعلانات.":"تم تفعيل SOON: سيظهر زر SOON فقط للمستخدمين.";
+ }catch(error){button.disabled=false;renderDeliverySoonToggle();document.getElementById("betaDeliveryStatus").textContent="فشل حفظ إعداد SOON: "+error.message;}
+}
 async function openPlatformDeliveryPage(offer){
  if(!hasAdminPermission("platform_files")){alert("У вас нет прав на управление файлами платформ.");return;}
  currentDeliveryOffer=["beta","android","ios"].includes(offer)?offer:"beta";
@@ -1782,7 +1813,7 @@ async function openPlatformDeliveryPage(offer){
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS"},label=labels[currentDeliveryOffer];
  document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ";
  document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
- document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await loadBetaDelivery();
+ document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await Promise.all([loadBetaDelivery(),loadDeliverySoonSettings()]);
 }
 async function switchPlatformDelivery(offer){
  if(!hasAdminPermission("platform_files"))return;
@@ -1796,7 +1827,8 @@ async function switchPlatformDelivery(offer){
  document.getElementById("betaDeliveryFiles").value="";document.getElementById("betaDeliveryMedia").value="";pendingPlatformFiles.length=0;updatePendingPlatformFiles();
  
  renderPlatformTabs();
- await loadBetaDelivery();
+ await Promise.all([loadBetaDelivery(),loadDeliverySoonSettings()]);
+ renderDeliverySoonToggle();
 }
 function closeBetaDeliveryPage(){document.getElementById("betaDeliveryPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
 let savedPlatformDeliveryFiles=[];
