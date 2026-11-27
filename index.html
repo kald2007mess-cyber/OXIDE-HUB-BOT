@@ -4394,11 +4394,10 @@ function applyAccountPageLanguage(language){
 </script>
 
 <style>
-<style>
-<!-- Account-only blue purple pink frame finish -->
-@keyframes oxideAccountFrameRGB{
-  0%,100%{border-color:#159cff;box-shadow:0 0 0 1px rgba(21,156,255,.65),0 0 13px rgba(21,156,255,.62),0 0 25px rgba(21,156,255,.28),inset 0 0 12px rgba(21,156,255,.08)}
-  50%{border-color:#ff55c8;box-shadow:0 0 0 1px rgba(255,85,200,.7),0 0 15px rgba(255,85,200,.68),0 0 28px rgba(255,85,200,.32),inset 0 0 13px rgba(255,85,200,.09)}
+/* Account-only VIP cool blue-purple finish */
+@keyframes oxideAccountFrameVIP{
+  0%,100%{border-color:#087FEA;box-shadow:0 0 0 1px rgba(8,127,234,.62),0 0 13px rgba(8,127,234,.58),0 0 25px rgba(64,92,235,.28),inset 0 0 12px rgba(8,127,234,.08)}
+  50%{border-color:#9638E8;box-shadow:0 0 0 1px rgba(150,56,232,.68),0 0 15px rgba(150,56,232,.62),0 0 28px rgba(88,75,245,.34),inset 0 0 13px rgba(150,56,232,.09)}
 }
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
@@ -4410,25 +4409,25 @@ function applyAccountPageLanguage(language){
 #accountPage .oxide-menu-icon,
 #accountPage .oxide-account-language select,
 #accountPage .oxide-copy-id{
-  border:1.5px solid #159cff!important;
-  animation:oxideAccountFrameRGB 3.8s ease-in-out infinite alternate!important;
+  border:1.5px solid #087FEA!important;
+  animation:oxideAccountFrameVIP 3.8s ease-in-out infinite alternate!important;
 }
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
 #accountPage .oxide-account-menu,
 #accountPage .oxide-achievement{
-  background:linear-gradient(145deg,rgba(20,34,75,.98),rgba(34,15,57,.98) 55%,rgba(65,17,57,.96))!important;
+  background:linear-gradient(105deg,rgba(8,127,234,.16) 0%,rgba(64,92,235,.19) 48%,rgba(150,56,232,.17) 100%)!important;
 }
 #accountPage .oxide-profile-avatar,
 #accountPage .oxide-account-stat-icon,
 #accountPage .oxide-menu-icon,
 #accountPage .oxide-account-language select,
 #accountPage .oxide-copy-id{
-  background:linear-gradient(135deg,rgba(0,145,255,.34),rgba(130,65,255,.38) 52%,rgba(255,75,185,.34))!important;
+  background:linear-gradient(105deg,rgba(8,127,234,.34) 0%,rgba(64,92,235,.38) 48%,rgba(150,56,232,.34) 100%)!important;
 }
-#accountPage .oxide-profile-id{background:linear-gradient(110deg,rgba(0,145,255,.12),rgba(130,65,255,.14),rgba(255,75,185,.12))!important}
+#accountPage .oxide-profile-id{background:linear-gradient(105deg,rgba(8,127,234,.12),rgba(64,92,235,.14) 48%,rgba(150,56,232,.12))!important}
 #accountPage .oxide-account-section-title>span,
-#accountPage .oxide-profile-mark{color:#d9a5ff!important;text-shadow:0 0 12px rgba(190,92,255,.7)}
+#accountPage .oxide-profile-mark{color:#b9a0ff!important;text-shadow:0 0 12px rgba(150,56,232,.62)}
 </style>
 
 </body>
