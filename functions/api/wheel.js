@@ -1,7 +1,7 @@
 import { getVisitor, json } from "./_lib/session.js";
 
 const MAX_ADS = 10;
-const SECTORS = [0, 10, 10, 10, 20, 20, 30, 50, 5, 100];
+const SECTORS = [0, 10, 20, 10, 5, 30, 10, 50, 20, 100];
 
 async function ensureWheelTables(DB) {
   await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_progress (user_id TEXT PRIMARY KEY, completed_ads INTEGER NOT NULL DEFAULT 0, used_ads INTEGER NOT NULL DEFAULT 0)").run();
@@ -9,7 +9,19 @@ async function ensureWheelTables(DB) {
   if (!(cols.results || []).some(c => c.name === "used_ads")) {
     await DB.prepare("ALTER TABLE oxide_wheel_ad_progress ADD COLUMN used_ads INTEGER NOT NULL DEFAULT 0").run();
   }
-  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_state (user_id TEXT PRIMARY KEY, free_next_at INTEGER NOT NULL DEFAULT 0)").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_state (user_id TEXT PRIMARY KEY, free_next_at INTEGER NOT NULL DEFAULT 0, free_used INTEGER NOT NULL DEFAULT 0)").run();
+  const stateCols = await DB.prepare("PRAGMA table_info(oxide_wheel_state)").all();
+  if (!(stateCols.results || []).some(c => c.name === "free_used")) await DB.prepare("ALTER TABLE oxide_wheel_state ADD COLUMN free_used INTEGER NOT NULL DEFAULT 0").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_migrations (migration_key TEXT PRIMARY KEY, applied_at INTEGER NOT NULL)").run();
+  const reset = await DB.prepare("SELECT migration_key FROM oxide_wheel_migrations WHERE migration_key='wheel_reset_all_users_v2'").first();
+  if (!reset) {
+    await DB.batch([
+      DB.prepare("DELETE FROM oxide_wheel_ad_pending"),
+      DB.prepare("DELETE FROM oxide_wheel_ad_progress"),
+      DB.prepare("DELETE FROM oxide_wheel_state"),
+      DB.prepare("INSERT OR IGNORE INTO oxide_wheel_migrations(migration_key,applied_at) VALUES('wheel_reset_all_users_v2',?)").bind(Math.floor(Date.now()/1000))
+    ]);
+  }
   await DB.prepare("CREATE TABLE IF NOT EXISTS point_ledger (id INTEGER PRIMARY KEY AUTOINCREMENT,user_uuid TEXT NOT NULL,delta REAL NOT NULL,balance_after REAL NOT NULL,reason TEXT NOT NULL,reference_type TEXT NOT NULL,reference_id TEXT NOT NULL,created_at INTEGER NOT NULL)").run();
 }
 
@@ -29,16 +41,16 @@ function chooseSector(prize) {
 }
 
 async function readWheelState(DB, userId, now) {
-  await DB.prepare("INSERT OR IGNORE INTO oxide_wheel_state(user_id,free_next_at) VALUES(?,0)").bind(userId).run();
+  await DB.prepare("INSERT OR IGNORE INTO oxide_wheel_state(user_id,free_next_at,free_used) VALUES(?,0,0)").bind(userId).run();
   await DB.prepare("INSERT OR IGNORE INTO oxide_wheel_ad_progress(user_id,completed_ads,used_ads) VALUES(?,0,0)").bind(userId).run();
   const [state, ads] = await Promise.all([
-    DB.prepare("SELECT free_next_at FROM oxide_wheel_state WHERE user_id=?").bind(userId).first(),
+    DB.prepare("SELECT free_next_at,free_used FROM oxide_wheel_state WHERE user_id=?").bind(userId).first(),
     DB.prepare("SELECT completed_ads,used_ads FROM oxide_wheel_ad_progress WHERE user_id=?").bind(userId).first()
   ]);
   const completedAds = Math.min(MAX_ADS, Math.max(0, Number(ads?.completed_ads || 0)));
   const usedAds = Math.min(completedAds, Math.max(0, Number(ads?.used_ads || 0)));
   return {
-    freeNextAt: Math.max(0, Number(state?.free_next_at || 0)),
+    freeNextAt: Number(state?.free_used || 0) ? Math.max(now + 1, Math.max(0, Number(state?.free_next_at || 0))) : 0,
     wheelAds: completedAds,
     adSpinsAvailable: Math.max(0, completedAds - usedAds),
     serverTime: now
@@ -106,7 +118,8 @@ export async function onRequestPost({ request, env }) {
     await ensureWheelTables(env.DB);
     const now = Math.floor(Date.now() / 1000);
     const current = await readWheelState(env.DB, userId, now);
-    const mode = current.freeNextAt <= now ? "free" : "ad";
+    const freeUsed = await env.DB.prepare("SELECT free_used FROM oxide_wheel_state WHERE user_id=?").bind(userId).first();
+    const mode = Number(freeUsed?.free_used || 0) === 0 ? "free" : "ad";
     if (mode === "ad" && current.adSpinsAvailable <= 0) {
       return json({ success: false, error: "NO_SPINS_AVAILABLE", ...current }, 409);
     }
@@ -118,7 +131,7 @@ export async function onRequestPost({ request, env }) {
     const sector = chooseSector(prize);
     const reference = crypto.randomUUID();
     const claim = mode === "free"
-      ? env.DB.prepare("UPDATE oxide_wheel_state SET free_next_at=? WHERE user_id=? AND free_next_at<=?").bind(now + 86400, userId, now)
+      ? env.DB.prepare("UPDATE oxide_wheel_state SET free_used=1,free_next_at=0 WHERE user_id=? AND free_used=0").bind(userId)
       : env.DB.prepare("UPDATE oxide_wheel_ad_progress SET used_ads=used_ads+1 WHERE user_id=? AND completed_ads>used_ads").bind(userId);
     const results = await env.DB.batch([
       claim,
