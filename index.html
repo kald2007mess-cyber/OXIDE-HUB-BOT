@@ -4009,7 +4009,7 @@ initializeOxideHub();
    const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"WALLET_HISTORY_FAILED");
    const items=Array.isArray(data.items)?data.items:[];list.replaceChildren();
    if(!items.length){const empty=document.createElement("div");empty.className="wallet-history-empty";empty.textContent=currentLanguage==="en"?"No wallet transactions yet.":"لا توجد عمليات في المحفظة بعد.";list.appendChild(empty);return}
-   const labels={adsgram_ad_reward:"مكافأة إعلان",telegram_channel_join:"مكافأة الاشتراك في القناة",mission_approved:"مكافأة مهمة",referral_reward:"مكافأة إحالة",referral_invited_bonus:"مكافأة التسجيل عبر إحالة",wallet_tap:"مكافأة الضغط",wallet_upgrade:"تطوير",wallet_mining:"مكافأة التعدين",redemption_request:"طلب استبدال",redemption_compensation:"إرجاع نقاط"};
+   const labels={adsgram_ad_reward:"مكافأة إعلان",telegram_channel_join:"مكافأة الاشتراك في القناة",mission_approved:"مكافأة مهمة",referral_reward:"مكافأة إحالة",referral_invited_bonus:"مكافأة التسجيل عبر إحالة",wallet_tap:"مكافأة الضغط",wallet_upgrade:"تطوير",wallet_mining:"مكافأة التعدين",wheel_spin_reward:"جائزة العجلة",redemption_request:"طلب استبدال",redemption_compensation:"إرجاع نقاط"};
    for(const item of items){const card=document.createElement("article");card.className="wallet-history-item";const reason=document.createElement("div");reason.className="wallet-history-reason";reason.textContent=labels[item.reason]||item.reason;const date=document.createElement("div");date.className="wallet-history-date";date.textContent=item.createdAt?new Date(item.createdAt*1000).toLocaleString("ar-DZ"):"";const amount=document.createElement("div");amount.className="wallet-history-delta "+(Number(item.delta)>=0?"positive":"negative");amount.textContent=(Number(item.delta)>0?"+":"")+Number(item.delta).toFixed(3);card.append(reason,date,amount);list.appendChild(card)}
   }catch(error){console.error("Wallet history error:",error);list.textContent="تعذر تحميل سجل المحفظة. حاول مجدداً."}
  };
@@ -5027,7 +5027,7 @@ function applyAccountPageLanguage(language){
 }
 
 
-/* OXIDE wheel attempts + Adsgram verified ad progress */
+/* OXIDE wheel: server-authoritative free/ad spins and wallet rewards */
 (function(){
  const spin=document.getElementById("oxideWheelSpinButton");
  const adButton=document.getElementById("oxideWheelAdButton");
@@ -5039,110 +5039,104 @@ function applyAccountPageLanguage(language){
  const wheel=document.querySelector("#oxideWheelPage .oxide-wheel-art");
  if(!spin||!adButton||!attempts||!countdown||!wheel||spin.dataset.bound==="1")return;
  spin.dataset.bound="1";
- const FREE_KEY="oxide_wheel_free_remaining_test_v3";
- const FREE_UNTIL_KEY="oxide_wheel_free_until_v2";
- const USED_KEY="oxide_wheel_ad_spins_used_v1";
- const prizes=[0,10,10,10,20,20,30,50,5,100];
- function weightedPrize(options){
-  const total=options.reduce((sum,item)=>sum+item.weight,0);
-  let roll=Math.random()*total;
-  for(const item of options){roll-=item.weight;if(roll<0)return item.value}
-  return options[options.length-1].value;
+ const spinLabel=spin.querySelector("span");
+ if(spinLabel)spinLabel.textContent="قم بتدوير (مجانية كل 24 ساعة)";
+ let wheelAds=0,adSpinsAvailable=0,freeNextAt=0,serverNow=Math.floor(Date.now()/1000),syncAt=Date.now(),busy=false,timer=null;
+ function applyState(data){
+  wheelAds=Math.min(10,Math.max(0,Number(data.wheelAds)||0));
+  adSpinsAvailable=Math.max(0,Number(data.adSpinsAvailable)||0);
+  freeNextAt=Math.max(0,Number(data.freeNextAt)||0);
+  serverNow=Math.max(0,Number(data.serverTime)||Math.floor(Date.now()/1000));
+  syncAt=Date.now();
+  update();
  }
- let freeRemaining=20,adEarned=0,adUsed=0,busy=false,timer=null;
- const read=(key,fallback)=>{try{const v=localStorage.getItem(key);return v===null?fallback:Number(v)}catch(_){return fallback}};
- const write=(key,value)=>{try{localStorage.setItem(key,String(value))}catch(_){}};
  function update(){
-  const now=Date.now();
-  let until=read(FREE_UNTIL_KEY,0);
-  if(until&&now>=until){freeRemaining=20;until=0;write(FREE_KEY,20);write(FREE_UNTIL_KEY,0)}
-  const total=Math.max(0,freeRemaining)+Math.max(0,adEarned-adUsed);
-  attempts.textContent=String(total);
-  adCount.textContent=adEarned>=10?"MAX":adEarned+"/10";
-  adButton.disabled=busy||adEarned>=10;
-  spin.disabled=busy||total<=0;
-  if(until>now){
-   const sec=Math.ceil((until-now)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),ss=sec%60;
+  const now=serverNow+Math.floor((Date.now()-syncAt)/1000);
+  const freeAvailable=!freeNextAt||freeNextAt<=now;
+  attempts.textContent=String((freeAvailable?1:0)+adSpinsAvailable);
+  adCount.textContent=wheelAds>=10?"MAX":wheelAds+"/10";
+  adButton.disabled=busy||wheelAds>=10;
+  spin.disabled=busy||(!freeAvailable&&adSpinsAvailable<=0);
+  if(!freeAvailable){
+   const sec=Math.max(0,freeNextAt-now),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),ss=sec%60;
    countdown.textContent=[h,m,ss].map(v=>String(v).padStart(2,"0")).join(":");
    countdown.hidden=false;
   }else countdown.hidden=true;
  }
- async function refreshAds(){
+ async function refreshWheel(){
   try{
-   const response=await fetch("/api/adsgram-reward",{method:"GET",cache:"no-store",credentials:"same-origin"});
-   const data=await response.json();
-   if(!response.ok||!data.success)throw new Error(data.error||"تعذر تحميل المحاولات");
-   adEarned=Math.min(10,Math.max(0,Number(data.wheelAds)||0));
-   adUsed=Math.min(adEarned,Math.max(0,read(USED_KEY,0)));
-   update();
-  }catch(error){if(adMessage)adMessage.textContent="تعذر تحميل تقدم الإعلانات. افتح حسابك ثم أعد المحاولة."}
- }
- spin.addEventListener("click",function(){
-  if(busy)return;
-  const until=read(FREE_UNTIL_KEY,0);
-  if(freeRemaining<=0&&adEarned<=adUsed){update();return}
-  const usedFreeAttempt=freeRemaining>0;
-  if(freeRemaining>0){
-   freeRemaining--;write(FREE_KEY,freeRemaining);
-   if(freeRemaining===0)write(FREE_UNTIL_KEY,Date.now()+86400000);
-  }else{
-   adUsed++;write(USED_KEY,adUsed);
+   const response=await fetch("/api/wheel",{method:"GET",cache:"no-store",credentials:"same-origin"});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.success)throw new Error(data.error||"تعذر تحميل محاولات العجلة");
+   applyState(data);
+  }catch(error){
+   if(adMessage)adMessage.textContent="تعذر تحميل محاولات العجلة. افتح حسابك ثم أعد المحاولة.";
   }
-  const isFreeSpin=usedFreeAttempt;
-  const selected=isFreeSpin
-   ?weightedPrize([{value:0,weight:20},{value:5,weight:15},{value:10,weight:45},{value:20,weight:20}])
-   :weightedPrize([{value:0,weight:18},{value:5,weight:12},{value:10,weight:40},{value:20,weight:22},{value:30,weight:8}]);
-  const matchingSectors=prizes.map((value,index)=>value===selected?index:-1).filter(index=>index>=0);
-  const sector=matchingSectors[Math.floor(Math.random()*matchingSectors.length)];
-  const angle=1800+((342-sector*36+360)%360);
+ }
+ spin.addEventListener("click",async function(){
+  if(busy)return;
   busy=true;update();
-  wheel.style.animation="none";
-  wheel.style.transition="none";
-  wheel.style.transform="rotate(0deg)";
-  void wheel.getBoundingClientRect();
-  wheel.style.transition="transform 5s cubic-bezier(.12,.72,.16,1)";
-  wheel.style.transform="rotate("+angle+"deg)";
-  window.setTimeout(function(){
-   if(prize)prize.textContent=selected+"";
+  try{
+   const response=await fetch("/api/wheel",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({action:"spin"})});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.success)throw new Error(data.error==="NO_SPINS_AVAILABLE"?"لا توجد محاولات متاحة. شاهد إعلاناً للحصول على 🎟️.":data.error||"تعذر تدوير العجلة.");
+   applyState(data);
+   const angle=1800+((342-Number(data.sector||0)*36+360)%360);
+   wheel.style.animation="none";
+   wheel.style.transition="none";
+   wheel.style.transform="rotate(0deg)";
+   void wheel.getBoundingClientRect();
+   wheel.style.transition="transform 5s cubic-bezier(.12,.72,.16,1)";
+   wheel.style.transform="rotate("+angle+"deg)";
+   if(adMessage)adMessage.textContent=data.mode==="free"?"استعملت المحاولة المجانية لهذا اليوم.":"تم استعمال 🎟️ واحدة.";
+   window.setTimeout(function(){
+    if(prize)prize.textContent=String(data.prize);
+    busy=false;update();
+    if(typeof window.loadOxideWallet==="function")window.loadOxideWallet();
+    refreshWheel();
+   },5100);
+   if(timer)clearInterval(timer);
+   timer=setInterval(update,1000);
+  }catch(error){
    busy=false;update();
-  },5100);
-  if(timer)clearInterval(timer);
-  timer=setInterval(update,1000);
+   if(adMessage)adMessage.textContent=error.message||"تعذر تدوير العجلة.";
+   refreshWheel();
+  }
  });
  adButton.addEventListener("click",async function(){
-  if(busy||adEarned>=10)return;
+  if(busy||wheelAds>=10)return;
   if(!window.Adsgram||typeof window.Adsgram.init!=="function"){
    if(adMessage)adMessage.textContent="نظام الإعلانات غير متاح حالياً.";
    return;
   }
-  busy=true;adButton.disabled=true;
+  busy=true;update();
   if(adMessage)adMessage.textContent="جارٍ تحضير الإعلان...";
-  update();
   try{
    const start=await fetch("/api/adsgram-reward",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({offer:"wheel"})});
    const started=await start.json().catch(()=>({}));
    if(!start.ok||!started.success)throw new Error(started.error||"تعذر بدء الإعلان");
-   const before=adEarned;
+   const before=wheelAds;
    if(!window.oxideAdsgramController)window.oxideAdsgramController=window.Adsgram.init({blockId:"61386"});
    const result=await window.oxideAdsgramController.show();
    if(!result||result.done!==true)throw new Error("لم يكتمل الإعلان.");
-   if(adMessage)adMessage.textContent="تمت مشاهدة الإعلان، جارٍ تأكيد المحاولة...";
+   if(adMessage)adMessage.textContent="تمت مشاهدة الإعلان، جارٍ تأكيد 🎟️...";
    let confirmed=false;
    for(let i=0;i<20;i++){
     await new Promise(resolve=>setTimeout(resolve,1000));
-    const response=await fetch("/api/adsgram-reward",{method:"GET",cache:"no-store",credentials:"same-origin"});
+    const response=await fetch("/api/wheel",{method:"GET",cache:"no-store",credentials:"same-origin"});
     const data=await response.json().catch(()=>({}));
-    const count=Math.min(10,Number(data.wheelAds)||0);
-    if(response.ok&&data.success&&count>before){adEarned=count;confirmed=true;break}
+    if(response.ok&&data.success){
+     applyState(data);
+     if(wheelAds>before){confirmed=true;break}
+    }
    }
-   if(!confirmed)throw new Error("لم يصل تأكيد الإعلان من الخادم. لم تُضف محاولة.");
-   if(adMessage)adMessage.textContent="تمت إضافة محاولة بنجاح ✓";
-  }catch(error){if(adMessage)adMessage.textContent=error.message||"تعذر إكمال الإعلان."}
-  finally{busy=false;update()}
+   if(!confirmed)throw new Error("لم يصل تأكيد الإعلان من الخادم. لم تُضف 🎟️.");
+   if(adMessage)adMessage.textContent="تمت إضافة 🎟️ بنجاح ✓";
+  }catch(error){
+   if(adMessage)adMessage.textContent=error.message||"تعذر إكمال الإعلان.";
+  }finally{busy=false;update();refreshWheel()}
  });
- freeRemaining=Math.max(0,Math.min(20,read(FREE_KEY,20)));
- adUsed=Math.max(0,read(USED_KEY,0));
- update();refreshAds();
+ update();refreshWheel();
  if(timer)clearInterval(timer);
  timer=setInterval(update,1000);
 })();
