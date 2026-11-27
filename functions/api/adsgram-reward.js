@@ -4,7 +4,7 @@ const REWARD_POINTS = 20;
 const MAX_ADS = 10;
 const CYCLE_SECONDS = 5 * 60 * 60;
 const CLAIM_COOLDOWN_SECONDS = 30;
-const PLATFORM_OFFERS = ["beta", "android", "ios"];
+const PLATFORM_OFFERS = ["beta", "android", "ios", "beta_pc"];
 
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string" || !a || a.length !== b.length) return false;
@@ -40,9 +40,12 @@ async function ensureTables(DB) {
       beta_ads INTEGER NOT NULL DEFAULT 0,
       android_ads INTEGER NOT NULL DEFAULT 0,
       ios_ads INTEGER NOT NULL DEFAULT 0,
+      beta_pc_ads INTEGER NOT NULL DEFAULT 0,
       cycle_started_at INTEGER NOT NULL
     )
   `).run();
+  const platformCols = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
+  if (!(platformCols.results || []).some(c => c.name === "beta_pc_ads")) await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
   await DB.prepare("CREATE TABLE IF NOT EXISTS adsgram_ad_analytics (id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,offer TEXT NOT NULL DEFAULT 'island',event_type TEXT NOT NULL,created_at INTEGER NOT NULL)").run();
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
@@ -76,21 +79,22 @@ async function readProgress(DB, userId, now) {
 
 async function readPlatformProgress(DB, userId, now) {
   await DB.prepare(
-    "INSERT OR IGNORE INTO platform_ad_progress(user_id,beta_ads,android_ads,ios_ads,cycle_started_at) VALUES(?,0,0,0,?)"
+    "INSERT OR IGNORE INTO platform_ad_progress(user_id,beta_ads,android_ads,ios_ads,beta_pc_ads,cycle_started_at) VALUES(?,0,0,0,0,?)"
   ).bind(userId, now).run();
   let row = await DB.prepare(
-    "SELECT beta_ads,android_ads,ios_ads,cycle_started_at FROM platform_ad_progress WHERE user_id=?"
+    "SELECT beta_ads,android_ads,ios_ads,beta_pc_ads,cycle_started_at FROM platform_ad_progress WHERE user_id=?"
   ).bind(userId).first();
   if (now - Number(row?.cycle_started_at || now) >= CYCLE_SECONDS) {
     await DB.prepare(
-      "UPDATE platform_ad_progress SET beta_ads=0,android_ads=0,ios_ads=0,cycle_started_at=? WHERE user_id=?"
+      "UPDATE platform_ad_progress SET beta_ads=0,android_ads=0,ios_ads=0,beta_pc_ads=0,cycle_started_at=? WHERE user_id=?"
     ).bind(now, userId).run();
     row = { beta_ads: 0, android_ads: 0, ios_ads: 0, cycle_started_at: now };
   }
   return {
     beta: Math.min(MAX_ADS, Math.max(0, Number(row?.beta_ads || 0))),
     android: Math.min(MAX_ADS, Math.max(0, Number(row?.android_ads || 0))),
-    ios: Math.min(MAX_ADS, Math.max(0, Number(row?.ios_ads || 0)))
+    ios: Math.min(MAX_ADS, Math.max(0, Number(row?.ios_ads || 0))),
+    beta_pc: Math.min(MAX_ADS, Math.max(0, Number(row?.beta_pc_ads || 0)))
   };
 }
 
@@ -108,6 +112,7 @@ async function notifyAdminAdWatch(env, DB, userUuid, result, offer, now) {
       beta: "BETA",
       android: "ANDROID",
       ios: "iOS",
+      beta_pc: "PC BETA",
       island: "الجزيرة (Island)"
     };
     const progress = result.platformProgress && offer !== "island"
@@ -275,7 +280,7 @@ export async function onRequestGet({ request, env }) {
       env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(userId).first(),
       env.DB.prepare("SELECT offer FROM platform_paid_unlocks WHERE user_uuid=?").bind(userId).all()
     ]);
-    const paidUnlocks={beta:false,android:false,ios:false};for(const row of (paidRows.results||[]))if(PLATFORM_OFFERS.includes(row.offer))paidUnlocks[row.offer]=true;
+    const paidUnlocks={beta:false,android:false,ios:false,beta_pc:false};for(const row of (paidRows.results||[]))if(PLATFORM_OFFERS.includes(row.offer))paidUnlocks[row.offer]=true;
     return json({ success: true, completedAds, platformProgress, points: Number(user?.points || 0), goAccess: Boolean(goPass), paidUnlocks });
   } catch (error) {
     console.error("AdsGram reward endpoint failed:", error);
