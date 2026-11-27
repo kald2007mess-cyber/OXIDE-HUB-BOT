@@ -109,6 +109,7 @@ export async function onRequestPost({request,env}){
    if(c.message.length>1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});
    for(let i=0;i<c.files.length;i++)await sendStoredDocument(env,chat,c.files[i],i===0&&c.message.length<=1024?c.message:"");
   }
+  await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:"✅ تم إرسال الملف بنجاح. يمكنك الآن تنزيله من هذه المحادثة."});
   await env.DB.prepare("INSERT INTO platform_delivery_claims(user_uuid,offer,last_sent_at) VALUES(?,?,?) ON CONFLICT(user_uuid,offer) DO UPDATE SET last_sent_at=excluded.last_sent_at").bind(user,offer,now).run();
   return out({success:true,offer,sentFiles:c.files.length});
  }catch(e){console.error("Platform delivery failed",e);return out({success:false,error:String(e?.message||"DELIVERY_FAILED").slice(0,180)},500);}
