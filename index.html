@@ -1454,9 +1454,9 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 .oxide-leaderboard-top-button svg{position:relative;z-index:1;width:25px;height:25px;filter:drop-shadow(0 0 5px rgba(204,174,255,.8))}
 .oxide-leaderboard-top-button:active{transform:scale(.96)}
 @keyframes oxideTrophyRain{from{background-position:0 -60px,0 -100px}to{background-position:0 100px,0 140px}}
-.top-bar:has(#referralPage[style*="display: block"]) .oxide-leaderboard-top-button{display:grid;place-items:center}
-@media(max-width:520px){.oxide-leaderboard-top-button{left:102px;width:38px;min-width:38px;height:46px;border-radius:15px}.top-bar:has(#referralPage[style*="display: block"]){padding-left:148px}}
-@media(max-width:360px){.oxide-leaderboard-top-button{left:90px;width:34px;min-width:34px;height:43px}.top-bar:has(#referralPage[style*="display: block"]){padding-left:130px}}
+body:has(#referralPage[style*="display: block"]) .top-bar .oxide-leaderboard-top-button{display:grid;place-items:center}
+@media(max-width:520px){.oxide-leaderboard-top-button{left:102px;width:38px;min-width:38px;height:46px;border-radius:15px}body:has(#referralPage[style*="display: block"]) .top-bar{padding-left:148px}}
+@media(max-width:360px){.oxide-leaderboard-top-button{left:90px;width:34px;min-width:34px;height:43px}body:has(#referralPage[style*="display: block"]) .top-bar{padding-left:130px}}
 @media(prefers-reduced-motion:reduce){.oxide-leaderboard-top-button::before{animation:none}}
 
 </style>
