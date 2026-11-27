@@ -1337,51 +1337,6 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 
 
 
-/* Unified blue-violet glass 3D finish across every main tab */
-:root{--oxide-blue:#168cff;--oxide-violet:#9a55ff;--oxide-glass:rgba(10,22,46,.72);--oxide-edge:rgba(105,164,255,.38)}
-.navigation{background:linear-gradient(135deg,rgba(7,20,45,.82),rgba(28,13,55,.76));border:1px solid rgba(113,150,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 9px 25px rgba(0,0,0,.32),0 0 18px rgba(77,115,255,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.nav-item{border:1px solid rgba(126,155,255,.12);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(35,47,91,.12));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 9px rgba(0,0,0,.16);transition:background .22s,border-color .22s,box-shadow .22s,transform .22s}
-.nav-item.active{background:linear-gradient(135deg,rgba(17,126,232,.82),rgba(91,65,205,.86) 58%,rgba(139,61,219,.82));border-color:rgba(183,177,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -5px 12px rgba(20,15,75,.2),0 5px 15px rgba(24,111,255,.28),0 0 18px rgba(143,82,255,.25)}
-.nav-item:active,.island-tab:active{transform:translateY(1px) scale(.985)}
-.nav-icon,.nav-icon svg{filter:drop-shadow(0 0 5px rgba(132,173,255,.35))}
-#homePage .progress-box,#homePage .stage,#homePage .guide-box,#homePage .support-box,
-#rewardsPage .balance-card,#rewardsPage .reward-card,#rewardsPage .pending-note,#rewardsPage .island-section,
-#referralPage .oxide-referral-card,#referralPage .oxide-invite-card,#referralPage .oxide-how-card,#referralPage .oxide-ranking-card,
-#newsPage .news-card,#accountPage .oxide-account-card,#accountPage .oxide-account-section,
-#missionsPage .mission-center,#missionsPage .mission-progress-card,#missionsPage .mission-summary-item,
-#skillsPage .skills-hero,#skillsPage .skills-wallet,#skillsPage .skill-card,#withdrawPage .withdraw-card{
- background-image:linear-gradient(145deg,rgba(17,42,79,.52),rgba(35,19,70,.34));
- border-color:var(--oxide-edge);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.105),inset 0 -1px 0 rgba(112,143,255,.08),0 10px 24px rgba(0,0,0,.24),0 0 16px rgba(79,115,255,.08);
- backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
-}
-#homePage .stage,#homePage .progress-box,#homePage .guide-box,#homePage .support-box,
-#rewardsPage .reward-card,#rewardsPage .island-section,#referralPage .oxide-referral-card,
-#accountPage .oxide-account-card,#missionsPage .mission-item,#skillsPage .skill-card{
- border-radius:15px
-}
-#homePage button:not(:disabled),#rewardsPage button:not(:disabled),#referralPage button:not(:disabled),
-#newsPage button:not(:disabled),#accountPage button:not(:disabled),#missionsPage button:not(:disabled),
-#skillsPage button:not(:disabled),#withdrawPage button:not(:disabled){
- box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 5px 12px rgba(0,0,0,.22)
-}
-#homePage .stage button:not(:disabled),#homePage .platform-button.available,#homePage .support-send,
-#rewardsPage .reward-button:not(:disabled),#rewardsPage .island-watch-button:not(:disabled),
-#referralPage .oxide-copy-button,#referralPage .oxide-share-button,
-#missionsPage .mission-link-button,#missionsPage .mission-submit-button,
-#accountPage .oxide-account-action,#skillsPage .skills-action{
- background:linear-gradient(120deg,#087fe8 0%,#4d63e8 52%,#913fe0 100%);
- border:1px solid rgba(181,190,255,.52);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 5px 14px rgba(33,91,220,.24),0 0 12px rgba(132,74,235,.16)
-}
-#homePage input,#homePage textarea,#homePage select,#rewardsPage input,#referralPage input,
-#accountPage input,#accountPage select,#missionsPage input,#missionsPage select,#skillsPage input{
- background:rgba(5,15,34,.68);border-color:rgba(113,150,255,.4);box-shadow:inset 0 2px 7px rgba(0,0,0,.2)
-}
-.island-tab{background:linear-gradient(145deg,rgba(20,54,96,.78),rgba(47,26,83,.72));border-color:rgba(112,157,255,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 7px 16px rgba(0,0,0,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.island-tab.active{background:linear-gradient(135deg,rgba(8,126,232,.88),rgba(79,70,205,.88),rgba(143,57,218,.82));border-color:rgba(192,185,255,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 17px rgba(104,96,255,.27)}
-@media(prefers-reduced-motion:no-preference){.nav-item.active{animation:oxideGlassGlow 3.2s ease-in-out infinite alternate}@keyframes oxideGlassGlow{from{box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 5px 14px rgba(24,111,255,.2),0 0 10px rgba(143,82,255,.14)}to{box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 6px 17px rgba(24,111,255,.32),0 0 19px rgba(143,82,255,.28)}}}
-
 </style>
 </head>
 <body>
