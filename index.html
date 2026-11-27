@@ -3797,6 +3797,32 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 @media(prefers-reduced-motion:reduce){
   #rewardsGrid .reward-button,#rewardsGrid .platform-purchase-button,#rewardsGrid .platform-ad-button,.island-watch-button{animation:none!important}
 }
+
+/* Match reward buttons to the exact OXIDE VIP button gradient and glow */
+@keyframes oxideVipMatchGlow{
+  0%,100%{background-position:0% 50%;box-shadow:0 0 8px rgba(8,127,234,.52),0 0 18px rgba(88,75,245,.42),0 0 28px rgba(150,56,232,.28),inset 0 1px 1px rgba(255,255,255,.28)}
+  50%{background-position:100% 50%;box-shadow:0 0 13px rgba(8,127,234,.82),0 0 27px rgba(88,75,245,.68),0 0 40px rgba(150,56,232,.46),inset 0 1px 1px rgba(255,255,255,.35)}
+}
+#rewardsGrid .reward-button:not(.platform-soon-button),
+#rewardsGrid .platform-purchase-button,
+#rewardsGrid .platform-ad-button,
+#rewardsGrid .reward-card>.reward-button,
+.island-watch-button{
+  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+  background-size:220% 220%!important;
+  border:1px solid rgba(151,126,255,.55)!important;
+  border-radius:12px!important;
+  color:#fff!important;
+  animation:oxideVipMatchGlow 2.4s ease-in-out infinite!important;
+  box-shadow:0 0 18px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.22);
+}
+#rewardsGrid .reward-button:not(.platform-soon-button):hover,
+#rewardsGrid .platform-purchase-button:hover,
+#rewardsGrid .platform-ad-button:hover,
+.island-watch-button:hover{filter:brightness(1.08) saturate(1.08)!important}
+#rewardsGrid .platform-soon-button,
+#rewardsGrid .platform-soon-button:disabled{background:#344253!important;border:1px solid rgba(117,145,171,.25)!important;box-shadow:none!important;animation:none!important}
+@media(prefers-reduced-motion:reduce){#rewardsGrid .reward-button,#rewardsGrid .platform-purchase-button,#rewardsGrid .platform-ad-button,.island-watch-button{animation:none!important}}
 </style>
 
 <div id="oxideVipModal" hidden>
