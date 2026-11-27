@@ -1241,6 +1241,99 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
   border:1px solid rgba(127,112,255,.55)!important;box-shadow:0 0 12px rgba(8,127,234,.14),0 0 15px rgba(150,56,232,.13)!important
 }
 
+
+/* OXIDE ISLAND — reference-matched vivid cyan / violet / magenta neon */
+@keyframes oxideIslandReferenceGlow{
+  0%,100%{box-shadow:0 0 10px rgba(0,195,255,.72),0 0 22px rgba(0,105,255,.38),0 0 30px rgba(184,0,255,.28),inset 0 0 12px rgba(0,195,255,.12);border-color:rgba(94,213,255,.95)}
+  50%{box-shadow:0 0 16px rgba(0,220,255,.95),0 0 30px rgba(0,105,255,.55),0 0 42px rgba(210,0,255,.58),inset 0 0 18px rgba(190,0,255,.18);border-color:rgba(226,103,255,.98)}
+}
+@keyframes oxideIslandButtonFlow{
+  0%,100%{background-position:0% 50%;box-shadow:0 0 12px rgba(0,207,255,.85),0 0 22px rgba(0,125,255,.48),0 0 27px rgba(205,0,255,.5),inset 0 1px rgba(255,255,255,.28)}
+  50%{background-position:100% 50%;box-shadow:0 0 17px rgba(0,220,255,1),0 0 30px rgba(115,0,255,.68),0 0 36px rgba(230,0,255,.72),inset 0 1px rgba(255,255,255,.38)}
+}
+#rewardsPage .island-section{
+  background:
+    radial-gradient(ellipse at 2% 42%,rgba(0,145,255,.27),transparent 42%),
+    radial-gradient(ellipse at 98% 44%,rgba(196,0,255,.30),transparent 46%),
+    linear-gradient(135deg,rgba(3,12,43,.98) 0%,rgba(12,10,52,.98) 52%,rgba(28,5,53,.98) 100%)!important;
+  border:2px solid rgba(105,103,255,.88)!important;
+  box-shadow:0 0 14px rgba(0,170,255,.7),0 0 28px rgba(160,0,255,.42),inset 0 0 30px rgba(71,30,255,.22)!important;
+}
+#rewardsPage .island-title{
+  font-size:30px!important;letter-spacing:2px!important;font-weight:1000!important;
+  background:linear-gradient(90deg,#00dcff 0%,#397cff 38%,#bb45ff 72%,#ff35df 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  text-shadow:0 0 10px rgba(0,195,255,.72),0 0 22px rgba(178,0,255,.7)!important;
+}
+#rewardsPage .oxide-exchange-heading{filter:drop-shadow(0 0 10px rgba(175,0,255,.55))}
+#rewardsPage .oxide-exchange-arrow{color:#d18aff!important;text-shadow:0 0 12px #bd35ff,0 0 20px #643cff!important}
+#rewardsPage .oxide-exchange-coin{filter:drop-shadow(0 0 8px rgba(0,200,255,.58)) drop-shadow(0 0 13px rgba(205,0,255,.65))!important}
+#rewardsPage .balance-card{
+  background:linear-gradient(105deg,rgba(0,75,160,.96) 0%,rgba(31,35,150,.97) 48%,rgba(104,0,153,.97) 100%)!important;
+  border:2px solid rgba(149,117,255,.98)!important;border-radius:22px!important;
+  box-shadow:0 0 12px rgba(0,199,255,.9),0 0 26px rgba(0,105,255,.5),0 0 34px rgba(210,0,255,.72),inset 0 0 20px rgba(255,255,255,.09)!important;
+}
+#rewardsPage .balance-label{color:#f1eaff!important;text-shadow:0 0 10px rgba(194,100,255,.85)!important}
+#rewardsPage .balance-number{
+  background:linear-gradient(90deg,#00dcff 0%,#76baff 35%,#d19aff 68%,#ffb0f5 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  text-shadow:0 0 12px rgba(0,195,255,.5),0 0 24px rgba(192,0,255,.48)!important
+}
+#rewardsPage .balance-unit{color:#fff!important;text-shadow:0 0 9px rgba(178,90,255,.8)!important}
+#rewardsPage .island-panel{
+  background:linear-gradient(135deg,rgba(3,14,48,.97),rgba(16,7,48,.98))!important;
+  border:2px solid rgba(118,74,255,.9)!important;border-radius:24px!important;
+  box-shadow:0 0 12px rgba(0,165,255,.58),0 0 25px rgba(183,0,255,.52),inset 0 0 25px rgba(91,42,255,.18)!important;
+}
+#rewardsPage .reward-card{
+  position:relative!important;
+  background:linear-gradient(112deg,rgba(0,48,128,.98) 0%,rgba(20,24,104,.98) 48%,rgba(68,9,111,.98) 100%)!important;
+  border:1.5px solid rgba(142,105,255,.95)!important;border-radius:21px!important;
+  box-shadow:0 0 10px rgba(0,195,255,.55),0 0 21px rgba(0,105,255,.28),0 0 25px rgba(190,0,255,.42),inset 0 0 18px rgba(255,255,255,.08)!important;
+}
+#rewardsPage .reward-card:before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(110deg,rgba(0,195,255,.12),transparent 42%,rgba(221,0,255,.15));
+}
+#rewardsPage .reward-image{position:relative!important;filter:drop-shadow(0 0 8px rgba(0,180,255,.2)) drop-shadow(0 5px 10px rgba(0,0,0,.3))!important}
+#rewardsPage .reward-name{position:relative!important;color:#fff!important;text-shadow:0 0 8px rgba(0,195,255,.55),0 0 13px rgba(213,0,255,.5)!important}
+#rewardsPage .reward-price{
+  position:relative!important;
+  background:linear-gradient(90deg,#36dfff 0%,#8cbaff 38%,#dba0ff 72%,#ff9bf1 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;-webkit-text-fill-color:transparent!important;
+  text-shadow:0 0 9px rgba(0,180,255,.45),0 0 14px rgba(207,0,255,.48)!important
+}
+#rewardsPage .reward-button,
+#rewardsPage .redeem-confirm,
+#rewardsPage .redeem-cancel{
+  background:linear-gradient(105deg,#00d9ff 0%,#087cff 34%,#8734ff 68%,#ed00ed 100%)!important;
+  background-size:220% 220%!important;border:1.5px solid rgba(203,179,255,.95)!important;border-radius:30px!important;
+  color:#fff!important;font-weight:900!important;text-shadow:0 0 8px rgba(255,255,255,.6)!important;
+  box-shadow:0 0 13px rgba(0,205,255,.95),0 0 24px rgba(0,110,255,.58),0 0 30px rgba(213,0,255,.78),inset 0 1px 0 rgba(255,255,255,.38)!important;
+  animation:oxideIslandButtonFlow 2.3s ease-in-out infinite!important;
+}
+#rewardsPage .reward-button:disabled,#rewardsPage .redeem-confirm:disabled{opacity:1!important;filter:saturate(.88)!important}
+#rewardsPage .redeem-inline-form{
+  background:linear-gradient(115deg,rgba(0,35,91,.98),rgba(52,8,88,.98))!important;
+  border:1.5px solid rgba(157,105,255,.95)!important;box-shadow:0 0 14px rgba(0,180,255,.5),0 0 25px rgba(200,0,255,.42)!important
+}
+#rewardsPage .redeem-inline-title{color:#f0d7ff!important;text-shadow:0 0 9px rgba(199,0,255,.65)}
+#rewardsPage .redeem-inline-input{background:rgba(2,12,42,.98)!important;color:#fff!important;border:1px solid #8b7cff!important}
+#rewardsPage .redeem-inline-input:focus{border-color:#00dfff!important;box-shadow:0 0 13px rgba(0,210,255,.75),0 0 20px rgba(195,0,255,.55)!important}
+#rewardsPage .reward-message{color:#e5c4ff!important;text-shadow:0 0 8px rgba(180,0,255,.45)}
+#rewardsPage .reward-orders{
+  background:linear-gradient(120deg,rgba(0,27,74,.9),rgba(49,6,75,.9))!important;
+  border:1.5px solid rgba(140,102,255,.8)!important;box-shadow:0 0 12px rgba(0,180,255,.35),0 0 20px rgba(192,0,255,.35)!important
+}
+#rewardsPage .reward-orders-title{color:#e5c4ff!important;text-shadow:0 0 10px rgba(190,0,255,.6)}
+#rewardsPage .reward-order-item{background:rgba(12,22,79,.82)!important;border-color:rgba(137,117,255,.65)!important}
+#rewardsPage .reward-order-name{color:#fff!important}
+#rewardsPage .reward-order-meta,#rewardsPage .reward-orders-empty{color:#c8d8ff!important}
+#rewardsPage .pending-note{
+  color:#e5d6ff!important;background:linear-gradient(110deg,rgba(0,39,89,.9),rgba(54,8,82,.9))!important;
+  border:1px solid rgba(146,112,255,.8)!important;box-shadow:0 0 12px rgba(0,174,255,.35),0 0 19px rgba(195,0,255,.3)!important
+}
+
 </style>
 </head>
 <body>
