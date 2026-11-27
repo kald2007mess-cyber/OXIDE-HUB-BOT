@@ -1400,6 +1400,53 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 #accountPage .oxide-account-language select{background:linear-gradient(135deg,#1268c8,#4432a6 58%,#762bd1)!important;border:1px solid rgba(139,119,255,.75)!important;color:#fff!important;border-radius:11px!important;box-shadow:0 0 12px rgba(77,112,255,.2)}
 #accountPage .oxide-account-language option{background:#17143b!important;color:#fff!important}
 
+
+/* OXIDE HUB missions — premium blue/purple glass interface; visual-only */
+#missionsPage{padding-bottom:18px}
+#missionsPage .oxide-missions-glass-frame{
+ position:relative;isolation:isolate;overflow:hidden;padding:16px 13px 18px;
+ border:1px solid rgba(112,132,255,.38);border-radius:23px;
+ background:linear-gradient(155deg,rgba(8,25,55,.94),rgba(18,12,49,.94) 58%,rgba(5,18,42,.96));
+ box-shadow:0 16px 38px rgba(0,0,0,.3),0 0 24px rgba(76,105,255,.1),inset 0 1px rgba(255,255,255,.1);
+ backdrop-filter:blur(16px) saturate(1.25);-webkit-backdrop-filter:blur(16px) saturate(1.25)
+}
+#missionsPage .oxide-missions-glass-frame:before{content:"";position:absolute;z-index:-1;inset:-35% -20% auto;height:230px;background:radial-gradient(ellipse,rgba(45,143,255,.19),transparent 68%),radial-gradient(ellipse at 80% 20%,rgba(157,73,255,.2),transparent 58%);pointer-events:none}
+#missionsPage .oxide-shards-summary{position:relative;margin:0 0 14px;padding:13px 15px;border:1px solid rgba(120,151,255,.35);border-radius:17px;background:linear-gradient(115deg,rgba(13,83,153,.35),rgba(71,37,139,.38));box-shadow:inset 0 1px rgba(255,255,255,.08),0 8px 20px rgba(0,0,0,.16)}
+#missionsPage .oxide-shards-caption{color:#c6d7ff;font-size:10px;font-weight:800;letter-spacing:1.5px}
+#missionsPage .oxide-shards-balance{margin-top:4px;color:#fff;font-size:29px;font-weight:950;text-shadow:0 0 16px rgba(99,154,255,.35)}
+#missionsPage .oxide-missions-heading{text-align:center;padding:6px 4px 14px}
+#missionsPage .oxide-missions-heading .oxide-referral-eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(151,111,255,.38);border-radius:30px;background:linear-gradient(100deg,rgba(23,111,207,.2),rgba(122,53,204,.22));color:#c9c4ff;font-size:10px;font-weight:900;letter-spacing:2px}
+#missionsPage .oxide-missions-heading h2{margin:13px 0 7px;color:#fff;font-size:25px;font-weight:950;letter-spacing:.3px;text-shadow:0 0 18px rgba(101,128,255,.25)}
+#missionsPage .oxide-missions-heading h2 img{width:29px;height:29px}
+#missionsPage .oxide-task-countline{margin:0;color:#aebfe5;font-size:11px}
+#missionsPage .oxide-task-countline strong{color:#8ecaff;font-size:13px}
+#missionsPage .oxide-island-ad-moved{margin:0 0 14px;padding:14px;border:1px solid rgba(107,142,255,.36);border-radius:17px;background:linear-gradient(135deg,rgba(11,67,122,.4),rgba(64,35,124,.42));box-shadow:inset 0 1px rgba(255,255,255,.07),0 9px 20px rgba(0,0,0,.16);color:#eaf2ff}
+#missionsPage .island-progress{height:9px;margin:10px 0;border-radius:20px;background:rgba(5,12,35,.7);border:1px solid rgba(151,174,255,.2);overflow:hidden}
+#missionsPage .island-progress-fill{border-radius:20px;background:linear-gradient(90deg,#168fff,#8060ff,#c06bff);box-shadow:0 0 13px rgba(116,111,255,.55)}
+#missionsPage .island-watch-button{width:100%;min-height:46px;margin-top:10px;border:1px solid rgba(156,190,255,.55);border-radius:13px;background:linear-gradient(105deg,#087fda,#4356d8 55%,#843bd0);color:#fff;font-size:13px;font-weight:900;box-shadow:0 7px 18px rgba(52,94,224,.24),inset 0 1px rgba(255,255,255,.2)}
+#missionsPage .oxide-mission-categories{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 14px}
+#missionsPage .oxide-mission-category{min-width:0;min-height:83px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:9px 4px;border:1px solid rgba(119,143,220,.27);border-radius:15px;background:linear-gradient(150deg,rgba(20,51,94,.72),rgba(34,20,75,.72));color:#c8d7f5;font-size:10px;font-weight:800;transition:transform .18s,border-color .18s,box-shadow .18s}
+#missionsPage .oxide-mission-category.active{border-color:rgba(129,176,255,.85);background:linear-gradient(145deg,rgba(14,112,196,.78),rgba(91,48,173,.82));color:#fff;box-shadow:0 0 0 1px rgba(129,145,255,.15),0 8px 19px rgba(53,85,204,.2),inset 0 1px rgba(255,255,255,.16)}
+#missionsPage .oxide-mission-category:active{transform:scale(.97)}
+#missionsPage .oxide-category-icon{width:35px;height:35px;display:grid;place-items:center;border:1px solid rgba(153,181,255,.25);border-radius:12px;background:linear-gradient(145deg,rgba(23,132,218,.28),rgba(130,64,208,.28));color:#b9d9ff;box-shadow:inset 0 1px rgba(255,255,255,.12)}
+#missionsPage .oxide-category-icon svg{width:23px;height:23px;stroke:url(#oxideMissionIconGradient);filter:drop-shadow(0 0 5px rgba(114,153,255,.35))}
+#missionsPage .mission-list{gap:10px}
+#missionsPage .mission-item{position:relative;overflow:hidden;padding:13px;border:1px solid rgba(111,145,220,.32);border-radius:16px;background:linear-gradient(145deg,rgba(13,43,79,.88),rgba(29,20,68,.9));box-shadow:0 8px 18px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.06)}
+#missionsPage .mission-item:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,#28b8ff,#9461ff);opacity:.9}
+#missionsPage .mission-item-icon{border:1px solid rgba(139,173,255,.5);border-radius:13px;background:linear-gradient(145deg,rgba(13,127,207,.38),rgba(104,57,186,.42));color:#d7e7ff;box-shadow:0 0 14px rgba(83,111,255,.16)}
+#missionsPage .mission-platform-svg{filter:drop-shadow(0 0 5px rgba(107,169,255,.35))}
+#missionsPage .mission-item-title{color:#f5f6ff;font-size:13px;font-weight:900}
+#missionsPage .mission-item-meta{color:#a3b5dc}
+#missionsPage .mission-description{color:#c3cce6;font-size:11px;line-height:1.8}
+#missionsPage .mission-status-pill{border-color:rgba(112,177,255,.4);background:rgba(30,116,204,.17);color:#9bd7ff}
+#missionsPage .mission-reward{color:#c4a4ff;text-shadow:0 0 9px rgba(148,98,255,.24)}
+#missionsPage .mission-link-button,#missionsPage .mission-submit-button{border:1px solid rgba(151,174,255,.5);border-radius:11px;background:linear-gradient(105deg,#087fd3,#4d55cf 55%,#813bd0);color:#fff;font-weight:900;box-shadow:0 6px 15px rgba(58,86,203,.2)}
+#missionsPage .mission-history{border-top-color:rgba(127,148,220,.25)}
+#missionsPage .mission-history-title{color:#b9a6ff}
+#missionsPage .mission-history-item{border:1px solid rgba(112,145,220,.27);border-radius:13px;background:linear-gradient(135deg,rgba(13,44,78,.78),rgba(31,20,66,.82));color:#e1e9ff}
+#missionsPage .mission-proof-box{border-color:rgba(122,154,232,.35);border-radius:13px;background:rgba(10,25,55,.6)}
+@media(max-width:360px){#missionsPage .oxide-missions-glass-frame{padding:12px 9px 15px}#missionsPage .oxide-mission-categories{gap:5px}#missionsPage .oxide-mission-category{min-height:76px;font-size:9px}#missionsPage .oxide-category-icon{width:32px;height:32px}#missionsPage .oxide-missions-heading h2{font-size:22px}}
+
 </style>
 </head>
 <body>
