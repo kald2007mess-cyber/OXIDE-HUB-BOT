@@ -8,31 +8,18 @@ function json(data, status = 200) {
 }
 
 async function ensureAdTables(DB) {
-  await DB.prepare(`CREATE TABLE IF NOT EXISTS reward_ad_cycles (
-    user_id TEXT PRIMARY KEY,
-    completed_ads INTEGER NOT NULL DEFAULT 0,
-    cycle_started_at INTEGER NOT NULL
-  )`).run();
-  const platformColumns = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
-  if (!(platformColumns.results || []).some(column => column.name === "beta_pc_ads")) {
-    await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
-  }
-  await DB.prepare(`CREATE TABLE IF NOT EXISTS adsgram_reward_state (
-    user_id TEXT PRIMARY KEY,
-    last_claim_at INTEGER NOT NULL DEFAULT 0
-  )`).run();
-  await DB.prepare(`CREATE TABLE IF NOT EXISTS adsgram_pending_offer (
-    user_id TEXT PRIMARY KEY,
-    offer TEXT NOT NULL,
-    created_at INTEGER NOT NULL
-  )`).run();
   await DB.prepare(`CREATE TABLE IF NOT EXISTS platform_ad_progress (
     user_id TEXT PRIMARY KEY,
     beta_ads INTEGER NOT NULL DEFAULT 0,
     android_ads INTEGER NOT NULL DEFAULT 0,
     ios_ads INTEGER NOT NULL DEFAULT 0,
+    beta_pc_ads INTEGER NOT NULL DEFAULT 0,
     cycle_started_at INTEGER NOT NULL
   )`).run();
+  const columns = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
+  if (!(columns.results || []).some(column => column.name === "beta_pc_ads")) {
+    await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
+  }
 }
 
 export async function onRequestPost({ request, env }) {
