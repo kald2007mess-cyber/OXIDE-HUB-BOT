@@ -59,9 +59,9 @@ export async function onRequestPost({ request, env }) {
       try {
         const parsed = new URL(joinUrl);
         validJoinUrl = parsed.protocol === "https:" && parsed.hostname === "t.me" &&
-          /^\\/[A-Za-z0-9_+/?=-]+$/.test(parsed.pathname + parsed.search);
+          parsed.pathname.length > 1 && /^[A-Za-z0-9_+/?=-]+$/.test((parsed.pathname + parsed.search).slice(1));
       } catch {}
-      if (!title || !/^(@[A-Za-z0-9_]{5,}|-100\\d{5,})$/.test(chatId) || !validJoinUrl) {
+      if (!title || !/^(@[A-Za-z0-9_]{5,}|-100[0-9]{5,})$/.test(chatId) || !validJoinUrl) {
         return json({ success:false,error:"INVALID_CHANNEL_DATA" },400);
       }
       const now = Math.floor(Date.now()/1000);
