@@ -36,7 +36,7 @@ async function getRequiredDownloadChannels(DB) {
 }
 async function channelMembership(userId,DB,env){
  if(!env.TELEGRAM_BOT_TOKEN)return{error:"TELEGRAM_BOT_TOKEN_MISSING"};
- const channels=await getRequiredDownloadChannels(DB),missing=[];
+ const channels=await getRequiredDownloadChannels(DB),missing=[],all=[];
  for(const channel of channels){
   const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getChatMember",{
    method:"POST",headers:{"Content-Type":"application/json"},
@@ -46,9 +46,10 @@ async function channelMembership(userId,DB,env){
   if(!response.ok||!data?.ok||!data.result)return{error:"CHANNEL_CHECK_UNAVAILABLE"};
   const member=data.result,status=String(member.status||"");
   const joined=["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true);
-  if(!joined)missing.push({id:Number(channel.id),title:String(channel.title),join_url:String(channel.join_url)});
+  const item={id:Number(channel.id),title:String(channel.title),join_url:String(channel.join_url),joined};
+  all.push(item);if(!joined)missing.push(item);
  }
- return{joined:missing.length===0,missingChannels:missing};
+ return{joined:missing.length===0,channels:all,missingChannels:missing};
 }
 async function authorizedUser(request,env,offer){
  const user=await getVisitor(request,env);if(!user)return{error:out({success:false,error:"NO_TELEGRAM_SESSION"},401)};
@@ -56,7 +57,7 @@ async function authorizedUser(request,env,offer){
  if(!identity?.telegram_user_id)return{error:out({success:false,error:"TELEGRAM_ID_NOT_FOUND"},403)};
  const membership=await channelMembership(identity.telegram_user_id,env.DB,env);
  if(membership.error)return{error:out({success:false,error:membership.error},503)};
- if(!membership.joined)return{error:out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED",channels:membership.missingChannels||[]},403)};
+ if(!membership.joined)return{error:out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED",channels:membership.channels||[],missingChannels:membership.missingChannels||[]},403)};
  await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
  const pass=await env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(user).first();
  if(pass)return{user,goAccess:true};
