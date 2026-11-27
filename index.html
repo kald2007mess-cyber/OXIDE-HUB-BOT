@@ -1390,6 +1390,16 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 #homePage #tapEnergyUpgradeLabel:active{transform:scale(.96)}
 #homePage .tap-energy-regen{color:#cbd0f2!important}
 
+
+/* OXIDE language controls: globe icon with the blue-purple VIP identity */
+.language-box{position:relative;display:flex;align-items:center}
+.language-box::before{content:"🌐";position:absolute;z-index:3;inset:0;display:grid;place-items:center;font-size:21px;pointer-events:none;filter:drop-shadow(0 0 5px rgba(119,151,255,.65))}
+.language-box select{position:relative;z-index:2;width:44px!important;min-width:44px;height:42px!important;min-height:42px!important;padding:0!important;border:1px solid rgba(139,119,255,.75)!important;border-radius:13px!important;background:linear-gradient(135deg,#1268c8 0%,#4432a6 55%,#762bd1 100%)!important;color:transparent!important;font-size:0!important;appearance:none;-webkit-appearance:none;box-shadow:0 0 13px rgba(77,112,255,.25),inset 0 1px rgba(255,255,255,.18)}
+.language-box select option{background:#17143b!important;color:#fff!important;font-size:14px!important}
+#accountPage .oxide-account-language .oxide-language-globe{background:linear-gradient(135deg,#167bdc,#4936b8 58%,#812fd1)!important;color:#fff!important;border:1px solid rgba(150,165,255,.55);box-shadow:0 0 12px rgba(91,112,255,.3);font-size:20px}
+#accountPage .oxide-account-language select{background:linear-gradient(135deg,#1268c8,#4432a6 58%,#762bd1)!important;border:1px solid rgba(139,119,255,.75)!important;color:#fff!important;border-radius:11px!important;box-shadow:0 0 12px rgba(77,112,255,.2)}
+#accountPage .oxide-account-language option{background:#17143b!important;color:#fff!important}
+
 </style>
 </head>
 <body>
@@ -1557,7 +1567,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
  <div class="oxide-account-section-title"><span>إعدادات الحساب</span><small>إدارة تجربتك</small></div>
  <div class="oxide-account-menu">
     <button type="button" class="oxide-account-menu-item" onclick="showPage('support')"><span class="oxide-menu-icon">☏</span><span><b>الدعم الفني</b><small>تواصل مع فريق المساعدة</small></span><span class="oxide-menu-arrow">‹</span></button>
-  <div class="oxide-account-language"><span class="oxide-menu-icon">文</span><span><b>لغة التطبيق</b><small>اختر اللغة المناسبة لك</small></span><select aria-label="لغة التطبيق" onchange="changeLanguage(this.value)" id="accountLanguage"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option></select></div>
+  <div class="oxide-account-language"><span class="oxide-menu-icon oxide-language-globe">🌐</span><span><b>لغة التطبيق</b><small>اختر اللغة المناسبة لك</small></span><select aria-label="لغة التطبيق" onchange="changeLanguage(this.value)" id="accountLanguage"><option value="ar">العربية</option><option value="en">English</option><option value="ru">Русский</option></select></div>
  </div>
  <footer class="oxide-account-footer"><strong>OXIDE HUB</strong><span>جميع الحقوق محفوظة © 2026</span><span>تصميم وتطوير SKIMI_17</span></footer>
 </section>
