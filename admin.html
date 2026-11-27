@@ -615,8 +615,9 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 #betaDeliveryPage .pm-file-actions button{width:38px;min-width:38px;height:38px;padding:8px;border-radius:10px;font-size:0}
 #betaDeliveryPage .pm-file-actions svg{width:18px;height:18px}#betaDeliveryPage .pm-save-button svg{width:19px;height:19px;vertical-align:middle;margin-inline-end:8px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:760px){#betaDeliveryPage .pm-simple-editor{grid-template-columns:1fr}}
-#betaDeliveryPage .pm-soon-toggle{width:auto;min-width:112px;margin:0;padding:10px 13px;border-radius:11px;border:1px solid #6f789e;background:#263047;color:#dce4f5;font-size:11px;font-weight:850;box-shadow:none}
-#betaDeliveryPage .pm-soon-toggle.is-soon{background:#273044;border-color:#69758d;color:#c0cadb;box-shadow:none}
+#betaDeliveryPage .pm-soon-toggle{width:auto;min-width:112px;margin:0;padding:10px 13px;border-radius:11px;border:1px solid #22c55e;background:linear-gradient(135deg,#064e3b,#166534);color:#dcfce7;font-size:11px;font-weight:900;letter-spacing:.35px;box-shadow:0 0 7px rgba(34,197,94,.7),0 0 17px rgba(34,197,94,.38),inset 0 0 9px rgba(74,222,128,.16);text-shadow:0 0 8px rgba(134,239,172,.8);transition:background .2s,border-color .2s,box-shadow .2s,color .2s}
+#betaDeliveryPage .pm-soon-toggle.is-soon{background:linear-gradient(135deg,#7f1d1d,#b91c1c);border-color:#ef4444;color:#fff1f2;box-shadow:0 0 7px rgba(239,68,68,.8),0 0 18px rgba(239,68,68,.48),inset 0 0 9px rgba(248,113,113,.2);text-shadow:0 0 8px rgba(254,202,202,.9)}
+#betaDeliveryPage .pm-soon-toggle:disabled{opacity:.82;cursor:wait}
 #betaDeliveryPage .pm-workspace-head{flex-wrap:wrap}
 
 
@@ -1791,8 +1792,8 @@ async function loadDeliverySoonSettings(){
 function renderDeliverySoonToggle(){
  const button=document.getElementById("deliverySoonToggle");if(!button)return;
  const soon=platformVisibility[currentDeliveryOffer]===false;
- button.textContent=soon?"● SOON: ON":"○ SOON: OFF";
- button.classList.toggle("is-soon",soon);button.disabled=false;
+ button.textContent=soon?"● SOON: ON":"● SOON: OFF";
+ button.classList.toggle("is-soon",soon);button.classList.toggle("is-active",!soon);button.disabled=false;
  button.title=soon?"إظهار زر SOON للمستخدمين":"إظهار أزرار GO والإعلانات للمستخدمين";
 }
 async function toggleDeliverySoon(){
