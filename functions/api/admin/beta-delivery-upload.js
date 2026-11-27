@@ -73,8 +73,8 @@ export async function onRequestPost({request,env}){
    const requestedName=String(body.fileName||"").trim().replace(/[\\/\r\n\u0000-\u001f]/g,"").slice(0,160);
    if(requestedName&&files.length===1){
     const original=String(files[0].name||"file");
-    const extension=(original.match(/(\\.[^.]+)$/)||[])[1]||"";
-    const finalName=/\\.[^.]+$/.test(requestedName)?requestedName:requestedName+extension;
+    const extension=(original.match(/(\.[^.]+)$/)||[])[1]||"";
+    const finalName=/\.[^.]+$/.test(requestedName)?requestedName:requestedName+extension;
     files[0]={...files[0],name:finalName};
    }
    const now=Math.floor(Date.now()/1000);
