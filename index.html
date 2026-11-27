@@ -4766,6 +4766,52 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   background:linear-gradient(110deg,rgba(205,126,65,.29),rgba(145,78,35,.17))!important;
   box-shadow:0 0 16px rgba(205,126,65,.16),inset 0 1px 0 rgba(255,220,190,.14)!important;
 }
+
+/* Current rank card matches the standard leaderboard rows (positions 4-10) */
+#oxideLeaderboardPage #oxideCurrentRank{
+  direction:rtl!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:11px!important;
+  min-height:78px!important;
+  margin:0!important;
+  padding:11px 12px!important;
+  border:1px solid rgba(112,139,255,.34)!important;
+  border-radius:16px!important;
+  background:linear-gradient(110deg,rgba(8,127,234,.075),rgba(150,56,232,.09))!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.18),inset 0 0 16px rgba(89,105,255,.035)!important;
+}
+#oxideLeaderboardPage #oxideCurrentRank .oxide-current-rank-label{
+  color:#bca8d7!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  margin-bottom:5px!important;
+}
+#oxideLeaderboardPage #oxideCurrentRank .oxide-current-rank-place{
+  color:#f2eaff!important;
+  font-size:15px!important;
+  font-weight:900!important;
+}
+#oxideLeaderboardPage #oxideCurrentRank .oxide-current-rank-score{
+  min-width:82px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  padding:9px 8px!important;
+  border:1px solid rgba(188,145,255,.22)!important;
+  border-radius:11px!important;
+  background:rgba(117,65,183,.16)!important;
+  color:#e3c9ff!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+@media(max-width:360px){
+  #oxideLeaderboardPage #oxideCurrentRank{min-height:70px!important;padding:9px!important;gap:7px!important}
+  #oxideLeaderboardPage #oxideCurrentRank .oxide-current-rank-score{min-width:68px!important;padding:8px 5px!important;font-size:10px!important}
+}
 </style>
 
 <div id="oxideVipModal" hidden>
