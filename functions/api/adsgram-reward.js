@@ -46,7 +46,9 @@ async function ensureTables(DB) {
   const platformCols = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
   if (!(platformCols.results || []).some(c => c.name === "beta_pc_ads")) await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
   await DB.prepare("CREATE TABLE IF NOT EXISTS adsgram_ad_analytics (id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,offer TEXT NOT NULL DEFAULT 'island',event_type TEXT NOT NULL,created_at INTEGER NOT NULL)").run();
-  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_progress (user_id TEXT PRIMARY KEY, completed_ads INTEGER NOT NULL DEFAULT 0)").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_progress (user_id TEXT PRIMARY KEY, completed_ads INTEGER NOT NULL DEFAULT 0, used_ads INTEGER NOT NULL DEFAULT 0)").run();
+  const wheelCols = await DB.prepare("PRAGMA table_info(oxide_wheel_ad_progress)").all();
+  if (!(wheelCols.results || []).some(c => c.name === "used_ads")) await DB.prepare("ALTER TABLE oxide_wheel_ad_progress ADD COLUMN used_ads INTEGER NOT NULL DEFAULT 0").run();
   await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_pending (user_id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, consumed_at INTEGER)").run();
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
@@ -114,7 +116,8 @@ async function notifyAdminAdWatch(env, DB, userUuid, result, offer, now) {
       android: "ANDROID",
       ios: "iOS",
       beta_pc: "PC BETA",
-      island: "الجزيرة (Island)"
+      island: "الجزيرة (Island)",
+      wheel: "العجلة 🎟️"
     };
     const progress = result.platformProgress && offer !== "island"
       ? Number(result.platformProgress[offer] || 0) + "/10"
@@ -133,7 +136,7 @@ async function notifyAdminAdWatch(env, DB, userUuid, result, offer, now) {
       "🆔 Telegram ID: " + String(profile?.telegram_user_id || "غير متوفر"),
       "🪪 OX: " + String(profile?.public_id || userUuid),
       "📊 إعلانات هذا القسم: " + progress,
-      "💰 المكافأة: +" + Number(result.pointsAwarded || 0) + " نقطة",
+      offer === "wheel" ? "🎟️ المحاولة: +1 محاولة للعجلة" : "💰 المكافأة: +" + Number(result.pointsAwarded || 0) + " نقطة",
       "⭐ الرصيد الحالي: " + Number(result.points || 0),
       "🕒 الوقت: " + time
     ].join("\n");
@@ -271,6 +274,12 @@ export async function onRequestGet({ request, env }) {
         ]);
         if (Number(results?.[0]?.meta?.changes || 0) !== 1) return json({ success: false, error: "WHEEL_AD_ALREADY_USED" }, 409);
         const wheelCount = await env.DB.prepare("SELECT completed_ads FROM oxide_wheel_ad_progress WHERE user_id=?").bind(identity.user_uuid).first();
+        const wheelBalance = await env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(identity.user_uuid).first();
+        await notifyAdminAdWatch(env, env.DB, identity.user_uuid, {
+          completedAds: Math.min(10, Number(wheelCount?.completed_ads || 0)),
+          pointsAwarded: 0,
+          points: Number(wheelBalance?.points || 0)
+        }, "wheel", now);
         return json({ success: true, offer: "wheel", wheelAds: Math.min(10, Number(wheelCount?.completed_ads || 0)) });
       }
       const pending = await env.DB.prepare(
