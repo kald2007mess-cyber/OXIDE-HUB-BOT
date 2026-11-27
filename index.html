@@ -1727,14 +1727,14 @@ body:has(#referralPage[style*="display: block"]) .top-bar .oxide-leaderboard-top
 <section id="oxideLeaderboardPage" class="oxide-leaderboard-page" aria-label="ترتيب المستخدمين" style="display:none">
   <header class="oxide-leaderboard-header">
     <button class="oxide-leaderboard-back" type="button" onclick="closeOxideLeaderboard()" aria-label="رجوع">‹</button>
-    <div><div class="oxide-leaderboard-eyebrow">OXIDE HUB</div><h2>🏆 الترتيب</h2></div>
+    <div><div class="oxide-leaderboard-eyebrow">OXIDE HUB</div><h2><svg class="oxide-lb-title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v2a4 4 0 0 0 4 4M16 6h3v2a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg> الترتيب</h2></div>
   </header>
   <div class="oxide-leaderboard-tabs" role="tablist" aria-label="نوع الترتيب">
-    <button type="button" class="active" id="oxideCoinsTab" role="tab" aria-selected="true" onclick="showOxideLeaderboardTab('points')"><img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/310dd0f2a34b8406cb9733bcfec4afc2f94dcd4a/file_00000000233481f4bc72d013007183a5.png" width="35" height="35" alt="" style="width:35px;height:35px;vertical-align:middle;object-fit:contain"> حسب العملات</button>
-    <button type="button" id="oxideReferralsTab" role="tab" aria-selected="false" onclick="showOxideLeaderboardTab('referrals')">👥 الدعوات</button>
+    <button type="button" class="active" id="oxideCoinsTab" role="tab" aria-selected="true" onclick="showOxideLeaderboardTab('points')"><svg class="oxide-lb-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5c-.7-.7-1.7-1-3-1-1.8 0-3 .9-3 2.2 0 3.4 6 1.2 6 4.5 0 1.3-1.2 2.3-3.2 2.3-1.3 0-2.5-.4-3.3-1.2M12 5.5v13"/></svg> حسب العملات</button>
+    <button type="button" id="oxideReferralsTab" role="tab" aria-selected="false" onclick="showOxideLeaderboardTab('referrals')"><svg class="oxide-lb-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13.5a4 4 0 0 1 3.5 4V19"/></svg> الدعوات</button>
   </div>
   <div class="oxide-leaderboard-content">
-    <div class="oxide-leaderboard-caption" id="oxideLeaderboardCaption">🏆 أفضل 10 في العملات</div>
+    <div class="oxide-leaderboard-caption" id="oxideLeaderboardCaption"><svg class="oxide-lb-caption-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v2a4 4 0 0 0 4 4M16 6h3v2a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg><span>أفضل 10 في العملات</span></div>
     <div id="oxideLeaderboardList"><div class="ranking-row">جاري التحميل...</div></div>
     <div id="oxideCurrentRank" class="oxide-current-rank" aria-live="polite"><div><div class="oxide-current-rank-label">ترتيبك الحالي</div><div class="oxide-current-rank-place">جاري التحميل...</div></div></div>
   </div>
@@ -2759,7 +2759,7 @@ function showOxideLeaderboardTab(metric){
  document.getElementById("oxideCoinsTab")?.setAttribute("aria-selected",String(coins));
  document.getElementById("oxideReferralsTab")?.setAttribute("aria-selected",String(!coins));
  const caption=document.getElementById("oxideLeaderboardCaption");
- if(caption)caption.textContent=coins?"🏆 أفضل 10 في العملات":"👥 أفضل 10 في الدعوات";
+ if(caption){const icon=coins?'<svg class="oxide-lb-caption-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v2a4 4 0 0 0 4 4M16 6h3v2a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg>':'<svg class="oxide-lb-caption-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13.5a4 4 0 0 1 3.5 4V19"/></svg>';caption.innerHTML=icon+"<span>"+(coins?"أفضل 10 في العملات":"أفضل 10 في الدعوات")+"</span>";}
  renderRanking("oxideLeaderboardList",coins?oxidePointsRanking:oxideReferralsRanking,coins?"points":"referrals");
  renderOxideCurrentRank(coins?"points":"referrals");
 }
@@ -4813,3 +4813,40 @@ function applyAccountPageLanguage(language){
 </script>
 </body>
 </html>
+
+<style>
+
+/* OXIDE leaderboard: framed metric tabs and SVG icon styling */
+#oxideLeaderboardPage .oxide-leaderboard-tabs button{
+  min-height:58px!important;
+  border:1.5px solid rgba(113,190,255,.82)!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  box-shadow:inset 0 0 0 1px rgba(155,110,255,.18),0 0 12px rgba(69,139,255,.12)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  color:#d9eaff!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-tabs button.active{
+  border-color:#bd91ff!important;
+  box-shadow:inset 0 0 0 1px rgba(189,145,255,.35),0 0 15px rgba(117,65,183,.3)!important;
+  color:#fff!important;
+}
+#oxideLeaderboardPage .oxide-lb-title-icon{
+  width:25px;height:25px;vertical-align:middle;margin-inline-end:5px;
+  fill:none;stroke:#d8b7ff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+#oxideLeaderboardPage .oxide-lb-tab-icon{
+  width:23px;height:23px;flex:0 0 23px;fill:none;stroke:#8bd8ff;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+#oxideLeaderboardPage .oxide-lb-caption-icon{
+  width:19px;height:19px;flex:0 0 19px;fill:none;stroke:#d9bdff;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+#oxideLeaderboardPage .oxide-leaderboard-caption{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+</style>
