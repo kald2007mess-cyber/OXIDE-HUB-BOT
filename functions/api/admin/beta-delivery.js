@@ -15,6 +15,13 @@ async function ensure(DB){
 function validOffer(v){const x=String(v||"beta").toLowerCase();return OFFERS.has(x)?x:null;}
 function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice():[];}catch{return [];}}
 async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json,published FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json),published:Number(row?.published??1)===1};}
+async function channelMembership(userId,env){
+ const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getChatMember",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:"@OxideHubOfficial",user_id:Number(userId)})});
+ const data=await response.json().catch(()=>null);
+ if(!response.ok||!data?.ok||!data.result)return{error:"CHANNEL_CHECK_UNAVAILABLE"};
+ const member=data.result,status=String(member.status||"");
+ return{joined:["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true)};
+}
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
 async function storeFile(env,file){if(!file||typeof file.arrayBuffer!=="function"||!file.size)throw new Error("INVALID_FILE");if(file.size>MAX_SIZE)throw new Error("FILE_TOO_LARGE");const form=new FormData();form.append("chat_id",String(env.TELEGRAM_ADMIN_ID));form.append("document",file,file.name||"platform-file");const r=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_FILE_UPLOAD_FAILED");const m=d.result,id=m.document?.file_id;if(!id)throw new Error("TELEGRAM_FILE_ID_MISSING");await tg(env.TELEGRAM_BOT_TOKEN,"deleteMessage",{chat_id:env.TELEGRAM_ADMIN_ID,message_id:m.message_id}).catch(()=>{});return{file_id:id,name:String(file.name||m.document.file_name||"file").slice(0,180),size:Number(file.size||0)};}
 export async function onRequestPost({request,env}){
@@ -61,10 +68,19 @@ export async function onRequestPost({request,env}){
   const user=await getVisitor(request,env);if(!user)return out({success:false,error:"NO_TELEGRAM_SESSION"},401);
   const identity=await env.DB.prepare("SELECT telegram_user_id FROM telegram_identities WHERE user_uuid=? LIMIT 1").bind(user).first();
   if(!identity?.telegram_user_id)return out({success:false,error:"TELEGRAM_ID_NOT_LINKED"},403);
-  const col={beta:"beta_ads",android:"android_ads",ios:"ios_ads"}[offer];
-  const p=await env.DB.prepare("SELECT "+col+" AS completed,cycle_started_at FROM platform_ad_progress WHERE user_id=?").bind(user).first();
+  const membership=await channelMembership(identity.telegram_user_id,env);
+  if(membership.error)return out({success:false,error:membership.error},503);
+  if(!membership.joined)return out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED"},403);
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
+  const goPass=await env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(user).first();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS platform_paid_unlocks(user_uuid TEXT NOT NULL,offer TEXT NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(user_uuid,offer))").run();
+  const paidPass=await env.DB.prepare("SELECT 1 AS allowed FROM platform_paid_unlocks WHERE user_uuid=? AND offer=?").bind(user,offer).first();
   const now=Math.floor(Date.now()/1000);
-  if(!p||now-Number(p.cycle_started_at||now)>=18000||Number(p.completed||0)<10)return out({success:false,error:"OFFER_NOT_COMPLETE"},403);
+  if(!goPass&&!paidPass){
+   const col={beta:"beta_ads",android:"android_ads",ios:"ios_ads"}[offer];
+   const p=await env.DB.prepare("SELECT "+col+" AS completed,cycle_started_at FROM platform_ad_progress WHERE user_id=?").bind(user).first();
+   if(!p||now-Number(p.cycle_started_at||now)>=18000||Number(p.completed||0)<10)return out({success:false,error:"OFFER_NOT_COMPLETE"},403);
+  }
   const last=await env.DB.prepare("SELECT last_sent_at FROM platform_delivery_claims WHERE user_uuid=? AND offer=?").bind(user,offer).first();
   if(now-Number(last?.last_sent_at||0)<30)return out({success:false,error:"PLEASE_WAIT"},429);
   const c=await config(env.DB,offer);if(!c.published)return out({success:false,error:"CONTENT_NOT_PUBLISHED"},404);if(!c.message&&!c.files.length)return out({success:false,error:"OFFER_CONTENT_NOT_CONFIGURED"},404);
