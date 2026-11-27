@@ -2132,8 +2132,8 @@ function formatIslandTimer(){const timer=document.getElementById("islandTimer");
 async function loadIsland(){const message=document.getElementById("islandMessage");if(message)message.textContent="";try{const response=await fetch("/api/reward-ptc",{method:"GET",cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||"Island request failed");islandAds=Array.isArray(data.ads)?data.ads.filter(ad=>typeof ad.url==="string"&&ad.url.startsWith("https://")&&Number(ad.duration)>0):[];islandCompleted=Math.max(0,Math.min(ISLAND_REQUIRED,Number(data.completedAds)||0));islandRemaining=Math.max(0,Number(data.remainingAds)||0);islandCycleEndsAt=Date.now()+Math.max(0,Number(data.remainingSeconds)||0)*1000;updateIslandDisplay();if(message)message.textContent="";formatIslandTimer();if(!islandTimerInterval&&document.getElementById("islandTimer"))islandTimerInterval=setInterval(formatIslandTimer,1000)}catch(error){if(message)message.textContent="";const button=document.getElementById("islandWatchButton");if(button)button.disabled=true}}
 let platformDeliveryBusy=false;
 let pendingChannelOffer=null;
-function openChannelSubscribeModal(offer){pendingChannelOffer=offer;const modal=document.getElementById("channelSubscribeModal"),status=document.getElementById("channelSubscribeStatus"),join=document.getElementById("channelSubscribeJoin"),check=document.getElementById("channelSubscribeCheck");if(status)status.textContent="";if(join)join.hidden=false;if(check)check.hidden=true;if(modal)modal.hidden=false;}
-function channelJoinClicked(){const join=document.getElementById("channelSubscribeJoin"),check=document.getElementById("channelSubscribeCheck"),status=document.getElementById("channelSubscribeStatus");if(join)join.hidden=true;if(check)check.hidden=false;if(status)status.textContent="بعد الاشتراك، اضغط تحقّق من الاشتراك.";}
+function openChannelSubscribeModal(offer,channels=[]){pendingChannelOffer=offer;const modal=document.getElementById("channelSubscribeModal"),status=document.getElementById("channelSubscribeStatus"),list=document.getElementById("channelSubscribeJoinList"),check=document.getElementById("channelSubscribeCheck");if(status)status.textContent="";if(list){list.replaceChildren();const rows=Array.isArray(channels)&&channels.length?channels:[{title:"OXIDE HUB",join_url:"https://t.me/OxideHubOfficial"}];for(const channel of rows){const url=String(channel.join_url||"");if(!/^https:\/\/t\.me\/[A-Za-z0-9_+/?=-]+$/i.test(url))continue;const link=document.createElement("a");link.className="channel-subscribe-join";link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="📢 "+String(channel.title||"اشترك في القناة");link.addEventListener("click",channelJoinClicked);list.append(link);}}if(check)check.hidden=true;if(modal)modal.hidden=false;}
+function channelJoinClicked(){const check=document.getElementById("channelSubscribeCheck"),status=document.getElementById("channelSubscribeStatus");if(check)check.hidden=false;if(status)status.textContent=currentLanguage==="ru"?"После вступления нажмите «Я подписался».":currentLanguage==="en"?"After joining, tap I've subscribed.":"بعد الاشتراك، اضغط تحقّق من الاشتراك.";}
 function closeChannelSubscribeModal(){const modal=document.getElementById("channelSubscribeModal");if(modal)modal.hidden=true;}
 async function verifyOxideChannelSubscription(){if(!pendingChannelOffer)return;const status=document.getElementById("channelSubscribeStatus"),check=document.getElementById("channelSubscribeCheck");if(check){check.disabled=true;check.textContent=currentLanguage==="ru"?"Проверка...":currentLanguage==="en"?"Checking...":"جارٍ التحقق...";}if(status)status.textContent="";try{await claimPlatformDelivery(pendingChannelOffer,true);}finally{if(check){check.disabled=false;check.textContent=currentLanguage==="ru"?"Я подписался":currentLanguage==="en"?"I've subscribed":"تحققت من الاشتراك";}}}
 async function claimPlatformDelivery(offer,subscriptionRetry=false){
@@ -2147,7 +2147,7 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
   const response=await fetch("/api/platform-delivery?offer="+encodeURIComponent(offer),{method:"GET",credentials:"same-origin",cache:"no-store"});
   const result=await response.json().catch(()=>({}));
   if(result.subscriptionRequired){
-   openChannelSubscribeModal(offer);
+   openChannelSubscribeModal(offer,result.channels||[]);
    const status=document.getElementById("channelSubscribeStatus");
    if(status)status.textContent=currentLanguage==="ru"?"Сначала подпишитесь на канал.":currentLanguage==="en"?"Please join the channel first.":"❌ يجب الاشتراك في القناة أولاً.";
    if(pageStatus)pageStatus.textContent="";
@@ -3648,7 +3648,7 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   <div class="channel-subscribe-icon">⚠️</div>
   <h2 id="channelSubscribeTitle">اشترك في القناة أولاً</h2>
   <p id="channelSubscribeText">للوصول إلى ملفات العرض، يرجى الاشتراك في قناة OXIDE HUB ثم العودة للتحقق من اشتراكك.</p>
-  <a class="channel-subscribe-join" href="https://t.me/OxideHubOfficial" target="_blank" rel="noopener noreferrer" id="channelSubscribeJoin" onclick="channelJoinClicked()">📢 اشترك في القناة</a>
+  <div class="channel-subscribe-join-list" id="channelSubscribeJoinList"></div>
   <button type="button" class="channel-subscribe-check" id="channelSubscribeCheck" onclick="verifyOxideChannelSubscription()" hidden>تحقّق من الاشتراك</button>
   <button type="button" class="channel-subscribe-close" onclick="closeChannelSubscribeModal()">إغلاق</button>
   <div id="channelSubscribeStatus" role="status" aria-live="polite"></div>
