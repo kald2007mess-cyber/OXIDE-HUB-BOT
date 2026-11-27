@@ -1460,7 +1460,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 
 </div>
 <section id="notificationsPanel" class="notifications-panel" hidden aria-live="polite">
- <div class="notifications-heading"><span>🔔 مركز الإشعارات</span><div class="notifications-heading-actions"><button class="notification-icon-button notification-delete-read" id="deleteReadNotificationsButton" type="button" onclick="deleteReadNotifications()" aria-label="حذف الإشعارات المقروءة" title="حذف الإشعارات المقروءة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg></button><button class="notification-icon-button" type="button" onclick="closeNotifications()" aria-label="إغلاق" title="إغلاق"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div></div>
+ <div class="notifications-heading"><span class="notifications-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg> مركز الإشعارات</span><div class="notifications-heading-actions"><button class="notification-icon-button notification-delete-read" id="deleteReadNotificationsButton" type="button" onclick="deleteReadNotifications()" aria-label="حذف الإشعارات المقروءة" title="حذف الإشعارات المقروءة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg></button><button class="notification-icon-button" type="button" onclick="closeNotifications()" aria-label="إغلاق" title="إغلاق"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div></div>
  <div id="notificationsList"><div class="notification-empty">جارٍ تحميل الإشعارات...</div></div>
 </section>
 <div class="brand-block"><div class="logo">OXIDE HUB</div><div class="subtitle">SURVIVE • EXPLORE • DOMINATE</div></div>
@@ -4578,6 +4578,56 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   box-shadow:0 0 9px rgba(8,127,234,.52),0 0 18px rgba(88,75,245,.38),0 0 27px rgba(150,56,232,.25),inset 0 1px 1px rgba(255,255,255,.25)!important;
   animation:oxideVipNeonPulse 2.4s ease-in-out infinite!important;
 }
+
+/* OXIDE notifications: full-screen blue-violet interface with SVG icon language */
+#notificationsPanel.notifications-panel{
+  position:fixed!important;inset:0!important;z-index:10050!important;
+  width:100vw!important;height:100dvh!important;max-height:100dvh!important;
+  margin:0!important;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom))!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+  border:0!important;border-radius:0!important;
+  background:radial-gradient(ellipse at 50% -12%,rgba(82,91,230,.28),transparent 48%),linear-gradient(155deg,#090d25 0%,#08091a 58%,#100923 100%)!important;
+  box-shadow:none!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;
+}
+#notificationsPanel .notifications-heading{
+  position:sticky;top:0;z-index:2;max-width:720px;margin:0 auto 18px;padding:12px 0 16px;
+  border-bottom:1px solid rgba(153,133,255,.2);
+  background:linear-gradient(180deg,rgba(9,13,37,.98),rgba(9,13,37,.88));
+  color:#f4f1ff;font-size:19px;
+}
+#notificationsPanel .notifications-title{display:flex;align-items:center;gap:10px}
+#notificationsPanel .notifications-title svg{
+  width:27px;height:27px;fill:none;stroke:url(#oxideMissionIconGradient);stroke:#9b80ff;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px rgba(100,130,255,.55));
+}
+#notificationsPanel #notificationsList{width:100%;max-width:720px;margin:0 auto;padding-bottom:25px}
+#notificationsPanel .notification-item{
+  margin:11px 0;padding:16px;border:1px solid rgba(130,123,255,.28);border-radius:17px;
+  background:linear-gradient(145deg,rgba(24,43,91,.68),rgba(39,22,78,.68));
+  box-shadow:0 8px 22px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.06);
+}
+#notificationsPanel .notification-item.unread{border-color:rgba(74,155,255,.72);box-shadow:0 0 18px rgba(66,111,255,.12),inset 0 1px rgba(255,255,255,.08)}
+#notificationsPanel .notification-title{color:#f4efff;font-size:15px}
+#notificationsPanel .notification-body{color:#c8d5f5}
+#notificationsPanel .notification-meta{color:#9c9bc7}
+#notificationsPanel .notification-icon-button{
+  width:42px;height:42px;border-radius:13px;border:1px solid rgba(151,126,255,.48);
+  background:linear-gradient(135deg,rgba(12,111,205,.28),rgba(123,52,205,.32));color:#d9d5ff;
+}
+#notificationsPanel .notification-icon-button svg{width:21px;height:21px;stroke:currentColor}
+#notificationsPanel .notification-delete-read{border-color:rgba(255,76,91,.5)!important;background:rgba(112,22,39,.22)!important;color:#ff475f!important}
+#notificationsPanel .notification-delete-read svg{stroke:#ff4058!important;filter:drop-shadow(0 0 5px rgba(255,48,77,.38))}
+#notificationsPanel .notification-delete-read:disabled{opacity:.3}
+#notificationsPanel .notification-claim{
+  border:1px solid rgba(163,135,255,.55);border-radius:13px;
+  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);
+  color:#fff;box-shadow:0 6px 17px rgba(79,83,220,.22);
+}
+#notificationsPanel .notification-empty{
+  margin:22px auto;padding:35px 15px;max-width:520px;border:1px solid rgba(145,123,255,.25);
+  border-radius:18px;background:linear-gradient(145deg,rgba(23,49,94,.48),rgba(47,25,83,.48));color:#c9c8ec;
+}
+#messagesTopButton svg{fill:none;stroke:url(#oxideMissionIconGradient);stroke:#a98aff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(104,130,255,.55))}
 </style>
 
 <div id="oxideVipModal" hidden>
