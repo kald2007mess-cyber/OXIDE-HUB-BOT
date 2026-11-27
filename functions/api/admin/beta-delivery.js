@@ -15,12 +15,34 @@ async function ensure(DB){
 function validOffer(v){const x=String(v||"beta").toLowerCase();return OFFERS.has(x)?x:null;}
 function filesFrom(value){try{const x=JSON.parse(String(value||"[]"));return Array.isArray(x)?x.filter(f=>f&&typeof f.name==="string"&&(typeof f.key==="string"||typeof f.file_id==="string")).slice():[];}catch{return [];}}
 async function config(DB,offer){const row=await DB.prepare("SELECT message,files_json,published FROM platform_delivery_config WHERE offer=?").bind(offer).first();return{message:String(row?.message||""),files:filesFrom(row?.files_json),published:Number(row?.published??1)===1};}
-async function channelMembership(userId,env){
- const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getChatMember",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:"@OxideHubOfficial",user_id:Number(userId)})});
- const data=await response.json().catch(()=>null);
- if(!response.ok||!data?.ok||!data.result)return{error:"CHANNEL_CHECK_UNAVAILABLE"};
- const member=data.result,status=String(member.status||"");
- return{joined:["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true)};
+async function getRequiredDownloadChannels(DB) {
+ await DB.prepare(`CREATE TABLE IF NOT EXISTS platform_download_channels (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,chat_id TEXT NOT NULL,join_url TEXT NOT NULL,
+  enabled INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL
+ )`).run();
+ await DB.prepare(`
+  INSERT INTO platform_download_channels(title,chat_id,join_url,enabled,created_at,updated_at)
+  SELECT 'OXIDE HUB','@OxideHubOfficial','https://t.me/OxideHubOfficial',1,?,?
+  WHERE NOT EXISTS (SELECT 1 FROM platform_download_channels)
+ `).bind(Math.floor(Date.now()/1000),Math.floor(Date.now()/1000)).run();
+ const result=await DB.prepare("SELECT id,title,chat_id,join_url FROM platform_download_channels WHERE enabled=1 ORDER BY id ASC").all();
+ return result.results||[];
+}
+async function channelMembership(userId,DB,env){
+ if(!env.TELEGRAM_BOT_TOKEN)return{error:"TELEGRAM_BOT_TOKEN_MISSING"};
+ const channels=await getRequiredDownloadChannels(DB),missing=[];
+ for(const channel of channels){
+  const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getChatMember",{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({chat_id:String(channel.chat_id),user_id:Number(userId)})
+  });
+  const data=await response.json().catch(()=>null);
+  if(!response.ok||!data?.ok||!data.result)return{error:"CHANNEL_CHECK_UNAVAILABLE"};
+  const member=data.result,status=String(member.status||"");
+  const joined=["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true);
+  if(!joined)missing.push({id:Number(channel.id),title:String(channel.title),join_url:String(channel.join_url)});
+ }
+ return{joined:missing.length===0,missingChannels:missing};
 }
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
 async function sendStoredDocument(env,chat,file,caption){
@@ -89,9 +111,9 @@ export async function onRequestPost({request,env}){
   const user=await getVisitor(request,env);if(!user)return out({success:false,error:"NO_TELEGRAM_SESSION"},401);
   const identity=await env.DB.prepare("SELECT telegram_user_id FROM telegram_identities WHERE user_uuid=? LIMIT 1").bind(user).first();
   if(!identity?.telegram_user_id)return out({success:false,error:"TELEGRAM_ID_NOT_LINKED"},403);
-  const membership=await channelMembership(identity.telegram_user_id,env);
+  const membership=await channelMembership(identity.telegram_user_id,env.DB,env);
   if(membership.error)return out({success:false,error:membership.error},503);
-  if(!membership.joined)return out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED"},403);
+  if(!membership.joined)return out({success:false,subscriptionRequired:true,error:"CHANNEL_SUBSCRIPTION_REQUIRED",channels:membership.missingChannels||[]},403);
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
   const goPass=await env.DB.prepare("SELECT 1 AS allowed FROM oxide_go_access WHERE user_uuid=?").bind(user).first();
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS platform_paid_unlocks(user_uuid TEXT NOT NULL,offer TEXT NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(user_uuid,offer))").run();
