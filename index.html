@@ -1328,6 +1328,68 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
  color:#fff!important;
 }
 
+
+
+/* SUPPORT + TOP ICONS VIP BLUE/PURPLE THEME */
+#supportPage .support-box{
+ background:linear-gradient(125deg,rgba(8,127,234,.20),rgba(64,92,235,.22) 48%,rgba(150,56,232,.24))!important;
+ border:1px solid rgba(126,137,255,.62)!important;
+ box-shadow:0 0 18px rgba(76,91,255,.18),0 0 25px rgba(145,54,225,.12),inset 0 1px rgba(255,255,255,.10)!important;
+ border-radius:20px!important;
+}
+#supportPage .support-title{color:#d9d4ff!important;text-shadow:0 0 12px rgba(110,140,255,.35)!important}
+#supportPage .support-description,
+#supportPage .support-empty,
+#supportPage .support-media-note,
+#supportPage .support-status{color:#cbd0f2!important}
+#supportPage .support-messages{
+ background:linear-gradient(145deg,rgba(8,30,75,.62),rgba(37,18,75,.62))!important;
+ border:1px solid rgba(126,137,255,.48)!important;
+ border-radius:16px!important;
+}
+#supportPage .support-message{border:1px solid rgba(126,137,255,.35)!important;border-radius:14px!important}
+#supportPage .support-message.admin{background:linear-gradient(120deg,rgba(8,127,234,.22),rgba(64,92,235,.20))!important}
+#supportPage .support-message.user{background:linear-gradient(120deg,rgba(90,52,190,.24),rgba(150,56,232,.20))!important}
+#supportPage .support-sender{color:#b8d8ff!important}
+#supportPage .support-input{
+ background:rgba(10,20,55,.82)!important;
+ border:1px solid rgba(126,137,255,.58)!important;
+ border-radius:14px!important;color:#fff!important;
+}
+#supportPage .support-input:focus{border-color:#58a9ff!important;box-shadow:0 0 12px rgba(64,125,255,.2)!important}
+#supportPage .support-send,
+#supportPage .support-top-button{
+ background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+ border:1px solid rgba(151,126,255,.65)!important;color:#fff!important;
+ border-radius:14px!important;
+ box-shadow:0 0 16px rgba(76,91,255,.22),inset 0 1px rgba(255,255,255,.18)!important;
+}
+#supportBackButton{border-radius:999px!important;padding:10px 17px!important}
+.messages-top-button,
+.support-top-button{
+ background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+ border:1px solid rgba(151,126,255,.65)!important;
+ color:#fff!important;
+ box-shadow:0 0 14px rgba(76,91,255,.22),inset 0 1px rgba(255,255,255,.18)!important;
+}
+.messages-top-button svg,
+.support-top-button svg{stroke:#fff!important;color:#fff!important}
+
+/* ENERGY LABEL — rounded capsule, not a square button; custom SVG lightning */
+#homePage .tap-energy-section .tap-energy-bottom button,
+#homePage #tapEnergyUpgradeLabel{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;min-height:34px!important;padding:7px 16px!important;
+ border-radius:999px!important;
+ background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+ border:1px solid rgba(173,167,255,.65)!important;color:#fff!important;
+ font:800 12px Arial,sans-serif!important;
+ box-shadow:0 0 14px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.2)!important;
+}
+#homePage #tapEnergyUpgradeLabel svg{width:17px!important;height:17px!important;fill:none!important;stroke:#fff!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 5px rgba(95,174,255,.7))}
+#homePage #tapEnergyUpgradeLabel:active{transform:scale(.96)}
+#homePage .tap-energy-regen{color:#cbd0f2!important}
+
 </style>
 </head>
 <body>
@@ -1381,7 +1443,7 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
       </div>
     </section>
     <section class="tap-energy-section" aria-label="الطاقة">
-      <div class="tap-energy-bottom"><button type="button" id="tapEnergyUpgradeLabel">⚡ الطاقة</button><span class="tap-energy-regen" id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span></div>
+      <div class="tap-energy-bottom"><button type="button" id="tapEnergyUpgradeLabel" aria-label="ترقية الطاقة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2.5 5.8 13h5.1l-.7 8.5L18.2 11h-5.1l.1-8.5Z"/></svg><span>الطاقة</span></button><span class="tap-energy-regen" id="tapEnergyRegen">تتجدد الطاقة تلقائياً</span></div>
       <div class="tap-energy-track"><span id="tapEnergyFill"></span></div>
     </section>
     
@@ -2027,7 +2089,7 @@ function applyTapHomeLanguage(language){
 
  set(".tap-home .tap-heading h1",w.title);set(".tap-home .tap-heading p",w.desc);set(".tap-home .tap-balance>span",w.balance);set(".tap-home .tap-hint",w.hint);set(".tap-home .tap-meter-top>span",w.storage);set("#missionsTab .nav-label",w.missions);
  const caps=document.querySelectorAll(".tap-stats-row .tap-stat-caption");if(caps[0])caps[0].textContent=w.energy;if(caps[1])caps[1].textContent=w.tapValue;
- const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton)energyButton.textContent="⚡ "+w.energyTitle;
+ const energyButton=document.getElementById("tapEnergyUpgradeLabel");if(energyButton){const energyLabel=energyButton.querySelector("span");if(energyLabel)energyLabel.textContent=w.energyTitle;energyButton.setAttribute("aria-label",w.energyTitle);}
  const reward=document.querySelector(".tap-home .tap-footer span:nth-child(2)");if(reward){const amount=reward.querySelector("b");reward.textContent=w.reward+" ";if(amount)reward.appendChild(amount);reward.append(" "+w.coin)}
 }function showBlockedScreen(){
  let screen=document.getElementById("oxideBlockedScreen");
