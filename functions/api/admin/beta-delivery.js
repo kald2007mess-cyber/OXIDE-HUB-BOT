@@ -23,6 +23,25 @@ async function channelMembership(userId,env){
  return{joined:["creator","administrator","member"].includes(status)||(status==="restricted"&&member.is_member===true)};
 }
 async function tg(token,method,payload){const r=await fetch("https://api.telegram.org/bot"+token+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_SEND_FAILED");return d.result;}
+async function sendStoredDocument(env,chat,file,caption){
+ if(file?.file_id)return tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:file.file_id,...(caption?{caption}:{})});
+ if(!file?.key||!env.PLATFORM_MEDIA)throw new Error("DELIVERY_FILE_REFERENCE_MISSING");
+ const object=await env.PLATFORM_MEDIA.get(file.key);
+ if(!object)throw new Error("DELIVERY_FILE_NOT_FOUND_IN_STORAGE");
+ const size=Number(file.size||object.size||0);
+ if(size>50*1024*1024)throw new Error("TELEGRAM_FILE_TOO_LARGE_MAX_50MB");
+ const bytes=await object.arrayBuffer();
+ if(!bytes.byteLength)throw new Error("DELIVERY_FILE_EMPTY");
+ const form=new FormData();
+ form.append("chat_id",String(chat));
+ if(caption)form.append("caption",caption);
+ const blob=new Blob([bytes],{type:String(file.contentType||"application/octet-stream")});
+ form.append("document",blob,String(file.name||"platform-file").replace(/[\\r\\n]/g,"_"));
+ const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||!data?.ok)throw new Error(data.description||"TELEGRAM_FILE_SEND_FAILED");
+ return data.result;
+}
 async function storeFile(env,file){if(!file||typeof file.arrayBuffer!=="function"||!file.size)throw new Error("INVALID_FILE");if(file.size>MAX_SIZE)throw new Error("FILE_TOO_LARGE");const form=new FormData();form.append("chat_id",String(env.TELEGRAM_ADMIN_ID));form.append("document",file,file.name||"platform-file");const r=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendDocument",{method:"POST",body:form});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.description||"TELEGRAM_FILE_UPLOAD_FAILED");const m=d.result,id=m.document?.file_id;if(!id)throw new Error("TELEGRAM_FILE_ID_MISSING");await tg(env.TELEGRAM_BOT_TOKEN,"deleteMessage",{chat_id:env.TELEGRAM_ADMIN_ID,message_id:m.message_id}).catch(()=>{});return{file_id:id,name:String(file.name||m.document.file_name||"file").slice(0,180),size:Number(file.size||0)};}
 export async function onRequestPost({request,env}){
  try{
@@ -86,8 +105,10 @@ export async function onRequestPost({request,env}){
   const c=await config(env.DB,offer);if(!c.published)return out({success:false,error:"CONTENT_NOT_PUBLISHED"},404);if(!c.message&&!c.files.length)return out({success:false,error:"OFFER_CONTENT_NOT_CONFIGURED"},404);
   const chat=String(identity.telegram_user_id);
   if(!c.files.length)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});
-  else if(c.files.length===1){if(c.message.length<=1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:c.files[0].file_id,caption:c.message||undefined});else{await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});await tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:c.files[0].file_id});}}
-  else if(c.files.length<=10){if(c.message.length>1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});const media=c.files.map((f,i)=>({type:"document",media:f.file_id,...(i===0&&c.message.length<=1024&&c.message?{caption:c.message}:{})}));await tg(env.TELEGRAM_BOT_TOKEN,"sendMediaGroup",{chat_id:chat,media});}else{if(c.message.length>1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});for(let i=0;i<c.files.length;i++){const f=c.files[i];await tg(env.TELEGRAM_BOT_TOKEN,"sendDocument",{chat_id:chat,document:f.file_id,...(i===0&&c.message.length<=1024&&c.message?{caption:c.message}:{})});}}
+  else{
+   if(c.message.length>1024)await tg(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chat,text:c.message});
+   for(let i=0;i<c.files.length;i++)await sendStoredDocument(env,chat,c.files[i],i===0&&c.message.length<=1024?c.message:"");
+  }
   await env.DB.prepare("INSERT INTO platform_delivery_claims(user_uuid,offer,last_sent_at) VALUES(?,?,?) ON CONFLICT(user_uuid,offer) DO UPDATE SET last_sent_at=excluded.last_sent_at").bind(user,offer,now).run();
   return out({success:true,offer,sentFiles:c.files.length});
  }catch(e){console.error("Platform delivery failed",e);return out({success:false,error:String(e?.message||"DELIVERY_FAILED").slice(0,180)},500);}
