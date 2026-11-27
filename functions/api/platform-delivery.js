@@ -1,6 +1,6 @@
 import { getVisitor } from "./_lib/session.js";
 
-const OFFERS={beta:"beta_ads",android:"android_ads",ios:"ios_ads"};
+const OFFERS={beta:"beta_ads",android:"android_ads",ios:"ios_ads",beta_pc:"beta_pc_ads"};
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){
  await DB.prepare("CREATE TABLE IF NOT EXISTS platform_delivery_config (offer TEXT PRIMARY KEY, message TEXT NOT NULL DEFAULT '', files_json TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL DEFAULT 0)").run();
