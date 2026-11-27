@@ -1147,6 +1147,17 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 .oxide-vip-footnote{margin:15px 0 0;color:#8996ad;font-size:11px;line-height:1.7}
 .oxide-vip-payment-status{min-height:18px;margin-top:9px;color:#ffd36a;font-size:11px;line-height:1.6}
 @media(max-width:380px){.oxide-vip-top-button{width:100px;min-width:100px;height:48px;border-radius:18px;font-size:15px}.oxide-vip-panel{padding:18px 13px}.oxide-vip-benefits{padding:12px 10px}.oxide-vip-benefit-copy strong{font-size:12px}}
+
+/* OXIDE VIP placement and blue-violet glow refinement */
+.top-bar{position:relative;padding-left:132px;min-height:58px}
+.oxide-vip-top-button{position:absolute;left:0;top:0;z-index:5;width:118px;min-width:118px;height:54px;border-radius:22px;background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);box-shadow:0 0 9px rgba(8,127,234,.62),0 0 22px rgba(88,75,245,.55),0 0 34px rgba(150,56,232,.34),inset 0 1px 1px rgba(255,255,255,.3);animation:oxideVipNeonPulse 2.4s ease-in-out infinite}
+.oxide-vip-top-button:hover{box-shadow:0 0 13px rgba(8,127,234,.8),0 0 29px rgba(88,75,245,.72),0 0 42px rgba(150,56,232,.48),inset 0 1px 1px rgba(255,255,255,.35)}
+@keyframes oxideVipNeonPulse{0%,100%{filter:saturate(1);box-shadow:0 0 8px rgba(8,127,234,.52),0 0 18px rgba(88,75,245,.42),0 0 28px rgba(150,56,232,.28),inset 0 1px 1px rgba(255,255,255,.28)}50%{filter:saturate(1.18);box-shadow:0 0 13px rgba(8,127,234,.82),0 0 27px rgba(88,75,245,.68),0 0 40px rgba(150,56,232,.46),inset 0 1px 1px rgba(255,255,255,.35)}}
+.oxide-vip-panel{width:min(100%,500px);max-height:min(94dvh,900px);padding:22px 20px 18px;overscroll-behavior:contain}
+.oxide-vip-benefit{min-height:64px}
+@media(max-width:520px){.top-bar{padding-left:108px;min-height:50px}.oxide-vip-top-button{width:96px;min-width:96px;height:46px;border-radius:18px;gap:7px;padding:0 10px;font-size:15px}.oxide-vip-top-button svg{width:25px;height:25px}#oxideVipModal{padding:10px}.oxide-vip-panel{width:100%;max-height:calc(100dvh - 20px);padding:17px 13px 14px;border-radius:23px}.oxide-vip-crown{width:45px;height:45px;margin:13px auto 5px}.oxide-vip-title{font-size:25px}.oxide-vip-price{font-size:29px;margin:10px 0 3px}.oxide-vip-subtitle{margin-bottom:13px}.oxide-vip-benefits{padding:10px 11px;border-radius:19px}.oxide-vip-benefit{min-height:57px;grid-template-columns:25px 1fr 25px;gap:7px}.oxide-vip-check{width:21px;height:21px}.oxide-vip-benefit-icon{width:23px;height:23px}.oxide-vip-benefit-copy strong{font-size:12px}.oxide-vip-benefit-copy small{font-size:10px;margin-top:2px}.oxide-vip-activate{margin-top:12px;padding:15px 10px;font-size:15px}.oxide-vip-footnote{margin-top:9px}}
+@media(max-width:360px){.top-bar{padding-left:94px}.oxide-vip-top-button{width:84px;min-width:84px;height:43px;font-size:14px}.oxide-vip-top-button svg{width:22px;height:22px}}
+@media(prefers-reduced-motion:reduce){.oxide-vip-top-button{animation:none}}
 </style>
 </head>
 <body>
