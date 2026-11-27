@@ -46,6 +46,8 @@ async function ensureTables(DB) {
   const platformCols = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
   if (!(platformCols.results || []).some(c => c.name === "beta_pc_ads")) await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
   await DB.prepare("CREATE TABLE IF NOT EXISTS adsgram_ad_analytics (id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,offer TEXT NOT NULL DEFAULT 'island',event_type TEXT NOT NULL,created_at INTEGER NOT NULL)").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_progress (user_id TEXT PRIMARY KEY, completed_ads INTEGER NOT NULL DEFAULT 0)").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_pending (user_id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, consumed_at INTEGER)").run();
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -255,11 +257,23 @@ export async function onRequestGet({ request, env }) {
         "SELECT status FROM users WHERE user_uuid=? LIMIT 1"
       ).bind(identity.user_uuid).first();
       if (!account || account.status !== "active") return json({ success: false, error: "ACCOUNT_NOT_ACTIVE" }, 403);
+      const now = Math.floor(Date.now() / 1000);
+      const wheelPending = await env.DB.prepare(
+        "SELECT created_at,consumed_at FROM oxide_wheel_ad_pending WHERE user_id=?"
+      ).bind(identity.user_uuid).first();
+      if (wheelPending && !wheelPending.consumed_at && now - Number(wheelPending.created_at || 0) <= 600) {
+        const results = await env.DB.batch([
+          env.DB.prepare("UPDATE oxide_wheel_ad_pending SET consumed_at=? WHERE user_id=? AND consumed_at IS NULL AND created_at>=?").bind(now, identity.user_uuid, now - 600),
+          env.DB.prepare("INSERT INTO oxide_wheel_ad_progress(user_id,completed_ads) SELECT ?,1 WHERE changes()=1 ON CONFLICT(user_id) DO UPDATE SET completed_ads=MIN(10,completed_ads+1)").bind(identity.user_uuid)
+        ]);
+        if (Number(results?.[0]?.meta?.changes || 0) !== 1) return json({ success: false, error: "WHEEL_AD_ALREADY_USED" }, 409);
+        const wheelCount = await env.DB.prepare("SELECT completed_ads FROM oxide_wheel_ad_progress WHERE user_id=?").bind(identity.user_uuid).first();
+        return json({ success: true, offer: "wheel", wheelAds: Math.min(10, Number(wheelCount?.completed_ads || 0)) });
+      }
       const pending = await env.DB.prepare(
         "SELECT offer FROM adsgram_pending_offer WHERE user_id=?"
       ).bind(identity.user_uuid).first();
       const offer = PLATFORM_OFFERS.includes(String(pending?.offer || "")) ? String(pending.offer) : "island";
-      const now = Math.floor(Date.now() / 1000);
       const result = await awardVerifiedAd(env.DB, identity.user_uuid, now, offer);
       if (result.success) await notifyAdminAdWatch(env, env.DB, identity.user_uuid, result, offer, now);
       return json(result, result.success ? 200 : result.error === "REWARD_COOLDOWN" ? 429 : 409);
@@ -269,9 +283,10 @@ export async function onRequestGet({ request, env }) {
     const userId = await getVisitor(request, env);
     if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     const now = Math.floor(Date.now() / 1000);
-    const [completedAds, platformProgress] = await Promise.all([
+    const [completedAds, platformProgress, wheelProgress] = await Promise.all([
       readProgress(env.DB, userId, now),
-      readPlatformProgress(env.DB, userId, now)
+      readPlatformProgress(env.DB, userId, now),
+      env.DB.prepare("SELECT completed_ads FROM oxide_wheel_ad_progress WHERE user_id=?").bind(userId).first()
     ]);
     await env.DB.prepare("CREATE TABLE IF NOT EXISTS oxide_go_access(user_uuid TEXT PRIMARY KEY,source_code TEXT NOT NULL,granted_at INTEGER NOT NULL)").run();
     await env.DB.prepare("CREATE TABLE IF NOT EXISTS platform_paid_unlocks(user_uuid TEXT NOT NULL,offer TEXT NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(user_uuid,offer))").run();
@@ -281,7 +296,7 @@ export async function onRequestGet({ request, env }) {
       env.DB.prepare("SELECT offer FROM platform_paid_unlocks WHERE user_uuid=?").bind(userId).all()
     ]);
     const paidUnlocks={beta:false,android:false,ios:false,beta_pc:false};for(const row of (paidRows.results||[]))if(PLATFORM_OFFERS.includes(row.offer))paidUnlocks[row.offer]=true;
-    return json({ success: true, completedAds, platformProgress, points: Number(user?.points || 0), goAccess: Boolean(goPass), paidUnlocks });
+    return json({ success: true, completedAds, platformProgress, wheelAds: Math.min(10, Number(wheelProgress?.completed_ads || 0)), points: Number(user?.points || 0), goAccess: Boolean(goPass), paidUnlocks });
   } catch (error) {
     console.error("AdsGram reward endpoint failed:", error);
     return json({ success: false, error: "ADSGRAM_REWARD_FAILED" }, 500);
@@ -296,6 +311,13 @@ export async function onRequestPost({ request, env }) {
     if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     const body = await request.json().catch(() => ({}));
     const offer = String(body?.offer || "");
+    if (offer === "wheel") {
+      const now = Math.floor(Date.now() / 1000);
+      const progress = await env.DB.prepare("SELECT completed_ads FROM oxide_wheel_ad_progress WHERE user_id=?").bind(userId).first();
+      if (Number(progress?.completed_ads || 0) >= 10) return json({ success: false, error: "WHEEL_ADS_MAX" }, 409);
+      await env.DB.prepare("INSERT INTO oxide_wheel_ad_pending(user_id,created_at,consumed_at) VALUES(?,?,NULL) ON CONFLICT(user_id) DO UPDATE SET created_at=excluded.created_at,consumed_at=NULL").bind(userId, now).run();
+      return json({ success: true, offer: "wheel", wheelAds: Number(progress?.completed_ads || 0) });
+    }
     if (offer !== "island" && !PLATFORM_OFFERS.includes(offer)) return json({ success: false, error: "INVALID_OFFER" }, 400);
     const now = Math.floor(Date.now() / 1000);
     const progress = offer === "island" ? null : await readPlatformProgress(env.DB, userId, now);
