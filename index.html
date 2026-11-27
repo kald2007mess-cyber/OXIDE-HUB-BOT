@@ -2152,6 +2152,29 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
   else{const pageStatus=document.getElementById("islandMessage")||document.getElementById("status");if(pageStatus)pageStatus.textContent=message;}
  }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
 }
+
+async function downloadPlatformDeliveryFile(button,url,fileName){
+ if(!button||button.disabled)return;
+ const card=button.closest(".oxide-delivery-file"),progress=card?.querySelector(".oxide-download-progress"),fill=card?.querySelector(".oxide-download-fill"),percent=card?.querySelector(".oxide-download-percent");
+ const original="⬇ Download file";button.disabled=true;button.classList.remove("is-downloaded");button.textContent="جاري تجهيز التنزيل…";if(progress)progress.hidden=false;if(fill)fill.style.width="0%";if(percent)percent.textContent="0%";
+ try{
+  const response=await fetch(url,{method:"GET",credentials:"same-origin",cache:"no-store"});
+  if(!response.ok){let detail="DOWNLOAD_FAILED";try{const data=await response.json();detail=data.error||detail;}catch{}throw new Error(detail);}
+  if(!response.body)throw new Error("DOWNLOAD_STREAM_UNAVAILABLE");
+  const total=Number(response.headers.get("Content-Length")||0),reader=response.body.getReader(),chunks=[];let received=0;
+  while(true){const part=await reader.read();if(part.done)break;chunks.push(part.value);received+=part.value.byteLength;
+   if(total>0){const value=Math.min(99,Math.floor(received/total*100));if(fill)fill.style.width=value+"%";if(percent)percent.textContent=value+"%";button.textContent="جارٍ التنزيل… "+value+"%";}
+   else{if(percent)percent.textContent=(received/1048576).toFixed(1)+" MB";button.textContent="جارٍ تنزيل الملف…";}
+  }
+  const blob=new Blob(chunks,{type:response.headers.get("Content-Type")||"application/octet-stream"});
+  if(!blob.size)throw new Error("EMPTY_DOWNLOAD");
+  if(fill)fill.style.width="100%";if(percent)percent.textContent="100%";
+  const objectUrl=URL.createObjectURL(blob),link=document.createElement("a");link.href=objectUrl;link.download=fileName;link.style.display="none";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+  button.classList.add("is-downloaded");button.textContent="✓ تم تجهيز الملف للتنزيل";
+ }catch(error){button.textContent="تعذّر التنزيل — أعد المحاولة";button.disabled=false;if(percent)percent.textContent="خطأ";const status=document.getElementById("platformDeliveryViewerStatus");if(status)status.textContent="تعذّر تنزيل الملف: "+(error.message||"DOWNLOAD_FAILED");return;
+ }
+ button.disabled=false;
+}
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
 function openPlatformDeliveryViewer(offer,data){
  const modal=document.getElementById("platformDeliveryModal"),title=document.getElementById("platformDeliveryTitle"),message=document.getElementById("platformDeliveryMessage"),list=document.getElementById("platformDeliveryFiles"),media=document.getElementById("platformDeliveryMedia"),mediaTitle=document.getElementById("platformDeliveryMediaTitle"),status=document.getElementById("platformDeliveryViewerStatus");
@@ -2166,8 +2189,13 @@ function openPlatformDeliveryViewer(offer,data){
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");size.textContent=(Number(file.size||0)/1024/1024).toFixed(2)+" MB";
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-  const download=document.createElement("a");download.href=url;download.download=file.name||"download";download.textContent="⬇ Download file";download.className="oxide-delivery-download";
-  card.append(name,size,download);list.appendChild(card);
+  const download=document.createElement("button");download.type="button";download.textContent="⬇ Download file";download.className="oxide-delivery-download";download.onclick=()=>downloadPlatformDeliveryFile(download,url,file.name||("file-"+(index+1)));
+  const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
+  const track=document.createElement("div");track.className="oxide-download-track";
+  const fill=document.createElement("div");fill.className="oxide-download-fill";fill.style.width="0%";track.appendChild(fill);
+  const percent=document.createElement("small");percent.className="oxide-download-percent";percent.textContent="0%";
+  progress.append(track,percent);
+  card.append(name,size,download,progress);list.appendChild(card);
  });
  if(!files.length){const empty=document.createElement("p");empty.textContent="No files attached to this offer.";list.appendChild(empty);}
  const mediaFiles=files.map((file,index)=>({file,index})).filter(({file})=>/^(image|video)\//i.test(String(file.contentType||"")));
@@ -3570,6 +3598,18 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 .channel-subscribe-panel button,.channel-subscribe-panel a{display:flex;align-items:center;justify-content:center;width:100%;min-height:45px;margin-top:10px;border:0;border-radius:12px;text-decoration:none;font-weight:800;font-size:14px;cursor:pointer}
 .channel-subscribe-join{background:linear-gradient(120deg,#168fe0,#1760bd);color:white}.channel-subscribe-check{background:linear-gradient(120deg,#7738d7,#a14ce9);color:white}.channel-subscribe-close{background:rgba(255,255,255,.08);color:#d8d2eb;border:1px solid rgba(255,255,255,.12)!important}
 #channelSubscribeStatus{min-height:18px;margin-top:10px;color:#ffd68a;font-size:12px}
+
+.oxide-delivery-download{width:100%;font-family:inherit;cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s;background:linear-gradient(112deg,#2769d8 0%,#5148d5 48%,#843de0 100%)!important;border:1px solid rgba(180,174,255,.72)!important;box-shadow:0 0 0 rgba(88,92,235,0),0 8px 24px rgba(68,76,210,.26)!important}
+.oxide-delivery-download:active{transform:scale(.985)}
+.oxide-delivery-download:not(:disabled){animation:oxideDownloadGlow 2.4s ease-in-out infinite}
+.oxide-delivery-download:disabled{opacity:1;cursor:wait;animation:none;filter:saturate(1.1)}
+.oxide-delivery-download.is-downloaded{background:linear-gradient(110deg,#138a68,#315eae)!important;border-color:#70e0ba!important;animation:none;color:#eafff5!important}
+@keyframes oxideDownloadGlow{0%,100%{box-shadow:0 0 10px rgba(53,111,235,.25),0 7px 20px rgba(102,54,207,.2)}50%{box-shadow:0 0 22px rgba(53,139,255,.52),0 0 30px rgba(145,64,229,.38)}}
+.oxide-download-progress{display:flex;align-items:center;gap:10px;margin-top:12px}
+.oxide-download-progress[hidden]{display:none!important}
+.oxide-download-track{height:9px;flex:1;overflow:hidden;border-radius:99px;background:rgba(111,126,168,.2);border:1px solid rgba(159,168,226,.25)}
+.oxide-download-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#2784f5,#6a4ee8,#a24be9);box-shadow:0 0 12px rgba(100,110,255,.6);transition:width .12s linear}
+.oxide-download-percent{min-width:38px;text-align:end;color:#cfc4ff;font-weight:900;font-variant-numeric:tabular-nums}
 </style>
 <div id="channelSubscribeModal" hidden>
  <div class="channel-subscribe-panel" role="dialog" aria-modal="true" aria-labelledby="channelSubscribeTitle">
