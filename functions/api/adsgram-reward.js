@@ -50,6 +50,16 @@ async function ensureTables(DB) {
   const wheelCols = await DB.prepare("PRAGMA table_info(oxide_wheel_ad_progress)").all();
   if (!(wheelCols.results || []).some(c => c.name === "used_ads")) await DB.prepare("ALTER TABLE oxide_wheel_ad_progress ADD COLUMN used_ads INTEGER NOT NULL DEFAULT 0").run();
   await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_ad_pending (user_id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, consumed_at INTEGER)").run();
+  await DB.prepare("CREATE TABLE IF NOT EXISTS oxide_wheel_migrations (migration_key TEXT PRIMARY KEY, applied_at INTEGER NOT NULL)").run();
+  const wheelReset = await DB.prepare("SELECT migration_key FROM oxide_wheel_migrations WHERE migration_key='wheel_reset_all_users_v2'").first();
+  if (!wheelReset) {
+    await DB.batch([
+      DB.prepare("DELETE FROM oxide_wheel_ad_pending"),
+      DB.prepare("DELETE FROM oxide_wheel_ad_progress"),
+      DB.prepare("DELETE FROM oxide_wheel_state"),
+      DB.prepare("INSERT OR IGNORE INTO oxide_wheel_migrations(migration_key,applied_at) VALUES('wheel_reset_all_users_v2',?)").bind(Math.floor(Date.now()/1000))
+    ]);
+  }
   await DB.prepare(`
     CREATE TABLE IF NOT EXISTS point_ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
