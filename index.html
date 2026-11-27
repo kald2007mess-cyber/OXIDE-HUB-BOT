@@ -1463,6 +1463,49 @@ body:has(#referralPage[style*="display: block"]) .top-bar .oxide-leaderboard-top
 @media(max-width:360px){.oxide-leaderboard-top-button{left:90px;width:39px;min-width:39px;height:46px}body:has(#referralPage[style*="display: block"]) .top-bar{padding-left:130px}}
 @media(prefers-reduced-motion:reduce){.oxide-leaderboard-top-button::before{animation:none}}
 
+
+
+/* OXIDE leaderboard destination: hide the app's bottom navigation */
+body.oxide-leaderboard-open-state .navigation{display:none!important;}
+
+/* One cohesive blue-violet glass frame around tabs, rankings and current rank */
+#oxideLeaderboardPage .oxide-leaderboard-main-frame{
+  position:relative!important;
+  z-index:1!important;
+  width:100%!important;
+  max-width:560px!important;
+  margin:0 auto 18px!important;
+  padding:14px!important;
+  border:1.5px solid rgba(105,139,255,.68)!important;
+  border-radius:23px!important;
+  background:linear-gradient(125deg,rgba(8,127,234,.19) 0%,rgba(62,83,218,.17) 48%,rgba(150,56,232,.20) 100%)!important;
+  box-shadow:0 0 18px rgba(54,105,255,.13),0 0 25px rgba(150,56,232,.12),inset 0 1px 0 rgba(220,230,255,.13)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-main-frame .oxide-leaderboard-tabs{
+  max-width:none!important;
+  margin:0 0 14px!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-main-frame .oxide-leaderboard-content{
+  max-width:none!important;
+  margin:0!important;
+  padding:12px 0 0!important;
+  border:0!important;
+  border-top:1px solid rgba(151,163,255,.28)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-main-frame .oxide-leaderboard-tabs button{
+  background:rgba(18,35,76,.42)!important;
+  border:1px solid rgba(130,151,255,.43)!important;
+  box-shadow:inset 0 1px 0 rgba(220,230,255,.08)!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-main-frame .oxide-leaderboard-tabs button.active{
+  background:linear-gradient(110deg,rgba(8,127,234,.36),rgba(150,56,232,.36))!important;
+  border-color:rgba(173,163,255,.78)!important;
+}
 </style>
 </head>
 <body>
@@ -1729,6 +1772,7 @@ body:has(#referralPage[style*="display: block"]) .top-bar .oxide-leaderboard-top
     <button class="oxide-leaderboard-back" type="button" onclick="closeOxideLeaderboard()" aria-label="رجوع">‹</button>
     <div><div class="oxide-leaderboard-eyebrow">OXIDE HUB</div><h2><svg class="oxide-lb-title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v2a4 4 0 0 0 4 4M16 6h3v2a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg> الترتيب</h2></div>
   </header>
+  <div class="oxide-leaderboard-main-frame">
   <div class="oxide-leaderboard-tabs" role="tablist" aria-label="نوع الترتيب">
     <button type="button" class="active" id="oxideCoinsTab" role="tab" aria-selected="true" onclick="showOxideLeaderboardTab('points')"><svg class="oxide-lb-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5c-.7-.7-1.7-1-3-1-1.8 0-3 .9-3 2.2 0 3.4 6 1.2 6 4.5 0 1.3-1.2 2.3-3.2 2.3-1.3 0-2.5-.4-3.3-1.2M12 5.5v13"/></svg> حسب العملات</button>
     <button type="button" id="oxideReferralsTab" role="tab" aria-selected="false" onclick="showOxideLeaderboardTab('referrals')"><svg class="oxide-lb-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13.5a4 4 0 0 1 3.5 4V19"/></svg> الدعوات</button>
@@ -1737,6 +1781,7 @@ body:has(#referralPage[style*="display: block"]) .top-bar .oxide-leaderboard-top
     <div class="oxide-leaderboard-caption" id="oxideLeaderboardCaption"><svg class="oxide-lb-caption-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v2a4 4 0 0 0 4 4M16 6h3v2a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg><span>أفضل 10 في العملات</span></div>
     <div id="oxideLeaderboardList"><div class="ranking-row">جاري التحميل...</div></div>
     <div id="oxideCurrentRank" class="oxide-current-rank" aria-live="polite"><div><div class="oxide-current-rank-label">ترتيبك الحالي</div><div class="oxide-current-rank-place">جاري التحميل...</div></div></div>
+  </div>
   </div>
 </section>
 
