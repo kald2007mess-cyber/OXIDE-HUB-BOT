@@ -117,6 +117,43 @@ export async function onRequestGet({ request, env }) {
   }
 }
 
+async function notifyAdminWithdrawal(env, DB, userId, amount, wheelBalance, accountBalance, now) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ADMIN_ID) return;
+  try {
+    const profile = await DB.prepare(`
+      SELECT p.telegram_user_id,p.username,p.first_name,p.last_name,p.public_id
+      FROM users u LEFT JOIN oxide_profiles p ON p.user_uuid=u.user_uuid
+      WHERE u.user_uuid=? LIMIT 1
+    `).bind(userId).first();
+    const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "بدون اسم";
+    const time = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Africa/Algiers", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    }).format(new Date(now * 1000));
+    const message = [
+      "💸 سحب جديد من أرباح العجلة — OXIDE HUB",
+      "",
+      "👤 الاسم: " + name,
+      "🔗 المستخدم: " + (profile?.username ? "@" + profile.username : "غير محدد"),
+      "🪪 رقم OX: " + String(profile?.public_id || userId),
+      "🆔 Telegram ID: " + String(profile?.telegram_user_id || "غير متوفر"),
+      "💰 المبلغ المسحوب: " + amount + " 🪙",
+      "🎡 رصيد العجلة المتبقي: " + wheelBalance + " 🪙",
+      "⭐ رصيد الحساب بعد التحويل: " + accountBalance + " 🪙",
+      "🕒 الوقت: " + time
+    ].join("\n");
+    const response = await fetch("https://api.telegram.org/bot" + env.TELEGRAM_BOT_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: env.TELEGRAM_ADMIN_ID, text: message, disable_web_page_preview: true })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) console.error("OXIDE wheel withdrawal notification failed:", data.description || response.status);
+  } catch (error) {
+    console.error("OXIDE wheel withdrawal notification failed:", error);
+  }
+}
+
 export async function onRequestPost({ request, env }) {
   try {
     if (!env.DB || !env.SESSION_SECRET) return json({ success: false, error: "SERVER_CONFIGURATION_MISSING" }, 500);
@@ -143,6 +180,7 @@ export async function onRequestPost({ request, env }) {
       const balance = await env.DB.prepare("SELECT points FROM users WHERE user_uuid=?").bind(userId).first();
       await env.DB.prepare("UPDATE visitors SET points=? WHERE user_id=?").bind(Number(balance?.points || 0), userId).run();
       const state = await readWheelState(env.DB, userId, now);
+      await notifyAdminWithdrawal(env, env.DB, userId, amount, state.wheelBalance, Number(balance?.points || 0), now);
       return json({ success: true, withdrawn: amount, points: Number(balance?.points || 0), ...state });
     }
 
