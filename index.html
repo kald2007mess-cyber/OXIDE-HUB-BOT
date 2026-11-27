@@ -4394,11 +4394,8 @@ function applyAccountPageLanguage(language){
 </script>
 
 <style>
-/* Account-only VIP cool blue-purple finish */
-@keyframes oxideAccountFrameVIP{
-  0%,100%{border-color:#087FEA;box-shadow:0 0 0 1px rgba(8,127,234,.62),0 0 13px rgba(8,127,234,.58),0 0 25px rgba(64,92,235,.28),inset 0 0 12px rgba(8,127,234,.08)}
-  50%{border-color:#9638E8;box-shadow:0 0 0 1px rgba(150,56,232,.68),0 0 15px rgba(150,56,232,.62),0 0 28px rgba(88,75,245,.34),inset 0 0 13px rgba(150,56,232,.09)}
-}
+
+/* Account-only: match the VIP button's exact cool gradient */
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
 #accountPage .oxide-account-menu,
@@ -4409,14 +4406,14 @@ function applyAccountPageLanguage(language){
 #accountPage .oxide-menu-icon,
 #accountPage .oxide-account-language select,
 #accountPage .oxide-copy-id{
-  border:1.5px solid #087FEA!important;
-  animation:oxideAccountFrameVIP 3.8s ease-in-out infinite alternate!important;
+  border:1.5px solid rgba(151,126,255,.55)!important;
+  box-shadow:0 0 18px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.12)!important;
 }
 #accountPage .oxide-profile-card,
 #accountPage .oxide-account-stat-card,
 #accountPage .oxide-account-menu,
 #accountPage .oxide-achievement{
-  background:linear-gradient(105deg,rgba(8,127,234,.16) 0%,rgba(64,92,235,.19) 48%,rgba(150,56,232,.17) 100%)!important;
+  background:linear-gradient(105deg,rgba(8,127,234,.17) 0%,rgba(64,92,235,.20) 48%,rgba(150,56,232,.18) 100%)!important;
 }
 #accountPage .oxide-profile-avatar,
 #accountPage .oxide-account-stat-icon,
