@@ -1752,13 +1752,8 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <div class="oxide-wheel-stage"><div class="oxide-wheel-pointer"></div>
 <svg class="oxide-wheel-art" viewBox="0 0 320 320" role="img" aria-label="عجلة الحظ">
 <circle cx="160" cy="160" r="151" fill="#101a3b" stroke="#9c83ff" stroke-width="5"/>
-<g stroke="#d9d2ff" stroke-width="2">
-<path d="M160 160L160 12A148 148 0 0 1 264.65 55.35Z" fill="#285fe2"/><path d="M160 160L264.65 55.35A148 148 0 0 1 308 160Z" fill="#873fe0"/>
-<path d="M160 160L308 160A148 148 0 0 1 264.65 264.65Z" fill="#2452b8"/><path d="M160 160L264.65 264.65A148 148 0 0 1 160 308Z" fill="#9a45df"/>
-<path d="M160 160L160 308A148 148 0 0 1 55.35 264.65Z" fill="#285fe2"/><path d="M160 160L55.35 264.65A148 148 0 0 1 12 160Z" fill="#873fe0"/>
-<path d="M160 160L12 160A148 148 0 0 1 55.35 55.35Z" fill="#2452b8"/><path d="M160 160L55.35 55.35A148 148 0 0 1 160 12Z" fill="#9a45df"/>
-</g><g fill="#fff" font-size="24" font-weight="900" text-anchor="middle" dominant-baseline="middle">
-<text x="205" y="53">0</text><text x="267" y="115">10</text><text x="267" y="205">10</text><text x="205" y="267">10</text><text x="115" y="267">20</text><text x="53" y="205">20</text><text x="53" y="115">30</text><text x="115" y="53">50</text></g>
+<g stroke="#d9d2ff" stroke-width="2"><path d="M160 160L160.00 12.00A148 148 0 0 1 246.99 40.27Z" fill="#285fe2"/><path d="M160 160L246.99 40.27A148 148 0 0 1 300.76 114.27Z" fill="#873fe0"/><path d="M160 160L300.76 114.27A148 148 0 0 1 300.76 205.73Z" fill="#2452b8"/><path d="M160 160L300.76 205.73A148 148 0 0 1 246.99 279.73Z" fill="#9a45df"/><path d="M160 160L246.99 279.73A148 148 0 0 1 160.00 308.00Z" fill="#285fe2"/><path d="M160 160L160.00 308.00A148 148 0 0 1 73.01 279.73Z" fill="#873fe0"/><path d="M160 160L73.01 279.73A148 148 0 0 1 19.24 205.73Z" fill="#2452b8"/><path d="M160 160L19.24 205.73A148 148 0 0 1 19.24 114.27Z" fill="#9a45df"/><path d="M160 160L19.24 114.27A148 148 0 0 1 73.01 40.27Z" fill="#285fe2"/><path d="M160 160L73.01 40.27A148 148 0 0 1 160.00 12.00Z" fill="#873fe0"/></g>
+<g fill="#fff" font-size="21" font-weight="900" text-anchor="middle" dominant-baseline="middle"><text x="192.4" y="60.1">0</text><text x="244.9" y="98.3">10</text><text x="265.0" y="160.0">10</text><text x="244.9" y="221.7">10</text><text x="192.4" y="259.9">20</text><text x="127.6" y="259.9">20</text><text x="75.1" y="221.7">30</text><text x="55.0" y="160.0">50</text><text x="75.1" y="98.3">5</text><text x="127.6" y="60.1">100</text></g>
 <circle cx="160" cy="160" r="28" fill="#101a35" stroke="#d7c8ff" stroke-width="4"/><circle cx="160" cy="160" r="9" fill="#bca3ff"/></svg></div>
 <button class="oxide-wheel-spin" id="oxideWheelSpinButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4z"/></svg><span>قم بتدوير (هذه مجانية)</span></button><div class="oxide-wheel-countdown" id="oxideWheelCountdown" hidden>23:59:59</div>
 <div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">1</strong></div></div>
@@ -5036,7 +5031,7 @@ function applyAccountPageLanguage(language){
  const FREE_KEY="oxide_wheel_free_remaining_v2";
  const FREE_UNTIL_KEY="oxide_wheel_free_until_v2";
  const USED_KEY="oxide_wheel_ad_spins_used_v1";
- const prizes=[0,10,10,10,20,20,30,50];
+ const prizes=[0,10,10,10,20,20,30,50,5,100];
  function weightedPrize(options){
   const total=options.reduce((sum,item)=>sum+item.weight,0);
   let roll=Math.random()*total;
@@ -5084,11 +5079,11 @@ function applyAccountPageLanguage(language){
   }
   const isFreeSpin=usedFreeAttempt;
   const selected=isFreeSpin
-   ?weightedPrize([{value:0,weight:25},{value:10,weight:50},{value:20,weight:25}])
-   :weightedPrize([{value:0,weight:20},{value:10,weight:45},{value:20,weight:25},{value:30,weight:8},{value:50,weight:2}]);
+   ?weightedPrize([{value:0,weight:20},{value:5,weight:15},{value:10,weight:45},{value:20,weight:20}])
+   :weightedPrize([{value:0,weight:18},{value:5,weight:12},{value:10,weight:40},{value:20,weight:22},{value:30,weight:8}]);
   const matchingSectors=prizes.map((value,index)=>value===selected?index:-1).filter(index=>index>=0);
   const sector=matchingSectors[Math.floor(Math.random()*matchingSectors.length)];
-  const angle=1800+((337.5-sector*45+360)%360);
+  const angle=1800+((342-sector*36+360)%360);
   busy=true;update();
   wheel.style.animation="none";
   wheel.style.transition="none";
