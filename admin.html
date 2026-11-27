@@ -772,7 +772,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 </section>
 <div class="menu-grid">
 <button class="menu-tile silver" data-admin-permission="users" onclick="action('activity')"><div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M5 4 3 6M19 4l2 2"/></svg></div><span>Журнал входов</span><small>Последние входы пользователей</small></button>
-<button class="menu-tile green" data-admin-permission="platform_files" onclick="openPlatformDeliveryPage('beta')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg></div><span>Управление файлами платформ</span><small>BETA • ANDROID • iOS</small></button>
+<button class="menu-tile green" data-admin-permission="platform_files" onclick="openPlatformDeliveryPage('beta')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg></div><span>Управление файлами платформ</span><small>BETA • ANDROID • iOS • BETA PC</small></button>
 <button class="menu-tile blue" data-admin-permission="users" onclick="action('users')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span>Информация о пользователях</span></button>
 <button class="menu-tile purple" data-admin-permission="support" onclick="action('support')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 10h8M8 14h5"/></svg></div><span>Техническая поддержка</span><small>Чаты пользователей</small></button>
 <button class="menu-tile purple" data-admin-permission="tasks" onclick="action('reviews')"><div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m8 12 2.5 2.5L16 9M8 6h8M8 18h5"/></svg></div><span>Проверка заявок</span><small>Задания • обмен баллов</small></button>
@@ -2339,6 +2339,7 @@ start();
    "Сбросить счётчики рекламы до 0/10 для всех пользователей BETA, ANDROID, iOS и BETA PC? Баллы и рефералы не изменятся.":"إعادة عدّادات الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS وBETA PC؟ لن تتغير النقاط أو الإحالات."
   });
 
+  Object.assign(AR_TRANSLATIONS,{"BETA • ANDROID • iOS • BETA PC":"BETA • ANDROID • iOS • BETA PC"});
   const RU_TO_AR=AR_TRANSLATIONS;
   const AR_TO_RU=Object.create(null);
   for(const [ru,ar] of Object.entries(RU_TO_AR)){
