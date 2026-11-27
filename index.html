@@ -1447,6 +1447,18 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 #missionsPage .mission-proof-box{border-color:rgba(122,154,232,.35);border-radius:13px;background:rgba(10,25,55,.6)}
 @media(max-width:360px){#missionsPage .oxide-missions-glass-frame{padding:12px 9px 15px}#missionsPage .oxide-mission-categories{gap:5px}#missionsPage .oxide-mission-category{min-height:76px;font-size:9px}#missionsPage .oxide-category-icon{width:32px;height:32px}#missionsPage .oxide-missions-heading h2{font-size:22px}}
 
+
+/* Referral-only leaderboard button beside VIP, with a contained rain effect */
+.oxide-leaderboard-top-button{display:none;position:absolute;left:126px;top:0;width:42px;height:54px;min-width:42px;overflow:hidden;border-radius:17px;z-index:6;background:linear-gradient(145deg,rgba(9,48,105,.96),rgba(67,29,119,.98));border:1px solid rgba(151,126,255,.62);color:#fff;box-shadow:0 0 13px rgba(8,127,234,.28),0 0 20px rgba(150,56,232,.25),inset 0 1px rgba(255,255,255,.2)}
+.oxide-leaderboard-top-button::before{content:"";position:absolute;inset:-45% -20%;z-index:0;pointer-events:none;background:repeating-linear-gradient(105deg,transparent 0 8px,rgba(132,190,255,.38) 9px,transparent 10px 17px),repeating-linear-gradient(105deg,transparent 0 15px,rgba(194,143,255,.3) 16px,transparent 17px 27px);background-size:100% 150%;animation:oxideTrophyRain 1.05s linear infinite;opacity:.8}
+.oxide-leaderboard-top-button svg{position:relative;z-index:1;width:25px;height:25px;filter:drop-shadow(0 0 5px rgba(204,174,255,.8))}
+.oxide-leaderboard-top-button:active{transform:scale(.96)}
+@keyframes oxideTrophyRain{from{background-position:0 -60px,0 -100px}to{background-position:0 100px,0 140px}}
+.top-bar:has(#referralPage[style*="display: block"]) .oxide-leaderboard-top-button{display:grid;place-items:center}
+@media(max-width:520px){.oxide-leaderboard-top-button{left:102px;width:38px;min-width:38px;height:46px;border-radius:15px}.top-bar:has(#referralPage[style*="display: block"]){padding-left:148px}}
+@media(max-width:360px){.oxide-leaderboard-top-button{left:90px;width:34px;min-width:34px;height:43px}.top-bar:has(#referralPage[style*="display: block"]){padding-left:130px}}
+@media(prefers-reduced-motion:reduce){.oxide-leaderboard-top-button::before{animation:none}}
+
 </style>
 </head>
 <body>
@@ -1457,6 +1469,10 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 <main class="container">
 <div class="top-bar">
   <div class="top-actions"><div class="language-box"><select id="language" onchange="changeLanguage(this.value)"><option value="ar">🇩🇿 العربية</option><option value="en">🇬🇧 English</option><option value="ru">🇷🇺 Русский</option></select></div><button class="messages-top-button" id="messagesTopButton" type="button" aria-label="Notifications" title="Notifications" onclick="toggleNotifications()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span class="notification-count" id="notificationCount">0</span></button><button class="support-top-button" id="supportTopButton" type="button" onclick="showPage('support')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"></path><rect x="3" y="12" width="4" height="7" rx="2"></rect><rect x="17" y="12" width="4" height="7" rx="2"></rect><path d="M19 19a3 3 0 0 1-3 2h-2"></path></svg><span id="supportTopButtonText">الدعم الفني</span><span class="oxide-new-badge" id="supportUnreadBadge" aria-label="رسائل دعم جديدة"></span></button></div><button class="oxide-vip-top-button" id="oxideVipTopButton" type="button" onclick="openOxideVipModal()" aria-label="OXIDE VIP"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m4 10 6.5 5L16 5l5.5 10 6.5-5-2.5 15h-19L4 10Z"/><path d="M7 28h18"/></svg><span>VIP</span></button>
+    <button class="oxide-leaderboard-open oxide-leaderboard-top-button" type="button" onclick="openOxideLeaderboard()" aria-label="فتح الترتيب" title="الترتيب">
+      <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg>
+    </button>
+
 
 </div>
 <section id="notificationsPanel" class="notifications-panel" hidden aria-live="polite">
@@ -1652,9 +1668,6 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
     <div class="oxide-shards-balance" id="referralShardBalance">—</div>
   </div>
   <div class="oxide-referral-heading">
-    <button class="oxide-leaderboard-open" type="button" onclick="openOxideLeaderboard()" aria-label="فتح الترتيب" title="الترتيب">
-      <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg>
-    </button>
     <div class="oxide-referral-eyebrow">الإحالات</div>
     <h2>ادعُ أصدقاءك واربح</h2>
   </div>
