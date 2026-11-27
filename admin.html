@@ -732,7 +732,7 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
 <div class="oxide-admin-stars" aria-hidden="true"></div>
 <div class="oxide-admin-rain-glass" aria-hidden="true"><canvas id="oxideRainCanvas"></canvas></div>
 <div class="container">
-<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели"><option value="ru" selected>Русский</option><option value="ar">العربية</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
+<header><h1>OXIDE HUB</h1><div class="subtitle">ADMIN CONTROL CENTER</div><div class="admin-language-switch" id="adminLanguageSwitch"><label for="adminLanguage">🌐 Язык панели</label><select id="adminLanguage" aria-label="Язык панели" onchange="window.setAdminLanguage&&window.setAdminLanguage(this.value)"><option value="ru" selected>Русский</option><option value="ar">العربية</option></select><span id="adminLanguageStatus" aria-live="polite"></span></div></header>
 <div class="card" id="loading"><div class="status" id="status">Проверка прав администратора...</div></div>
 <div id="panel" class="hidden">
 <div id="mainMenu">
@@ -2269,8 +2269,15 @@ start();
   try{savedLanguage=localStorage.getItem("oxide-admin-language")||"ru";}catch(_){}
   if(!LANGS[savedLanguage])savedLanguage="ru";
   select.value=savedLanguage;
-  select.addEventListener("change",()=>applyLanguage(select.value));
-  window.setAdminLanguage=applyLanguage;
+  window.setAdminLanguage=function(lang){
+   const nextLang=LANGS[lang]?lang:"ru";
+   if(select.value!==nextLang)select.value=nextLang;
+   applyLanguage(nextLang);
+   requestAnimationFrame(()=>applyLanguage(nextLang));
+  };
+  select.addEventListener("change",function(){window.setAdminLanguage(this.value);});
+  select.addEventListener("input",function(){window.setAdminLanguage(this.value);});
+  select.onchange=function(){window.setAdminLanguage(this.value);};
   applyLanguage(savedLanguage);
   const observer=new MutationObserver(records=>{
    if(applying)return;
