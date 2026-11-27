@@ -1,7 +1,7 @@
 import { json } from "./_lib/session.js";
 import { authorizeAdmin, adminAuthResponse } from "./_lib/admin-auth.js";
 
-const PLATFORMS = ["android", "ios", "beta"];
+const PLATFORMS = ["android", "ios", "beta", "beta_pc"];
 
 async function ensureTable(env) {
   await env.DB.prepare(`
@@ -18,7 +18,7 @@ async function readVisibility(env) {
   const result = await env.DB.prepare(
     "SELECT platform, enabled FROM platform_visibility"
   ).all();
-  const visibility = { android: true, ios: true, beta: true };
+  const visibility = { android: true, ios: true, beta: true, beta_pc: true };
   for (const row of result.results || []) {
     if (PLATFORMS.includes(row.platform)) {
       visibility[row.platform] = Number(row.enabled) === 1;
