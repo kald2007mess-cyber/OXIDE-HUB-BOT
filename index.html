@@ -4123,6 +4123,123 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #accountPage .oxide-account-language select{background:linear-gradient(135deg,#173d78,#30145f)!important;border:1px solid rgba(120,174,255,.55)!important}
 #accountPage .oxide-account-footer strong{color:#a9d9ff!important;text-shadow:0 0 12px rgba(22,143,232,.35)}
 
+
+/* ACCOUNT VIP THEME — matching the exact blue/indigo/purple VIP gradient inside and outside */
+#accountPage.oxide-account-page{
+ --vip-flow:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);
+ --vip-flow-soft:linear-gradient(125deg,rgba(8,127,234,.23) 0%,rgba(64,92,235,.25) 48%,rgba(150,56,232,.27) 100%);
+ --vip-flow-border:rgba(126,137,255,.62);
+ --vip-flow-glow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.13),inset 0 1px rgba(255,255,255,.10);
+}
+#accountPage .oxide-profile-card,
+#accountPage .oxide-account-stat-card,
+#accountPage .oxide-account-menu{
+ background:var(--vip-flow-soft)!important;
+ border:1px solid var(--vip-flow-border)!important;
+ box-shadow:var(--vip-flow-glow)!important;
+}
+#accountPage .oxide-profile-card:before{
+ background:linear-gradient(135deg,rgba(8,127,234,.32),rgba(150,56,232,.34))!important;
+}
+#accountPage .oxide-profile-avatar{
+ background:var(--vip-flow)!important;
+ border:1px solid rgba(190,190,255,.7)!important;
+ box-shadow:0 0 18px rgba(76,91,255,.28),inset 0 1px rgba(255,255,255,.2)!important;
+}
+#accountPage .oxide-profile-mark,
+#accountPage .oxide-account-status{
+ color:#d9d4ff!important;
+ text-shadow:0 0 10px rgba(110,140,255,.35)!important;
+}
+#accountPage .oxide-profile-id{
+ background:var(--vip-flow-soft)!important;
+ border:1px solid rgba(126,137,255,.55)!important;
+ border-radius:14px!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+}
+#accountPage .oxide-copy-id,
+#accountPage .oxide-redeem-open,
+#accountPage .oxide-redeem-submit{
+ background:var(--vip-flow)!important;
+ border:1px solid rgba(151,126,255,.65)!important;
+ color:#fff!important;
+ box-shadow:0 0 18px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#accountPage .oxide-level-track{
+ background:var(--vip-flow-soft)!important;
+ border:1px solid rgba(126,137,255,.5)!important;
+}
+#accountPage .oxide-level-track>span{
+ background:var(--vip-flow)!important;
+ box-shadow:0 0 14px rgba(76,119,255,.5)!important;
+}
+#accountPage .oxide-account-stat-icon,
+#accountPage .oxide-menu-icon{
+ background:var(--vip-flow)!important;
+ border:1px solid rgba(173,167,255,.55)!important;
+ color:#fff!important;
+ box-shadow:0 0 12px rgba(76,91,255,.2),inset 0 1px rgba(255,255,255,.18)!important;
+}
+#accountPage .oxide-account-section-title>span{
+ color:#d7d0ff!important;
+ text-shadow:0 0 12px rgba(112,120,255,.3)!important;
+}
+#accountPage .oxide-account-section-title>small,
+#accountPage .oxide-account-heading p,
+#accountPage .oxide-account-stat-label,
+#accountPage .oxide-account-stat-card small,
+#accountPage .oxide-profile-identity>span{
+ color:#c6c9f2!important;
+}
+#accountPage .oxide-account-stat-card strong,
+#accountPage .oxide-profile-identity strong{
+ color:#fff!important;
+ text-shadow:0 0 12px rgba(135,142,255,.3)!important;
+}
+#accountPage .oxide-account-menu-item,
+#accountPage .oxide-account-language{
+ background:transparent!important;
+ border-bottom-color:rgba(126,137,255,.3)!important;
+}
+#accountPage .oxide-account-menu-item b,
+#accountPage .oxide-account-language b,
+#accountPage .oxide-menu-arrow{
+ color:#fff!important;
+}
+#accountPage .oxide-account-menu-item small,
+#accountPage .oxide-account-language small{
+ color:#c2c8ed!important;
+}
+#accountPage .oxide-account-language select{
+ background:var(--vip-flow)!important;
+ border:1px solid rgba(151,126,255,.6)!important;
+ color:#fff!important;
+}
+#accountPage .oxide-achievement{
+ background:var(--vip-flow-soft)!important;
+ border:1px solid var(--vip-flow-border)!important;
+ box-shadow:var(--vip-flow-glow)!important;
+}
+#accountPage .oxide-account-footer strong{
+ color:#b9c5ff!important;
+ text-shadow:0 0 12px rgba(76,119,255,.35)!important;
+}
+#accountPage .oxide-redeem-dialog{
+ background:linear-gradient(145deg,rgba(8,28,65,.98),rgba(48,22,91,.98))!important;
+ border:1px solid var(--vip-flow-border)!important;
+ box-shadow:0 0 28px rgba(76,91,255,.2),0 0 24px rgba(145,54,225,.15)!important;
+}
+#accountPage .oxide-redeem-symbol{
+ background:var(--vip-flow)!important;
+ color:#fff!important;
+ box-shadow:0 0 18px rgba(76,91,255,.25)!important;
+}
+#accountPage .oxide-redeem-dialog input{
+ background:var(--vip-flow-soft)!important;
+ border:1px solid rgba(126,137,255,.55)!important;
+ color:#fff!important;
+}
+
 </style>
 
 <div id="oxideVipModal" hidden>
