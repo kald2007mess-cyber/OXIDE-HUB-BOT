@@ -2197,6 +2197,7 @@ function openPlatformDeliveryViewer(offer,data){
  if(!modal||!list)return;
  modal._deliveryData={offer,data};
  const files=Array.isArray(data.files)?data.files:[];
+ const mediaFiles=Array.isArray(data.media)?data.media:[];
  title.textContent=offer.toUpperCase()+" • DELIVERY";
  message.textContent=data.message||"Your files are ready.";
  list.replaceChildren();if(media)media.replaceChildren();if(media)media.hidden=true;
@@ -2205,7 +2206,6 @@ function openPlatformDeliveryViewer(offer,data){
   const card=document.createElement("article");card.className="oxide-delivery-file";
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
-  const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
   const download=document.createElement("button");download.type="button";download.textContent="⬇ إرسال الملف إلى محادثة البوت";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,offer));
   const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
   const track=document.createElement("div");track.className="oxide-download-track";
@@ -2214,18 +2214,19 @@ function openPlatformDeliveryViewer(offer,data){
   progress.append(track,percent);
   card.append(name,size,download,progress);list.appendChild(card);
  });
- if(!files.length){const empty=document.createElement("p");empty.textContent="No files attached to this offer.";list.appendChild(empty);}
- const mediaFiles=files.map((file,index)=>({file,index})).filter(({file})=>/^(image|video)\//i.test(String(file.contentType||"")));
+ if(!files.length){const empty=document.createElement("p");empty.textContent=currentLanguage==="ar"?"لا توجد ملفات تنزيل مرفقة.":currentLanguage==="ru"?"Файлы для скачивания не прикреплены.":"No downloadable files attached.";list.appendChild(empty);}
  if(media&&mediaFiles.length){
-  mediaFiles.forEach(({file,index})=>{
+  mediaFiles.forEach((entry)=>{
+   const file=entry.file||entry;const originalIndex=Number(entry.index);
    const item=document.createElement("div");item.className="oxide-delivery-media-item";
-   const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=file.name||"Media";
-   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-   if(String(file.contentType||"").startsWith("image/")){const preview=document.createElement("img");preview.src=url;preview.alt=file.name||"Preview";preview.loading="lazy";item.append(caption,preview);}
+   const isVideo=String(file.contentType||"").startsWith("video/");
+   const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=isVideo?(currentLanguage==="ar"?"▶ طريقة الاستعمال":currentLanguage==="ru"?"▶ Как пользоваться":"▶ How to use"):(currentLanguage==="ar"?"✦ ما هو جديد":currentLanguage==="ru"?"✦ Что нового":"✦ What's new");
+   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+originalIndex;
+   if(!isVideo){const preview=document.createElement("img");preview.src=url;preview.alt=caption.textContent;preview.loading="lazy";item.append(caption,preview);}
    else{const preview=document.createElement("video");preview.src=url;preview.controls=true;preview.preload="metadata";item.append(caption,preview);}
    media.appendChild(item);
   });
-  media.hidden=false;if(mediaTitle)mediaTitle.hidden=false;
+  media.hidden=false;if(mediaTitle)mediaTitle.hidden=true;
  }
  modal.hidden=false;
 }
