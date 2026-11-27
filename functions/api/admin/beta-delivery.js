@@ -1,7 +1,7 @@
 import { getVisitor } from "../_lib/session.js";
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
-const OFFERS = new Set(["beta", "android", "ios"]);
+const OFFERS = new Set(["beta", "android", "ios", "beta_pc"]);
 const MAX_SIZE = 3 * 1024 * 1024 * 1024;
 function out(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"}});}
 async function ensure(DB){
