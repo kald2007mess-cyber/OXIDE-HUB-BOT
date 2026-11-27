@@ -50,7 +50,8 @@ async function readWheelState(DB, userId, now) {
   const completedAds = Math.min(MAX_ADS, Math.max(0, Number(ads?.completed_ads || 0)));
   const usedAds = Math.min(completedAds, Math.max(0, Number(ads?.used_ads || 0)));
   return {
-    freeNextAt: Number(state?.free_used || 0) ? Math.max(now + 1, Math.max(0, Number(state?.free_next_at || 0))) : 0,
+    freeNextAt: 0,
+    freeAvailable: Number(state?.free_used || 0) === 0,
     wheelAds: completedAds,
     adSpinsAvailable: Math.max(0, completedAds - usedAds),
     serverTime: now
