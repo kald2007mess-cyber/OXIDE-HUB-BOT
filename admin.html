@@ -2038,6 +2038,18 @@ async function refreshBroadcastStatus(){
  }catch(error){status.textContent="Не удалось обновить статус рассылки: "+error.message;}
 }
 /* Остальные разделы управления */
+
+let downloadConditionRows=[];
+function openDownloadConditionsPage(){if(!adminOwner){alert("Этот раздел доступен только владельцу.");return;}document.getElementById("mainMenu").classList.add("hidden");document.getElementById("downloadConditionsPage").classList.remove("hidden");resetDownloadConditionForm();loadDownloadConditions();}
+function closeDownloadConditionsPage(){document.getElementById("downloadConditionsPage").classList.add("hidden");document.getElementById("mainMenu").classList.remove("hidden");}
+function resetDownloadConditionForm(){document.getElementById("downloadConditionId").value="";document.getElementById("downloadConditionTitle").value="";document.getElementById("downloadConditionChatId").value="";document.getElementById("downloadConditionUrl").value="";document.getElementById("downloadConditionEnabled").checked=true;document.getElementById("downloadConditionFormTitle").textContent="Добавить канал";document.getElementById("downloadConditionSave").textContent="Сохранить канал";}
+async function downloadConditionRequest(payload){const response=await fetch("/api/admin/download-conditions",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({...payload,initData:tg.initData})});const data=await response.json().catch(()=>({}));if(!response.ok||!data.success)throw new Error(data.error||"DOWNLOAD_CONDITIONS_FAILED");return data;}
+async function loadDownloadConditions(){const list=document.getElementById("downloadConditionsList"),status=document.getElementById("downloadConditionsStatus");if(!adminOwner||!tg?.initData)return;list.textContent="Загрузка условий...";try{const data=await downloadConditionRequest({action:"list"});downloadConditionRows=Array.isArray(data.channels)?data.channels:[];renderDownloadConditions();status.textContent="Условия обновлены.";}catch(error){list.textContent="Не удалось загрузить каналы.";status.textContent="Ошибка: "+error.message;}}
+function renderDownloadConditions(){const list=document.getElementById("downloadConditionsList");list.replaceChildren();document.getElementById("downloadConditionCount").textContent=String(downloadConditionRows.length);if(!downloadConditionRows.length){list.textContent="Нет обязательных каналов. Пользователи смогут открыть страницу загрузки без подписки.";return;}for(const channel of downloadConditionRows){const item=document.createElement("article");item.className="download-condition-item";const title=document.createElement("strong");title.textContent=channel.title;const id=document.createElement("small");id.textContent=channel.chat_id;const url=document.createElement("small");url.textContent=channel.join_url;const state=document.createElement("span");state.className="download-condition-state"+(Number(channel.enabled)===1?"":" off");state.textContent=Number(channel.enabled)===1?"● Активное условие":"● Отключено";const actions=document.createElement("div");actions.className="download-condition-item-actions";const edit=document.createElement("button");edit.type="button";edit.textContent="✏️ Изменить";edit.onclick=()=>editDownloadCondition(channel.id);const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="Удалить";del.onclick=()=>deleteDownloadCondition(channel.id);actions.append(edit,del);item.append(title,id,url,state,actions);list.append(item);}}
+function editDownloadCondition(id){const row=downloadConditionRows.find(x=>Number(x.id)===Number(id));if(!row)return;document.getElementById("downloadConditionId").value=row.id;document.getElementById("downloadConditionTitle").value=row.title||"";document.getElementById("downloadConditionChatId").value=row.chat_id||"";document.getElementById("downloadConditionUrl").value=row.join_url||"";document.getElementById("downloadConditionEnabled").checked=Number(row.enabled)===1;document.getElementById("downloadConditionFormTitle").textContent="Изменить канал";document.getElementById("downloadConditionSave").textContent="Сохранить изменения";document.getElementById("downloadConditionTitle").scrollIntoView({behavior:"smooth",block:"center"});}
+async function saveDownloadCondition(){const button=document.getElementById("downloadConditionSave"),status=document.getElementById("downloadConditionsStatus");const payload={action:"save",id:Number(document.getElementById("downloadConditionId").value||0),title:document.getElementById("downloadConditionTitle").value.trim(),chat_id:document.getElementById("downloadConditionChatId").value.trim(),join_url:document.getElementById("downloadConditionUrl").value.trim(),enabled:document.getElementById("downloadConditionEnabled").checked?1:0};button.disabled=true;try{const data=await downloadConditionRequest(payload);downloadConditionRows=data.channels||[];renderDownloadConditions();resetDownloadConditionForm();status.textContent="Сохранено. Изменения применяются к странице загрузки.";}catch(error){status.textContent="Не удалось сохранить канал: "+error.message;}finally{button.disabled=false;}}
+async function deleteDownloadCondition(id){if(!confirm("Удалить это условие подписки? Пользователи больше не будут обязаны подписываться на этот канал."))return;const status=document.getElementById("downloadConditionsStatus");try{const data=await downloadConditionRequest({action:"delete",id:Number(id)});downloadConditionRows=data.channels||[];renderDownloadConditions();status.textContent="Условие удалено.";}catch(error){status.textContent="Не удалось удалить условие: "+error.message;}}
+
 function action(name){if(name==="rewards"){openAdminRewards();return;}if(name==="security"){if(!adminOwner){alert("Раздел безопасности и прав доступа предназначен только для владельца.");return;}openSecurity();return;}if(["users","news","tasks","reviews","support"].includes(name)&&!hasAdminPermission(name==="reviews"?"tasks":name)){alert("У вас нет прав на этот раздел.");return;}if(name==="activity"){openActivity();return;}if(name==="users"){openUsers();return;}if(name==="news"){openNews();return;}if(name==="tasks"){openTasks();return;}if(name==="reviews"){openReviews();return;}if(name==="support"){openSupportAdmin();return;}const messages={stats:"Статистика сайта"};alert((messages[name]||"Этот раздел")+"\\nЭта функция ещё не подключена.");}
 
 
@@ -2304,6 +2316,29 @@ start();
    "0 файлов":"0 ملف",
    "Сохранить":"حفظ"
   });
+
+  Object.assign(AR_TRANSLATIONS,{
+   "Условия открытия загрузки":"شروط فتح صفحة التنزيل",
+   "Добавление, изменение и удаление обязательных каналов":"إضافة شروط القنوات وتعديلها وحذفها",
+   "Условия открытия страницы загрузки":"شروط فتح صفحة التنزيل",
+   "Пользователь должен подписаться на все включённые каналы, чтобы открыть файлы платформ.":"يجب على المستخدم الاشتراك في جميع القنوات المفعّلة لفتح ملفات المنصات.",
+   "Добавить канал":"إضافة قناة","Название канала":"اسم القناة","Например: OXIDE HUB":"مثال: OXIDE HUB",
+   "Telegram ID или @username канала":"معرّف تيليجرام أو اسم المستخدم للقناة",
+   "Ссылка на вступление в канал":"رابط الانضمام إلى القناة","Условие активно":"الشرط مفعّل",
+   "Сохранить канал":"حفظ القناة","Обязательные каналы":"القنوات المطلوبة",
+   "Все активные каналы обязательны для подписки. Вы можете отключить условие, изменить его или удалить.":"يجب الاشتراك في جميع القنوات المفعّلة. يمكنك تعطيل الشرط أو تعديله أو حذفه.",
+   "Загрузка условий...":"جارٍ تحميل الشروط...","Этот раздел доступен только владельцу.":"هذا القسم متاح للمالك فقط.",
+   "Условия обновлены.":"تم تحديث الشروط.","Не удалось загрузить каналы.":"تعذر تحميل القنوات.",
+   "Нет обязательных каналов. Пользователи смогут открыть страницу загрузки без подписки.":"لا توجد قنوات مطلوبة. يمكن للمستخدمين فتح صفحة التنزيل دون اشتراك.",
+   "Активное условие":"شرط مفعّل","Отключено":"معطّل","Изменить канал":"تعديل القناة",
+   "Сохранить изменения":"حفظ التعديلات","Изменить":"تعديل","Удалить":"حذف",
+   "Сохранено. Изменения применяются к странице загрузки.":"تم الحفظ. تُطبّق التغييرات على صفحة التنزيل.",
+   "Условие удалено.":"تم حذف الشرط.",
+   "Удалить это условие подписки? Пользователи больше не будут обязаны подписываться на этот канал.":"هل تريد حذف شرط الاشتراك؟ لن يُطلب من المستخدمين الاشتراك في هذه القناة بعد الآن.",
+   "Счётчики просмотров рекламы будут сброшены до 0/10 для всех пользователей BETA, ANDROID, iOS и BETA PC. Баллы и рефералы не изменятся.":"ستُعاد عدّادات مشاهدة الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS وBETA PC. لن تتغير النقاط أو الإحالات.",
+   "Сбросить счётчики рекламы до 0/10 для всех пользователей BETA, ANDROID, iOS и BETA PC? Баллы и рефералы не изменятся.":"إعادة عدّادات الإعلانات إلى 0/10 لجميع المستخدمين في BETA وANDROID وiOS وBETA PC؟ لن تتغير النقاط أو الإحالات."
+  });
+
   const RU_TO_AR=AR_TRANSLATIONS;
   const AR_TO_RU=Object.create(null);
   for(const [ru,ar] of Object.entries(RU_TO_AR)){
