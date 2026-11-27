@@ -2169,20 +2169,15 @@ function openChannelSubscribeModal(offer,channels=[]){
    row.append(name,action);list.append(row);
   }
  }
- if(check){check.hidden=missing===0;check.disabled=false;check.textContent=ru?"Проверить подписку":ar?"تحقّق من الاشتراك":"Verify subscription";}
+ if(check){check.hidden=false;check.disabled=false;check.textContent=ru?"Проверить подписку":ar?"تحقّق من الاشتراك":"Verify subscription";}
  if(modal)modal.hidden=false;
 }
-let oxideChannelAutoVerifyAt=0,oxideChannelAutoVerifyTimer=null;
 function channelJoinClicked(){
  const check=document.getElementById("channelSubscribeCheck"),status=document.getElementById("channelSubscribeStatus");
  if(check)check.hidden=false;
- if(status)status.textContent=currentLanguage==="ru"?"После возвращения подписка будет проверяться автоматически.":currentLanguage==="en"?"We'll automatically check your membership when you return.":"سنفحص اشتراكك تلقائياً عند عودتك من تيليجرام.";
- if(oxideChannelAutoVerifyTimer)clearInterval(oxideChannelAutoVerifyTimer);
- oxideChannelAutoVerifyTimer=setInterval(()=>{if(!document.hidden&&pendingChannelOffer&&!document.getElementById("channelSubscribeModal")?.hidden)autoVerifyOxideChannelOnReturn();else if(!pendingChannelOffer||document.getElementById("channelSubscribeModal")?.hidden){clearInterval(oxideChannelAutoVerifyTimer);oxideChannelAutoVerifyTimer=null;}},2500);
+ if(status)status.textContent=currentLanguage==="ru"?"После подписки вернитесь сюда и нажмите «Проверить подписку».":currentLanguage==="en"?"After joining, return here and tap “Verify subscription”.":"بعد الاشتراك، ارجع إلى هنا واضغط على زر «تحقّق من الاشتراك».";
 }
-function closeChannelSubscribeModal(){const modal=document.getElementById("channelSubscribeModal");if(modal)modal.hidden=true;if(oxideChannelAutoVerifyTimer){clearInterval(oxideChannelAutoVerifyTimer);oxideChannelAutoVerifyTimer=null;}}
-function autoVerifyOxideChannelOnReturn(){if(document.hidden||!pendingChannelOffer||document.getElementById("channelSubscribeModal")?.hidden)return;const now=Date.now();if(now-oxideChannelAutoVerifyAt<2200)return;oxideChannelAutoVerifyAt=now;verifyOxideChannelSubscription();}
-if(!window.__oxideChannelAutoVerifyBound){window.__oxideChannelAutoVerifyBound=true;window.addEventListener("focus",()=>setTimeout(autoVerifyOxideChannelOnReturn,700));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(autoVerifyOxideChannelOnReturn,700);});}
+function closeChannelSubscribeModal(){const modal=document.getElementById("channelSubscribeModal");if(modal)modal.hidden=true;}
 async function verifyOxideChannelSubscription(){
  if(!pendingChannelOffer||platformDeliveryBusy)return;
  const check=document.getElementById("channelSubscribeCheck");
