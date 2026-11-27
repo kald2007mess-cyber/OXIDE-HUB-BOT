@@ -1460,6 +1460,22 @@ body:has(#missionsPage[style*="display: block"]) .top-bar .oxide-wheel-top-butto
 @media(max-width:520px){.oxide-wheel-top-button{left:102px;width:43px;min-width:43px;height:50px;border-radius:16px}}
 @media(max-width:360px){.oxide-wheel-top-button{left:90px;width:39px;min-width:39px;height:46px}}
 
+.oxide-wheel-page{min-height:calc(100dvh - 130px);padding:8px 0 24px;color:#fff}
+.oxide-wheel-header{display:flex;align-items:center;gap:13px;margin:0 0 15px}
+.oxide-wheel-back{width:43px;height:43px;border:1px solid rgba(151,126,255,.5);border-radius:14px;background:linear-gradient(135deg,#087FEA,#9638E8);color:#fff;font-size:34px;line-height:1;cursor:pointer;box-shadow:0 0 15px rgba(105,82,255,.3)}
+.oxide-wheel-eyebrow{font-size:10px;letter-spacing:2px;color:#9cbaff;font-weight:900}
+.oxide-wheel-header h2{margin:3px 0 0;font-size:22px;font-weight:950}
+.oxide-wheel-panel{padding:17px 14px 18px;border:1px solid rgba(130,151,255,.35);border-radius:24px;background:linear-gradient(155deg,rgba(12,38,78,.94),rgba(35,20,72,.96));box-shadow:0 12px 28px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.08);text-align:center}
+.oxide-wheel-subtitle{margin:0 0 12px;color:#b8c9ed;font-size:13px}
+.oxide-wheel-stage{position:relative;width:min(82vw,330px);aspect-ratio:1;margin:0 auto 17px;display:grid;place-items:center}
+.oxide-wheel-art{width:100%;height:100%;filter:drop-shadow(0 0 17px rgba(115,91,255,.34))}
+.oxide-wheel-pointer{position:absolute;z-index:2;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #fff;filter:drop-shadow(0 0 7px #a98bff)}
+.oxide-wheel-spin,.oxide-wheel-collect{width:100%;min-height:49px;border:1px solid rgba(175,161,255,.7);border-radius:15px;background:linear-gradient(100deg,#087FEA,#4b50df 52%,#9638E8);color:#fff;font-size:15px;font-weight:950;box-shadow:0 0 17px rgba(95,83,255,.42);margin:0 0 14px}
+.oxide-wheel-spin:disabled,.oxide-wheel-collect:disabled{opacity:.58;filter:saturate(.75);cursor:not-allowed}
+.oxide-wheel-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 13px}
+.oxide-wheel-info{display:flex;flex-direction:column;gap:7px;padding:12px 8px;border:1px solid rgba(126,151,230,.28);border-radius:14px;background:rgba(10,22,52,.62)}
+.oxide-wheel-info span{font-size:11px;color:#aebfe5}.oxide-wheel-info strong{font-size:20px;color:#fff;text-shadow:0 0 12px rgba(140,130,255,.35)}
+.oxide-wheel-collect{margin:0;background:linear-gradient(100deg,#6539b8,#315fca);box-shadow:0 0 14px rgba(102,83,225,.28)}
 /* Referral-only leaderboard button beside VIP, with a contained rain effect */
 .oxide-leaderboard-top-button{display:none;position:absolute;left:126px;top:0;width:48px;height:58px;min-width:48px;overflow:hidden;border-radius:18px;z-index:6;background:linear-gradient(135deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);border:1px solid rgba(177,164,255,.85);color:#fff;box-shadow:0 0 12px rgba(8,127,234,.55),0 0 25px rgba(150,56,232,.48),inset 0 1px 2px rgba(255,255,255,.35)}
 .oxide-leaderboard-top-button::before{content:"";position:absolute;inset:-45% -20%;z-index:0;pointer-events:none;background:repeating-linear-gradient(105deg,transparent 0 8px,rgba(132,190,255,.38) 9px,transparent 10px 17px),repeating-linear-gradient(105deg,transparent 0 15px,rgba(194,143,255,.3) 16px,transparent 17px 27px);background-size:100% 150%;animation:oxideTrophyRain 1.05s linear infinite;opacity:.8}
@@ -1524,7 +1540,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <main class="container">
 <div class="top-bar">
   <div class="top-actions"><div class="language-box"><select id="language" onchange="changeLanguage(this.value)"><option value="ar">🇩🇿 العربية</option><option value="en">🇬🇧 English</option><option value="ru">🇷🇺 Русский</option></select></div><button class="messages-top-button" id="messagesTopButton" type="button" aria-label="Notifications" title="Notifications" onclick="toggleNotifications()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span class="notification-count" id="notificationCount">0</span></button><button class="support-top-button" id="supportTopButton" type="button" onclick="showPage('support')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"></path><rect x="3" y="12" width="4" height="7" rx="2"></rect><rect x="17" y="12" width="4" height="7" rx="2"></rect><path d="M19 19a3 3 0 0 1-3 2h-2"></path></svg><span id="supportTopButtonText">الدعم الفني</span><span class="oxide-new-badge" id="supportUnreadBadge" aria-label="رسائل دعم جديدة"></span></button></div><button class="oxide-vip-top-button" id="oxideVipTopButton" type="button" onclick="openOxideVipModal()" aria-label="OXIDE VIP"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m4 10 6.5 5L16 5l5.5 10 6.5-5-2.5 15h-19L4 10Z"/><path d="M7 28h18"/></svg><span>VIP</span></button>
-    <button class="oxide-wheel-top-button" id="oxideWheelTopButton" type="button" aria-label="عجلة الحظ" title="عجلة الحظ"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="2.1"/><path d="M12 2.8v7.1M21.2 12h-7.1M12 21.2v-7.1M2.8 12h7.1M5.5 5.5l5 5M18.5 5.5l-5 5M18.5 18.5l-5-5M5.5 18.5l5-5"/><path d="m10 2.9 2-2 2 2"/></svg></button>
+    <button class="oxide-wheel-top-button" id="oxideWheelTopButton" type="button" onclick="showPage(&quot;wheel&quot;)" aria-label="عجلة الحظ" title="عجلة الحظ"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="2.1"/><path d="M12 2.8v7.1M21.2 12h-7.1M12 21.2v-7.1M2.8 12h7.1M5.5 5.5l5 5M18.5 5.5l-5 5M18.5 18.5l-5-5M5.5 18.5l5-5"/><path d="m10 2.9 2-2 2 2"/></svg></button>
     <button class="oxide-leaderboard-open oxide-leaderboard-top-button" type="button" onclick="openOxideLeaderboard()" aria-label="فتح الترتيب" title="الترتيب">
       <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg>
     </button>
@@ -1718,6 +1734,23 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
   <div id="missionList" class="mission-list oxide-new-task-list" aria-live="polite"><div class="mission-item"><div class="mission-description">جارٍ تحميل المهمات...</div></div></div><div id="referralMilestoneList" class="mission-list oxide-new-task-list" style="display:none" aria-live="polite"></div>
 </div>
 </section>
+<section id="oxideWheelPage" class="oxide-wheel-page" style="display:none">
+<header class="oxide-wheel-header"><button class="oxide-wheel-back" type="button" onclick="showPage('missions')" aria-label="رجوع">‹</button><div><div class="oxide-wheel-eyebrow">OXIDE HUB</div><h2>🎡 عجلة الحظ</h2></div></header>
+<div class="oxide-wheel-panel"><p class="oxide-wheel-subtitle">أدر العجلة واكتشف جائزتك</p>
+<div class="oxide-wheel-stage"><div class="oxide-wheel-pointer"></div>
+<svg class="oxide-wheel-art" viewBox="0 0 320 320" role="img" aria-label="عجلة الحظ">
+<circle cx="160" cy="160" r="151" fill="#101a3b" stroke="#9c83ff" stroke-width="5"/>
+<g stroke="#d9d2ff" stroke-width="2">
+<path d="M160 160L160 12A148 148 0 0 1 264.65 55.35Z" fill="#285fe2"/><path d="M160 160L264.65 55.35A148 148 0 0 1 308 160Z" fill="#873fe0"/>
+<path d="M160 160L308 160A148 148 0 0 1 264.65 264.65Z" fill="#2452b8"/><path d="M160 160L264.65 264.65A148 148 0 0 1 160 308Z" fill="#9a45df"/>
+<path d="M160 160L160 308A148 148 0 0 1 55.35 264.65Z" fill="#285fe2"/><path d="M160 160L55.35 264.65A148 148 0 0 1 12 160Z" fill="#873fe0"/>
+<path d="M160 160L12 160A148 148 0 0 1 55.35 55.35Z" fill="#2452b8"/><path d="M160 160L55.35 55.35A148 148 0 0 1 160 12Z" fill="#9a45df"/>
+</g><g fill="#fff" font-size="24" font-weight="900" text-anchor="middle" dominant-baseline="middle">
+<text x="205" y="53">5</text><text x="267" y="115">10</text><text x="267" y="205">20</text><text x="205" y="267">30</text><text x="115" y="267">50</text><text x="53" y="205">100</text><text x="53" y="115">0</text><text x="115" y="53">20</text></g>
+<circle cx="160" cy="160" r="28" fill="#101a35" stroke="#d7c8ff" stroke-width="4"/><circle cx="160" cy="160" r="9" fill="#bca3ff"/></svg></div>
+<button class="oxide-wheel-spin" type="button" disabled>🎯 أدر العجلة</button>
+<div class="oxide-wheel-info-grid"><div class="oxide-wheel-info"><span>آخر جائزة</span><strong id="oxideWheelLastPrize">—</strong></div><div class="oxide-wheel-info"><span>عدد المحاولات</span><strong id="oxideWheelAttempts">0</strong></div></div>
+<button class="oxide-wheel-collect" type="button" disabled>＋ اجمع محاولات</button></div></section>
 <section id="referralPage" class="oxide-referral-page" style="display:none">
   <div class="oxide-shards-summary">
     <div class="oxide-shards-caption">YOUR SHARDS</div>
@@ -2485,6 +2518,7 @@ function showPage(page){
   document.getElementById("homePage").style.display="none";
   document.getElementById("rewardsPage").style.display="none";
   document.getElementById("missionsPage").style.display="none";
+  document.getElementById("oxideWheelPage").style.display="none";
   document.getElementById("referralPage").style.display="none";
   document.getElementById("vipPage").style.display=page==="vip"?"block":"none";
   document.getElementById("newsPage").style.display=news?"block":"none";
@@ -2501,6 +2535,7 @@ function showPage(page){
  document.getElementById("homePage").style.display=home?"block":"none";
  document.getElementById("rewardsPage").style.display=rewards?"block":"none";
  document.getElementById("missionsPage").style.display=page==="missions"?"block":"none";
+ document.getElementById("oxideWheelPage").style.display=page==="wheel"?"block":"none";
  document.getElementById("supportPage").style.display=support?"block":"none";
  document.getElementById("referralPage").style.display=referral?"block":"none";
  document.getElementById("vipPage").style.display=vip?"block":"none";
