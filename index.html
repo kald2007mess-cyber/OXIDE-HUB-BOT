@@ -2153,19 +2153,26 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
  }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
 }
 
-function trackPlatformDeliveryProgress(link,url){
- const card=link.closest(".oxide-delivery-file"),progress=card?.querySelector(".oxide-download-progress"),fill=card?.querySelector(".oxide-download-fill"),percent=card?.querySelector(".oxide-download-percent");
- if(link.dataset.started==="1")return;
- link.dataset.started="1";
- link.classList.remove("is-downloaded");
- link.textContent="⬇ تم فتح التنزيل — تحقق من إشعارات الهاتف";
- if(progress)progress.hidden=false;
- if(fill){fill.style.width="35%";fill.classList.add("oxide-download-indeterminate");}
- if(percent)percent.textContent="تحقق من التنزيلات";
- const status=document.getElementById("platformDeliveryViewerStatus");
- if(status)status.textContent="تم فتح رابط الملف مباشرة. راجع إشعار التنزيلات في هاتفك.";
- // Do not fetch the file here: the link's own navigation is the single real download.
- setTimeout(()=>{delete link.dataset.started;},4000);
+async function trackPlatformDeliveryProgress(button,offer){
+ const card=button.closest(".oxide-delivery-file"),progress=card?.querySelector(".oxide-download-progress"),fill=card?.querySelector(".oxide-download-fill"),percent=card?.querySelector(".oxide-download-percent"),status=document.getElementById("platformDeliveryViewerStatus");
+ if(button.dataset.sending==="1")return;
+ button.dataset.sending="1";button.disabled=true;button.textContent="⏳ جارٍ إرسال الملف إلى محادثة البوت…";
+ if(progress)progress.hidden=false;if(fill){fill.style.width="35%";fill.classList.add("oxide-download-indeterminate");}if(percent)percent.textContent="إرسال إلى تيليجرام";
+ if(status)status.textContent="انتظر، سيصلك الملف كرسالة من OXIDE HUB داخل محادثة البوت.";
+ try{
+  const response=await fetch("/api/admin/beta-delivery",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({offer})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.success)throw new Error(data.error||"TELEGRAM_DELIVERY_FAILED");
+  if(fill){fill.classList.remove("oxide-download-indeterminate");fill.style.width="100%";}
+  if(percent)percent.textContent="تم الإرسال";
+  button.classList.add("is-downloaded");button.textContent="✓ تم إرسال الملف إلى محادثة البوت";
+  if(status)status.textContent="✅ تم إرسال الملف. افتح محادثة OXIDE HUB وستجده كملف قابل للتنزيل.";
+ }catch(error){
+  button.textContent="↻ إعادة إرسال الملف";button.disabled=false;
+  if(fill)fill.classList.remove("oxide-download-indeterminate");
+  if(percent)percent.textContent="تعذّر الإرسال";
+  if(status)status.textContent="لم يتم إرسال الملف: "+(error.message||"DELIVERY_FAILED");
+ }finally{delete button.dataset.sending;}
 }
 
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
@@ -2182,7 +2189,7 @@ function openPlatformDeliveryViewer(offer,data){
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-  const download=document.createElement("a");download.href=new URL(url,window.location.origin).href;download.target="_blank";download.rel="noopener noreferrer";download.textContent="⬇ تنزيل الملف";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,url));
+  const download=document.createElement("button");download.type="button";download.textContent="⬇ إرسال الملف إلى محادثة البوت";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,offer));
   const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
   const track=document.createElement("div");track.className="oxide-download-track";
   const fill=document.createElement("div");fill.className="oxide-download-fill";fill.style.width="0%";track.appendChild(fill);
