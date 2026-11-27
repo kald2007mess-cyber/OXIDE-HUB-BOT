@@ -2155,87 +2155,89 @@ start();
  
  Object.assign(AR_TRANSLATIONS,{"Управление заданиями":"إدارة المهمات","Создание заданий и контроль заявок пользователей в одном месте":"إضافة المهمات ومتابعة طلبات المستخدمين من مكان واحد","Всего заданий":"إجمالي المهمات","Все категории":"كل الفئات","Одобрено":"مكتملة ومقبولة","Одобренные заявки":"تمت الموافقة","На проверке":"قيد المراجعة","Ожидают решения":"تنتظر الإدارة","Отклонено":"مرفوضة","Отклонённые заявки":"طلبات مرفوضة","Добавить задание":"إضافة مهمة","Добавление заданий":"إضافة المهمات","Каналы Telegram":"قنوات تيليجرام","Боты":"البوتات","Приглашения друзей":"دعوة الأصدقاء","Открыть форму добавления":"إظهار نموذج إضافة مهمة","Добавить новое задание":"إضافة مهمة جديدة","Название задания":"اسم المهمة","Введите название задания":"اكتب اسم المهمة هنا","Платформа":"المنصة","Описание задания":"وصف المهمة","Опишите, что должен сделать пользователь":"اشرح للمستخدم المطلوب منه","Ссылка на задание (HTTPS)":"رابط المهمة (HTTPS)","Баллы после одобрения":"النقاط عند القبول","Порядок задания":"ترتيب المهمة","Статус":"الحالة","Активно":"مفعّلة","Отключено":"متوقفة","Предварительный просмотр задания LIVE":"معاينة المهمة LIVE","Здесь появится название задания":"عنوان المهمة سيظهر هنا","Добавьте описание, чтобы увидеть его здесь.":"أضف وصفًا لتظهر معاينته هنا.","Ссылка ещё не добавлена":"لم تتم إضافة رابط بعد","Сохранить задание":"حفظ المهمة","Отменить изменения":"إلغاء التعديل","Текущие задания":"المهمات الحالية","Управление и контроль всех заданий":"إدارة ومراقبة جميع المهمات المسجلة","Поиск по названию задания или ID...":"ابحث باسم المهمة أو رقمها...","Все":"الكل","Загрузка заданий...":"جارٍ تحميل المهمات...","Пользователи, выполнившие задание":"المستخدمون الذين أكملوا المهمة","Закрыть список пользователей":"إغلاق القائمة","Количество выполнений учитывает только одобренные заявки. Задание с сохранёнными заявками нельзя удалить; отключите его, чтобы сохранить историю.":"عدد الإكمالات يعرض الطلبات التي تمت الموافقة عليها فقط. لا يمكن حذف مهمة لها طلبات محفوظة؛ أوقفها بدلًا من ذلك للحفاظ على السجل.","Задание без названия":"مهمة بدون اسم","Награда: ":"المكافأة: "," баллов":" نقطة","Порядок: ":"الترتيب: ","Категория: ":"الفئة: ","Одобрено":"مقبولة","На проверке":"قيد المراجعة","Отклонено":"مرفوضة","ID задания: #":"رقم المهمة: #","Статус: ":"الحالة: ","Нет заданий, соответствующих выбранным условиям.":"لا توجد مهمات مطابقة لهذا الاختيار.","Задание обновлено.":"تم تحديث المهمة.","Задание добавлено.":"تمت إضافة المهمة.","Введите название задания.":"أدخل اسم المهمة.","Ссылка на задание должна начинаться с https://":"يجب أن يبدأ رابط المهمة بـ https://","Некорректное количество баллов.":"عدد النقاط غير صالح.","Некорректный порядок задания.":"ترتيب المهمة غير صالح.","Сохранение...":"جارٍ الحفظ...","Загрузка...":"جارٍ التحميل...","Загружено ":"تم تحميل "," заданий.":" مهمة.","Не удалось загрузить задания: ":"تعذر تحميل المهمات: ","Не удалось изменить статус задания: ":"تعذر تغيير حالة المهمة: ","Не удалось удалить задание: ":"تعذر حذف المهمة: ","Удалить задание №":"حذف المهمة رقم ","Если по нему сохранены заявки, система не позволит его удалить. Вместо этого можно отключить задание.":"إذا كانت للمهمة طلبات محفوظة فلن يسمح النظام بحذفها. أوقفها بدلًا من ذلك.","Задание удалено.":"تم حذف المهمة.","Количество одобренных пользователей: ":"عدد المستخدمين المقبولين: ","Пока нет пользователей, выполнивших это задание.":"لا يوجد مستخدمون أكملوا هذه المهمة بعد."});
  Object.assign(AR_TRANSLATIONS,{"Категории заданий":"فئات المهمات","Обновить задания":"تحديث المهمات","Фильтр по статусу":"تصفية حسب الحالة","Открыть форму добавления задания":"إظهار نموذج إضافة مهمة","Показать подробности задания":"عرض تفاصيل المهمة","Изменить задание №":"تعديل المهمة رقم"});
- const AR_KEYS=Object.keys(AR_TRANSLATIONS).sort((a,b)=>b.length-a.length);
- const originals=new WeakMap();
- let applying=false, queued=false;
- function translateValue(value){
-  if(Object.prototype.hasOwnProperty.call(AR_TRANSLATIONS,value))return AR_TRANSLATIONS[value];
-  let result=String(value??"");
-  for(const source of AR_KEYS){
-   if(result.includes(source))result=result.split(source).join(AR_TRANSLATIONS[source]);
+ // Two separately maintained language dictionaries; no online/automatic translation.
+  const RU_TO_AR=AR_TRANSLATIONS;
+  const AR_TO_RU=Object.create(null);
+  for(const [ru,ar] of Object.entries(RU_TO_AR)){
+   if(!Object.prototype.hasOwnProperty.call(AR_TO_RU,ar))AR_TO_RU[ar]=ru;
   }
-  return result;
- }
- function applyLanguage(lang){
-  if(!LANGS[lang])lang="ru";
-  if(applying)return;
-  applying=true;
-  const arabic=lang==="ar";
-  document.documentElement.lang=lang;
-  document.documentElement.dir=LANGS[lang].dir;
-  document.body.classList.toggle("admin-lang-ar",arabic);
-  document.body.classList.toggle("admin-lang-ru",!arabic);
-  const label=document.querySelector('label[for="adminLanguage"]');
-  if(label)label.textContent=arabic?"🌐 اللغة":"🌐 Язык панели";
-  for(const option of select.options)option.textContent=option.value==="ar"?"العربية":"Русский";
-  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-  let node;
-  while((node=walker.nextNode())){
-   const parent=node.parentElement;
-   if(!parent||parent.closest("script,style,noscript,svg,canvas,code,pre,[data-no-translate],.admin-language-switch"))continue;
-   let saved=originals.get(node);
-   if(!saved||node.nodeValue!==saved.last){
-    saved={source:node.nodeValue,last:node.nodeValue};
-    originals.set(node,saved);
-   }
-   const next=arabic?translateValue(saved.source):saved.source;
-   if(node.nodeValue!==next)node.nodeValue=next;
-   saved.last=next;
+  const MAPS={ar:RU_TO_AR,ru:AR_TO_RU};
+  const originals=new WeakMap();
+  let applying=false,queued=false;
+  function localizeValue(value,lang){
+   const map=MAPS[lang]||{};
+   if(Object.prototype.hasOwnProperty.call(map,value))return map[value];
+   let result=String(value??"");
+   const keys=Object.keys(map).sort((a,b)=>b.length-a.length);
+   for(const source of keys)if(result.includes(source))result=result.split(source).join(map[source]);
+   return result;
   }
-  const attrs=["placeholder","title","aria-label","value"];
-  for(const el of document.body.querySelectorAll("*")){
-   if(el.closest("script,style,svg,canvas,[data-no-translate],.admin-language-switch"))continue;
-   let saved=originals.get(el);
-   if(!saved||saved.nodeType||typeof saved!=="object"){saved={};originals.set(el,saved);}
-   for(const attr of attrs){
-    if(!el.hasAttribute(attr))continue;
-    const current=el.getAttribute(attr);
-    if(!saved[attr]||current!==saved[attr].last)saved[attr]={source:current,last:current};
-    const next=arabic?translateValue(saved[attr].source):saved[attr].source;
-    if(current!==next)el.setAttribute(attr,next);
-    saved[attr].last=next;
-   }
+  function applyLanguage(lang){
+   if(!LANGS[lang])lang="ru";
+   if(applying)return;
+   applying=true;
+   try{
+    const arabic=lang==="ar";
+    document.documentElement.lang=lang;
+    document.documentElement.dir=LANGS[lang].dir;
+    document.body.classList.toggle("admin-lang-ar",arabic);
+    document.body.classList.toggle("admin-lang-ru",!arabic);
+    const label=document.querySelector('label[for="adminLanguage"]');
+    if(label)label.textContent=arabic?"🌐 اللغة":"🌐 Язык панели";
+    for(const option of select.options)option.textContent=option.value==="ar"?"العربية":"Русский";
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    let node;
+    while((node=walker.nextNode())){
+     const parent=node.parentElement;
+     if(!parent||parent.closest("script,style,noscript,svg,canvas,code,pre,[data-no-translate],.admin-language-switch"))continue;
+     let saved=originals.get(node);
+     if(!saved||node.nodeValue!==saved.last){saved={source:node.nodeValue,last:node.nodeValue};originals.set(node,saved);}
+     const next=localizeValue(saved.source,lang);
+     if(node.nodeValue!==next)node.nodeValue=next;
+     saved.last=next;
+    }
+    const attrs=["placeholder","title","aria-label","value"];
+    for(const el of document.body.querySelectorAll("*")){
+     if(el.closest("script,style,svg,canvas,[data-no-translate],.admin-language-switch"))continue;
+     let saved=originals.get(el);
+     if(!saved||saved.nodeType||typeof saved!=="object"){saved={};originals.set(el,saved);}
+     for(const attr of attrs){
+      if(!el.hasAttribute(attr))continue;
+      const current=el.getAttribute(attr);
+      if(!saved[attr]||current!==saved[attr].last)saved[attr]={source:current,last:current};
+      const next=localizeValue(saved[attr].source,lang);
+      if(current!==next)el.setAttribute(attr,next);
+      saved[attr].last=next;
+     }
+    }
+    const status=document.getElementById("adminLanguageStatus");
+    if(status)status.textContent=arabic?"تم تفعيل الواجهة العربية":"Язык панели: русский";
+    try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
+   }finally{applying=false;}
   }
-  const status=document.getElementById("adminLanguageStatus");
-  if(status)status.textContent=arabic?"تم تطبيق العربية":"Язык панели: русский";
-  try{localStorage.setItem("oxide-admin-language",lang);}catch(_){}
-  applying=false;
- }
- function scheduleTranslation(){
-  if(queued||select.value!=="ar")return;
-  queued=true;
-  requestAnimationFrame(()=>{
-   queued=false;
-   if(select.value==="ar")applyLanguage("ar");
+  function scheduleLanguageUpdate(){
+   if(queued)return;
+   queued=true;
+   requestAnimationFrame(()=>{queued=false;applyLanguage(select.value);});
+  }
+  select.innerHTML='<option value="ru">Русский</option><option value="ar">العربية</option>';
+  let savedLanguage="ru";
+  try{savedLanguage=localStorage.getItem("oxide-admin-language")||"ru";}catch(_){}
+  if(!LANGS[savedLanguage])savedLanguage="ru";
+  select.value=savedLanguage;
+  select.addEventListener("change",()=>applyLanguage(select.value));
+  window.setAdminLanguage=applyLanguage;
+  applyLanguage(savedLanguage);
+  const observer=new MutationObserver(records=>{
+   if(applying)return;
+   const relevant=records.some(record=>{
+    const target=record.target.nodeType===1?record.target:record.target.parentElement;
+    return !target||!target.closest(".admin-language-switch");
+   });
+   if(relevant)scheduleLanguageUpdate();
   });
- }
- select.innerHTML='<option value="ru">Русский</option><option value="ar">العربية</option>';
- let saved="ru";
- try{saved=localStorage.getItem("oxide-admin-language")||"ru";}catch(_){}
- if(!LANGS[saved])saved="ru";
- select.value=saved;
- select.addEventListener("change",()=>applyLanguage(select.value));
- applyLanguage(saved);
- const observer=new MutationObserver(records=>{
-  if(applying||select.value!=="ar")return;
-  const relevant=records.some(record=>{
-   const target=record.target.nodeType===1?record.target:record.target.parentElement;
-   return !target||!target.closest(".admin-language-switch");
-  });
-  if(relevant)scheduleTranslation();
- });
- observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label","value"]});
-})();
+  observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label","value"]});
+ })();
 </script>
 </body>
 </html>
