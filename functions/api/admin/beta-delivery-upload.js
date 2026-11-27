@@ -1,6 +1,6 @@
 import { authorizeAdmin, adminAuthResponse } from "../_lib/admin-auth.js";
 
-const OFFERS = new Set(["beta","android","ios"]);
+const OFFERS = new Set(["beta","android","ios","beta_pc"]);
 const MAX_SIZE = 3 * 1024 * 1024 * 1024;
 const PART_SIZE = 16 * 1024 * 1024;
 
