@@ -4187,6 +4187,66 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 }
 
 
+
+/* OXIDE ISLAND — final edge-light refinement to match the supplied neon reference */
+#rewardsPage .island-section{
+  background:
+    radial-gradient(ellipse at 0% 38%,rgba(0,164,255,.24),transparent 48%),
+    radial-gradient(ellipse at 100% 38%,rgba(225,0,255,.26),transparent 48%),
+    linear-gradient(105deg,#050d31 0%,#100a3b 52%,#1b063b 100%)!important;
+  border:2px solid transparent!important;
+  background-clip:padding-box!important;
+  box-shadow:0 0 0 1px rgba(102,139,255,.9),0 0 12px rgba(0,194,255,.78),0 0 30px rgba(194,0,255,.68),inset 0 0 28px rgba(94,46,255,.18)!important;
+}
+#rewardsPage .balance-card{
+  background:
+    radial-gradient(ellipse at 0% 50%,rgba(0,207,255,.2),transparent 48%),
+    radial-gradient(ellipse at 100% 50%,rgba(235,0,255,.25),transparent 48%),
+    linear-gradient(105deg,#063b91 0%,#172b9c 45%,#68008f 100%)!important;
+  border:1.5px solid rgba(165,142,255,.98)!important;
+  box-shadow:0 0 0 1px rgba(0,190,255,.48),0 0 13px rgba(0,207,255,.92),0 0 27px rgba(55,75,255,.58),0 0 37px rgba(223,0,255,.78),inset 0 0 18px rgba(255,255,255,.13)!important;
+}
+#rewardsPage .reward-card{
+  isolation:isolate!important;
+  background:
+    radial-gradient(ellipse at 0% 48%,rgba(0,166,255,.26),transparent 56%),
+    radial-gradient(ellipse at 100% 52%,rgba(218,0,255,.28),transparent 58%),
+    linear-gradient(110deg,#062c78 0%,#111b68 48%,#47066f 100%)!important;
+  border:1px solid rgba(155,143,255,.92)!important;
+  box-shadow:0 0 0 1px rgba(92,122,255,.35),0 0 12px rgba(0,188,255,.58),0 0 23px rgba(176,0,255,.48),inset 0 0 18px rgba(255,255,255,.08)!important;
+  filter:drop-shadow(0 0 7px rgba(0,177,255,.36)) drop-shadow(0 0 9px rgba(200,0,255,.3))!important;
+}
+#rewardsPage .reward-card:before{
+  z-index:0!important;
+  background:
+    linear-gradient(105deg,rgba(0,210,255,.16) 0%,transparent 42%,rgba(228,0,255,.19) 100%),
+    radial-gradient(ellipse at 0% 50%,rgba(0,191,255,.16),transparent 45%),
+    radial-gradient(ellipse at 100% 50%,rgba(222,0,255,.16),transparent 48%)!important;
+}
+#rewardsPage .reward-card:after{
+  content:""!important;position:absolute!important;inset:1px!important;border-radius:19px!important;
+  border:1px solid rgba(192,170,255,.58)!important;pointer-events:none!important;z-index:1!important;
+  box-shadow:inset 2px 0 10px rgba(0,207,255,.48),inset -2px 0 12px rgba(225,0,255,.5),inset 0 0 9px rgba(139,97,255,.24)!important;
+}
+#rewardsPage .reward-image,#rewardsPage .reward-name,#rewardsPage .reward-price,#rewardsPage .reward-button{
+  z-index:2!important;
+}
+#rewardsPage .reward-button,#rewardsPage .redeem-confirm,#rewardsPage .redeem-cancel{
+  background:linear-gradient(105deg,#00eaff 0%,#087cff 32%,#773dff 66%,#f000f5 100%)!important;
+  border:1px solid rgba(221,198,255,.98)!important;
+  box-shadow:0 0 0 1px rgba(0,198,255,.34),0 0 12px rgba(0,220,255,.98),0 0 23px rgba(46,94,255,.66),0 0 31px rgba(225,0,255,.86),inset 0 1px 0 rgba(255,255,255,.55)!important;
+  text-shadow:0 0 8px rgba(255,255,255,.72)!important;
+}
+#rewardsPage .island-title{
+  background:linear-gradient(90deg,#00eaff 0%,#148dff 34%,#9b5cff 68%,#ff36e9 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  filter:drop-shadow(0 0 5px rgba(0,208,255,.95)) drop-shadow(0 0 12px rgba(210,0,255,.8))!important;
+}
+#rewardsPage .balance-number{
+  filter:drop-shadow(0 0 7px rgba(0,201,255,.68)) drop-shadow(0 0 11px rgba(213,0,255,.55))!important;
+}
+
 </style>
 
 <div id="oxideVipModal" hidden>
