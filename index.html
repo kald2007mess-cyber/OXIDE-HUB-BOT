@@ -3887,6 +3887,20 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #rewardsGrid .platform-soon-button,
 #rewardsGrid .platform-soon-button:disabled{background:#344253!important;background-image:none!important;box-shadow:none!important;animation:none!important}
 
+
+/* Apply the same VIP look to reward redemption actions as well */
+#rewardsGrid .reward-button:not(.platform-soon-button),
+.redeem-confirm{
+  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+  background-image:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+  background-size:auto!important;
+  border:1px solid rgba(151,126,255,.55)!important;
+  border-radius:22px!important;
+  color:#fff!important;
+  animation:oxideVipNeonPulse 2.4s ease-in-out infinite!important;
+}
+#rewardsGrid .reward-button:not(.platform-soon-button):disabled,
+.redeem-confirm:disabled{opacity:1!important}
 /* Final visual match: only the 1000-coin and watch-ad buttons */
 #rewardsGrid .platform-purchase-button,
 #rewardsGrid .platform-ad-button,
