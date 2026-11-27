@@ -4240,6 +4240,95 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
  color:#fff!important;
 }
 
+
+/* REFERRAL VIP THEME — same blue/indigo/purple gradient on frames and inner surfaces */
+#referralPage.oxide-referral-page{
+ --ref-vip:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%);
+ --ref-vip-soft:linear-gradient(125deg,rgba(8,127,234,.23) 0%,rgba(64,92,235,.25) 48%,rgba(150,56,232,.27) 100%);
+ --ref-vip-border:rgba(126,137,255,.62);
+ --ref-vip-glow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.13),inset 0 1px rgba(255,255,255,.10);
+}
+#referralPage .oxide-shards-summary,
+#referralPage .oxide-invite-card,
+#referralPage .oxide-referral-stat,
+#referralPage .oxide-eligibility-card,
+#referralPage .oxide-link-card,
+#referralPage .oxide-how-card{
+ background:var(--ref-vip-soft)!important;
+ border:1px solid var(--ref-vip-border)!important;
+ box-shadow:var(--ref-vip-glow)!important;
+}
+#referralPage .oxide-shards-caption,
+#referralPage .oxide-referral-eyebrow,
+#referralPage .oxide-stat-unit,
+#referralPage .oxide-invite-description strong{
+ color:#d9d4ff!important;
+ text-shadow:0 0 10px rgba(110,140,255,.25)!important;
+}
+#referralPage .oxide-shards-balance,
+#referralPage .oxide-stat-value,
+#referralPage .oxide-eligibility-value,
+#referralPage .oxide-invite-title,
+#referralPage .oxide-link-heading,
+#referralPage .oxide-how-card h3{
+ color:#fff!important;
+ text-shadow:0 0 12px rgba(135,142,255,.24)!important;
+}
+#referralPage .oxide-invite-icon,
+#referralPage .oxide-eligibility-icon,
+#referralPage .oxide-step-number,
+#referralPage .oxide-link-icon{
+ background:var(--ref-vip)!important;
+ border:1px solid rgba(173,167,255,.55)!important;
+ color:#fff!important;
+ box-shadow:0 0 12px rgba(76,91,255,.2),inset 0 1px rgba(255,255,255,.18)!important;
+}
+#referralPage .oxide-eligibility-icon{
+ border-radius:8px!important;
+}
+#referralPage .oxide-invite-description,
+#referralPage .oxide-stat-label,
+#referralPage .oxide-eligibility-label,
+#referralPage .oxide-eligibility-note,
+#referralPage .oxide-link-label,
+#referralPage .oxide-link-hint,
+#referralPage .oxide-how-step,
+#referralPage .oxide-how-note{
+ color:#d2d4f2!important;
+}
+#referralPage .oxide-referral-input{
+ background:var(--ref-vip-soft)!important;
+ color:#fff!important;
+ border:1px solid var(--ref-vip-border)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+}
+#referralPage .oxide-link-actions .referral-button,
+#referralPage .oxide-leaderboard-open{
+ background:var(--ref-vip)!important;
+ border:1px solid rgba(151,126,255,.65)!important;
+ color:#fff!important;
+ box-shadow:0 0 18px rgba(76,91,255,.24),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#referralPage .oxide-step-number{
+ flex:0 0 25px!important;
+ width:25px!important;height:25px!important;
+ border-radius:50%!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-back,
+#oxideLeaderboardPage .oxide-leaderboard-tabs button,
+#oxideLeaderboardPage .oxide-leaderboard-content,
+#oxideLeaderboardPage .ranking-row,
+#oxideLeaderboardPage .oxide-current-rank{
+ background:var(--ref-vip-soft)!important;
+ border:1px solid var(--ref-vip-border)!important;
+ box-shadow:var(--ref-vip-glow)!important;
+ color:#fff!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-tabs button.active{
+ background:var(--ref-vip)!important;
+ color:#fff!important;
+}
+
 </style>
 
 <div id="oxideVipModal" hidden>
