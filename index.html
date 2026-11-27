@@ -5049,7 +5049,7 @@ function applyAccountPageLanguage(language){
   button.disabled=true;
   countdown.textContent="23:59:59";
   countdown.hidden=false;
-  if(wheel){wheel.classList.remove("oxide-wheel-spinning");void wheel.offsetWidth;wheel.classList.add("oxide-wheel-spinning");}
+  if(wheel){const sectorIndex=Math.floor(Math.random()*8);const finalAngle=1800-22.5-(sectorIndex*45);wheel.classList.remove("oxide-wheel-spinning");wheel.style.transition="none";wheel.style.transform="rotate(0deg)";void wheel.offsetWidth;wheel.style.transition="transform 4s cubic-bezier(.12,.72,.16,1)";wheel.style.transform="rotate("+finalAngle+"deg)";}
   if(timer)clearInterval(timer);
   render();
   timer=setInterval(function(){render();if(button.disabled===false){clearInterval(timer);timer=null}},1000);
