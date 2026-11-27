@@ -2727,9 +2727,19 @@ async function loadRewardOrders(){
 function makePublicId(value){const input=String(value||"").trim();if(!input)return"OX-UNKNOWN";if(/^OX-[A-Z0-9]{8}$/i.test(input))return input.toUpperCase();const compact=input.replace(/-/g,"");if(/^[0-9a-f]{32}$/i.test(compact))return"OX-"+compact.slice(0,8).toUpperCase();return"OX-UNKNOWN"}
 function safeRankingId(item){if(item&&typeof item.displayId==="string"&&/^OX-[A-Z0-9]{8}$/i.test(item.displayId))return item.displayId.toUpperCase();const candidate=item&&(item.userId||item.user_id||item.id);return candidate?makePublicId(candidate):"OX-UNKNOWN"}
 
+let oxideLeaderboardReturnPage="home";
+function getOxideVisiblePage(){
+ const pages=["homePage","rewardsPage","missionsPage","referralPage","vipPage","newsPage","supportPage","accountPage","skillsPage"];
+ const pageNames={homePage:"home",rewardsPage:"rewards",missionsPage:"missions",referralPage:"referral",vipPage:"vip",newsPage:"news",supportPage:"support",accountPage:"account",skillsPage:"skills"};
+ for(const id of pages){const el=document.getElementById(id);if(el&&getComputedStyle(el).display!=="none")return pageNames[id];}
+ return "home";
+}
 function openOxideLeaderboard(){
  const page=document.getElementById("oxideLeaderboardPage");
  if(!page)return;
+ oxideLeaderboardReturnPage=getOxideVisiblePage();
+ ["homePage","rewardsPage","missionsPage","referralPage","vipPage","newsPage","supportPage","accountPage","skillsPage","maintenancePanel"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none";});
+ document.querySelectorAll("#homeTab,#rewardsTab,#missionsTab,#referralTab,#vipTab,#newsTab").forEach(tab=>tab.classList.remove("active"));
  page.style.display="block";
  document.body.style.overflow="hidden";
  showOxideLeaderboardTab("points");
@@ -2739,6 +2749,7 @@ function closeOxideLeaderboard(){
  const page=document.getElementById("oxideLeaderboardPage");
  if(page)page.style.display="none";
  document.body.style.overflow="";
+ showPage(oxideLeaderboardReturnPage||"home");
 }
 function showOxideLeaderboardTab(metric){
  oxideLeaderboardMetric=metric==="referrals"?"referrals":"points";
