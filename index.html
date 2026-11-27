@@ -2153,25 +2153,19 @@ async function claimPlatformDelivery(offer,subscriptionRetry=false){
  }finally{platformDeliveryBusy=false;if(button)button.disabled=false;}
 }
 
-async function trackPlatformDeliveryProgress(link,url){
+function trackPlatformDeliveryProgress(link,url){
  const card=link.closest(".oxide-delivery-file"),progress=card?.querySelector(".oxide-download-progress"),fill=card?.querySelector(".oxide-download-fill"),percent=card?.querySelector(".oxide-download-percent");
- if(link.dataset.tracking==="1")return;
- link.dataset.tracking="1";link.classList.remove("is-downloaded");link.textContent="⬇ جارٍ إرسال طلب التنزيل…";if(progress)progress.hidden=false;if(fill)fill.style.width="0%";if(percent)percent.textContent="0%";
- try{
-  // The clicked anchor itself performs the real browser download synchronously.
-  // This parallel same-origin request is used only to report transfer progress.
-  const response=await fetch(url,{method:"GET",credentials:"same-origin",cache:"no-store"});
-  if(!response.ok){let detail="DOWNLOAD_FAILED";try{const data=await response.json();detail=data.error||detail;}catch{}throw new Error(detail);}
-  const total=Number(response.headers.get("Content-Length")||0),reader=response.body?.getReader();if(!reader)throw new Error("DOWNLOAD_STREAM_UNAVAILABLE");
-  let received=0;
-  while(true){const part=await reader.read();if(part.done)break;received+=part.value.byteLength;
-   if(total>0){const value=Math.min(100,Math.floor(received/total*100));if(fill)fill.style.width=value+"%";if(percent)percent.textContent=value+"%";link.textContent="⬇ جارٍ التنزيل… "+value+"%";}
-   else{if(percent)percent.textContent=(received/1024).toFixed(0)+" KB";link.textContent="⬇ جارٍ تنزيل الملف…";}
-  }
-  if(received===0)throw new Error("EMPTY_DOWNLOAD");
-  if(fill)fill.style.width="100%";if(percent)percent.textContent="100%";link.classList.add("is-downloaded");link.textContent="✓ تم إرسال الملف إلى التنزيلات";
- }catch(error){link.textContent="تعذّر التحقق — افحص التنزيلات";if(percent)percent.textContent="خطأ";const status=document.getElementById("platformDeliveryViewerStatus");if(status)status.textContent="تعذّر تجهيز الملف: "+(error.message||"DOWNLOAD_FAILED");}
- finally{delete link.dataset.tracking;}
+ if(link.dataset.started==="1")return;
+ link.dataset.started="1";
+ link.classList.remove("is-downloaded");
+ link.textContent="⬇ تم فتح التنزيل — تحقق من إشعارات الهاتف";
+ if(progress)progress.hidden=false;
+ if(fill){fill.style.width="100%";fill.classList.add("oxide-download-indeterminate");}
+ if(percent)percent.textContent="تحقق من التنزيلات";
+ const status=document.getElementById("platformDeliveryViewerStatus");
+ if(status)status.textContent="تم فتح رابط الملف مباشرة. راجع إشعار التنزيلات في هاتفك.";
+ // Do not fetch the file here: the link's own navigation is the single real download.
+ setTimeout(()=>{delete link.dataset.started;},4000);
 }
 
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
@@ -2188,7 +2182,7 @@ function openPlatformDeliveryViewer(offer,data){
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-  const download=document.createElement("a");download.href=url;download.setAttribute("download",file.name||("file-"+(index+1)));download.rel="noopener";download.textContent="⬇ Download file";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,url));
+  const download=document.createElement("a");download.href=new URL(url,window.location.origin).href;download.target="_blank";download.rel="noopener noreferrer";download.textContent="⬇ تنزيل الملف";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,url));
   const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
   const track=document.createElement("div");track.className="oxide-download-track";
   const fill=document.createElement("div");fill.className="oxide-download-fill";fill.style.width="0%";track.appendChild(fill);
