@@ -2160,7 +2160,7 @@ function trackPlatformDeliveryProgress(link,url){
  link.classList.remove("is-downloaded");
  link.textContent="⬇ تم فتح التنزيل — تحقق من إشعارات الهاتف";
  if(progress)progress.hidden=false;
- if(fill){fill.style.width="100%";fill.classList.add("oxide-download-indeterminate");}
+ if(fill){fill.style.width="35%";fill.classList.add("oxide-download-indeterminate");}
  if(percent)percent.textContent="تحقق من التنزيلات";
  const status=document.getElementById("platformDeliveryViewerStatus");
  if(status)status.textContent="تم فتح رابط الملف مباشرة. راجع إشعار التنزيلات في هاتفك.";
@@ -3602,6 +3602,8 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 .oxide-download-progress[hidden]{display:none!important}
 .oxide-download-track{height:9px;flex:1;overflow:hidden;border-radius:99px;background:rgba(111,126,168,.2);border:1px solid rgba(159,168,226,.25)}
 .oxide-download-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#2784f5,#6a4ee8,#a24be9);box-shadow:0 0 12px rgba(100,110,255,.6);transition:width .12s linear}
+.oxide-download-fill.oxide-download-indeterminate{width:35%!important;animation:oxideDownloadIndeterminate 1.15s ease-in-out infinite alternate}
+@keyframes oxideDownloadIndeterminate{from{transform:translateX(-35%)}to{transform:translateX(185%)}}
 .oxide-download-percent{min-width:38px;text-align:end;color:#cfc4ff;font-weight:900;font-variant-numeric:tabular-nums}
 </style>
 <div id="channelSubscribeModal" hidden>
