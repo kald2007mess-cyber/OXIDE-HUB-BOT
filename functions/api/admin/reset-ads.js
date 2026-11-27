@@ -13,6 +13,10 @@ async function ensureAdTables(DB) {
     completed_ads INTEGER NOT NULL DEFAULT 0,
     cycle_started_at INTEGER NOT NULL
   )`).run();
+  const platformColumns = await DB.prepare("PRAGMA table_info(platform_ad_progress)").all();
+  if (!(platformColumns.results || []).some(column => column.name === "beta_pc_ads")) {
+    await DB.prepare("ALTER TABLE platform_ad_progress ADD COLUMN beta_pc_ads INTEGER NOT NULL DEFAULT 0").run();
+  }
   await DB.prepare(`CREATE TABLE IF NOT EXISTS adsgram_reward_state (
     user_id TEXT PRIMARY KEY,
     last_claim_at INTEGER NOT NULL DEFAULT 0
@@ -47,13 +51,10 @@ export async function onRequestPost({ request, env }) {
     const users = await env.DB.prepare("SELECT COUNT(*) AS total FROM users").first();
 
     await env.DB.batch([
-      env.DB.prepare("UPDATE platform_ad_progress SET beta_ads=0,android_ads=0,ios_ads=0,cycle_started_at=?").bind(now),
-      env.DB.prepare("UPDATE reward_ad_cycles SET completed_ads=0,cycle_started_at=?").bind(now),
-      env.DB.prepare("UPDATE adsgram_reward_state SET last_claim_at=0"),
-      env.DB.prepare("DELETE FROM adsgram_pending_offer")
+      env.DB.prepare("UPDATE platform_ad_progress SET beta_ads=0,android_ads=0,ios_ads=0,beta_pc_ads=0,cycle_started_at=?").bind(now)
     ]);
 
-    return json({ success: true, resetUsers: Number(users?.total || 0), resetPlatforms: ["BETA", "ANDROID", "iOS"] });
+    return json({ success: true, resetUsers: Number(users?.total || 0), resetPlatforms: ["BETA", "ANDROID", "iOS", "BETA PC"] });
   } catch (error) {
     console.error("Admin ad progress reset failed:", error);
     return json({ success: false, error: "RESET_AD_PROGRESS_FAILED" }, 500);
