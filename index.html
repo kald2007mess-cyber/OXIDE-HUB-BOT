@@ -4679,6 +4679,21 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
   box-shadow:0 0 12px rgba(205,126,65,.05),inset 0 1px 0 rgba(255,220,190,.02)!important;
 }
 #oxideLeaderboardPage #oxideLeaderboardList > .oxide-ranking-profile:last-child{margin-bottom:0!important;}
+
+/* OXIDE leaderboard: remove all panel and item background fills */
+#oxideLeaderboardPage,
+#oxideLeaderboardPage *,
+#oxideLeaderboardPage *::before,
+#oxideLeaderboardPage *::after{
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+#oxideLeaderboardPage::before{
+  background:none!important;
+  box-shadow:none!important;
+  border:0!important;
+}
 </style>
 
 <div id="oxideVipModal" hidden>
