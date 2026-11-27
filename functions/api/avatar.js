@@ -2,14 +2,25 @@ import { getVisitor, json } from "./_lib/session.js";
 
 export async function onRequestGet({ request, env }) {
   try {
-    if (!env.DB || !env.SESSION_SECRET || !env.TELEGRAM_BOT_TOKEN) {
+    if (!env.DB || !env.TELEGRAM_BOT_TOKEN) {
       return json({ success: false, error: "AVATAR_CONFIGURATION_MISSING" }, 500);
     }
-    const userId = await getVisitor(request, env);
-    if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
-    const profile = await env.DB.prepare(
-      "SELECT telegram_user_id FROM oxide_profiles WHERE user_uuid = ? LIMIT 1"
-    ).bind(userId).first();
+    const url = new URL(request.url);
+    const publicId = url.searchParams.get("ox");
+    let profile;
+    if (publicId) {
+      if (publicId.length > 80) return new Response("Avatar unavailable", { status: 404 });
+      profile = await env.DB.prepare(
+        "SELECT telegram_user_id FROM oxide_profiles WHERE public_id = ? LIMIT 1"
+      ).bind(publicId).first();
+    } else {
+      if (!env.SESSION_SECRET) return json({ success: false, error: "AVATAR_CONFIGURATION_MISSING" }, 500);
+      const userId = await getVisitor(request, env);
+      if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
+      profile = await env.DB.prepare(
+        "SELECT telegram_user_id FROM oxide_profiles WHERE user_uuid = ? LIMIT 1"
+      ).bind(userId).first();
+    }
     if (!profile?.telegram_user_id) return new Response("Avatar unavailable", { status: 404 });
 
     const photosResponse = await fetch(
@@ -29,7 +40,7 @@ export async function onRequestGet({ request, env }) {
     if (!imageResponse.ok) return new Response("Avatar unavailable", { status: 404 });
     const headers = new Headers();
     headers.set("Content-Type", imageResponse.headers.get("Content-Type") || "image/jpeg");
-    headers.set("Cache-Control", "private, max-age=3600");
+    headers.set("Cache-Control", publicId ? "public, max-age=3600" : "private, max-age=3600");
     headers.set("X-Content-Type-Options", "nosniff");
     return new Response(imageResponse.body, { status: 200, headers });
   } catch (error) {
