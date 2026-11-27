@@ -14,6 +14,8 @@ async function ensure(DB){
   await DB.prepare("UPDATE platform_delivery_config SET message=?,files_json=?,published=1,updated_at=? WHERE offer='beta'").bind(legacy.message||'',legacy.files_json||'[]',Number(legacy.updated_at||Math.floor(Date.now()/1000))).run();
  }
  for(const offer of ['beta','android','ios'])await DB.prepare("INSERT OR IGNORE INTO platform_delivery_config(offer,message,files_json,updated_at) VALUES(?, '', '[]', 0)").bind(offer).run();
+ // Repair older BETA rows that contain saved content but were left unpublished by the previous save flow.
+ await DB.prepare("UPDATE platform_delivery_config SET published=1 WHERE offer='beta' AND COALESCE(published,0)<>1 AND (TRIM(COALESCE(message,''))<>'' OR (COALESCE(files_json,'[]') NOT IN ('','[]')))").run();
 }
 function mimeFromName(name){const ext=String(name||"").toLowerCase().split(".").pop();return ({png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",zip:"application/zip"})[ext]||"application/octet-stream";}
 async function channelMembership(userId,env){
