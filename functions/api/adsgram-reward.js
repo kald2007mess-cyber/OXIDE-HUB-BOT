@@ -1,6 +1,5 @@
 import { getVisitor, json } from "./_lib/session.js";
 
-const REWARD_POINTS = 20;
 const MAX_ADS = 10;
 const CYCLE_SECONDS = 5 * 60 * 60;
 const CLAIM_COOLDOWN_SECONDS = 30;
@@ -154,6 +153,7 @@ async function awardVerifiedAd(DB, userUuid, now, offer) {
   ).bind(userUuid).run();
 
   const isPlatformOffer = PLATFORM_OFFERS.includes(offer);
+  const rewardPoints = isPlatformOffer ? 10 : 20;
   const column = isPlatformOffer ? offer + "_ads" : null;
   if (isPlatformOffer) {
     const progress = await readPlatformProgress(DB, userUuid, now);
@@ -179,7 +179,7 @@ async function awardVerifiedAd(DB, userUuid, now, offer) {
     ).bind(userUuid, MAX_ADS),
     DB.prepare(
       "UPDATE users SET points=points+?,updated_at=? WHERE user_uuid=? AND status='active' AND changes()=1"
-    ).bind(REWARD_POINTS, now, userUuid),
+    ).bind(rewardPoints, now, userUuid),
     DB.prepare(`
       INSERT INTO point_ledger
         (user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at)
@@ -188,7 +188,7 @@ async function awardVerifiedAd(DB, userUuid, now, offer) {
       WHERE user_uuid=?
         AND EXISTS(SELECT 1 FROM adsgram_reward_state WHERE user_id=? AND last_claim_at=?)
         AND changes()=1
-    `).bind(REWARD_POINTS, reference, now, userUuid, userUuid, now)
+    `).bind(rewardPoints, reference, now, userUuid, userUuid, now)
   ]);
 
   if (Number(results?.[0]?.meta?.changes || 0) !== 1) {
@@ -220,7 +220,7 @@ async function awardVerifiedAd(DB, userUuid, now, offer) {
   ]);
   return {
     success: true,
-    pointsAwarded: REWARD_POINTS,
+    pointsAwarded: rewardPoints,
     points: Number(balance?.points || 0),
     completedAds: isPlatformOffer ? platformProgress[offer] : Math.min(MAX_ADS, Number(completed?.completed_ads || 0)),
     offer: isPlatformOffer ? offer : "island",
