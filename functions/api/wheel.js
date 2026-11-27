@@ -133,7 +133,7 @@ export async function onRequestPost({ request, env }) {
       if (amount > current.wheelBalance) return json({ success: false, error: "INSUFFICIENT_WHEEL_BALANCE", ...current }, 400);
       const reference = crypto.randomUUID();
       const results = await env.DB.batch([
-        env.DB.prepare("UPDATE oxide_wheel_wallet SET balance=balance-?,updated_at=? WHERE user_id=? AND balance=? AND balance>=?").bind(amount, now, userId, current.wheelBalance, amount),
+        env.DB.prepare("UPDATE oxide_wheel_wallet SET balance=balance-?,updated_at=? WHERE user_id=? AND balance=? AND balance>=? AND EXISTS (SELECT 1 FROM users WHERE user_uuid=? AND status='active')").bind(amount, now, userId, current.wheelBalance, amount, userId),
         env.DB.prepare("UPDATE users SET points=points+?,updated_at=? WHERE user_uuid=? AND status='active' AND changes()=1").bind(amount, now, userId),
         env.DB.prepare("INSERT INTO point_ledger(user_uuid,delta,balance_after,reason,reference_type,reference_id,created_at) SELECT user_uuid,?,points,'wheel_withdrawal','wheel_withdrawal',?,? FROM users WHERE user_uuid=? AND changes()=1").bind(amount, reference, now, userId)
       ]);
