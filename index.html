@@ -1158,6 +1158,89 @@ input:not(#referralLink),textarea,[contenteditable="true"],[contenteditable=""]{
 @media(max-width:520px){.top-bar{padding-left:108px;min-height:50px}.oxide-vip-top-button{width:96px;min-width:96px;height:46px;border-radius:18px;gap:7px;padding:0 10px;font-size:15px}.oxide-vip-top-button svg{width:25px;height:25px}#oxideVipModal{padding:10px}.oxide-vip-panel{width:100%;max-height:calc(100dvh - 20px);padding:17px 13px 14px;border-radius:23px}.oxide-vip-crown{width:45px;height:45px;margin:13px auto 5px}.oxide-vip-title{font-size:25px}.oxide-vip-price{font-size:29px;margin:10px 0 3px}.oxide-vip-subtitle{margin-bottom:13px}.oxide-vip-benefits{padding:10px 11px;border-radius:19px}.oxide-vip-benefit{min-height:57px;grid-template-columns:25px 1fr 25px;gap:7px}.oxide-vip-check{width:21px;height:21px}.oxide-vip-benefit-icon{width:23px;height:23px}.oxide-vip-benefit-copy strong{font-size:12px}.oxide-vip-benefit-copy small{font-size:10px;margin-top:2px}.oxide-vip-activate{margin-top:12px;padding:15px 10px;font-size:15px}.oxide-vip-footnote{margin-top:9px}}
 @media(max-width:360px){.top-bar{padding-left:94px}.oxide-vip-top-button{width:84px;min-width:84px;height:43px;font-size:14px}.oxide-vip-top-button svg{width:22px;height:22px}}
 @media(prefers-reduced-motion:reduce){.oxide-vip-top-button{animation:none}}
+
+/* OXIDE ISLAND — neon blue/purple visual pass (scoped to Rewards page only) */
+@keyframes oxideIslandNeonPulse{
+  0%,100%{box-shadow:0 0 9px rgba(8,127,234,.28),0 0 16px rgba(150,56,232,.22),inset 0 1px rgba(255,255,255,.12)}
+  50%{box-shadow:0 0 15px rgba(8,127,234,.48),0 0 25px rgba(150,56,232,.42),inset 0 1px rgba(255,255,255,.2)}
+}
+#rewardsPage .island-section{
+  position:relative;
+  background:radial-gradient(ellipse at 8% 10%,rgba(8,127,234,.22),transparent 44%),radial-gradient(ellipse at 92% 14%,rgba(150,56,232,.25),transparent 48%),linear-gradient(145deg,rgba(8,15,48,.97),rgba(20,8,48,.97))!important;
+  border:1px solid rgba(133,91,255,.72)!important;
+  box-shadow:0 0 12px rgba(8,127,234,.28),0 0 28px rgba(150,56,232,.22),inset 0 0 24px rgba(91,57,210,.12)!important;
+}
+#rewardsPage .island-title{
+  background:linear-gradient(100deg,#39c5ff 0%,#b58aff 42%,#e18aff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;
+  -webkit-text-fill-color:transparent;text-shadow:0 0 17px rgba(150,56,232,.42)!important;
+}
+#rewardsPage .oxide-exchange-heading{color:#d9b4ff!important;text-shadow:0 0 12px rgba(150,56,232,.42)}
+#rewardsPage .oxide-exchange-coin{filter:drop-shadow(0 0 7px rgba(150,56,232,.75)) drop-shadow(0 0 12px rgba(8,127,234,.28))}
+#rewardsPage .oxide-exchange-arrow{color:#c99aff!important;text-shadow:0 0 12px rgba(150,56,232,.7)}
+#rewardsPage .balance-card{
+  background:linear-gradient(110deg,rgba(5,75,150,.82) 0%,rgba(41,35,125,.88) 48%,rgba(91,22,139,.88) 100%)!important;
+  border:1px solid rgba(173,126,255,.8)!important;
+  box-shadow:0 0 12px rgba(8,127,234,.35),0 0 23px rgba(150,56,232,.3),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#rewardsPage .balance-label{color:#e0d0ff!important;text-shadow:0 0 8px rgba(150,56,232,.42)}
+#rewardsPage .balance-number{
+  background:linear-gradient(95deg,#58caff 0%,#d3a2ff 48%,#f0b0ff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  text-shadow:0 0 17px rgba(150,56,232,.24)!important;
+}
+#rewardsPage .balance-unit{color:#d8b5ff!important;text-shadow:0 0 9px rgba(150,56,232,.38)}
+#rewardsPage .island-panel{
+  background:linear-gradient(145deg,rgba(5,17,49,.94),rgba(24,8,53,.94))!important;
+  border:1px solid rgba(91,133,255,.52)!important;
+  box-shadow:inset 0 0 22px rgba(83,65,202,.12),0 0 17px rgba(8,127,234,.16)!important;
+}
+#rewardsPage .reward-card{
+  background:linear-gradient(135deg,rgba(9,36,91,.94) 0%,rgba(26,22,82,.95) 48%,rgba(57,17,91,.96) 100%)!important;
+  border:1px solid rgba(133,112,255,.65)!important;
+  box-shadow:0 0 10px rgba(8,127,234,.2),0 0 17px rgba(150,56,232,.18),inset 0 1px rgba(255,255,255,.1)!important;
+}
+#rewardsPage .reward-name{color:#f4eaff!important;text-shadow:0 0 9px rgba(150,56,232,.3)}
+#rewardsPage .reward-price{
+  background:linear-gradient(90deg,#58caff,#d69aff 65%,#e7a8ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  text-shadow:0 0 10px rgba(150,56,232,.22)
+}
+#rewardsPage .reward-button,
+#rewardsPage .redeem-confirm,
+#rewardsPage .redeem-cancel{
+  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+  background-image:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+  background-size:auto!important;border:1px solid rgba(178,145,255,.78)!important;border-radius:22px!important;
+  color:#fff!important;text-shadow:0 1px 5px rgba(0,0,0,.3);
+  box-shadow:0 0 11px rgba(8,127,234,.35),0 0 19px rgba(150,56,232,.32),inset 0 1px rgba(255,255,255,.22)!important;
+  animation:oxideIslandNeonPulse 2.4s ease-in-out infinite!important;
+}
+#rewardsPage .reward-button:disabled,
+#rewardsPage .redeem-confirm:disabled{opacity:.72!important;filter:saturate(.72)}
+#rewardsPage .redeem-inline-form{
+  background:linear-gradient(135deg,rgba(7,26,67,.96),rgba(39,12,69,.96))!important;
+  border:1px solid rgba(145,111,255,.7)!important;box-shadow:0 0 15px rgba(150,56,232,.2)!important
+}
+#rewardsPage .redeem-inline-title{color:#e2c5ff!important}
+#rewardsPage .redeem-inline-input{
+  background:rgba(5,15,43,.96)!important;color:#fff!important;border:1px solid rgba(117,145,255,.72)!important
+}
+#rewardsPage .redeem-inline-input:focus{border-color:#c17cff!important;box-shadow:0 0 12px rgba(150,56,232,.42)!important}
+#rewardsPage .reward-message{color:#d9b5ff!important}
+#rewardsPage .reward-orders{
+  background:linear-gradient(145deg,rgba(7,22,57,.86),rgba(34,12,59,.86))!important;
+  border:1px solid rgba(132,111,255,.56)!important;box-shadow:0 0 14px rgba(150,56,232,.16)!important
+}
+#rewardsPage .reward-orders-title{color:#ddbaff!important;text-shadow:0 0 9px rgba(150,56,232,.35)}
+#rewardsPage .reward-order-item{background:rgba(18,28,73,.68)!important;border-color:rgba(127,123,255,.38)!important}
+#rewardsPage .reward-order-name{color:#f0e5ff!important}
+#rewardsPage .reward-order-meta,#rewardsPage .reward-orders-empty{color:#b9c8f4!important}
+#rewardsPage .pending-note{
+  color:#d6c5f3!important;background:linear-gradient(120deg,rgba(7,32,76,.82),rgba(42,13,68,.82))!important;
+  border:1px solid rgba(127,112,255,.55)!important;box-shadow:0 0 12px rgba(8,127,234,.14),0 0 15px rgba(150,56,232,.13)!important
+}
+
 </style>
 </head>
 <body>
