@@ -3753,6 +3753,50 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 @keyframes oxideDownloadIndeterminate{from{transform:translateX(-35%)}to{transform:translateX(185%)}}
 .oxide-download-percent{min-width:38px;text-align:end;color:#cfc4ff;font-weight:900;font-variant-numeric:tabular-nums}
 
+
+/* Animated blue-violet glow for reward and platform buttons shown in Rewards tab */
+@keyframes oxideRewardButtonGlow{
+  0%,100%{background-position:0% 50%;box-shadow:0 0 8px rgba(0,132,255,.52),0 0 15px rgba(143,54,245,.34),inset 0 1px 0 rgba(255,255,255,.22);border-color:rgba(75,158,255,.88)}
+  50%{background-position:100% 50%;box-shadow:0 0 13px rgba(0,153,255,.78),0 0 27px rgba(168,64,255,.66),inset 0 1px 0 rgba(255,255,255,.32);border-color:rgba(190,111,255,.96)}
+}
+#rewardsGrid .reward-button:not(.platform-soon-button),
+#rewardsGrid .platform-purchase-button,
+#rewardsGrid .platform-ad-button,
+#rewardsGrid .reward-card>.reward-button,
+.island-watch-button{
+  background:linear-gradient(105deg,#087feA 0%,#4d4be9 48%,#9638e8 100%)!important;
+  background-size:240% 240%!important;
+  border:1px solid rgba(130,153,255,.88)!important;
+  color:#fff!important;
+  animation:oxideRewardButtonGlow 2.8s ease-in-out infinite!important;
+  transition:filter .2s ease,transform .2s ease!important;
+}
+#rewardsGrid .reward-button:not(.platform-soon-button):hover,
+#rewardsGrid .platform-purchase-button:hover,
+#rewardsGrid .platform-ad-button:hover,
+.island-watch-button:hover{
+  filter:brightness(1.16) saturate(1.2)!important;
+  transform:translateY(-1px);
+}
+#rewardsGrid .reward-button:not(.platform-soon-button):disabled,
+#rewardsGrid .platform-purchase-button:disabled,
+#rewardsGrid .platform-ad-button:disabled{
+  opacity:1!important;
+  color:#fff!important;
+  cursor:not-allowed;
+  animation:oxideRewardButtonGlow 3.4s ease-in-out infinite!important;
+}
+#rewardsGrid .platform-soon-button,
+#rewardsGrid .platform-soon-button:disabled{
+  background:#344253!important;
+  border:1px solid rgba(117,145,171,.25)!important;
+  color:#aab7c6!important;
+  box-shadow:none!important;
+  animation:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #rewardsGrid .reward-button,#rewardsGrid .platform-purchase-button,#rewardsGrid .platform-ad-button,.island-watch-button{animation:none!important}
+}
 </style>
 
 <div id="oxideVipModal" hidden>
