@@ -73,6 +73,9 @@ export async function onRequestGet({request,env}){
    headers.set("Content-Disposition",(type.startsWith("image/")||type.startsWith("video/"))?"inline; filename*=UTF-8''"+encodeURIComponent(safe):"attachment; filename*=UTF-8''"+encodeURIComponent(safe));
    return new Response(body,{status:200,headers});
   }
-  return out({success:true,offer,message:String(row?.message||""),files:files.map(f=>({name:f.name,size:Number(f.size||0),contentType:f.contentType||mimeFromName(f.name)}))});
+  const mediaTypes=/^(image|video)\//i;
+  const publicFiles=files.map((f,index)=>({file:f,index})).filter(({file})=>!mediaTypes.test(String(file.contentType||mimeFromName(file.name)))).map(({file})=>({name:file.name,size:Number(file.size||0),contentType:file.contentType||mimeFromName(file.name)}));
+  const publicMedia=files.map((f,index)=>({file:f,index})).filter(({file})=>mediaTypes.test(String(file.contentType||mimeFromName(file.name)))).map(({file,index})=>({index,name:file.name,contentType:file.contentType||mimeFromName(file.name)}));
+  return out({success:true,offer,message:String(row?.message||""),files:publicFiles,media:publicMedia});
  }catch(error){console.error("Platform delivery fetch failed",error);return out({success:false,error:String(error?.message||"DELIVERY_FAILED").slice(0,180)},500);}
 }
