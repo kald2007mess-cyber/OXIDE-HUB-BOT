@@ -2741,6 +2741,7 @@ function openOxideLeaderboard(){
  ["homePage","rewardsPage","missionsPage","referralPage","vipPage","newsPage","supportPage","accountPage","skillsPage","maintenancePanel"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none";});
  document.querySelectorAll("#homeTab,#rewardsTab,#missionsTab,#referralTab,#vipTab,#newsTab").forEach(tab=>tab.classList.remove("active"));
  page.style.display="block";
+ document.body.classList.add("oxide-leaderboard-open-state");
  document.body.style.overflow="hidden";
  showOxideLeaderboardTab("points");
  if(!referralLoaded)loadReferral();
@@ -2748,6 +2749,7 @@ function openOxideLeaderboard(){
 function closeOxideLeaderboard(){
  const page=document.getElementById("oxideLeaderboardPage");
  if(page)page.style.display="none";
+ document.body.classList.remove("oxide-leaderboard-open-state");
  document.body.style.overflow="";
  showPage(oxideLeaderboardReturnPage||"home");
 }
@@ -4848,5 +4850,13 @@ function applyAccountPageLanguage(language){
 }
 #oxideLeaderboardPage .oxide-leaderboard-caption{
   display:flex;align-items:center;justify-content:center;gap:7px;
+}
+</style>
+
+<style>
+/* Hide global header controls while the leaderboard destination is open */
+body.oxide-leaderboard-open-state .top-bar .top-actions,
+body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
+  display:none!important;
 }
 </style>
