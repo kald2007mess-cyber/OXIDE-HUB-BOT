@@ -2222,7 +2222,17 @@ function openPlatformDeliveryViewer(offer,data){
    const isVideo=String(file.contentType||"").startsWith("video/");
    const caption=document.createElement("div");caption.className="oxide-delivery-media-caption";caption.textContent=currentLanguage==="ar"?"✦ ماهو جديد":currentLanguage==="ru"?"✦ Что нового":"✦ What's new";
    const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+originalIndex;
-   if(!isVideo){const preview=document.createElement("img");preview.src=url;preview.alt=caption.textContent;preview.loading="lazy";item.append(caption,preview);}
+   if(!isVideo){
+    const preview=document.createElement("img");preview.src=url;preview.alt=caption.textContent;preview.loading="lazy";
+    preview.style.touchAction="pan-y";preview.style.transformOrigin="center center";preview.style.transition="transform .08s ease-out";
+    let zoom=1,pinchStart=1,startDistance=0;
+    const distance=(touches)=>Math.hypot(touches[0].clientX-touches[1].clientX,touches[0].clientY-touches[1].clientY);
+    preview.addEventListener("touchstart",event=>{if(event.touches.length===2){startDistance=distance(event.touches);pinchStart=zoom;}},{passive:true});
+    preview.addEventListener("touchmove",event=>{if(event.touches.length===2&&startDistance){event.preventDefault();zoom=Math.max(1,Math.min(4,pinchStart*distance(event.touches)/startDistance));preview.style.transform="scale("+zoom+")";}},{passive:false});
+    preview.addEventListener("touchend",event=>{if(event.touches.length<2)startDistance=0;},{passive:true});
+    preview.addEventListener("dblclick",()=>{zoom=zoom>1?1:2;preview.style.transform="scale("+zoom+")";});
+    item.style.overflow="hidden";item.append(caption,preview);
+   }
    else{const preview=document.createElement("video");preview.src=url;preview.controls=true;preview.preload="metadata";item.append(caption,preview);}
    media.appendChild(item);
   });
