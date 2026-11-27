@@ -4052,20 +4052,21 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 
 <style>
 #platformDeliveryModal[hidden]{display:none!important}
-#platformDeliveryModal{position:fixed;inset:0;z-index:99999;background:rgba(4,5,15,.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:14px}
-#platformDeliveryModal .oxide-delivery-panel{width:min(100%,780px);height:min(92vh,900px);max-height:94vh;overflow:auto;padding:26px;border:1px solid rgba(185,138,255,.55);border-radius:24px;background:radial-gradient(ellipse at 50% 0%,rgba(151,91,255,.2),transparent 42%),linear-gradient(145deg,#241637,#0d1020);color:#fff;box-shadow:0 24px 80px #000d,0 0 35px rgba(150,95,255,.18)}
+#platformDeliveryModal{position:fixed;inset:0;z-index:99999;background:rgba(3,7,20,.9);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:14px}
+#platformDeliveryModal .oxide-delivery-panel{width:min(100%,780px);height:min(92vh,900px);max-height:94vh;overflow:auto;padding:26px;border:1px solid transparent;border-radius:24px;background:linear-gradient(145deg,#101a35,#0b1023) padding-box,linear-gradient(125deg,#087fea 0%,#4d4be9 48%,#9638e8 100%) border-box;color:#fff;box-shadow:0 24px 80px #000d,0 0 24px rgba(8,127,234,.2),0 0 34px rgba(150,56,232,.2)}
 #platformDeliveryModal .oxide-delivery-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#platformDeliveryModal h2{font-size:25px;margin:0;color:#e6caff;letter-spacing:.5px}
-#platformDeliveryModal button{width:auto;margin:0;padding:9px 13px;background:#543578;border:1px solid #bd92f5;border-radius:10px;color:#fff}
-#platformDeliveryMessage{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8cbe9;line-height:1.7;margin:14px 0}
-.oxide-delivery-file{padding:20px;margin:15px 0;border:1px solid #7654a5;border-radius:17px;background:linear-gradient(145deg,#211a38,#171329);display:flex;flex-direction:column;gap:11px;box-shadow:inset 0 1px rgba(255,255,255,.04)}
-.oxide-delivery-file strong{overflow-wrap:anywhere;color:#fff;font-size:17px}.oxide-delivery-file small{color:#b8a8d0;font-size:13px}
-.oxide-delivery-media-item{padding:12px;margin:12px 0;border:1px solid #634887;border-radius:14px;background:#171329;display:flex;flex-direction:column;gap:9px}
-#platformDeliveryMediaTitle{margin:20px 0 8px;color:#e6caff;font-size:14px;letter-spacing:1.5px}
-.oxide-delivery-media-caption{color:#d8cbe9;font-size:12px;overflow-wrap:anywhere}
-#platformDeliveryMedia img,#platformDeliveryMedia video{display:block;width:100%;max-height:360px;object-fit:contain;background:#05040a;border-radius:10px}
+#platformDeliveryModal h2{font-size:25px;margin:0;color:#d9d8ff;letter-spacing:.5px;text-shadow:0 0 14px rgba(105,105,255,.35)}
+#platformDeliveryModal button{width:auto;margin:0;padding:9px 13px;background:linear-gradient(105deg,#087fea,#4d4be9 52%,#9638e8);border:1px solid rgba(153,166,255,.9);border-radius:10px;color:#fff;box-shadow:0 0 12px rgba(8,127,234,.2),0 0 16px rgba(150,56,232,.16)}
+#platformDeliveryMessage{white-space:pre-wrap;overflow-wrap:anywhere;color:#cbd8f5;line-height:1.7;margin:14px 0}
+.oxide-delivery-file{padding:20px;margin:15px 0;border:1px solid rgba(91,126,245,.52);border-radius:17px;background:linear-gradient(145deg,rgba(17,38,75,.92),rgba(23,18,55,.96));display:flex;flex-direction:column;gap:11px;box-shadow:inset 0 1px rgba(255,255,255,.05),0 0 16px rgba(56,92,220,.1)}
+.oxide-delivery-file strong{overflow-wrap:anywhere;color:#fff;font-size:17px}.oxide-delivery-file small{color:#b8c8ed;font-size:13px}
+.oxide-delivery-media-item{padding:12px;margin:12px 0;border:1px solid rgba(104,111,238,.48);border-radius:14px;background:linear-gradient(145deg,#101e3b,#171638);display:flex;flex-direction:column;gap:9px}
+#platformDeliveryMediaTitle{margin:20px 0 8px;color:#c9cfff;font-size:14px;letter-spacing:1.5px}
+.oxide-delivery-media-caption{color:#cbd8f5;font-size:12px;overflow-wrap:anywhere}
+#platformDeliveryMedia img,#platformDeliveryMedia video{display:block;width:100%;max-height:360px;object-fit:contain;background:#050817;border-radius:10px}
 #platformDeliveryMedia[hidden],#platformDeliveryMediaTitle[hidden]{display:none!important}
-.oxide-delivery-download{display:block;text-align:center;padding:17px;border-radius:13px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:900;font-size:16px;box-shadow:0 7px 22px rgba(120,70,173,.25)}
+.oxide-delivery-download{display:block;text-align:center;padding:17px;border-radius:13px;background:linear-gradient(105deg,#087fea 0%,#4d4be9 48%,#9638e8 100%);border:1px solid rgba(165,174,255,.95);color:white;text-decoration:none;font-weight:900;font-size:16px;box-shadow:0 0 12px rgba(8,127,234,.32),0 8px 22px rgba(102,65,220,.3);transition:transform .18s,filter .18s,box-shadow .18s}
+.oxide-delivery-download:active{transform:scale(.985);filter:brightness(1.12)}
 #platformDeliveryViewerStatus{color:#ffb7b7;font-size:12px}
 @media(max-width:520px){#platformDeliveryModal{padding:8px}#platformDeliveryModal .oxide-delivery-panel{width:100%;height:94vh;max-height:94vh;padding:18px 14px;border-radius:19px}#platformDeliveryModal h2{font-size:20px}.oxide-delivery-file{padding:16px}.oxide-delivery-download{padding:16px;font-size:15px}}
 
