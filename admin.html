@@ -253,7 +253,10 @@ button{border-radius:12px}
 
 .redeem-code-history{margin-top:22px;padding-top:16px;border-top:1px solid rgba(112,160,225,.2)}.redeem-code-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;margin:9px 0;border:1px solid #294661;border-radius:13px;background:rgba(8,22,39,.76)}.redeem-code-main{min-width:0;display:flex;flex-direction:column;gap:6px}.redeem-code-main strong{direction:ltr;text-align:right;color:#fff;font-size:16px;overflow-wrap:anywhere}.redeem-code-main small{color:#a9bfd4;font-size:12px;line-height:1.6}.redeem-code-state{font-size:11px;font-weight:bold;padding:5px 8px;border-radius:20px;white-space:nowrap}.redeem-code-state.live{color:#8df0bd;background:#123d30;border:1px solid #23875e}.redeem-code-state.expired{color:#ffb2b2;background:#492326;border:1px solid #a74747}.redeem-code-edit{width:42px;min-width:42px;height:42px;padding:0;margin:0;background:rgba(46,82,130,.55);border:1px solid #4775a4;font-size:19px}.redeem-users-modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:14px}.redeem-users-modal.hidden{display:none!important}.redeem-users-panel{width:min(100%,560px);max-height:85vh;overflow:auto;padding:17px;border:1px solid rgba(102,220,255,.3);border-radius:18px;background:#0b162a;box-shadow:0 18px 55px #000b}.redeem-users-panel>button{width:auto;margin:0 0 12px}.redeem-user-row{display:flex;align-items:center;gap:12px;padding:11px;margin:8px 0;border:1px solid #294661;border-radius:12px;background:#101f35}.redeem-user-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:50%;overflow:hidden;background:#1b3451;display:grid;place-items:center;color:#9fdcff;font-weight:bold}.redeem-user-avatar img{width:100%;height:100%;object-fit:cover}.redeem-user-info{min-width:0;display:flex;flex-direction:column;gap:5px}.redeem-user-info strong{overflow-wrap:anywhere;color:#fff}.redeem-user-info small{color:#9fdcff;font-size:12px;overflow-wrap:anywhere}.redeem-user-points{margin-right:auto;color:#a7f3c0;font-weight:bold;white-space:nowrap;font-size:12px}@media(max-width:420px){.redeem-code-row{align-items:flex-start}.redeem-code-state{white-space:normal;text-align:center}.redeem-code-edit{flex:0 0 40px}}
 
-/* Purple premium platform delivery workspace */
+
+  #betaDeliveryPage .pm-back-home{display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 16px;border:1px solid rgba(185,138,255,.35);border-radius:12px;background:rgba(35,25,58,.82);color:#eadcff;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 0 18px rgba(151,91,255,.12)}
+  #betaDeliveryPage .pm-back-home:hover{border-color:rgba(185,138,255,.75);box-shadow:0 0 22px rgba(151,91,255,.28)}
+  /* Purple premium platform delivery workspace */
 #betaDeliveryPage{--pm-violet:#b98aff;--pm-bright:#d7b5ff;--pm-deep:#17102b;--pm-panel:rgba(20,14,39,.88);--pm-border:rgba(185,138,255,.27)}
 #betaDeliveryPage .platform-console{max-width:790px;margin:10px auto 28px;color:#f8f3ff}
 #betaDeliveryPage .platform-back{width:auto;min-width:190px;margin:0 0 13px;padding:11px 15px;background:rgba(35,25,58,.82);border:1px solid var(--pm-border);border-radius:12px;color:#e5d2ff;font-size:13px}
@@ -804,26 +807,26 @@ html[dir="rtl"] .pm-content-editor textarea{text-align:right;direction:rtl}
    <div class="pm-simple-editor">
     <section class="pm-panel pm-attach-panel">
      <div class="pm-panel-kicker">01 / ATTACHMENTS</div>
-     <div class="pm-add-row"><div class="pm-add-row-icon"><svg viewBox="0 0 24 24"><path d="M4 4h10l6 6v10H4zM14 4v6h6M8 15h8M8 18h5"/></svg></div><div class="pm-add-row-copy"><strong>ملفات</strong><small>APK · IPA · ZIP · PDF وغيرها</small></div><button type="button" class="pm-add-file-button" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> إضافة</button></div>
+     <div class="pm-add-row"><div class="pm-add-row-icon"><svg viewBox="0 0 24 24"><path d="M4 4h10l6 6v10H4zM14 4v6h6M8 15h8M8 18h5"/></svg></div><div class="pm-add-row-copy"><strong>Файлы</strong><small>APK · IPA · ZIP · PDF и другие</small></div><button type="button" class="pm-add-file-button" onclick="document.getElementById('betaDeliveryFiles').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Добавить</button></div>
      <input id="betaDeliveryFiles" class="pm-hidden-file" type="file">
-     <div class="pm-add-row"><div class="pm-add-row-icon media"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></div><div class="pm-add-row-copy"><strong>صورة / فيديو</strong><small>إرفاق صورة أو مقطع فيديو</small></div><button type="button" class="pm-add-file-button media" onclick="document.getElementById('betaDeliveryMedia').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> إضافة</button></div>
+     <div class="pm-add-row"><div class="pm-add-row-icon media"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></div><div class="pm-add-row-copy"><strong>Изображение / видео</strong><small>Прикрепить изображение или видео</small></div><button type="button" class="pm-add-file-button media" onclick="document.getElementById('betaDeliveryMedia').click()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> إضافة</button></div>
      <input id="betaDeliveryMedia" class="pm-hidden-file" type="file" accept="image/*,video/*">
-     <div class="pm-queue-head"><span>الملفات المضافة</span><strong><span id="pmPendingCount">0</span></strong></div>
-     <div id="pmPendingFiles" class="pm-pending-files"><div class="pm-empty-queue">لم تتم إضافة أي ملفات بعد</div></div>
+     <div class="pm-queue-head"><span>Добавленные файлы</span><strong><span id="pmPendingCount">0</span></strong></div>
+     <div id="pmPendingFiles" class="pm-pending-files"><div class="pm-empty-queue">Файлы ещё не добавлены</div></div>
     </section>
     <section class="pm-panel pm-details-panel">
      <div class="pm-panel-kicker">02 / DETAILS</div>
-     <label class="pm-field-label" for="pmContentTitle"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg> اسم الملف</label>
-     <input id="pmContentTitle" class="pm-title-input" maxlength="180" placeholder="اكتب اسم الملف هنا...">
-     <label class="pm-field-label" for="betaDeliveryMessage"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 10h12M4 15h16M4 20h9"/></svg> وصف</label>
-     <textarea id="betaDeliveryMessage" class="pm-description-input" maxlength="4000" rows="2" placeholder="اكتب وصفاً مختصراً..."></textarea>
-     <div class="pm-editor-footer"><span>محتوى مستقل لكل منصة</span><strong id="pmMessageCount">0 / 4000</strong></div>
+     <label class="pm-field-label" for="pmContentTitle"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg> Название файла</label>
+     <input id="pmContentTitle" class="pm-title-input" maxlength="180" placeholder="Введите название файла...">
+     <label class="pm-field-label" for="betaDeliveryMessage"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 10h12M4 15h16M4 20h9"/></svg> Описание</label>
+     <textarea id="betaDeliveryMessage" class="pm-description-input" maxlength="4000" rows="2" placeholder="Введите краткое описание..."></textarea>
+     <div class="pm-editor-footer"><span>Отдельное содержимое для каждой платформы</span><strong id="pmMessageCount">0 / 4000</strong></div>
     </section>
    </div>
    <section class="pm-saved-card pm-library-panel">
-    <div class="pm-saved-card-head"><div><div class="pm-panel-kicker">03 / HISTORY</div><h3><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 9h8M8 13h8M8 17h5"/></svg> سجل الملفات</h3></div><span id="pmSavedCount" class="pm-saved-count">0 ملف</span></div>
-    <div id="betaDeliveryCurrentFiles" class="pm-library-list"><div class="pm-empty-files">لا توجد файлов محفوظة لهذه المنصة بعد</div></div>
-    <div class="pm-saved-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4m0 4h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg> Эти файлы получит пользователь после выполнения условий и нажатия GO</div>
+    <div class="pm-saved-card-head"><div><div class="pm-panel-kicker">03 / HISTORY</div><h3><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 9h8M8 13h8M8 17h5"/></svg> История файлов</h3></div><span id="pmSavedCount" class="pm-saved-count">0 ملف</span></div>
+    <div id="betaDeliveryCurrentFiles" class="pm-library-list"><div class="pm-empty-files">Для этой платформы пока нет сохранённых файлов</div></div>
+    <div class="pm-saved-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4m0 4h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg> Пользователь получит эти файлы после выполнения условий и нажатия GO</div>
    </section>
    <p class="pm-description hidden" id="platformDeliveryDescription">Файлы платформы сохраняются отдельно.</p>
    <div class="pm-save-area"><div id="betaDeliveryProgressWrap" class="platform-progress hidden"><div class="platform-progress-head"><span id="betaDeliveryProgressLabel">Сохранение...</span><strong id="betaDeliveryProgressText">0%</strong></div><div class="platform-progress-track"><div id="betaDeliveryProgressBar" class="platform-progress-fill"></div></div></div><button class="pm-save-button" id="betaDeliverySaveButton" onclick="saveBetaDelivery()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l3 3v13H4V4zM8 4v6h8V4M8 20v-6h8v6"/></svg> حفظ</button><div id="betaDeliveryStatus" class="pm-status">Загрузка настроек...</div></div>
@@ -1813,7 +1816,7 @@ async function openPlatformDeliveryPage(offer){
  document.getElementById("deliveryPlatformSelect").value=currentDeliveryOffer;
  renderPlatformTabs();
  const labels={beta:"BETA",android:"ANDROID",ios:"iOS",beta_pc:"BETA (PC)"},label=labels[currentDeliveryOffer];
- document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"حفظ";
+ document.getElementById("platformDeliveryHeading").textContent="Файлы — "+label;document.getElementById("betaDeliverySaveButton").innerHTML=platformSvgIcon("M5 12h14M12 5v14")+"Сохранить";
  document.getElementById("platformDeliveryDescription").textContent="Файлы этой платформы сохраняются отдельно.";
  document.getElementById("mainMenu").classList.add("hidden");document.getElementById("betaDeliveryPage").classList.remove("hidden");await Promise.all([loadBetaDelivery(),loadDeliverySoonSettings()]);
 }
@@ -2248,6 +2251,33 @@ start();
   "всего получателей: ":"إجمالي المستلمين: "
 });
  // Two separately maintained language dictionaries; no online/automatic translation.
+
+  Object.assign(AR_TRANSLATIONS,{
+   "Назад на главную":"العودة إلى الواجهة الرئيسية",
+   "Файлы":"الملفات",
+   "APK · IPA · ZIP · PDF и другие":"APK · IPA · ZIP · PDF وغيرها",
+   "Добавить":"إضافة",
+   "Изображение / видео":"صورة / فيديو",
+   "Прикрепить изображение или видео":"إرفاق صورة أو فيديو",
+   "Добавленные файлы":"الملفات المضافة",
+   "Файлы ещё не добавлены":"لم تتم إضافة أي ملفات بعد",
+   "Название файла":"اسم الملف",
+   "Введите название файла...":"اكتب اسم الملف هنا...",
+   "Описание":"وصف",
+   "Введите краткое описание...":"اكتب وصفاً مختصراً...",
+   "Отдельное содержимое для каждой платформы":"محتوى مستقل لكل منصة",
+   "История файлов":"سجل الملفات",
+   "Для этой платформы пока нет сохранённых файлов":"لم تتم إضافة أي ملفات محفوظة لهذه المنصة بعد",
+   "Пользователь получит эти файлы после выполнения условий и нажатия GO":"هذه الملفات يستلمها المستخدم بعد إكمال الشروط والضغط على GO",
+   "Сохранить":"حفظ",
+   "Рабочая область":"مساحة العمل",
+   "Файлы платформы":"ملفات المنصة",
+   "Поиск по сохранённым файлам":"البحث في الملفات المحفوظة",
+   "Очистить поиск":"مسح البحث",
+   "Обновить данные":"تحديث البيانات",
+   "Поиск фильтрует загруженные результаты, не изменяя сохранённые данные.":"البحث يصفّي الملفات المعروضة دون تغيير البيانات المحفوظة.",
+   "Последнее обновление: ":"آخر تحديث: "
+  });
   const RU_TO_AR=AR_TRANSLATIONS;
   const AR_TO_RU=Object.create(null);
   for(const [ru,ar] of Object.entries(RU_TO_AR)){
