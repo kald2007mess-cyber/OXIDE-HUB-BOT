@@ -4116,6 +4116,11 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 .channel-subscribe-check:active{transform:scale(.985)}
 .channel-subscribe-close{display:flex;align-items:center;justify-content:center;width:100%;min-height:43px;margin-top:9px;border-radius:12px;background:rgba(255,255,255,.035);color:#91a4c3;border:1px solid rgba(255,255,255,.1)!important;font-size:12px;font-weight:800;cursor:pointer}
 #channelSubscribeStatus{min-height:18px;margin-top:10px;color:#ffd68a;font-size:12px;line-height:1.6}
+/* Blue-purple visual treatment for the channel verification screen */
+.channel-subscribe-panel{border:1px solid rgba(143,119,255,.72);box-shadow:0 25px 80px rgba(0,0,0,.68),0 0 30px rgba(47,108,255,.22),0 0 34px rgba(139,61,231,.2),inset 0 1px rgba(255,255,255,.09)}
+.channel-subscribe-join{background:linear-gradient(120deg,rgba(20,59,105,.96),rgba(47,31,91,.96));border-color:rgba(117,133,255,.48)!important}
+.channel-subscribe-close{background:linear-gradient(115deg,rgba(39,91,174,.2),rgba(105,54,169,.22));color:#d7d9ff;border:1px solid rgba(143,119,255,.38)!important;box-shadow:0 0 14px rgba(86,88,225,.12)}
+
 @media(max-width:380px){.channel-subscribe-panel{padding:22px 14px 17px}.channel-subscribe-join,.channel-subscribe-joined{padding:11px 9px;gap:7px}.channel-subscribe-channel-name{font-size:12px;gap:7px}.channel-subscribe-channel-name:before{width:34px;height:34px;flex-basis:34px}.channel-subscribe-state{min-width:104px;padding:8px 7px;font-size:10px}}
 
 .oxide-delivery-download{width:100%;font-family:inherit;cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s;background:linear-gradient(112deg,#2769d8 0%,#5148d5 48%,#843de0 100%)!important;border:1px solid rgba(180,174,255,.72)!important;box-shadow:0 0 0 rgba(88,92,235,0),0 8px 24px rgba(68,76,210,.26)!important}
