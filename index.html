@@ -1084,6 +1084,9 @@ button,a,input,select,textarea{max-width:100%;touch-action:manipulation}
 .oxide-leaderboard-open{position:absolute;left:0;top:0;width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(183,139,255,.62);border-radius:12px;background:linear-gradient(145deg,rgba(92,53,148,.95),rgba(35,21,62,.98));color:#e2c7ff;box-shadow:0 5px 18px rgba(113,65,184,.22);cursor:pointer}
 .oxide-leaderboard-open:active{transform:scale(.96)}
 .oxide-leaderboard-page{position:fixed;inset:0;z-index:9999;overflow-y:auto;padding:calc(22px + env(safe-area-inset-top)) 15px calc(24px + env(safe-area-inset-bottom));background:radial-gradient(ellipse at 12% 18%,rgba(8,127,234,.25),transparent 38%),radial-gradient(ellipse at 88% 42%,rgba(150,56,232,.24),transparent 42%),radial-gradient(ellipse at 50% -10%,rgba(104,58,163,.34),transparent 55%),linear-gradient(145deg,#070b1c 0%,#0b0920 48%,#090514 100%);text-align:initial;direction:rtl}
+ .oxide-leaderboard-page::before{content:"";position:fixed;inset:9px;z-index:0;pointer-events:none;border:1px solid transparent;border-radius:24px;background:linear-gradient(145deg,rgba(8,127,234,.08),rgba(150,56,232,.06)) padding-box,linear-gradient(135deg,rgba(85,180,255,.9),rgba(157,105,255,.72) 48%,rgba(65,91,220,.8)) border-box;box-shadow:inset 0 0 28px rgba(78,105,255,.09),0 0 22px rgba(91,88,235,.16)}
+ .oxide-leaderboard-header,.oxide-leaderboard-tabs,.oxide-leaderboard-content{position:relative;z-index:1}
+ @media(max-width:520px){.oxide-leaderboard-page::before{inset:6px;border-radius:19px}}
 .oxide-leaderboard-header{max-width:520px;margin:0 auto 22px;display:flex;align-items:center;gap:14px}
 .oxide-leaderboard-back{width:42px;height:42px;border-radius:12px;border:1px solid rgba(188,145,255,.45);background:rgba(40,25,67,.85);color:#e8d7ff;font-size:30px;line-height:1;cursor:pointer}
 .oxide-leaderboard-eyebrow{font-size:10px;letter-spacing:2px;color:#ad83e9;font-weight:800}
