@@ -110,7 +110,27 @@ export async function onRequestGet({ request, env }) {
     if (!userId) return json({ success: false, error: "NO_TELEGRAM_SESSION" }, 401);
     await ensureWheelTables(env.DB);
     const now = Math.floor(Date.now() / 1000);
-    return json({ success: true, ...(await readWheelState(env.DB, userId, now)) });
+    const state = await readWheelState(env.DB, userId, now);
+    const recentSpins = await env.DB.prepare(`
+      SELECT l.delta AS prize,l.created_at AS createdAt,
+        p.public_id AS publicId,p.first_name AS firstName,p.last_name AS lastName
+      FROM oxide_wheel_ledger l
+      LEFT JOIN oxide_profiles p ON p.user_uuid=l.user_id
+      WHERE l.reason='wheel_spin_reward'
+      ORDER BY l.created_at DESC,l.id DESC
+      LIMIT 20
+    `).all();
+    return json({
+      success: true,
+      ...state,
+      recentSpins: (recentSpins.results || []).map(item => ({
+        prize: Number(item.prize || 0),
+        createdAt: Number(item.createdAt || 0),
+        publicId: String(item.publicId || "OX"),
+        firstName: String(item.firstName || ""),
+        lastName: String(item.lastName || "")
+      }))
+    });
   } catch (error) {
     console.error("OXIDE wheel state failed:", error);
     return json({ success: false, error: "WHEEL_STATE_FAILED" }, 500);
