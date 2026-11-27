@@ -1,6 +1,6 @@
 import { getVisitor, json } from "./_lib/session.js";
 
-const OFFERS = ["beta", "android", "ios"];
+const OFFERS = ["beta", "android", "ios", "beta_pc"];
 const COST = 1000;
 
 async function ensure(DB) {
