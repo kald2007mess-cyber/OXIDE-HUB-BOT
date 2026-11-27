@@ -2176,26 +2176,6 @@ async function trackPlatformDeliveryProgress(button,offer){
 }
 
 function closePlatformDeliveryViewer(){const modal=document.getElementById("platformDeliveryModal");if(modal)modal.hidden=true;}
-function openPlatformFileDownloadPage(offer,file,index){
- const modal=document.getElementById("platformDeliveryModal"),title=document.getElementById("platformDeliveryTitle"),message=document.getElementById("platformDeliveryMessage"),list=document.getElementById("platformDeliveryFiles"),media=document.getElementById("platformDeliveryMedia"),mediaTitle=document.getElementById("platformDeliveryMediaTitle"),status=document.getElementById("platformDeliveryViewerStatus");
- if(!modal||!list)return;
- const bytes=Number(file.size||0),size=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
- const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
- const name=file.name||("File "+(index+1));
- title.textContent="OXIDE • DOWNLOAD";
- message.textContent="صفحة تنزيل الملف";
- list.replaceChildren();if(media)media.hidden=true;if(mediaTitle)mediaTitle.hidden=true;
- const back=document.createElement("button");back.type="button";back.className="oxide-delivery-back";back.textContent="← العودة إلى الملفات";
- back.addEventListener("click",()=>{const saved=modal._deliveryData;if(saved?.data)openPlatformDeliveryViewer(saved.offer,saved.data);});
- const page=document.createElement("section");page.className="oxide-download-page";
- const icon=document.createElement("div");icon.className="oxide-download-page-icon";icon.innerHTML='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5v23m0 0 9-9m-9 9-9-9M8 31v8a4 4 0 0 0 4 4h24a4 4 0 0 0 4-4v-8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
- const fileName=document.createElement("strong");fileName.textContent=name;
- const fileSize=document.createElement("small");fileSize.textContent=size;
- const hint=document.createElement("p");hint.textContent="ملفك جاهز. اضغط على الزر بالأسفل لبدء التنزيل على جهازك.";
- const link=document.createElement("a");link.className="oxide-download-page-action";link.href=url;link.setAttribute("download",name);link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>تنزيل</span>';
- link.addEventListener("click",()=>{if(status)status.textContent="⏳ جارٍ بدء تنزيل الملف…";});
- page.append(icon,fileName,fileSize,hint,link);list.append(back,page);if(status)status.textContent="";
-}
 function openPlatformDeliveryViewer(offer,data){
  const modal=document.getElementById("platformDeliveryModal"),title=document.getElementById("platformDeliveryTitle"),message=document.getElementById("platformDeliveryMessage"),list=document.getElementById("platformDeliveryFiles"),media=document.getElementById("platformDeliveryMedia"),mediaTitle=document.getElementById("platformDeliveryMediaTitle"),status=document.getElementById("platformDeliveryViewerStatus");
  if(!modal||!list)return;
@@ -2210,14 +2190,13 @@ function openPlatformDeliveryViewer(offer,data){
   const name=document.createElement("strong");name.textContent=file.name||("File "+(index+1));
   const size=document.createElement("small");const bytes=Number(file.size||0);size.textContent=bytes<=0?"الحجم غير متاح":bytes<1024?(bytes+" B"):bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
   const url="/api/platform-delivery?offer="+encodeURIComponent(offer)+"&file="+index;
-  const downloadPage=document.createElement("button");downloadPage.type="button";downloadPage.className="oxide-delivery-open-page";downloadPage.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>تنزيل</span>';downloadPage.addEventListener("click",()=>openPlatformFileDownloadPage(offer,file,index));
-  const download=document.createElement("button");download.type="button";download.textContent="إرسال الملف إلى محادثة البوت";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,offer));
+  const download=document.createElement("button");download.type="button";download.textContent="⬇ إرسال الملف إلى محادثة البوت";download.className="oxide-delivery-download";download.addEventListener("click",()=>trackPlatformDeliveryProgress(download,offer));
   const progress=document.createElement("div");progress.className="oxide-download-progress";progress.hidden=true;
   const track=document.createElement("div");track.className="oxide-download-track";
   const fill=document.createElement("div");fill.className="oxide-download-fill";fill.style.width="0%";track.appendChild(fill);
   const percent=document.createElement("small");percent.className="oxide-download-percent";percent.textContent="0%";
   progress.append(track,percent);
-  card.append(name,size,downloadPage,download,progress);list.appendChild(card);
+  card.append(name,size,download,progress);list.appendChild(card);
  });
  if(!files.length){const empty=document.createElement("p");empty.textContent="No files attached to this offer.";list.appendChild(empty);}
  const mediaFiles=files.map((file,index)=>({file,index})).filter(({file})=>/^(image|video)\//i.test(String(file.contentType||"")));
@@ -3585,16 +3564,6 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeRedeemC
 #platformDeliveryMedia img,#platformDeliveryMedia video{display:block;width:100%;max-height:360px;object-fit:contain;background:#05040a;border-radius:10px}
 #platformDeliveryMedia[hidden],#platformDeliveryMediaTitle[hidden]{display:none!important}
 .oxide-delivery-download{display:block;text-align:center;padding:17px;border-radius:13px;background:linear-gradient(90deg,#7846ad,#4d2e80);border:1px solid #c49aff;color:white;text-decoration:none;font-weight:900;font-size:16px;box-shadow:0 7px 22px rgba(120,70,173,.25)}
-.oxide-delivery-open-page,.oxide-delivery-back{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 16px;border-radius:13px;border:1px solid rgba(139,92,246,.65);background:linear-gradient(110deg,#285fba,#7040ad);color:#fff;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 7px 22px rgba(91,75,190,.24)}
-.oxide-delivery-open-page svg,.oxide-download-page-action svg{width:22px;height:22px;flex:0 0 22px}
-.oxide-delivery-back{align-self:flex-start;min-height:40px;padding:8px 12px;background:#28203c;font-size:13px}
-.oxide-download-page{display:flex;flex-direction:column;align-items:center;gap:13px;padding:28px 18px;margin-top:16px;border:1px solid rgba(167,119,255,.4);border-radius:20px;background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.24),transparent 52%),linear-gradient(145deg,#211a38,#12101f);text-align:center}
-.oxide-download-page-icon{display:grid;place-items:center;width:76px;height:76px;border-radius:22px;color:#d6baff;background:rgba(139,92,246,.18);border:1px solid rgba(190,155,255,.5);box-shadow:0 0 26px rgba(139,92,246,.22)}
-.oxide-download-page-icon svg{width:44px;height:44px}
-.oxide-download-page strong{max-width:100%;overflow-wrap:anywhere;color:#fff;font-size:18px}
-.oxide-download-page small,.oxide-download-page p{color:#bbaed0;font-size:13px;line-height:1.7}
-.oxide-download-page-action{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:54px;margin-top:8px;border-radius:14px;background:linear-gradient(100deg,#2369bd,#7041b7);border:1px solid #9a8bff;color:#fff;text-decoration:none;font-weight:900;font-size:17px;box-shadow:0 8px 25px rgba(87,85,210,.3)}
-.oxide-download-page-action svg{color:#fff}
 #platformDeliveryViewerStatus{color:#ffb7b7;font-size:12px}
 @media(max-width:520px){#platformDeliveryModal{padding:8px}#platformDeliveryModal .oxide-delivery-panel{width:100%;height:94vh;max-height:94vh;padding:18px 14px;border-radius:19px}#platformDeliveryModal h2{font-size:20px}.oxide-delivery-file{padding:16px}.oxide-delivery-download{padding:16px;font-size:15px}}
 
