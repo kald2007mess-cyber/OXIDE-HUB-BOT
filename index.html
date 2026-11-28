@@ -1588,7 +1588,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 }
 </style>
 </head>
-<body>
+<body class="oxide-home-lock">
 <div id="oxideStartupSplash" aria-label="OXIDE HUB loading">
  <img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/a86a28d334f013a679b9bd06b80505299a52f1df/file_000000005528821084279174db759b58.png" alt="OXIDE HUB space startup screen" fetchpriority="high">
  <div id="oxideStartupDust" aria-hidden="true"></div>
@@ -2590,6 +2590,9 @@ function showPage(page){
  const news=page==="news";
  const account=page==="account";
  const skills=page==="skills";
+ const lockHome=page==="home"&&!maintenanceActive;
+ document.body.classList.toggle("oxide-home-lock",lockHome);
+ document.documentElement.classList.toggle("oxide-home-lock",lockHome);
  if(maintenanceActive){
   const maintenanceNotice=!support&&!news;
   document.getElementById("maintenancePanel").style.display=maintenanceNotice?"block":"none";
@@ -5335,4 +5338,4 @@ body.oxide-leaderboard-open-state .top-bar .top-actions,
 body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
   display:none!important;
 }
-</style>
+</style>\n/* HOME ONLY: stop vertical page movement and lift bottom details slightly */\nhtml.oxide-home-lock,body.oxide-home-lock{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important;overscroll-behavior:none!important;touch-action:pan-x!important}\nbody.oxide-home-lock .container{overflow:hidden!important}\n@media(max-width:600px){body.oxide-home-lock #homePage.tap-home{padding-bottom:12px!important}body.oxide-home-lock #homePage .tap-bottom-info{bottom:calc(48px + env(safe-area-inset-bottom))!important}}\n
