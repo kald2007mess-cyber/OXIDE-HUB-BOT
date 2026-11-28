@@ -21,6 +21,10 @@
 html{min-height:100%;background-color:#030816}
 #oxideStartupSplash{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#030816;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #oxideStartupSplash img{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center}
+#oxideStartupProgress{position:absolute;left:50%;bottom:calc(7vh + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(80vw,370px);height:17px;padding:3px;overflow:hidden;border:1px solid rgba(116,91,178,.9);border-radius:999px;background:linear-gradient(145deg,#100d20,#071322 58%,#080b18);box-shadow:0 0 0 1px rgba(3,6,18,.9),0 0 20px rgba(126,72,220,.32),inset 0 2px 5px rgba(0,0,0,.9)}
+#oxideStartupProgress .oxide-startup-progress-fill{position:relative;width:100%;height:100%;overflow:hidden;border-radius:999px;background:linear-gradient(90deg,#963fe8 0%,#704cf0 48%,#168fdf 100%);box-shadow:0 0 11px rgba(112,91,255,.55)}
+#oxideStartupProgress .oxide-startup-progress-fill:after{content:"";position:absolute;top:-60%;bottom:-60%;left:-38%;width:28%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(255,255,255,.22),transparent);filter:blur(1px);animation:oxideStartupShine 1.8s ease-in-out infinite}
+@keyframes oxideStartupShine{0%{left:-38%;opacity:0}18%{opacity:1}82%{opacity:1}100%{left:112%;opacity:0}}
 #oxideStartupSplash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 body.oxide-startup-loading{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#oxideStartupSplash{transition:none}}
@@ -1573,6 +1577,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <body>
 <div id="oxideStartupSplash" aria-label="OXIDE HUB loading">
  <img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/a86a28d334f013a679b9bd06b80505299a52f1df/file_000000005528821084279174db759b58.png" alt="OXIDE HUB space startup screen" fetchpriority="high">
+ <div id="oxideStartupProgress" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100"><div class="oxide-startup-progress-fill"></div></div>
 </div>
 
 <div class="stars"></div>
