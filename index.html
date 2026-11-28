@@ -21,10 +21,12 @@
 html{min-height:100%;background-color:#030816}
 #oxideStartupSplash{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#030816;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #oxideStartupSplash img{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center}
-#oxideStartupProgress{position:absolute;left:50%;bottom:calc(7vh + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(80vw,370px);height:17px;padding:3px;overflow:hidden;border:1px solid rgba(116,91,178,.9);border-radius:999px;background:linear-gradient(145deg,#100d20,#071322 58%,#080b18);box-shadow:0 0 0 1px rgba(3,6,18,.9),0 0 20px rgba(126,72,220,.32),inset 0 2px 5px rgba(0,0,0,.9)}
-#oxideStartupProgress .oxide-startup-progress-fill{position:relative;width:100%;height:100%;overflow:hidden;border-radius:999px;background:linear-gradient(90deg,#963fe8 0%,#704cf0 48%,#168fdf 100%);box-shadow:0 0 11px rgba(112,91,255,.55)}
-#oxideStartupProgress .oxide-startup-progress-fill:after{content:"";position:absolute;top:-60%;bottom:-60%;left:-38%;width:28%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(255,255,255,.22),transparent);filter:blur(1px);animation:oxideStartupShine 1.8s ease-in-out infinite}
-@keyframes oxideStartupShine{0%{left:-38%;opacity:0}18%{opacity:1}82%{opacity:1}100%{left:112%;opacity:0}}
+#oxideStartupProgress{position:absolute;left:50%;bottom:calc(6.5vh + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(88vw,410px);padding:8px 10px 10px;border:2px solid rgba(92,105,173,.95);clip-path:polygon(3% 0,97% 0,100% 22%,100% 78%,97% 100%,3% 100%,0 78%,0 22%);background:linear-gradient(110deg,rgba(18,5,35,.98),rgba(5,12,31,.98) 52%,rgba(3,20,42,.98));box-shadow:0 0 0 2px rgba(0,0,0,.85),0 0 18px rgba(145,54,255,.42),0 0 22px rgba(0,145,255,.3),inset 0 1px 0 rgba(255,255,255,.22)}
+#oxideStartupProgress .oxide-startup-percent{display:block;margin:0 auto 5px;text-align:center;font:900 italic 23px/1 Arial,sans-serif;letter-spacing:2px;color:#fff;text-shadow:0 0 5px #fff,0 0 10px #a64dff,0 0 16px #168fff;-webkit-text-stroke:.45px rgba(195,218,255,.9)}
+#oxideStartupProgress .oxide-startup-track{height:18px;padding:3px;overflow:hidden;border:1px solid rgba(164,174,230,.8);background:linear-gradient(180deg,#02040d,#101326 50%,#02040b);box-shadow:inset 0 2px 5px #000,0 0 7px rgba(102,91,255,.35)}
+#oxideStartupProgress .oxide-startup-progress-fill{position:relative;width:0%;height:100%;overflow:hidden;background:linear-gradient(90deg,#a51dff 0%,#713bff 43%,#315cff 70%,#00baff 100%);box-shadow:0 0 10px rgba(168,61,255,.85),0 0 13px rgba(0,174,255,.7);transition:width .12s linear}
+#oxideStartupProgress .oxide-startup-progress-fill:after{content:"";position:absolute;inset:-50% auto -50% -35%;width:24%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),rgba(255,255,255,.25),transparent);filter:blur(1px);animation:oxideStartupShine 1.35s ease-in-out infinite}
+@keyframes oxideStartupShine{0%{left:-35%;opacity:0}18%{opacity:1}82%{opacity:1}100%{left:115%;opacity:0}}
 #oxideStartupSplash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 body.oxide-startup-loading{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#oxideStartupSplash{transition:none}}
@@ -1577,7 +1579,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <body>
 <div id="oxideStartupSplash" aria-label="OXIDE HUB loading">
  <img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/a86a28d334f013a679b9bd06b80505299a52f1df/file_000000005528821084279174db759b58.png" alt="OXIDE HUB space startup screen" fetchpriority="high">
- <div id="oxideStartupProgress" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100"><div class="oxide-startup-progress-fill"></div></div>
+ <div id="oxideStartupProgress" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="oxide-startup-percent" id="oxideStartupPercent">0%</span><div class="oxide-startup-track"><div class="oxide-startup-progress-fill" id="oxideStartupFill"></div></div></div>
 </div>
 
 <div class="stars"></div>
@@ -3860,6 +3862,20 @@ async function initializeOxideHub(){
  finally{window.hideOxideStartupSplash&&window.hideOxideStartupSplash()}
 }
 window.__OXIDE_SPLASH_STARTED_AT=Date.now();
+(function(){
+ const duration=30000,start=window.__OXIDE_SPLASH_STARTED_AT;
+ const fill=document.getElementById("oxideStartupFill");
+ const label=document.getElementById("oxideStartupPercent");
+ const frame=document.getElementById("oxideStartupProgress");
+ function tick(){
+  const pct=Math.min(100,Math.floor(((Date.now()-start)/duration)*100));
+  if(fill)fill.style.width=pct+"%";
+  if(label)label.textContent=pct+"%";
+  if(frame)frame.setAttribute("aria-valuenow",String(pct));
+  if(pct<100)requestAnimationFrame(tick);
+ }
+ requestAnimationFrame(tick);
+})();
 window.hideOxideStartupSplash=function(){
  const splash=document.getElementById("oxideStartupSplash");
  if(!splash||splash.dataset.hideScheduled==="1")return;
