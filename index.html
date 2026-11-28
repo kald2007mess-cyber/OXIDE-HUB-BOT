@@ -5295,3 +5295,28 @@ body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
 #missionsPage .oxide-mission-category.active{
   background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
 }
+
+
+<style>
+/* Missions: reveal the actual page background through the translucent frames */
+#missionsPage .oxide-missions-glass-frame,
+#missionsPage .oxide-shards-summary,
+#missionsPage .oxide-island-ad-moved,
+#missionsPage .oxide-mission-category,
+#missionsPage .mission-center,
+#missionsPage .mission-progress-card,
+#missionsPage .mission-summary-item,
+#missionsPage .mission-item,
+#missionsPage .mission-history-item,
+#missionsPage .mission-proof-box,
+#missionsPage .mission-preview,
+#missionsPage .mission-offers-section,
+#missionsPage .mission-offer-card,
+#missionsPage .mission-offer-art{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#missionsPage .oxide-missions-glass-frame{
+  background:linear-gradient(125deg,rgba(8,127,234,.23) 0%,rgba(64,92,235,.25) 48%,rgba(150,56,232,.27) 100%)!important;
+}
+</style>
