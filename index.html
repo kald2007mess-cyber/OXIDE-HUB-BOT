@@ -14,7 +14,7 @@
 </script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>OXIDE HUB</title>
 <style>
 *{box-sizing:border-box}
@@ -5220,6 +5220,32 @@ function applyAccountPageLanguage(language){
 })();
 
 </script>
+
+<style id="oxide-cross-platform-layout-normalization">
+/* Consistent responsive rendering across Android and iOS Telegram WebViews */
+html{
+  -webkit-text-size-adjust:100%!important;
+  text-size-adjust:100%!important;
+  min-height:100%;
+}
+body{
+  min-height:100vh;
+  min-height:100svh;
+  -webkit-tap-highlight-color:transparent;
+}
+@supports(height:100dvh){
+  .oxide-leaderboard-page{min-height:100dvh}
+  #supportPage{min-height:calc(100dvh - 120px)}
+}
+img,video,canvas,svg{max-width:100%}
+button,input,select,textarea{font-family:inherit}
+input,select,textarea{font-size:16px}
+@media(max-width:600px){
+  .container{width:100%;max-width:100%;min-width:0}
+  .container>*{min-width:0}
+  .container img,.container video{height:auto;max-width:100%}
+}
+</style>
 </body>
 </html>
 
