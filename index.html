@@ -5269,18 +5269,29 @@ body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
 </style>
 
 <style>
-/* Missions frames: match the same violet-blue glass opacity as Referral */
+/* Missions: use the exact Referral translucent blue-violet glass surfaces */
+#missionsPage.oxide-missions-page{
+  --ref-vip-soft:linear-gradient(125deg,rgba(8,127,234,.23) 0%,rgba(64,92,235,.25) 48%,rgba(150,56,232,.27) 100%);
+  --ref-vip-border:rgba(126,137,255,.62);
+  --ref-vip-glow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.13),inset 0 1px rgba(255,255,255,.10);
+}
+#missionsPage .oxide-missions-glass-frame,
+#missionsPage .oxide-shards-summary,
+#missionsPage .oxide-island-ad-moved,
+#missionsPage .oxide-mission-category,
 #missionsPage .mission-center,
 #missionsPage .mission-progress-card,
 #missionsPage .mission-summary-item,
-#missionsPage .oxide-mission-category,
 #missionsPage .mission-item,
 #missionsPage .mission-history-item,
 #missionsPage .mission-proof-box,
 #missionsPage .mission-preview,
 #missionsPage .mission-offers-section,
-#missionsPage .mission-offer-card,
-#missionsPage .mission-offer-art{
-  background:linear-gradient(145deg,rgba(32,29,68,.94),rgba(14,16,43,.96))!important;
+#missionsPage .mission-offer-card{
+  background:var(--ref-vip-soft)!important;
+  border:1px solid var(--ref-vip-border)!important;
+  box-shadow:var(--ref-vip-glow)!important;
 }
-
+#missionsPage .oxide-mission-category.active{
+  background:linear-gradient(105deg,#087FEA 0%,#405CEB 48%,#9638E8 100%)!important;
+}
