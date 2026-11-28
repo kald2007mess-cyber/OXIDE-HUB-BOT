@@ -22,6 +22,12 @@ html{min-height:100%;background-color:#030816}
 #oxideStartupSplash{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#030816;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #oxideStartupSplash img{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center}
 #oxideStartupSplash img#oxideStartupBottomImage{position:absolute!important;z-index:2!important;inset:auto 0 30px 0!important;margin:0 auto!important;transform:none!important;width:60%!important;height:auto!important;max-height:14.4vh!important;object-fit:contain!important;object-position:center bottom!important;display:block!important;pointer-events:none;mix-blend-mode:screen!important}
+
+#oxideStartupProgress{position:absolute!important;z-index:3!important;left:0!important;right:0!important;bottom:30px!important;margin:0 auto!important;width:60%!important;aspect-ratio:941/245!important;pointer-events:none!important;mix-blend-mode:screen}
+#oxideStartupProgressValue{position:absolute;left:0;right:0;top:43%;transform:translateY(-50%);text-align:center;font:800 clamp(10px,2.1vw,18px)/1 Arial,sans-serif;letter-spacing:1px;color:#d8c5ff;text-shadow:0 0 4px #a020ff,0 0 9px #8b24ff,0 0 14px #168dff}
+#oxideStartupProgressTrack{position:absolute;left:9%;width:82%;top:68%;height:5%;min-height:2px;max-height:5px;border-radius:999px;background:linear-gradient(90deg,rgba(112,0,255,.32),rgba(0,120,255,.3));box-shadow:0 0 4px rgba(160,40,255,.8),0 0 7px rgba(0,130,255,.65);overflow:hidden}
+#oxideStartupProgressFill{height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#c000ff 0%,#8a36ff 45%,#168dff 100%);box-shadow:0 0 5px #d000ff,0 0 9px #168dff;animation:oxideStartupFill 30s linear forwards}
+@keyframes oxideStartupFill{from{width:0%}to{width:100%}}
 #oxideStartupSplash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 body.oxide-startup-loading{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#oxideStartupSplash{transition:none}}
@@ -1575,6 +1581,7 @@ body.oxide-leaderboard-open-state .navigation{display:none!important;}
 <div id="oxideStartupSplash" aria-label="OXIDE HUB loading">
  <img src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/a86a28d334f013a679b9bd06b80505299a52f1df/file_000000005528821084279174db759b58.png" alt="OXIDE HUB space startup screen" fetchpriority="high">
  <img id="oxideStartupBottomImage" src="https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/e983d3176937afa5da67acaffecd4338254e3b8e/IMG_20261128_122733.png" alt="OXIDE HUB bottom graphic" fetchpriority="high">
+ <div id="oxideStartupProgress" aria-label="Loading progress"><div id="oxideStartupProgressValue">0%</div><div id="oxideStartupProgressTrack"><div id="oxideStartupProgressFill"></div></div></div>
 </div>
 
 <div class="stars"></div>
@@ -3857,6 +3864,13 @@ async function initializeOxideHub(){
  finally{window.hideOxideStartupSplash&&window.hideOxideStartupSplash()}
 }
 window.__OXIDE_SPLASH_STARTED_AT=Date.now();
+window.__OXIDE_SPLASH_PROGRESS_TIMER=setInterval(function(){
+ const value=document.getElementById("oxideStartupProgressValue");
+ if(!value){clearInterval(window.__OXIDE_SPLASH_PROGRESS_TIMER);return}
+ const elapsed=Date.now()-(window.__OXIDE_SPLASH_STARTED_AT||Date.now());
+ value.textContent=Math.min(100,Math.floor(elapsed/300)).toString()+"%";
+ if(elapsed>=30000){value.textContent="100%";clearInterval(window.__OXIDE_SPLASH_PROGRESS_TIMER)}
+},100);
 window.hideOxideStartupSplash=function(){
  const splash=document.getElementById("oxideStartupSplash");
  if(!splash||splash.dataset.hideScheduled==="1")return;
