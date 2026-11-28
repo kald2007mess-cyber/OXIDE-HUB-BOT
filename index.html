@@ -26,7 +26,7 @@ html{min-height:100%;background-color:#030816}
 #oxideStartupProgress{position:absolute!important;z-index:3!important;left:0!important;right:0!important;bottom:30px!important;margin:0 auto!important;width:60%!important;aspect-ratio:941/245!important;pointer-events:none!important;mix-blend-mode:screen}
 #oxideStartupProgressValue{position:absolute;left:0;right:0;top:calc(43% - 20px);transform:translateY(-50%);text-align:center;font-family:Arial,sans-serif;font-size:clamp(17.6px,3.68vw,30.4px);font-weight:900;letter-spacing:1.2px;-webkit-text-stroke:4px currentColor;paint-order:stroke fill;color:#ffffff;-webkit-text-fill-color:transparent;background:linear-gradient(180deg,#f4f0ff 0%,#a9baff 18%,#398fff 43%,#7654ed 68%,#d3a0ff 100%);-webkit-background-clip:text;background-clip:text;text-shadow:0 1px 0 rgba(255,255,255,.75),0 2px 0 rgba(75,70,190,.85),0 3px 0 rgba(35,44,125,.8),0 4px 7px rgba(4,12,48,.95),0 0 8px rgba(27,133,255,.95),0 0 15px rgba(139,65,255,.85);white-space:nowrap}
 #oxideStartupProgressTrack{position:absolute;left:5%;width:90%;top:calc(62% - 14px);height:24%;min-height:4px;max-height:24px;border-radius:999px;background:linear-gradient(90deg,rgba(112,0,255,.42),rgba(0,120,255,.4));border:1px solid rgba(185,145,255,.42);box-shadow:0 0 6px rgba(160,40,255,.9),0 0 11px rgba(0,130,255,.78),inset 0 0 4px rgba(255,255,255,.16);overflow:hidden}
-#oxideStartupProgressFill{height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#c000ff 0%,#8a36ff 45%,#168dff 100%);box-shadow:0 0 5px #d000ff,0 0 9px #168dff;animation:oxideStartupFill 30s linear forwards}
+#oxideStartupProgressFill{height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#c000ff 0%,#8a36ff 45%,#168dff 100%);box-shadow:0 0 5px #d000ff,0 0 9px #168dff;animation:oxideStartupFill 15s linear forwards}
 @keyframes oxideStartupFill{from{width:0%}to{width:100%}}
 #oxideStartupSplash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 body.oxide-startup-loading{overflow:hidden}
@@ -3868,15 +3868,15 @@ window.__OXIDE_SPLASH_PROGRESS_TIMER=setInterval(function(){
  const value=document.getElementById("oxideStartupProgressValue");
  if(!value){clearInterval(window.__OXIDE_SPLASH_PROGRESS_TIMER);return}
  const elapsed=Date.now()-(window.__OXIDE_SPLASH_STARTED_AT||Date.now());
- value.textContent=Math.min(100,Math.floor(elapsed/300)).toString()+"%";
- if(elapsed>=30000){value.textContent="100%";clearInterval(window.__OXIDE_SPLASH_PROGRESS_TIMER)}
+ value.textContent=Math.min(100,Math.floor(elapsed/150)).toString()+"%";
+ if(elapsed>=15000){value.textContent="100%";clearInterval(window.__OXIDE_SPLASH_PROGRESS_TIMER)}
 },100);
 window.hideOxideStartupSplash=function(){
  const splash=document.getElementById("oxideStartupSplash");
  if(!splash||splash.dataset.hideScheduled==="1")return;
  splash.dataset.hideScheduled="1";
  const elapsed=Date.now()-(window.__OXIDE_SPLASH_STARTED_AT||Date.now());
- const remaining=Math.max(0,30000-elapsed);
+ const remaining=Math.max(0,15000-elapsed);
  setTimeout(()=>{
   splash.classList.add("is-hidden");
   document.body.classList.remove("oxide-startup-loading");
