@@ -5449,3 +5449,66 @@ body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
   #referralPage .oxide-how-note{animation:none!important}
 }
 </style>
+
+
+<!-- OXIDE_NOTIFICATIONS_RANKING_VIP_SUPPORT_GLASS_20261128 -->
+<style>
+/* Shared 30% transparent animated blue-purple glass for requested interfaces */
+#notificationsPanel,
+#notificationsPanel .notification-item,
+#notificationsPanel .notification-icon-button,
+#oxideVipModal .oxide-vip-panel,
+#oxideVipModal .oxide-vip-benefits,
+#oxideVipModal .oxide-vip-close,
+#vipPage .island-section,
+#supportPage .support-box,
+#supportPage .support-messages,
+#supportPage .support-input,
+#oxideLeaderboardPage .oxide-leaderboard-tabs button,
+#oxideLeaderboardPage .oxide-leaderboard-back,
+#oxideLeaderboardPage .oxide-leaderboard-content > *,
+#oxideLeaderboardPage .referral-ranking,
+#oxideLeaderboardPage .ranking-row{
+  background-image:
+    linear-gradient(rgba(5,7,22,.30),rgba(5,7,22,.30)),
+    linear-gradient(125deg,rgba(8,127,234,.16) 0%,rgba(64,92,235,.18) 48%,rgba(150,56,232,.20) 100%)!important;
+  background-size:200% 200%,200% 200%!important;
+  background-position:0% 50%,0% 50%;
+  animation:oxideUtilityGlassFlow 9s ease-in-out infinite!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border-color:rgba(126,137,255,.68)!important;
+  box-shadow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.14),inset 0 1px rgba(255,255,255,.08)!important;
+}
+#notificationsPanel{border-radius:18px!important}
+#notificationsPanel .notification-item{border-radius:13px!important}
+#oxideVipModal .oxide-vip-panel{background-color:rgba(5,7,22,.30)!important;border-radius:28px!important}
+#oxideVipModal .oxide-vip-benefit{border-bottom:1px solid rgba(153,151,255,.13)}
+#oxideLeaderboardPage{
+  background:
+    linear-gradient(rgba(5,7,22,.30),rgba(5,7,22,.30)),
+    linear-gradient(125deg,rgba(8,127,234,.16),rgba(64,92,235,.18) 48%,rgba(150,56,232,.20))!important;
+  background-size:200% 200%,200% 200%!important;
+  animation:oxideUtilityGlassFlow 9s ease-in-out infinite!important;
+}
+#oxideLeaderboardPage .oxide-leaderboard-content > *{border-radius:16px!important}
+#supportPage{position:relative;isolation:isolate;min-height:calc(100dvh - 120px);overflow:hidden}
+#supportPage::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:url("https://raw.githubusercontent.com/kald2007mess-cyber/OXIDE-HUB-BOT/4bc2b9f1cd3b11bf70a21b555182a4552516b251/file_0000000005e882469e55b5721385efa2.png");
+  background-repeat:no-repeat;background-position:center top;background-size:contain;opacity:.99;
+}
+#supportPage .support-box{position:relative;z-index:1}
+@keyframes oxideUtilityGlassFlow{
+  0%,100%{background-position:0% 50%,0% 50%}
+  50%{background-position:100% 50%,100% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+  #notificationsPanel,#notificationsPanel .notification-item,#notificationsPanel .notification-icon-button,
+  #oxideVipModal .oxide-vip-panel,#oxideVipModal .oxide-vip-benefits,#oxideVipModal .oxide-vip-close,
+  #vipPage .island-section,#supportPage .support-box,#supportPage .support-messages,#supportPage .support-input,
+  #oxideLeaderboardPage,#oxideLeaderboardPage .oxide-leaderboard-tabs button,
+  #oxideLeaderboardPage .oxide-leaderboard-back,#oxideLeaderboardPage .oxide-leaderboard-content > *,
+  #oxideLeaderboardPage .referral-ranking,#oxideLeaderboardPage .ranking-row{animation:none!important}
+}
+</style>
