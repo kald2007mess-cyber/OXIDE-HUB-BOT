@@ -305,9 +305,13 @@ body{padding:18px 10px}
 .news-comments{border-color:rgba(105,180,235,.25)}
 .news-comment-input{background:rgba(3,18,38,.82);border-color:rgba(91,184,255,.4);min-height:42px}
 .news-comment-send{border-radius:9px;padding:9px 14px}
-/* Slow, visible rain on a glass pane. The original background.png remains untouched. */
-.rain-glass{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:1;background:linear-gradient(115deg,rgba(120,190,255,.025),transparent 38%,rgba(125,195,255,.035) 72%,transparent)}
-#oxideRainCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+/* Scattered violet-blue startup dust particles across the full app background. */
+.rain-glass{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:.78;background-image:radial-gradient(circle,rgba(255,255,255,.88) 0 1px,transparent 1.9px),radial-gradient(circle,rgba(151,112,255,.9) 0 1.25px,transparent 2.2px),radial-gradient(circle,rgba(93,184,255,.9) 0 1px,transparent 2px);background-size:73px 91px,113px 127px,97px 109px;background-position:7px 13px,31px 49px,61px 17px}
+.rain-glass::before,.rain-glass::after{content:"";position:absolute;inset:-35%;pointer-events:none;background-image:radial-gradient(circle,rgba(255,255,255,.92) 0 1.2px,transparent 2.1px),radial-gradient(circle,rgba(161,119,255,.9) 0 1.15px,transparent 2px),radial-gradient(circle,rgba(93,183,255,.9) 0 1.2px,transparent 2.1px),radial-gradient(circle,rgba(255,255,255,.72) 0 .8px,transparent 1.7px),radial-gradient(circle,rgba(177,127,255,.82) 0 1px,transparent 1.9px);background-size:151px 119px,83px 157px,127px 97px,47px 103px,109px 89px;background-position:17px 31px,57px 9px,91px 43px,11px 71px,39px 27px;opacity:.88;will-change:transform;animation:oxideStartupDustFloat 11s linear infinite}
+.rain-glass::after{opacity:.62;animation:oxideStartupDustFloatReverse 14.5s linear infinite}
+#oxideRainCanvas{display:none!important}
+@keyframes oxideStartupDustFloat{from{transform:translate3d(0,0,0)}to{transform:translate3d(-110px,-78px,0)}}
+@keyframes oxideStartupDustFloatReverse{from{transform:translate3d(0,0,0)}to{transform:translate3d(95px,-65px,0)}}
 
 
 
@@ -3941,80 +3945,7 @@ initializeOxideHub();
  loadPlatformVisibility();
 })();
 
-// OXIDE HUB realistic falling rain + water droplets sliding over glass.
-(function initOxideRealRain(){
- const canvas=document.getElementById('oxideRainCanvas');
- if(!canvas || !canvas.getContext) return;
- const ctx=canvas.getContext('2d',{alpha:true});
- if(!ctx) return;
- let w=0,h=0,dpr=1,raf=0,last=0,raindrops=[],glassDrops=[];
- const rand=(a,b)=>a+Math.random()*(b-a);
- function resize(){
-   const rect=canvas.getBoundingClientRect();
-   w=Math.max(1,rect.width);h=Math.max(1,rect.height);
-   dpr=Math.min(window.devicePixelRatio||1,1.5);
-   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-   ctx.setTransform(dpr,0,0,dpr,0,0);
-   const count=Math.max(45,Math.min(180,Math.round(w*h/7000)));
-   raindrops=Array.from({length:count},()=>({x:rand(-20,w+20),y:rand(-h,h),len:rand(9,25),speed:rand(420,850),width:rand(.55,1.35),alpha:rand(.16,.48),drift:rand(-28,18)}));
-   glassDrops=Array.from({length:Math.max(10,Math.min(40,Math.round(w/16)))},()=>makeGlassDrop(true));
- }
- function makeGlassDrop(initial=false){
-   const r=rand(1.1,4.4);
-   return {x:rand(0,w),y:initial?rand(0,h):rand(-35,-5),r,vy:rand(7,25),vx:rand(-2,2),trail:rand(12,48),alpha:rand(.18,.48),wobble:rand(0,Math.PI*2)};
- }
- function drawRain(dt){
-   for(const d of raindrops){
-     d.y+=d.speed*dt;d.x+=d.drift*dt;
-     if(d.y>h+35){d.y=rand(-90,-10);d.x=rand(-10,w+10)}
-     if(d.x>w+25)d.x=-20;if(d.x< -25)d.x=w+20;
-     const g=ctx.createLinearGradient(d.x,d.y-d.len,d.x+d.drift*.035,d.y);
-     g.addColorStop(0,'rgba(204,235,255,0)');
-     g.addColorStop(.35,`rgba(202,231,255,${d.alpha*.48})`);
-     g.addColorStop(1,`rgba(235,248,255,${d.alpha})`);
-     ctx.beginPath();ctx.strokeStyle=g;ctx.lineWidth=d.width;ctx.lineCap='round';
-     ctx.moveTo(d.x,d.y-d.len);ctx.lineTo(d.x+d.drift*.035,d.y);ctx.stroke();
-   }
- }
- function drawGlassDrops(dt,time){
-   for(let i=0;i<glassDrops.length;i++){
-     const d=glassDrops[i];
-     d.y+=d.vy*dt;d.x+=Math.sin(time*.0007+d.wobble)*d.vx*dt;
-     if(d.y>h+50){glassDrops[i]=makeGlassDrop(false);continue}
-     // faint wet trail behind the bead
-     const trail=ctx.createLinearGradient(d.x,d.y-d.trail,d.x,d.y);
-     trail.addColorStop(0,'rgba(195,229,255,0)');
-     trail.addColorStop(1,`rgba(198,229,255,${d.alpha*.23})`);
-     ctx.beginPath();ctx.strokeStyle=trail;ctx.lineWidth=Math.max(.7,d.r*.55);ctx.lineCap='round';
-     ctx.moveTo(d.x,d.y-d.trail);ctx.lineTo(d.x,d.y);ctx.stroke();
-     // convex droplet with cool edge and bright reflected highlight
-     const rg=ctx.createRadialGradient(d.x-d.r*.36,d.y-d.r*.42,.2,d.x,d.y,d.r*1.35);
-     rg.addColorStop(0,`rgba(255,255,255,${d.alpha*.9})`);
-     rg.addColorStop(.28,`rgba(206,235,255,${d.alpha*.42})`);
-     rg.addColorStop(.72,`rgba(96,164,220,${d.alpha*.19})`);
-     rg.addColorStop(1,'rgba(225,245,255,0)');
-     ctx.beginPath();ctx.fillStyle=rg;ctx.ellipse(d.x,d.y,d.r*.78,d.r*1.18,0,0,Math.PI*2);ctx.fill();
-     ctx.beginPath();ctx.strokeStyle=`rgba(231,247,255,${d.alpha*.65})`;ctx.lineWidth=.65;
-     ctx.ellipse(d.x-d.r*.12,d.y-d.r*.12,d.r*.48,d.r*.78,-.18,Math.PI*1.08,Math.PI*1.78);ctx.stroke();
-     ctx.beginPath();ctx.fillStyle=`rgba(255,255,255,${d.alpha*.8})`;ctx.ellipse(d.x-d.r*.25,d.y-d.r*.42,Math.max(.45,d.r*.15),Math.max(.7,d.r*.25),-.3,0,Math.PI*2);ctx.fill();
-   }
- }
- function frame(now){
-   if(document.hidden){raf=0;return}
-   const dt=Math.min(.04,(now-last||16.7)/1000);last=now;
-   ctx.clearRect(0,0,w,h);
-   drawRain(dt);drawGlassDrops(dt,now);
-   raf=requestAnimationFrame(frame);
- }
- resize();
- if('ResizeObserver' in window){new ResizeObserver(resize).observe(canvas)}else window.addEventListener('resize',resize,{passive:true});
- document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0}else if(!raf){raf=requestAnimationFrame(frame)}});
- raf=requestAnimationFrame(frame);
-})();
-
-
-
-
+// Replaced realistic rain animation with the scattered violet-blue dust layer above.
 
 /* OXIDE persistent wallet + AUREX-style energy/tap upgrades. */
 (function(){
