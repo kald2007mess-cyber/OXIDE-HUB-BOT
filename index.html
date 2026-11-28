@@ -3854,9 +3854,18 @@ async function initializeOxideHub(){
  try{await boot()}catch(error){console.error("OXIDE HUB startup failed:",error)}
  finally{window.hideOxideStartupSplash&&window.hideOxideStartupSplash()}
 }
+window.__OXIDE_SPLASH_STARTED_AT=Date.now();
 window.hideOxideStartupSplash=function(){
  const splash=document.getElementById("oxideStartupSplash");
- if(splash){splash.classList.add("is-hidden");document.body.classList.remove("oxide-startup-loading");setTimeout(()=>splash.remove(),500)}
+ if(!splash||splash.dataset.hideScheduled==="1")return;
+ splash.dataset.hideScheduled="1";
+ const elapsed=Date.now()-(window.__OXIDE_SPLASH_STARTED_AT||Date.now());
+ const remaining=Math.max(0,30000-elapsed);
+ setTimeout(()=>{
+  splash.classList.add("is-hidden");
+  document.body.classList.remove("oxide-startup-loading");
+  setTimeout(()=>splash.remove(),500);
+ },remaining);
 };
 async function boot(){/* Verify Telegram Mini App identity and establish the visitor cookie first. */if(!await loadUserId())return;/* Referral attribution is processed server-side from Telegram /start payloads. */if(window.loadOxideWallet)await window.loadOxideWallet();await loadReferral();getActiveSession();createStages();await refreshProgress();await loadSavedLanguage();if(sessionStorage.getItem("oxide_referral_notice")==="1"){document.getElementById("referralStatus").textContent=t("refRegistered");sessionStorage.removeItem("oxide_referral_notice")}loadRewards();loadIsland();loadMissionStatus();loadNotifications(false);startSupportChat();setInterval(()=>{if(!document.hidden)refreshProgress()},10000);window.addEventListener("focus",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false);loadNotifications(false)});document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)}});window.addEventListener("pageshow",()=>{refreshProgressAfterAd();refreshIslandAfterReturn();loadSupportMessages(false)});setInterval(()=>{if(!document.hidden){loadMissionStatus();checkNewsUpdates();loadNotifications(false);if(document.getElementById("rewardsPage").style.display==="block")loadRewardOrders()}},30000)}
 initializeOxideHub();
