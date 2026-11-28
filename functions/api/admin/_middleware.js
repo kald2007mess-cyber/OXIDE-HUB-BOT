@@ -2,16 +2,17 @@
 const READ_ACTIONS = new Set([
   "list","get","load","status","stats","analytics","overview","search",
   "history","check","preview","details","permissions","activity","verify",
-  "fetch","refresh","count","summary"
+  "fetch","refresh","count","summary","proof","messages","completed"
 ]);
 const MUTATING_ENDPOINTS = new Set([
-  "beta-delivery-upload","beta-delivery","broadcast","download-conditions",
+  "beta-delivery-upload","beta-delivery","broadcast","downloads","download-conditions",
   "maintenance","news","redeem-codes","redemption-offers","reset-ads",
   "reset-data","reviews","rewards","security","support","tasks",
   "platform-delivery","platform-unlock","platform-visibility"
 ]);
 const LABELS = {
   "beta-delivery-upload":"رفع ملف تسليم تجريبي",
+  "downloads":"إدارة التنزيلات والملفات",
   "beta-delivery":"إدارة التسليم التجريبي",
   "broadcast":"إرسال منشور / إذاعة",
   "download-conditions":"تعديل شروط التنزيل",
