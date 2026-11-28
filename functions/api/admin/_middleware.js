@@ -1,7 +1,7 @@
 // OXIDE HUB: notify the owner about successful admin dashboard visits and mutations.
 const READ_ACTIONS = new Set([
   "list","get","load","status","stats","analytics","overview","search",
-  "history","check","preview","details","permissions","activity","verify",
+  "history","check","preview","details","activity","verify",
   "fetch","refresh","count","summary","proof","messages","completed"
 ]);
 const MUTATING_ENDPOINTS = new Set([
