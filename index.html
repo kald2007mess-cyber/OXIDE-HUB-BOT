@@ -5408,4 +5408,44 @@ body.oxide-leaderboard-open-state .top-bar #oxideVipTopButton{
   #rewardsPage .reward-orders,
   #rewardsPage .pending-note{animation:none!important}
 }
+</style>\n
+<style>
+/* Referral tab: match the same 30% dark animated blue-purple glass */
+#referralPage .oxide-shards-summary,
+#referralPage .oxide-invite-card,
+#referralPage .oxide-referral-stat,
+#referralPage .oxide-eligibility-card,
+#referralPage .oxide-link-card,
+#referralPage .oxide-how-card,
+#referralPage .oxide-how-step,
+#referralPage .oxide-how-note{
+  background:linear-gradient(rgba(5,7,22,.30),rgba(5,7,22,.30)),linear-gradient(125deg,rgba(8,127,234,.16) 0%,rgba(64,92,235,.18) 48%,rgba(150,56,232,.20) 100%)!important;
+  background-size:200% 200%,200% 200%!important;
+  background-position:0% 50%,0% 50%;
+  animation:oxideReferralGradientFlow 9s ease-in-out infinite!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border-color:rgba(126,137,255,.68)!important;
+  box-shadow:0 0 18px rgba(76,91,255,.20),0 0 25px rgba(145,54,225,.14),inset 0 1px rgba(255,255,255,.08)!important;
+}
+#referralPage .oxide-referral-input{
+  background:linear-gradient(rgba(5,7,22,.30),rgba(5,7,22,.30)),linear-gradient(125deg,rgba(8,127,234,.16),rgba(64,92,235,.18) 48%,rgba(150,56,232,.20))!important;
+  border-color:rgba(126,137,255,.68)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+@keyframes oxideReferralGradientFlow{
+  0%,100%{background-position:0% 50%,0% 50%}
+  50%{background-position:100% 50%,100% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+  #referralPage .oxide-shards-summary,
+  #referralPage .oxide-invite-card,
+  #referralPage .oxide-referral-stat,
+  #referralPage .oxide-eligibility-card,
+  #referralPage .oxide-link-card,
+  #referralPage .oxide-how-card,
+  #referralPage .oxide-how-step,
+  #referralPage .oxide-how-note{animation:none!important}
+}
 </style>
